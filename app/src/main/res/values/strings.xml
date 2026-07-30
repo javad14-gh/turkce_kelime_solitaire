@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Kelime Eşleştirme Solitaire</string>
+    <string name="privacy_policy_url">https://www.example.com/privacy-policy</string>
+    <string name="data_safety_url">https://www.example.com/data-safety</string>
+</resources>

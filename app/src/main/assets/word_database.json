@@ -1,0 +1,141 @@
+{
+  "categories": [
+    {
+      "id": "cat_yemekler",
+      "name": "Türk Yemekleri",
+      "difficulty": "Kolay",
+      "group": "yemekler"
+    },
+    {
+      "id": "cat_semtler",
+      "name": "İstanbul Semtleri",
+      "difficulty": "Kolay",
+      "group": "semtler"
+    },
+    {
+      "id": "cat_ankara_semtleri",
+      "name": "Ankara Semtleri",
+      "difficulty": "Kolay",
+      "group": "semtler"
+    },
+    {
+      "id": "cat_enstrumanlar",
+      "name": "Türk Enstrümanları",
+      "difficulty": "Orta",
+      "group": "muzik"
+    },
+    {
+      "id": "cat_edebiyat",
+      "name": "Edebi Terimler",
+      "difficulty": "Zor",
+      "group": "edebiyat"
+    },
+    {
+      "id": "cat_savaslar",
+      "name": "Tarihi Savaşlar",
+      "difficulty": "Zor",
+      "group": "tarih"
+    },
+    {
+      "id": "cat_renkler",
+      "name": "Renkler",
+      "difficulty": "Kolay",
+      "group": "renkler"
+    },
+    {
+      "id": "cat_meyveler",
+      "name": "Meyveler",
+      "difficulty": "Kolay",
+      "group": "meyveler"
+    }
+  ],
+  "words": [
+    {"id": "w_kebap", "categoryId": "cat_yemekler", "wordText": "Kebap", "difficulty": "Kolay"},
+    {"id": "w_lahmacun", "categoryId": "cat_yemekler", "wordText": "Lahmacun", "difficulty": "Kolay"},
+    {"id": "w_manti", "categoryId": "cat_yemekler", "wordText": "Mantı", "difficulty": "Kolay"},
+    {"id": "w_baklava", "categoryId": "cat_yemekler", "wordText": "Baklava", "difficulty": "Kolay"},
+    {"id": "w_menemen", "categoryId": "cat_yemekler", "wordText": "Menemen", "difficulty": "Kolay"},
+    {"id": "w_dolma", "categoryId": "cat_yemekler", "wordText": "Dolma", "difficulty": "Kolay"},
+    {"id": "w_iskender", "categoryId": "cat_yemekler", "wordText": "İskender", "difficulty": "Kolay"},
+    {"id": "w_karniyarik", "categoryId": "cat_yemekler", "wordText": "Karnıyarık", "difficulty": "Kolay"},
+    {"id": "w_pide", "categoryId": "cat_yemekler", "wordText": "Pide", "difficulty": "Kolay"},
+    {"id": "w_kadayif", "categoryId": "cat_yemekler", "wordText": "Kadayıf", "difficulty": "Kolay"},
+
+    {"id": "w_kadikoy", "categoryId": "cat_semtler", "wordText": "Kadıköy", "difficulty": "Kolay"},
+    {"id": "w_besiktas", "categoryId": "cat_semtler", "wordText": "Beşiktaş", "difficulty": "Kolay"},
+    {"id": "w_uskudar", "categoryId": "cat_semtler", "wordText": "Üsküdar", "difficulty": "Kolay"},
+    {"id": "w_beyoglu", "categoryId": "cat_semtler", "wordText": "Beyoğlu", "difficulty": "Kolay"},
+    {"id": "w_eminonu", "categoryId": "cat_semtler", "wordText": "Eminönü", "difficulty": "Kolay"},
+    {"id": "w_sariyer", "categoryId": "cat_semtler", "wordText": "Sarıyer", "difficulty": "Kolay"},
+    {"id": "w_fatih", "categoryId": "cat_semtler", "wordText": "Fatih", "difficulty": "Kolay"},
+    {"id": "w_ortakoy", "categoryId": "cat_semtler", "wordText": "Ortaköy", "difficulty": "Kolay"},
+    {"id": "w_bakirkoy", "categoryId": "cat_semtler", "wordText": "Bakırköy", "difficulty": "Kolay"},
+    {"id": "w_sisli", "categoryId": "cat_semtler", "wordText": "Şişli", "difficulty": "Kolay"},
+
+    {"id": "w_saz", "categoryId": "cat_enstrumanlar", "wordText": "Saz", "difficulty": "Orta"},
+    {"id": "w_baglama", "categoryId": "cat_enstrumanlar", "wordText": "Bağlama", "difficulty": "Orta"},
+    {"id": "w_kanun", "categoryId": "cat_enstrumanlar", "wordText": "Kanun", "difficulty": "Orta"},
+    {"id": "w_kemence", "categoryId": "cat_enstrumanlar", "wordText": "Kemençe", "difficulty": "Orta"},
+    {"id": "w_ney", "categoryId": "cat_enstrumanlar", "wordText": "Ney", "difficulty": "Orta"},
+    {"id": "w_ud", "categoryId": "cat_enstrumanlar", "wordText": "Ud", "difficulty": "Orta"},
+    {"id": "w_def", "categoryId": "cat_enstrumanlar", "wordText": "Def", "difficulty": "Orta"},
+    {"id": "w_zurna", "categoryId": "cat_enstrumanlar", "wordText": "Zurna", "difficulty": "Orta"},
+    {"id": "w_tulum", "categoryId": "cat_enstrumanlar", "wordText": "Tulum", "difficulty": "Orta"},
+    {"id": "w_cumbus", "categoryId": "cat_enstrumanlar", "wordText": "Cümbüş", "difficulty": "Orta"},
+
+    {"id": "w_kafiye", "categoryId": "cat_edebiyat", "wordText": "Kafiye", "difficulty": "Zor"},
+    {"id": "w_redif", "categoryId": "cat_edebiyat", "wordText": "Redif", "difficulty": "Zor"},
+    {"id": "w_tesbih", "categoryId": "cat_edebiyat", "wordText": "Teşbih", "difficulty": "Zor"},
+    {"id": "w_mecaz", "categoryId": "cat_edebiyat", "wordText": "Mecaz", "difficulty": "Zor"},
+    {"id": "w_aruz", "categoryId": "cat_edebiyat", "wordText": "Aruz", "difficulty": "Zor"},
+    {"id": "w_mubalaga", "categoryId": "cat_edebiyat", "wordText": "Mübalağa", "difficulty": "Zor"},
+    {"id": "w_gazel", "categoryId": "cat_edebiyat", "wordText": "Gazel", "difficulty": "Zor"},
+    {"id": "w_kaside", "categoryId": "cat_edebiyat", "wordText": "Kaside", "difficulty": "Zor"},
+    {"id": "w_seci", "categoryId": "cat_edebiyat", "wordText": "Seci", "difficulty": "Zor"},
+    {"id": "w_aliterasyon", "categoryId": "cat_edebiyat", "wordText": "Aliterasyon", "difficulty": "Zor"},
+
+    {"id": "w_malazgirt", "categoryId": "cat_savaslar", "wordText": "Malazgirt", "difficulty": "Zor"},
+    {"id": "w_miryokefalon", "categoryId": "cat_savaslar", "wordText": "Miryokefalon", "difficulty": "Zor"},
+    {"id": "w_dandanakan", "categoryId": "cat_savaslar", "wordText": "Dandanakan", "difficulty": "Zor"},
+    {"id": "w_nigbolu", "categoryId": "cat_savaslar", "wordText": "Niğbolu", "difficulty": "Zor"},
+    {"id": "w_caldiran", "categoryId": "cat_savaslar", "wordText": "Çaldıran", "difficulty": "Zor"},
+    {"id": "w_ridaniye", "categoryId": "cat_savaslar", "wordText": "Ridaniye", "difficulty": "Zor"},
+    {"id": "w_preveze", "categoryId": "cat_savaslar", "wordText": "Preveze", "difficulty": "Zor"},
+    {"id": "w_mohac", "categoryId": "cat_savaslar", "wordText": "Mohaç", "difficulty": "Zor"},
+    {"id": "w_sakarya", "categoryId": "cat_savaslar", "wordText": "Sakarya", "difficulty": "Zor"},
+    {"id": "w_anafartalar", "categoryId": "cat_savaslar", "wordText": "Anafartalar", "difficulty": "Zor"},
+
+    {"id": "w_cankaya", "categoryId": "cat_ankara_semtleri", "wordText": "Çankaya", "difficulty": "Kolay"},
+    {"id": "w_kecioren", "categoryId": "cat_ankara_semtleri", "wordText": "Keçiören", "difficulty": "Kolay"},
+    {"id": "w_mamak", "categoryId": "cat_ankara_semtleri", "wordText": "Mamak", "difficulty": "Kolay"},
+    {"id": "w_altindag", "categoryId": "cat_ankara_semtleri", "wordText": "Altındağ", "difficulty": "Kolay"},
+    {"id": "w_yenimahalle", "categoryId": "cat_ankara_semtleri", "wordText": "Yenimahalle", "difficulty": "Kolay"},
+    {"id": "w_etimesgut", "categoryId": "cat_ankara_semtleri", "wordText": "Etimesgut", "difficulty": "Kolay"},
+    {"id": "w_sincan", "categoryId": "cat_ankara_semtleri", "wordText": "Sincan", "difficulty": "Kolay"},
+    {"id": "w_golbasi", "categoryId": "cat_ankara_semtleri", "wordText": "Gölbaşı", "difficulty": "Kolay"},
+    {"id": "w_pursaklar", "categoryId": "cat_ankara_semtleri", "wordText": "Pursaklar", "difficulty": "Kolay"},
+    {"id": "w_elmadag", "categoryId": "cat_ankara_semtleri", "wordText": "Elmadağ", "difficulty": "Kolay"},
+
+    {"id": "w_kirmizi", "categoryId": "cat_renkler", "wordText": "Kırmızı", "difficulty": "Kolay"},
+    {"id": "w_mavi", "categoryId": "cat_renkler", "wordText": "Mavi", "difficulty": "Kolay"},
+    {"id": "w_yesil", "categoryId": "cat_renkler", "wordText": "Yeşil", "difficulty": "Kolay"},
+    {"id": "w_sari", "categoryId": "cat_renkler", "wordText": "Sarı", "difficulty": "Kolay"},
+    {"id": "w_siyah", "categoryId": "cat_renkler", "wordText": "Siyah", "difficulty": "Kolay"},
+    {"id": "w_beyaz", "categoryId": "cat_renkler", "wordText": "Beyaz", "difficulty": "Kolay"},
+    {"id": "w_turuncu", "categoryId": "cat_renkler", "wordText": "Turuncu", "difficulty": "Kolay"},
+    {"id": "w_pembe", "categoryId": "cat_renkler", "wordText": "Pembe", "difficulty": "Kolay"},
+    {"id": "w_mor", "categoryId": "cat_renkler", "wordText": "Mor", "difficulty": "Kolay"},
+    {"id": "w_gri", "categoryId": "cat_renkler", "wordText": "Gri", "difficulty": "Kolay"},
+
+    {"id": "w_elma", "categoryId": "cat_meyveler", "wordText": "Elma", "difficulty": "Kolay"},
+    {"id": "w_armut", "categoryId": "cat_meyveler", "wordText": "Armut", "difficulty": "Kolay"},
+    {"id": "w_cilek", "categoryId": "cat_meyveler", "wordText": "Çilek", "difficulty": "Kolay"},
+    {"id": "w_muz", "categoryId": "cat_meyveler", "wordText": "Muz", "difficulty": "Kolay"},
+    {"id": "w_kiraz", "categoryId": "cat_meyveler", "wordText": "Kiraz", "difficulty": "Kolay"},
+    {"id": "w_kavun", "categoryId": "cat_meyveler", "wordText": "Kavun", "difficulty": "Kolay"},
+    {"id": "w_karpuz", "categoryId": "cat_meyveler", "wordText": "Karpuz", "difficulty": "Kolay"},
+    {"id": "w_erik", "categoryId": "cat_meyveler", "wordText": "Erik", "difficulty": "Kolay"},
+    {"id": "w_portakal", "categoryId": "cat_meyveler", "wordText": "Portakal", "difficulty": "Kolay"},
+    {"id": "w_uzum", "categoryId": "cat_meyveler", "wordText": "Üzüm", "difficulty": "Kolay"}
+  ]
+}

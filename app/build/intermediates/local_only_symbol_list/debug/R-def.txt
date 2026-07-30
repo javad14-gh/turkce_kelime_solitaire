@@ -1,0 +1,6 @@
+R_DEF: Internal format may change without notice
+local
+string app_name
+string data_safety_url
+string privacy_policy_url
+style Theme.TurkceKelimeSolitaire
