@@ -94,7 +94,12 @@ class GameViewModel : ViewModel() {
     }
 
     private fun loadLevelData(levelNum: Int, db: WordDatabase) {
-        val generated = levelGenerator.generateLevel(db, levelNum)
+        val lastCategoryIds = if (levelNum != _uiState.value.levelNumber) {
+            _uiState.value.levelData?.targetCategories?.map { it.id }?.toSet() ?: emptySet()
+        } else {
+            emptySet()
+        }
+        val generated = levelGenerator.generateLevel(db, levelNum, lastCategoryIds)
         val allWords = generated.targetWords
 
         // Initialize 4 empty Foundation slots
