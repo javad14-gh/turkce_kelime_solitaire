@@ -374,8 +374,6 @@ class LevelGenerator {
                 return true
             }
         }
-
         return false
-    }
     }
 }
