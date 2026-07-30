@@ -46,11 +46,17 @@ class LevelGenerator {
             else -> listOf("Kolay", "Orta", "Zor") // CokZor uses any difficulty but with maximum size
         }
 
+        // Predict previous level categories to avoid consecutive duplicates
+        val previousLevelCatIds = getCategorySelectionForSeed(database, levelNumber - 1)
+
         // Filter and choose categories based on constraints
         var selectedCategories = allCategories.filter { it.difficulty in allowedDifficulties }
         if (selectedCategories.size < numCategories) {
             selectedCategories = allCategories
         }
+
+        val nonDuplicates = selectedCategories.filter { it.id !in previousLevelCatIds }
+        val duplicates = selectedCategories.filter { it.id in previousLevelCatIds }
 
         var attempts = 0
         while (attempts < 200) {
@@ -58,7 +64,8 @@ class LevelGenerator {
             val seed = levelNumber.toLong() + (attempts * 1000L)
             val random = Random(seed)
 
-            val shuffledCats = selectedCategories.shuffled(random)
+            // Prioritize categories not present in the previous level
+            val shuffledCats = nonDuplicates.shuffled(random) + duplicates.shuffled(random)
             val currentSelectedCats = mutableListOf<Category>()
             val occupiedGroups = mutableSetOf<String>()
             
@@ -178,6 +185,61 @@ class LevelGenerator {
             initialTableau = listOf(cards, emptyList(), emptyList(), emptyList()),
             initialStock = emptyList()
         )
+    }
+
+    /**
+     * Helper to predict selected categories for a given level seed without running solvability checks.
+     * Prevents stack recursion when checking the previous level's content.
+     */
+    private fun getCategorySelectionForSeed(database: WordDatabase, levelNum: Int): Set<String> {
+        if (levelNum < 1) return emptySet()
+        val allCategories = database.categories
+        val cycleIndex = (levelNum - 1) % 10
+        val difficultyLevel = when (cycleIndex) {
+            0, 1, 3, 7 -> "Kolay"
+            2, 4, 5, 8 -> "Orta"
+            6 -> "Zor"
+            else -> "CokZor"
+        }
+        val scaleFactor = (levelNum - 1) / 30
+        val baseCategories = when (difficultyLevel) {
+            "Kolay" -> 3
+            "Orta" -> 4
+            "Zor" -> 5
+            else -> 6
+        }
+        val numCategories = minOf(7, baseCategories + scaleFactor)
+
+        val allowedDifficulties = when (difficultyLevel) {
+            "Kolay" -> listOf("Kolay")
+            "Orta" -> listOf("Kolay", "Orta")
+            "Zor" -> listOf("Orta", "Zor")
+            else -> listOf("Kolay", "Orta", "Zor")
+        }
+        var selectedCategories = allCategories.filter { it.difficulty in allowedDifficulties }
+        if (selectedCategories.size < numCategories) {
+            selectedCategories = allCategories
+        }
+        val seed = levelNum.toLong()
+        val random = Random(seed)
+        val shuffledCats = selectedCategories.shuffled(random)
+        val currentSelectedCats = mutableListOf<Category>()
+        val occupiedGroups = mutableSetOf<String>()
+        for (cat in shuffledCats) {
+            if (currentSelectedCats.size >= numCategories) break
+            val group = cat.group
+            if (group == null || !occupiedGroups.contains(group)) {
+                currentSelectedCats.add(cat)
+                if (group != null) {
+                    occupiedGroups.add(group)
+                }
+            }
+        }
+        if (currentSelectedCats.size < numCategories) {
+            currentSelectedCats.clear()
+            currentSelectedCats.addAll(shuffledCats.take(numCategories))
+        }
+        return currentSelectedCats.map { it.id }.toSet()
     }
 
     /**
