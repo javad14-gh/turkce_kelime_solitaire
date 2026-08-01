@@ -61,9 +61,13 @@ class MainActivity : ComponentActivity() {
                             LevelSelectScreen(
                                 coins = state.coins,
                                 completedLevelsStars = state.completedLevelsStars,
+                                showResumeDialogForLevel = state.showResumeDialogForLevel,
                                 onLevelSelected = { level, activity ->
                                     viewModel.selectLevel(level, activity)
                                 },
+                                onResumeSelected = { viewModel.resumeActiveGame() },
+                                onStartFreshSelected = { viewModel.discardAndStartFresh(this@MainActivity) },
+                                onDismissResumeDialog = { viewModel.dismissResumeDialog() },
                                 onBackClicked = { viewModel.returnToMainMenu() }
                             )
                         }
@@ -90,6 +94,7 @@ class MainActivity : ComponentActivity() {
                                         viewModel.attemptStackCards(cards, colIdx)
                                     },
                                     onDrawFromStock = { viewModel.drawFromStock() },
+                                    onRestartLevel = { viewModel.restartLevel(this@MainActivity) },
                                     onBackToMenu = { viewModel.returnToMainMenu() }
                                 )
                             } ?: LoadingView()

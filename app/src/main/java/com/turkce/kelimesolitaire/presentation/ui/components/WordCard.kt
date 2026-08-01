@@ -3,9 +3,11 @@ package com.turkce.kelimesolitaire.presentation.ui.components
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.keyframes
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,6 +31,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -94,8 +97,8 @@ fun WordCard(
         }
     }
 
-    val scale = if (isDragged) 1.12f else if (isSelected) 1.05f else 1.0f
-    val elevation = if (isDragged) 10.dp else 2.dp
+    val scale = if (isDragged) 1.15f else if (isSelected) 1.05f else 1.0f
+    val elevation = if (isDragged) 16.dp else if (isSelected) 6.dp else 3.dp
     
     // Board outline styling: category cards get a gold border when face up!
     val borderColor = when {
@@ -106,14 +109,20 @@ fun WordCard(
         else -> Color.DarkGray.copy(alpha = 0.3f)
     }
 
+    val cardBrush = when {
+        !isFaceUp -> Brush.verticalGradient(
+            colors = listOf(Color(0xFF1E88E5), Color(0xFF0D47A1))
+        )
+        card.isCategory -> Brush.verticalGradient(
+            colors = listOf(Color(0xFFFFFDE7), Color(0xFFFFF59D))
+        )
+        else -> Brush.verticalGradient(
+            colors = listOf(Color(0xFFFFFFFF), Color(0xFFECEFF1))
+        )
+    }
+
     Card(
-        colors = CardDefaults.cardColors(
-            containerColor = when {
-                !isFaceUp -> Color(0xFF1976D2)
-                card.isCategory -> Color(0xFFFFF9C4) // Solid warm yellow background for categories
-                else -> Color.White
-            }
-        ),
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
         shape = RoundedCornerShape(8.dp),
         modifier = modifier
             // 1. Measure the static layout slot bounds (placed BEFORE drag offset!)
@@ -137,7 +146,8 @@ fun WordCard(
                 )
             }
             .scale(scale)
-            .shadow(elevation, RoundedCornerShape(8.dp))
+            .shadow(elevation, RoundedCornerShape(8.dp), clip = false)
+            .background(cardBrush, shape = RoundedCornerShape(8.dp))
             .border(
                 width = if (isSelected || isShaking || !isFaceUp || card.isCategory) 1.5.dp else 1.dp,
                 color = borderColor,
@@ -147,37 +157,54 @@ fun WordCard(
                 if (isFaceUp) {
                     Modifier
                         .pointerInput(card.id) {
-                            detectDragGestures(
-                                onDragStart = {
-                                    if (currentInteractionEnabled) {
-                                        currentOnDragStart()
-                                        currentOnTap()
+                            awaitEachGesture {
+                                val down = awaitFirstDown(requireUnconsumed = true)
+                                down.consume() // Consume Down event immediately to prevent touch leaks to overlapping cards!
+                                
+                                if (currentInteractionEnabled) {
+                                    currentOnDragStart()
+                                }
+                                
+                                var isDragging = false
+                                
+                                while (true) {
+                                    val event = awaitPointerEvent()
+                                    val anyPressed = event.changes.any { it.pressed }
+                                    if (!anyPressed) {
+                                        break
                                     }
-                                },
-                                onDrag = { change, dragAmount ->
-                                    if (currentInteractionEnabled) {
-                                        change.consume()
-                                        currentOnDrag(dragAmount)
+                                    
+                                    val dragChange = event.changes.firstOrNull { it.id == down.id }
+                                    if (dragChange != null) {
+                                        if (dragChange.isConsumed) {
+                                            break
+                                        }
+                                        
+                                        val dragAmount = dragChange.position - dragChange.previousPosition
+                                        if (dragAmount.getDistanceSquared() > 0.5f) {
+                                            isDragging = true
+                                            dragChange.consume()
+                                            if (currentInteractionEnabled) {
+                                                currentOnDrag(dragAmount)
+                                            }
+                                        }
                                     }
-                                },
-                                onDragEnd = {
-                                    if (currentInteractionEnabled) {
-                                        // Calculate center of card in root coordinates (using original layout slot position + current offset)
+                                }
+                                
+                                if (currentInteractionEnabled) {
+                                    if (isDragging) {
                                         val dropCenter = Offset(
                                             cardPositionInRoot.x + currentDragOffset.x + (cardSize.width / 2),
                                             cardPositionInRoot.y + currentDragOffset.y + (cardSize.height / 2)
                                         )
                                         currentOnDragEnd(dropCenter)
-                                    }
-                                },
-                                onDragCancel = {
-                                    if (currentInteractionEnabled) {
-                                        currentOnDragCancel()
+                                    } else {
+                                        // Simple click/tap!
+                                        currentOnTap()
                                     }
                                 }
-                            )
+                            }
                         }
-                        .clickable(enabled = isInteractionEnabled) { currentOnTap() }
                 } else {
                     Modifier
                 }

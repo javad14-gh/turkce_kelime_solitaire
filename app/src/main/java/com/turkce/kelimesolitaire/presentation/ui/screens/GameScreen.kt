@@ -23,6 +23,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -74,14 +76,18 @@ fun GameScreen(
     movesRemaining: Int,
     errors: Int,
     onCardSelected: (String?) -> Unit,
-    onCardDropped: (List<SolitaireCard>, FoundationSlot) -> Unit, // List signature for group matching
-    onCardStacked: (List<SolitaireCard>, Int) -> Unit, // List signature for group column transfer
+    onCardDropped: (List<SolitaireCard>, FoundationSlot) -> Boolean,
+    onCardStacked: (List<SolitaireCard>, Int) -> Boolean,
     onDrawFromStock: () -> Unit,
+    onRestartLevel: () -> Unit,
     onBackToMenu: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var isAnimatingReturn by remember { mutableStateOf(false) }
+    var showExitConfirmDialog by remember { mutableStateOf(false) }
+
     BackHandler {
-        onBackToMenu()
+        showExitConfirmDialog = true
     }
 
     val coroutineScope = rememberCoroutineScope()
@@ -95,17 +101,15 @@ fun GameScreen(
     // Bounding boxes of bottom cards (or empty containers) in Tableau columns
     val tableauBounds = remember { mutableStateMapOf<Int, Rect>() }
 
-    val isWasteDragging = draggedCards.isNotEmpty() && wastePile.any { it.id == draggedCards.first().id }
+    // Detect if user is dragging a waste pile card (need higher z-index overlay!)
+    val isWasteDragging = wastePile.lastOrNull()?.let { top -> draggedCards.any { it.id == top.id } } ?: false
 
     Box(
         modifier = modifier
             .fillMaxSize()
             .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF1E5E3A), // Solitaire Felt Green
-                        Color(0xFF0F3621)
-                    )
+                Brush.radialGradient(
+                    colors = listOf(Color(0xFF1E5E3A), Color(0xFF0F3620))
                 )
             )
             .padding(horizontal = 12.dp, vertical = 8.dp)
@@ -115,52 +119,96 @@ fun GameScreen(
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             
-            // 1. TOP ROW: Moves banner, HUD controls, and Stock/Waste piles
+            // 1. TOP HEADER ROW (Menu, Level Title, Coins)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 6.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Left: Coins
+                Text(
+                    text = "🪙 $coins",
+                    color = AccentGold,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Black
+                )
+
+                // Center: Level Title
+                Text(
+                    text = "Seviye ${levelData.levelNumber}",
+                    color = TextPrimary,
+                    fontSize = 17.sp,
+                    fontWeight = FontWeight.Black
+                )
+
+                // Right: Controls Row (Restart & Hamburger Menu)
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Restart Level Button
+                    Box(
+                        modifier = Modifier
+                            .size(36.dp)
+                            .clickable { onRestartLevel() }
+                            .border(1.dp, BorderGlass, RoundedCornerShape(8.dp))
+                            .background(Color.White.copy(alpha = 0.05f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "↺",
+                            color = TextPrimary,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+
+                    // Hamburger Menu
+                    Box(
+                        modifier = Modifier
+                            .size(36.dp)
+                            .clickable { showExitConfirmDialog = true }
+                            .border(1.dp, BorderGlass, RoundedCornerShape(8.dp))
+                            .background(Color.White.copy(alpha = 0.05f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "☰",
+                            color = TextPrimary,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            // 2. HUD & PILES ROW (Moves, Progress Bar, and Stock/Waste piles)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(115.dp)
+                    .padding(horizontal = 16.dp)
                     .zIndex(if (isWasteDragging) 5f else 1f),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Left HUD Box: Back to Menu
-                Box(
-                    modifier = Modifier
-                        .width(70.dp)
-                        .clickable { onBackToMenu() }
-                        .border(1.dp, BorderGlass, RoundedCornerShape(12.dp))
-                        .padding(vertical = 8.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "◀ Menü",
-                        color = TextPrimary,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-
-                // Center Title & Stats HUD
+                // Left Column: Moves and Star Progress Bar
                 Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                    horizontalAlignment = Alignment.Start,
                     verticalArrangement = Arrangement.Center,
-                    modifier = Modifier.width(180.dp)
+                    modifier = Modifier.width(160.dp)
                 ) {
                     Text(
-                        text = "Seviye ${levelData.levelNumber}",
-                        color = AccentGold,
-                        fontSize = 13.sp,
+                        text = "Hamle: $movesRemaining",
+                        color = Color.White,
+                        fontSize = 16.sp,
                         fontWeight = FontWeight.Black
                     )
-                    Spacer(modifier = Modifier.height(2.dp))
-                    Text(
-                        text = "🪙 $coins  ⭐ $score",
-                        color = TextPrimary,
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
                     
                     val initialMoves = (totalWordsToMatch * 3) + 15
                     val progress = movesRemaining.toFloat() / initialMoves.toFloat()
@@ -190,65 +238,10 @@ fun GameScreen(
                                 )
                                 .align(Alignment.CenterStart)
                         )
-                        
-                        // Remaining Moves Overlay Text (Centered inside the progress bar!)
-                        Text(
-                            text = "$movesRemaining Hamle",
-                            color = Color.White,
-                            fontSize = 9.sp,
-                            fontWeight = FontWeight.ExtraBold,
-                            modifier = Modifier.zIndex(2f) // Drawn on top of the progress fill!
-                        )
-
-                        // Symmetrical Star markers overlay
-                        // Star 1 (at 2%)
-                        Box(
-                            modifier = Modifier
-                                .align(Alignment.CenterStart)
-                                .padding(start = 4.dp)
-                                .zIndex(3f)
-                        ) {
-                            Text(
-                                text = "★",
-                                color = AccentGold,
-                                fontSize = 8.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-
-                        // Star 2 (at 15%)
-                        Box(
-                            modifier = Modifier
-                                .align(Alignment.CenterStart)
-                                .padding(start = (180 * 0.15f).dp - 4.dp)
-                                .zIndex(3f)
-                        ) {
-                            Text(
-                                text = "★",
-                                color = if (progress >= 0.15f) AccentGold else Color.Gray.copy(alpha = 0.5f),
-                                fontSize = 8.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-
-                        // Star 3 (at 40%)
-                        Box(
-                            modifier = Modifier
-                                .align(Alignment.CenterStart)
-                                .padding(start = (180 * 0.40f).dp - 4.dp)
-                                .zIndex(3f)
-                        ) {
-                            Text(
-                                text = "★",
-                                color = if (progress >= 0.40f) AccentGold else Color.Gray.copy(alpha = 0.5f),
-                                fontSize = 8.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
                     }
                 }
 
-                // Piles
+                // Right Row: Piles (Waste & Stock)
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
@@ -264,7 +257,7 @@ fun GameScreen(
                                 isShaking = shakingCardId == topWaste.id,
                                 isDragged = isDragged,
                                 dragOffset = if (isDragged) dragOffset else Offset.Zero,
-                                isInteractionEnabled = draggedCards.isEmpty() || isDragged,
+                                isInteractionEnabled = !isAnimatingReturn && (draggedCards.isEmpty() || isDragged),
                                 onTap = {
                                     if (selectedCardId == topWaste.id) onCardSelected(null)
                                     else onCardSelected(topWaste.id)
@@ -284,8 +277,21 @@ fun GameScreen(
                                             bounds != null && bounds.contains(dropCenter)
                                         }
                                         if (matchedSlot != null) {
-                                            draggedCards = emptyList()
-                                            onCardDropped(finalGroup, matchedSlot)
+                                            val success = onCardDropped(finalGroup, matchedSlot)
+                                            if (success) {
+                                                draggedCards = emptyList()
+                                            } else {
+                                                coroutineScope.launch {
+                                                    isAnimatingReturn = true
+                                                    val anim = Animatable(dragOffset, Offset.VectorConverter)
+                                                    anim.animateTo(Offset.Zero, spring(stiffness = Spring.StiffnessMedium)) {
+                                                        dragOffset = this.value
+                                                    }
+                                                    draggedCards = emptyList()
+                                                    onCardSelected(null)
+                                                    isAnimatingReturn = false
+                                                }
+                                            }
                                         } else {
                                             var matchedColIdx = -1
                                             for (cIdx in 0..3) {
@@ -296,28 +302,45 @@ fun GameScreen(
                                                 }
                                             }
                                             if (matchedColIdx != -1) {
-                                                draggedCards = emptyList()
-                                                onCardStacked(finalGroup, matchedColIdx)
+                                                val success = onCardStacked(finalGroup, matchedColIdx)
+                                                if (success) {
+                                                    draggedCards = emptyList()
+                                                } else {
+                                                    coroutineScope.launch {
+                                                        isAnimatingReturn = true
+                                                        val anim = Animatable(dragOffset, Offset.VectorConverter)
+                                                        anim.animateTo(Offset.Zero, spring(stiffness = Spring.StiffnessMedium)) {
+                                                            dragOffset = this.value
+                                                        }
+                                                        draggedCards = emptyList()
+                                                        onCardSelected(null)
+                                                        isAnimatingReturn = false
+                                                    }
+                                                }
                                             } else {
                                                 coroutineScope.launch {
+                                                    isAnimatingReturn = true
                                                     val anim = Animatable(dragOffset, Offset.VectorConverter)
                                                     anim.animateTo(Offset.Zero, spring(stiffness = Spring.StiffnessMedium)) {
                                                         dragOffset = this.value
                                                     }
                                                     draggedCards = emptyList()
                                                     onCardSelected(null)
+                                                    isAnimatingReturn = false
                                                 }
                                             }
                                         }
                                     }
                                 },
                                 onDragCancel = {
-                                    draggedCards = emptyList()
                                     coroutineScope.launch {
+                                        isAnimatingReturn = true
                                         val anim = Animatable(dragOffset, Offset.VectorConverter)
                                         anim.animateTo(Offset.Zero, spring(stiffness = Spring.StiffnessMedium)) {
                                             dragOffset = this.value
                                         }
+                                        draggedCards = emptyList()
+                                        isAnimatingReturn = false
                                     }
                                 }
                             )
@@ -333,11 +356,7 @@ fun GameScreen(
                                 ),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text(
-                                text = "Boş",
-                                color = Color.White.copy(alpha = 0.2f),
-                                fontSize = 10.sp
-                            )
+                            Text(text = "Boş", color = Color.White.copy(alpha = 0.2f), fontSize = 10.sp)
                         }
                     }
 
@@ -367,27 +386,8 @@ fun GameScreen(
                                 onDragEnd = {},
                                 onDragCancel = {}
                             )
-
-                            // Remaining Card Count Overlay
-                            Box(
-                                modifier = Modifier
-                                    .align(Alignment.TopEnd)
-                                    .padding(4.dp)
-                                    .size(16.dp)
-                                    .background(Color.White, shape = CircleShape)
-                                    .border(1.dp, Color(0xFF1976D2), CircleShape),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = "${stockPile.size}",
-                                    color = Color(0xFF1976D2),
-                                    fontSize = 9.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
                         }
                     } else {
-                        // Recycle pile slot
                         Box(
                             modifier = Modifier
                                 .size(width = 85.dp, height = 110.dp)
@@ -413,7 +413,7 @@ fun GameScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // 2. MAIN SOLITAIRE TABLE BOARD (4 Vertical Lanes containing Category & Tableau Column)
+            // 2. MAIN SOLITAIRE TABLE BOARD
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -423,29 +423,30 @@ fun GameScreen(
                 verticalAlignment = Alignment.Top
             ) {
                 for (colIdx in 0..3) {
-                    val slot = foundationSlots[colIdx]
                     val colList = tableauPiles[colIdx]
-                    val isColDragging = draggedCards.isNotEmpty() && colList.any { it.id == draggedCards.first().id }
+                    val isColDragging = draggedCards.isNotEmpty() && colList.any { c -> draggedCards.any { it.id == c.id } }
                     
                     Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
                             .width(85.dp)
                             .fillMaxHeight()
-                            .zIndex(if (isColDragging) 5f else 1f)
+                            .zIndex(if (isColDragging) 10f else 1f),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Top
                     ) {
-                        // Category slot
-                        val activeCategory = slot.activeCategory
-                        val totalWordsForSlot = if (activeCategory != null) {
-                            levelData.targetWords.count { it.categoryId == activeCategory.id }
+                        // Category Drop Zone Slot
+                        val slot = foundationSlots[colIdx]
+                        val totalWordsForSlot = if (slot.activeCategory != null) {
+                            levelData.targetWords.count { it.categoryId == slot.activeCategory.id }
                         } else 0
-
-                        val isHighlighted = selectedCardId != null
 
                         CategoryDropZone(
                             slot = slot,
                             totalWords = totalWordsForSlot,
-                            isHighlighted = isHighlighted,
+                            isHighlighted = selectedCardId != null && run {
+                                val selected = (tableauPiles.flatten() + wastePile).find { it.id == selectedCardId }
+                                selected != null && selected.categoryId == slot.activeCategory?.id
+                            },
                             onTap = {
                                 selectedCardId?.let { cardId ->
                                     val cardFromWaste = wastePile.lastOrNull()?.takeIf { it.id == cardId }
@@ -490,7 +491,6 @@ fun GameScreen(
                             colList.forEachIndexed { rowIdx, card ->
                                 key(card.id) {
                                     val isDragged = draggedCards.any { it.id == card.id }
-                                    val isLast = rowIdx == colList.size - 1
                                     
                                     WordCard(
                                         card = card,
@@ -498,7 +498,7 @@ fun GameScreen(
                                         isShaking = shakingCardId == card.id,
                                         isDragged = isDragged,
                                         dragOffset = if (isDragged) dragOffset else Offset.Zero,
-                                        isInteractionEnabled = draggedCards.isEmpty() || isDragged,
+                                        isInteractionEnabled = !isAnimatingReturn && (draggedCards.isEmpty() || isDragged),
                                         onTap = {
                                             if (selectedCardId == card.id) onCardSelected(null)
                                             else onCardSelected(card.id)
@@ -513,18 +513,27 @@ fun GameScreen(
                                         },
                                         onDragEnd = { dropCenter ->
                                             val finalGroup = draggedCards
-                                            android.util.Log.d("SolitaireDebug", "Tableau DragEnd: card=${card.text}, groupSize=${finalGroup.size}, dropCenter=$dropCenter")
-                                            dropZoneBounds.forEach { (key, rect) ->
-                                                android.util.Log.d("SolitaireDebug", "  DropZone $key: $rect, contains=${rect.contains(dropCenter)}")
-                                            }
                                             if (finalGroup.isNotEmpty()) {
                                                 val matchedSlot = foundationSlots.find { slot ->
                                                     val bounds = dropZoneBounds[slot.id.toString()]
                                                     bounds != null && bounds.contains(dropCenter)
                                                 }
                                                 if (matchedSlot != null) {
-                                                    draggedCards = emptyList()
-                                                    onCardDropped(finalGroup, matchedSlot)
+                                                    val success = onCardDropped(finalGroup, matchedSlot)
+                                                    if (success) {
+                                                        draggedCards = emptyList()
+                                                    } else {
+                                                        coroutineScope.launch {
+                                                            isAnimatingReturn = true
+                                                            val anim = Animatable(dragOffset, Offset.VectorConverter)
+                                                            anim.animateTo(Offset.Zero, spring(stiffness = Spring.StiffnessMedium)) {
+                                                                dragOffset = this.value
+                                                            }
+                                                            draggedCards = emptyList()
+                                                            onCardSelected(null)
+                                                            isAnimatingReturn = false
+                                                        }
+                                                    }
                                                 } else {
                                                     var matchedColIdx = -1
                                                     for (cIdx in 0..3) {
@@ -535,16 +544,31 @@ fun GameScreen(
                                                         }
                                                     }
                                                     if (matchedColIdx != -1) {
-                                                        draggedCards = emptyList()
-                                                        onCardStacked(finalGroup, matchedColIdx)
+                                                        val success = onCardStacked(finalGroup, matchedColIdx)
+                                                        if (success) {
+                                                            draggedCards = emptyList()
+                                                        } else {
+                                                            coroutineScope.launch {
+                                                                isAnimatingReturn = true
+                                                                val anim = Animatable(dragOffset, Offset.VectorConverter)
+                                                                anim.animateTo(Offset.Zero, spring(stiffness = Spring.StiffnessMedium)) {
+                                                                    dragOffset = this.value
+                                                                }
+                                                                draggedCards = emptyList()
+                                                                onCardSelected(null)
+                                                                isAnimatingReturn = false
+                                                            }
+                                                        }
                                                     } else {
                                                         coroutineScope.launch {
+                                                            isAnimatingReturn = true
                                                             val anim = Animatable(dragOffset, Offset.VectorConverter)
                                                             anim.animateTo(Offset.Zero, spring(stiffness = Spring.StiffnessMedium)) {
                                                                 dragOffset = this.value
                                                             }
                                                             draggedCards = emptyList()
                                                             onCardSelected(null)
+                                                            isAnimatingReturn = false
                                                         }
                                                     }
                                                 }
@@ -552,22 +576,22 @@ fun GameScreen(
                                         },
                                         onDragCancel = {
                                             coroutineScope.launch {
+                                                isAnimatingReturn = true
                                                 val anim = Animatable(dragOffset, Offset.VectorConverter)
                                                 anim.animateTo(Offset.Zero, spring(stiffness = Spring.StiffnessMedium)) {
                                                     dragOffset = this.value
                                                 }
                                                 draggedCards = emptyList()
+                                                isAnimatingReturn = false
                                             }
                                         },
                                         modifier = Modifier
                                             .offset(y = (rowIdx * 25).dp)
-                                            .then(
-                                                if (isLast) {
-                                                    Modifier.onGloballyPositioned { coordinates ->
-                                                        tableauBounds[colIdx] = coordinates.boundsInRoot()
-                                                    }
-                                                } else Modifier
-                                            )
+                                            .onGloballyPositioned { coordinates ->
+                                                if (rowIdx == colList.size - 1) {
+                                                    tableauBounds[colIdx] = coordinates.boundsInRoot()
+                                                }
+                                            }
                                     )
                                 }
                             }
@@ -619,6 +643,89 @@ fun GameScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(text = "🃏", fontSize = 16.sp)
+                }
+            }
+        }
+
+        // 4. EXIT CONFIRMATION DIALOG OVERLAY
+        if (showExitConfirmDialog) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.7f))
+                    .zIndex(100f)
+                    .clickable { showExitConfirmDialog = false },
+                contentAlignment = Alignment.Center
+            ) {
+                Card(
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFF0F3B24)),
+                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier
+                        .width(300.dp)
+                        .border(1.dp, BorderGlass, RoundedCornerShape(16.dp))
+                        .clickable(enabled = false) {}
+                ) {
+                    Column(
+                        modifier = Modifier.padding(24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "Oyundan Çık",
+                            color = AccentGold,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Black,
+                            textAlign = TextAlign.Center
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Text(
+                            text = "Oyundan çıkmak istiyor musunuz? İlerlemeniz kaydedilecektir.",
+                            color = TextPrimary,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Medium,
+                            textAlign = TextAlign.Center,
+                            lineHeight = 18.sp
+                        )
+                        Spacer(modifier = Modifier.height(20.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .clickable { showExitConfirmDialog = false }
+                                    .border(1.dp, Color.White.copy(alpha = 0.15f), RoundedCornerShape(8.dp))
+                                    .padding(vertical = 10.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "İptal",
+                                    color = TextPrimary,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                            
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .clickable { 
+                                        showExitConfirmDialog = false
+                                        onBackToMenu() 
+                                    }
+                                    .background(Color(0xFFE5A93C), shape = RoundedCornerShape(8.dp))
+                                    .padding(vertical = 10.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "Çıkış Yap",
+                                    color = Color.Black,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Black
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }

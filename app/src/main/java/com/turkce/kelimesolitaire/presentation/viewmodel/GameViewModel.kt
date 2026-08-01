@@ -52,7 +52,8 @@ data class GameUiState(
     val shakingCardId: String? = null,
     val starsEarned: Int = 3,
     val levelCompletedBonus: Int = 50,
-    val errorsInLevel: Int = 0
+    val errorsInLevel: Int = 0,
+    val showResumeDialogForLevel: Int? = null // Null if no dialog is displayed
 )
 
 class GameViewModel : ViewModel() {
@@ -163,13 +164,13 @@ class GameViewModel : ViewModel() {
         checkMovesRemaining()
     }
 
-    fun attemptPlaceCards(cards: List<SolitaireCard>, targetSlot: FoundationSlot, context: Context) {
+    fun attemptPlaceCards(cards: List<SolitaireCard>, targetSlot: FoundationSlot, context: Context): Boolean {
         android.util.Log.d("SolitaireDebug", "attemptPlaceCards: cards=${cards.map { it.text }}, targetSlotId=${targetSlot.id}, targetActiveCategory=${targetSlot.activeCategory?.name}")
-        if (cards.isEmpty()) return
+        if (cards.isEmpty()) return false
 
         val updatedSlots = _uiState.value.foundationSlots.map { it.copy() }.toMutableList()
         val slotIdx = updatedSlots.indexOfFirst { it.id == targetSlot.id }
-        if (slotIdx == -1) return
+        if (slotIdx == -1) return false
         
         val activeSlot = updatedSlots[slotIdx]
 
@@ -259,14 +260,16 @@ class GameViewModel : ViewModel() {
             } else {
                 checkMovesRemaining()
             }
+            return true
         } else {
             // Stack contains mismatched cards -> Shake first card grab
             triggerShakeError(cards.first().id)
+            return false
         }
     }
 
-    fun attemptStackCards(cards: List<SolitaireCard>, targetColIdx: Int) {
-        if (cards.isEmpty()) return
+    fun attemptStackCards(cards: List<SolitaireCard>, targetColIdx: Int): Boolean {
+        if (cards.isEmpty()) return false
         val targetBottom = _uiState.value.tableauPiles[targetColIdx].lastOrNull()
 
         // Valid stack check: target is empty OR matches category ID of the dragged stack's top card
@@ -290,8 +293,10 @@ class GameViewModel : ViewModel() {
                 )
             }
             checkMovesRemaining()
+            return true
         } else {
             triggerShakeError(cards.first().id)
+            return false
         }
     }
 
@@ -451,7 +456,41 @@ class GameViewModel : ViewModel() {
     }
 
     fun selectLevel(levelNum: Int, activity: Activity) {
-        _uiState.update { it.copy(levelNumber = levelNum) }
+        val currentLvlData = _uiState.value.levelData
+        if (currentLvlData != null && currentLvlData.levelNumber == levelNum &&
+            _uiState.value.movesRemaining > 0 &&
+            _uiState.value.totalMatchedWordsCount < _uiState.value.totalWordsToMatch
+        ) {
+            // There is an active in-progress game for this level! Show the resume dialog.
+            _uiState.update { it.copy(showResumeDialogForLevel = levelNum) }
+        } else {
+            // Otherwise, start fresh!
+            _uiState.update { it.copy(levelNumber = levelNum, showResumeDialogForLevel = null) }
+            startNewGame(activity)
+        }
+    }
+
+    fun resumeActiveGame() {
+        _uiState.update {
+            it.copy(
+                screenState = ScreenState.Gameplay,
+                showResumeDialogForLevel = null
+            )
+        }
+    }
+
+    fun discardAndStartFresh(activity: Activity) {
+        val levelNum = _uiState.value.showResumeDialogForLevel ?: _uiState.value.levelNumber
+        _uiState.update {
+            it.copy(
+                levelNumber = levelNum,
+                showResumeDialogForLevel = null
+            )
+        }
         startNewGame(activity)
+    }
+
+    fun dismissResumeDialog() {
+        _uiState.update { it.copy(showResumeDialogForLevel = null) }
     }
 }

@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -52,19 +53,23 @@ fun CategoryDropZone(
 
     val glowColor by animateColorAsState(
         targetValue = when {
-            isCompleted -> SuccessGreen
-            isHighlighted -> SecondaryNeon
+            isCompleted -> Color(0xFFFF9F0A) // Glowing Amber/Orange for completed slots
+            matchedWords.isNotEmpty() -> AccentGold.copy(alpha = 0.7f) // Gold outline when matching words
+            isHighlighted -> SecondaryNeon // Teal highlight when card selected
             else -> Color.White.copy(alpha = 0.15f)
         }
     )
 
     if (activeCategory == null) {
         // --- 1. INACTIVE/EMPTY SLOT (Green felt container waiting for category activation) ---
+        val emptySlotBrush = Brush.verticalGradient(
+            colors = listOf(Color(0xFF0F3B24), Color(0xFF154C30))
+        )
         Box(
             modifier = modifier
                 .size(width = 85.dp, height = 110.dp) // Playing card vertical proportions
                 .scale(scaleFactor)
-                .background(Color(0xFF154C30), shape = RoundedCornerShape(8.dp))
+                .background(emptySlotBrush, shape = RoundedCornerShape(8.dp))
                 .border(
                     width = if (isHighlighted) 2.dp else 1.dp,
                     color = if (isHighlighted) SecondaryNeon else Color.White.copy(alpha = 0.2f),
@@ -94,15 +99,24 @@ fun CategoryDropZone(
         }
     } else {
         // --- 2. ACTIVE SLOT (Category playing card style) ---
+        val activeSlotBrush = Brush.verticalGradient(
+            colors = listOf(Color(0xFFFFFFFF), Color(0xFFECEFF1))
+        )
         Card(
-            colors = CardDefaults.cardColors(containerColor = Color.White),
+            colors = CardDefaults.cardColors(containerColor = Color.Transparent),
             shape = RoundedCornerShape(8.dp),
             modifier = modifier
                 .size(width = 85.dp, height = 110.dp)
                 .scale(scaleFactor)
-                .shadow(4.dp, RoundedCornerShape(8.dp))
+                .shadow(6.dp, RoundedCornerShape(8.dp), clip = false)
+                .background(activeSlotBrush, shape = RoundedCornerShape(8.dp))
                 .border(
-                    width = if (isHighlighted || isCompleted) 2.dp else 1.dp,
+                    width = when {
+                        isCompleted -> 3.dp
+                        isHighlighted -> 2.dp
+                        matchedWords.isNotEmpty() -> 1.5.dp
+                        else -> 1.dp
+                    },
                     color = glowColor,
                     shape = RoundedCornerShape(8.dp)
                 )
@@ -116,7 +130,7 @@ fun CategoryDropZone(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(24.dp)
+                        .height(28.dp)
                         .background(AccentGold),
                     contentAlignment = Alignment.Center
                 ) {
@@ -125,7 +139,8 @@ fun CategoryDropZone(
                         color = Color.Black,
                         fontSize = 9.sp,
                         fontWeight = FontWeight.ExtraBold,
-                        maxLines = 1,
+                        maxLines = 2,
+                        lineHeight = 10.sp,
                         textAlign = TextAlign.Center
                     )
                 }
