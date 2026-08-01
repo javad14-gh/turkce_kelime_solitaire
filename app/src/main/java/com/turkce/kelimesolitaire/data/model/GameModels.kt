@@ -42,6 +42,7 @@ data class FoundationSlot(
 
 data class LevelData(
     val levelNumber: Int,
+    val difficulty: String = "Kolay",
     val targetCategories: List<Category>,
     val targetWords: List<Word>,
     val initialTableau: List<List<SolitaireCard>>,

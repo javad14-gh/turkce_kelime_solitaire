@@ -162,6 +162,7 @@ class LevelGenerator {
                 // Solvable configuration successfully generated!
                 return LevelData(
                     levelNumber = levelNumber,
+                    difficulty = difficultyLevel,
                     targetCategories = currentSelectedCats,
                     targetWords = targetWords,
                     initialTableau = tableaus,
@@ -184,6 +185,7 @@ class LevelGenerator {
         }
         return LevelData(
             levelNumber = levelNumber,
+            difficulty = difficultyLevel,
             targetCategories = defaultCategories,
             targetWords = defaultWords,
             initialTableau = listOf(cards, emptyList(), emptyList(), emptyList()),

@@ -233,6 +233,7 @@ class GameViewModel : ViewModel() {
                     selectedCardId = null
                 )
             }
+            saveCoinsToPrefs(context, _uiState.value.coins)
 
             // Check if the Category is completed -> Trigger Auto-Clearance Delay (1 second)
             val targetCategory = tempActiveCategory
@@ -363,7 +364,15 @@ class GameViewModel : ViewModel() {
             remainingPercent >= 15f -> 2
             else -> 1
         }
-        val bonus = 50 + (stars * 10)
+        
+        val baseBonus = when (_uiState.value.levelData?.difficulty) {
+            "Kolay" -> 40
+            "Orta" -> 60
+            "Zor" -> 85
+            "CokZor" -> 110
+            else -> 40
+        }
+        val bonus = baseBonus + (stars * 15)
 
         // Save progress using SharedPreferences
         val prefs = context.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)
@@ -387,6 +396,7 @@ class GameViewModel : ViewModel() {
                 completedLevelsStars = updatedMap
             )
         }
+        saveCoinsToPrefs(context, _uiState.value.coins)
     }
 
     fun purchaseExtraMoves(activity: Activity) {
@@ -398,6 +408,7 @@ class GameViewModel : ViewModel() {
                     screenState = ScreenState.Gameplay
                 )
             }
+            saveCoinsToPrefs(activity, _uiState.value.coins)
         } else {
             watchAdForExtraMoves(activity)
         }
@@ -437,18 +448,34 @@ class GameViewModel : ViewModel() {
             _uiState.update {
                 it.copy(coins = it.coins + rewardAmount)
             }
+            saveCoinsToPrefs(activity, _uiState.value.coins)
         }
     }
 
     fun initPreferences(context: Context) {
         val prefs = context.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)
         val map = mutableMapOf<Int, Int>()
-        for (i in 1..50) {
-            if (prefs.contains("level_${i}_stars")) {
-                map[i] = prefs.getInt("level_${i}_stars", 0)
+        
+        // Dynamically load stars for all levels (e.g. level 101+) by iterating over all entries
+        val allPrefs = prefs.all
+        for ((key, value) in allPrefs) {
+            if (key.startsWith("level_") && key.endsWith("_stars")) {
+                val levelNumStr = key.substring(6, key.length - 6)
+                val levelNum = levelNumStr.toIntOrNull()
+                val stars = value as? Int
+                if (levelNum != null && stars != null) {
+                    map[levelNum] = stars
+                }
             }
         }
-        _uiState.update { it.copy(completedLevelsStars = map) }
+        
+        val savedCoins = prefs.getInt("user_coins", 100)
+        _uiState.update { it.copy(completedLevelsStars = map, coins = savedCoins) }
+    }
+
+    private fun saveCoinsToPrefs(context: Context, newCoins: Int) {
+        val prefs = context.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)
+        prefs.edit().putInt("user_coins", newCoins).apply()
     }
 
     fun navigateToLevelSelect() {

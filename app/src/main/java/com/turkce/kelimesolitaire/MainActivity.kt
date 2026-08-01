@@ -53,7 +53,11 @@ class MainActivity : ComponentActivity() {
                             MainMenuScreen(
                                 levelNumber = state.levelNumber,
                                 coins = state.coins,
+                                completedLevelsStars = state.completedLevelsStars,
                                 onPlayClicked = { viewModel.navigateToLevelSelect() },
+                                onQuickPlayClicked = { level ->
+                                    viewModel.selectLevel(level, this@MainActivity)
+                                },
                                 onWatchAdForCoins = { viewModel.watchRewardedAdForCoins(this@MainActivity) }
                             )
                         }
