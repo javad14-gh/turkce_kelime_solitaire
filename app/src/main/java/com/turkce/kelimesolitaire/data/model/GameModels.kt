@@ -24,6 +24,7 @@ data class WordDatabase(
     val words: List<Word>
 )
 
+@Serializable
 data class SolitaireCard(
     val id: String,
     val text: String,
@@ -34,12 +35,14 @@ data class SolitaireCard(
     val category: Category? = null
 )
 
+@Serializable
 data class FoundationSlot(
     val id: Int,
     val activeCategory: Category? = null,
     val matchedWords: List<Word> = emptyList()
 )
 
+@Serializable
 data class LevelData(
     val levelNumber: Int,
     val difficulty: String = "Kolay",
@@ -47,4 +50,17 @@ data class LevelData(
     val targetWords: List<Word>,
     val initialTableau: List<List<SolitaireCard>>,
     val initialStock: List<SolitaireCard>
+)
+
+@Serializable
+data class SavedGameSession(
+    val levelNumber: Int,
+    val levelData: LevelData,
+    val foundationSlots: List<FoundationSlot>,
+    val tableauPiles: List<List<SolitaireCard>>,
+    val stockPile: List<SolitaireCard>,
+    val wastePile: List<SolitaireCard>,
+    val score: Int,
+    val movesRemaining: Int,
+    val totalMatchedWordsCount: Int
 )

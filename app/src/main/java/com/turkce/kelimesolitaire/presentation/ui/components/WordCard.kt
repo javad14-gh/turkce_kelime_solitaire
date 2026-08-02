@@ -167,40 +167,46 @@ fun WordCard(
                                 
                                 var isDragging = false
                                 
-                                while (true) {
-                                    val event = awaitPointerEvent()
-                                    val anyPressed = event.changes.any { it.pressed }
-                                    if (!anyPressed) {
-                                        break
-                                    }
-                                    
-                                    val dragChange = event.changes.firstOrNull { it.id == down.id }
-                                    if (dragChange != null) {
-                                        if (dragChange.isConsumed) {
+                                try {
+                                    while (true) {
+                                        val event = awaitPointerEvent()
+                                        val anyPressed = event.changes.any { it.pressed }
+                                        if (!anyPressed) {
                                             break
                                         }
                                         
-                                        val dragAmount = dragChange.position - dragChange.previousPosition
-                                        if (dragAmount.getDistanceSquared() > 0.5f) {
-                                            isDragging = true
-                                            dragChange.consume()
-                                            if (currentInteractionEnabled) {
-                                                currentOnDrag(dragAmount)
+                                        val dragChange = event.changes.firstOrNull { it.id == down.id }
+                                        if (dragChange != null) {
+                                            if (dragChange.isConsumed) {
+                                                break
+                                            }
+                                            
+                                            val dragAmount = dragChange.position - dragChange.previousPosition
+                                            if (dragAmount.getDistanceSquared() > 0.5f) {
+                                                isDragging = true
+                                                dragChange.consume()
+                                                if (currentInteractionEnabled) {
+                                                    currentOnDrag(dragAmount)
+                                                }
                                             }
                                         }
                                     }
-                                }
-                                
-                                if (currentInteractionEnabled) {
-                                    if (isDragging) {
-                                        val dropCenter = Offset(
-                                            cardPositionInRoot.x + currentDragOffset.x + (cardSize.width / 2),
-                                            cardPositionInRoot.y + currentDragOffset.y + (cardSize.height / 2)
-                                        )
-                                        currentOnDragEnd(dropCenter)
-                                    } else {
-                                        // Simple click/tap!
-                                        currentOnTap()
+                                    
+                                    if (currentInteractionEnabled) {
+                                        if (isDragging) {
+                                            val dropCenter = Offset(
+                                                cardPositionInRoot.x + currentDragOffset.x + (cardSize.width / 2),
+                                                cardPositionInRoot.y + currentDragOffset.y + (cardSize.height / 2)
+                                            )
+                                            currentOnDragEnd(dropCenter)
+                                        } else {
+                                            // Simple click/tap!
+                                            currentOnTap()
+                                        }
+                                    }
+                                } catch (e: Exception) {
+                                    if (currentInteractionEnabled && isDragging) {
+                                        currentOnDragCancel()
                                     }
                                 }
                             }
@@ -226,7 +232,7 @@ fun WordCard(
                         Text(
                             text = "👑 KAT",
                             color = AccentGold,
-                            fontSize = 9.sp,
+                            fontSize = 10.sp,
                             fontWeight = FontWeight.ExtraBold,
                             modifier = Modifier.padding(bottom = 2.dp)
                         )
@@ -234,10 +240,10 @@ fun WordCard(
                     Text(
                         text = card.text,
                         color = Color.Black,
-                        fontSize = if (card.isCategory) 12.sp else 13.sp,
+                        fontSize = if (card.isCategory) 14.sp else 15.sp,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center,
-                        lineHeight = 15.sp
+                        lineHeight = 17.sp
                     )
                 }
             } else {

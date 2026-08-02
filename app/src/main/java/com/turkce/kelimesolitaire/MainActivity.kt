@@ -69,7 +69,7 @@ class MainActivity : ComponentActivity() {
                                 onLevelSelected = { level, activity ->
                                     viewModel.selectLevel(level, activity)
                                 },
-                                onResumeSelected = { viewModel.resumeActiveGame() },
+                                onResumeSelected = { viewModel.resumeActiveGame(this@MainActivity) },
                                 onStartFreshSelected = { viewModel.discardAndStartFresh(this@MainActivity) },
                                 onDismissResumeDialog = { viewModel.dismissResumeDialog() },
                                 onBackClicked = { viewModel.returnToMainMenu() }
@@ -77,6 +77,7 @@ class MainActivity : ComponentActivity() {
                         }
                         is ScreenState.Gameplay -> {
                             state.levelData?.let { level ->
+                                android.util.Log.d("SolitaireDebug", "MainActivity: Gameplay state collected. showEntryBanner=${state.showEntryBanner}")
                                 GameScreen(
                                     levelData = level,
                                     foundationSlots = state.foundationSlots,
@@ -88,18 +89,51 @@ class MainActivity : ComponentActivity() {
                                     shakingCardId = state.shakingCardId,
                                     score = state.score,
                                     coins = state.coins,
+                                    completedLevelsStars = state.completedLevelsStars,
+                                    initialMoves = state.minPossibleMoves + 18,
                                     movesRemaining = state.movesRemaining,
                                     errors = state.errorsInLevel,
+                                    hintedCardId = state.hintedCardId,
+                                    hintedTargetId = state.hintedTargetId,
+                                    showOutofMovesDialog = state.showOutofMovesDialog,
+                                    completedCategoryName = state.completedCategoryName,
+                                    showEntryBanner = state.showEntryBanner,
                                     onCardSelected = { cardId -> viewModel.selectCard(cardId) },
                                     onCardDropped = { cards, slot ->
                                         viewModel.attemptPlaceCards(cards, slot, this@MainActivity)
                                     },
                                     onCardStacked = { cards, colIdx ->
-                                        viewModel.attemptStackCards(cards, colIdx)
+                                        viewModel.attemptStackCards(cards, colIdx, this@MainActivity)
                                     },
-                                    onDrawFromStock = { viewModel.drawFromStock() },
+                                    onDrawFromStock = { viewModel.drawFromStock(this@MainActivity) },
                                     onRestartLevel = { viewModel.restartLevel(this@MainActivity) },
-                                    onBackToMenu = { viewModel.returnToMainMenu() }
+                                    onBackToMenu = { viewModel.returnToMainMenu() },
+                                    onShowHint = {
+                                        viewModel.showHint(this@MainActivity) { msg ->
+                                            android.widget.Toast.makeText(this@MainActivity, msg, android.widget.Toast.LENGTH_SHORT).show()
+                                        }
+                                    },
+                                    onUndoLastMove = {
+                                        viewModel.undoLastMove(this@MainActivity) { msg ->
+                                            android.widget.Toast.makeText(this@MainActivity, msg, android.widget.Toast.LENGTH_SHORT).show()
+                                        }
+                                    },
+                                    onUseJoker = {
+                                        viewModel.useJoker(this@MainActivity) { msg ->
+                                            android.widget.Toast.makeText(this@MainActivity, msg, android.widget.Toast.LENGTH_SHORT).show()
+                                        }
+                                    },
+                                    onBuyExtraMoves = {
+                                        viewModel.buyExtraMoves(this@MainActivity) { msg ->
+                                            android.widget.Toast.makeText(this@MainActivity, msg, android.widget.Toast.LENGTH_SHORT).show()
+                                        }
+                                    },
+                                    onAcceptDefeat = {
+                                        viewModel.acceptDefeat()
+                                    },
+                                    onDismissEntryBanner = {
+                                        viewModel.dismissEntryBanner()
+                                    }
                                 )
                             } ?: LoadingView()
                         }

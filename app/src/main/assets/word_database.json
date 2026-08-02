@@ -276,7 +276,7 @@
       "difficulty": "Orta"
     },
     {
-      "id": "cat_ölçü_birimleri",
+      "id": "cat_olcu_birimleri",
       "name": "Ölçü Birimleri",
       "difficulty": "Orta",
       "group": "gida"
@@ -4615,67 +4615,67 @@
     },
     {
       "id": "w_kilogram",
-      "categoryId": "cat_meyve_sebze_yemek_terimleri",
+      "categoryId": "cat_olcu_birimleri",
       "wordText": "Kilogram",
       "difficulty": "Orta"
     },
     {
       "id": "w_gram",
-      "categoryId": "cat_meyve_sebze_yemek_terimleri",
+      "categoryId": "cat_olcu_birimleri",
       "wordText": "Gram",
       "difficulty": "Orta"
     },
     {
       "id": "w_litre",
-      "categoryId": "cat_meyve_sebze_yemek_terimleri",
+      "categoryId": "cat_olcu_birimleri",
       "wordText": "Litre",
       "difficulty": "Orta"
     },
     {
       "id": "w_bardak_2",
-      "categoryId": "cat_meyve_sebze_yemek_terimleri",
+      "categoryId": "cat_olcu_birimleri",
       "wordText": "Bardak",
       "difficulty": "Orta"
     },
     {
       "id": "w_kasik_2",
-      "categoryId": "cat_meyve_sebze_yemek_terimleri",
+      "categoryId": "cat_olcu_birimleri",
       "wordText": "Kaşık",
       "difficulty": "Orta"
     },
     {
       "id": "w_tutam",
-      "categoryId": "cat_meyve_sebze_yemek_terimleri",
+      "categoryId": "cat_olcu_birimleri",
       "wordText": "Tutam",
       "difficulty": "Orta"
     },
     {
       "id": "w_dilim",
-      "categoryId": "cat_meyve_sebze_yemek_terimleri",
+      "categoryId": "cat_olcu_birimleri",
       "wordText": "Dilim",
       "difficulty": "Orta"
     },
     {
       "id": "w_demet",
-      "categoryId": "cat_meyve_sebze_yemek_terimleri",
+      "categoryId": "cat_olcu_birimleri",
       "wordText": "Demet",
       "difficulty": "Orta"
     },
     {
       "id": "w_yemek_kasigi",
-      "categoryId": "cat_meyve_sebze_yemek_terimleri",
+      "categoryId": "cat_olcu_birimleri",
       "wordText": "Yemek Kaşığı",
       "difficulty": "Orta"
     },
     {
       "id": "w_cay_kasigi",
-      "categoryId": "cat_meyve_sebze_yemek_terimleri",
+      "categoryId": "cat_olcu_birimleri",
       "wordText": "Çay Kaşığı",
       "difficulty": "Orta"
     },
     {
       "id": "w_paket",
-      "categoryId": "cat_meyve_sebze_yemek_terimleri",
+      "categoryId": "cat_olcu_birimleri",
       "wordText": "Paket",
       "difficulty": "Orta"
     },
