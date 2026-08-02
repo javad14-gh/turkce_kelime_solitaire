@@ -96,15 +96,13 @@ fun GameScreen(
     shakingCardId: String?,
     score: Int,
     coins: Int,
-    completedLevelsStars: Map<Int, Int>,
-    initialMoves: Int,
+    completedLevels: Set<Int>,
     movesRemaining: Int,
     errors: Int,
     hintedCardId: String?,
     hintedTargetId: String?,
     showOutofMovesDialog: Boolean,
     completedCategoryName: String?,
-    showEntryBanner: Boolean,
     onCardSelected: (String?) -> Unit,
     onCardDropped: (List<SolitaireCard>, FoundationSlot) -> Boolean,
     onCardStacked: (List<SolitaireCard>, Int) -> Boolean,
@@ -116,11 +114,9 @@ fun GameScreen(
     onUseJoker: () -> Unit,
     onBuyExtraMoves: () -> Unit,
     onAcceptDefeat: () -> Unit,
-    onDismissEntryBanner: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var isAnimatingReturn by remember { mutableStateOf(false) }
-    var isBannerVisible by rememberSaveable(levelData.levelNumber) { mutableStateOf(true) }
 
     // Moves counter animated decrement flash and scale
     var prevMoves by remember { mutableStateOf(movesRemaining) }
@@ -164,8 +160,8 @@ fun GameScreen(
         }
     }
 
-    val isReplay = remember(levelData.levelNumber, completedLevelsStars) {
-        (completedLevelsStars[levelData.levelNumber] ?: 0) > 0
+    val isReplay = remember(levelData.levelNumber, completedLevels) {
+        completedLevels.contains(levelData.levelNumber)
     }
 
     // List of floating coins text (+2) to animate
@@ -191,10 +187,11 @@ fun GameScreen(
                     colors = listOf(Color(0xFF1E5E3A), Color(0xFF0F3620))
                 )
             )
-            .padding(horizontal = 12.dp, vertical = 8.dp)
     ) {
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 12.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             
@@ -1062,113 +1059,6 @@ fun GameScreen(
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center
                         )
-                    }
-                }
-            }
-
-            // 6. LEVEL START TARGETS BANNER OVERLAY
-            if (showEntryBanner || isBannerVisible) {
-                val minPossible = initialMoves - 18
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Black.copy(alpha = 0.75f))
-                        .zIndex(200f)
-                        .clickable(
-                            indication = null,
-                            interactionSource = remember { MutableInteractionSource() }
-                        ) {},
-                    contentAlignment = Alignment.Center
-                ) {
-                    Card(
-                        colors = CardDefaults.cardColors(containerColor = DarkCard),
-                        shape = RoundedCornerShape(16.dp),
-                        modifier = Modifier
-                            .width(310.dp)
-                            .border(1.5.dp, AccentGold, RoundedCornerShape(16.dp))
-                            .clickable(enabled = false) {}
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(24.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                text = "BÖLÜM ${levelData.levelNumber} HEDEFLERİ",
-                                color = AccentGold,
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Black,
-                                textAlign = TextAlign.Center,
-                                letterSpacing = 1.sp
-                            )
-                            Spacer(modifier = Modifier.height(16.dp))
-                            
-                            // 3-Star Target Row
-                            Row(
-                                modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(text = "⭐⭐⭐", fontSize = 16.sp, modifier = Modifier.width(75.dp))
-                                Text(
-                                    text = "En az ${minPossible + 13} hamle kala bitir",
-                                    color = Color.White,
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.Medium
-                                )
-                            }
-                            
-                            // 2-Star Target Row
-                            Row(
-                                modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(text = "⭐⭐", fontSize = 16.sp, modifier = Modifier.width(75.dp))
-                                Text(
-                                    text = "En az ${minPossible + 4} hamle kala bitir",
-                                    color = Color.White,
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.Medium
-                                )
-                            }
-                            
-                            // 1-Star Target Row
-                            Row(
-                                modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(text = "⭐", fontSize = 16.sp, modifier = Modifier.width(75.dp))
-                                Text(
-                                    text = "Bölümü başarıyla tamamla",
-                                    color = Color.White.copy(alpha = 0.8f),
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.Medium
-                                )
-                            }
-                            
-                            Spacer(modifier = Modifier.height(24.dp))
-                            
-                            Button(
-                                onClick = {
-                                    isBannerVisible = false
-                                    onDismissEntryBanner()
-                                },
-                                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                                shape = RoundedCornerShape(20.dp),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(46.dp)
-                                    .background(
-                                        Brush.horizontalGradient(listOf(PrimaryNeon, SecondaryNeon)),
-                                        shape = RoundedCornerShape(20.dp)
-                                    )
-                            ) {
-                                Text(
-                                    text = "BAŞLA",
-                                    color = Color.White,
-                                    fontSize = 15.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
-                        }
                     }
                 }
             }

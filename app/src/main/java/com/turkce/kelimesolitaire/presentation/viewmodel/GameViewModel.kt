@@ -26,7 +26,6 @@ import kotlinx.coroutines.launch
 
 sealed interface ScreenState {
     object MainMenu : ScreenState
-    object LevelSelect : ScreenState
     object Loading : ScreenState
     object Gameplay : ScreenState
     object LevelComplete : ScreenState
@@ -39,7 +38,7 @@ data class GameUiState(
     val score: Int = 0,
     val coins: Int = 100,
     val levelData: LevelData? = null,
-    val completedLevelsStars: Map<Int, Int> = emptyMap(),
+    val completedLevels: Set<Int> = emptySet(),
     
     // Solitaire board state
     val foundationSlots: List<FoundationSlot> = listOf(
@@ -50,20 +49,16 @@ data class GameUiState(
     val wastePile: List<SolitaireCard> = emptyList(),
     
     val totalWordsToMatch: Int = 0,
-    val totalMatchedWordsCount: Int = 0, // Independent matched progress tracking
+    val totalMatchedWordsCount: Int = 0,
     val movesRemaining: Int = 60,
     val selectedCardId: String? = null,
     val shakingCardId: String? = null,
-    val starsEarned: Int = 3,
     val levelCompletedBonus: Int = 50,
     val errorsInLevel: Int = 0,
-    val showResumeDialogForLevel: Int? = null, // Null if no dialog is displayed
     val hintedCardId: String? = null,
     val hintedTargetId: String? = null,
     val showOutofMovesDialog: Boolean = false,
-    val minPossibleMoves: Int = 20,
-    val completedCategoryName: String? = null,
-    val showEntryBanner: Boolean = true
+    val completedCategoryName: String? = null
 )
 
 class GameViewModel : ViewModel() {
@@ -97,7 +92,6 @@ class GameViewModel : ViewModel() {
         val currentLvl = _uiState.value.levelNumber
         
         undoStack.clear() // Clear undo history on fresh start
-        // Remove any old saved session since we are starting fresh!
         clearActiveSessionFromPrefs(activity, currentLvl)
         
         if (currentLvl > 1 && currentLvl % 2 == 0) {
@@ -120,7 +114,6 @@ class GameViewModel : ViewModel() {
         val generated = levelGenerator.generateLevel(db, levelNum, lastCategoryIds)
         val allWords = generated.targetWords
 
-        // Initialize 4 empty Foundation slots
         val initialSlots = listOf(
             FoundationSlot(0),
             FoundationSlot(1),
@@ -131,6 +124,7 @@ class GameViewModel : ViewModel() {
         _uiState.update {
             it.copy(
                 screenState = ScreenState.Gameplay,
+                levelNumber = levelNum,
                 levelData = generated,
                 foundationSlots = initialSlots,
                 tableauPiles = generated.initialTableau,
@@ -138,15 +132,12 @@ class GameViewModel : ViewModel() {
                 wastePile = emptyList(),
                 totalWordsToMatch = allWords.size,
                 totalMatchedWordsCount = 0,
-                minPossibleMoves = allWords.size + generated.initialStock.size,
-                movesRemaining = allWords.size + generated.initialStock.size + 18, // Exact base moves (word count + stock count) + 18 buffer moves
+                movesRemaining = allWords.size + generated.initialStock.size + 18,
                 selectedCardId = null,
                 shakingCardId = null,
-                errorsInLevel = 0,
-                showEntryBanner = true
+                errorsInLevel = 0
             )
         }
-        android.util.Log.d("SolitaireDebug", "loadLevelData complete, showEntryBanner set to true")
     }
 
     fun selectCard(cardId: String?) {
@@ -166,8 +157,7 @@ class GameViewModel : ViewModel() {
                     stockPile = currentStock,
                     wastePile = currentWaste,
                     movesRemaining = maxOf(0, it.movesRemaining - 1),
-                    selectedCardId = null,
-                    showEntryBanner = false
+                    selectedCardId = null
                 )
             }
         } else {
@@ -178,8 +168,7 @@ class GameViewModel : ViewModel() {
                         stockPile = recycled,
                         wastePile = emptyList(),
                         movesRemaining = maxOf(0, it.movesRemaining - 1),
-                        selectedCardId = null,
-                        showEntryBanner = false
+                        selectedCardId = null
                     )
                 }
             }
@@ -189,7 +178,6 @@ class GameViewModel : ViewModel() {
     }
 
     fun attemptPlaceCards(cards: List<SolitaireCard>, targetSlot: FoundationSlot, context: Context): Boolean {
-        android.util.Log.d("SolitaireDebug", "attemptPlaceCards: cards=${cards.map { it.text }}, targetSlotId=${targetSlot.id}, targetActiveCategory=${targetSlot.activeCategory?.name}, showEntryBanner=${_uiState.value.showEntryBanner}")
         if (cards.isEmpty()) return false
 
         val updatedSlots = _uiState.value.foundationSlots.map { it.copy() }.toMutableList()
@@ -197,9 +185,8 @@ class GameViewModel : ViewModel() {
         if (slotIdx == -1) return false
         
         val activeSlot = updatedSlots[slotIdx]
-
         val currentLvl = _uiState.value.levelNumber
-        val isReplay = (_uiState.value.completedLevelsStars[currentLvl] ?: 0) > 0
+        val isReplay = _uiState.value.completedLevels.contains(currentLvl)
 
         var tempActiveCategory = activeSlot.activeCategory
         val tempMatchedWords = activeSlot.matchedWords.toMutableList()
@@ -211,23 +198,19 @@ class GameViewModel : ViewModel() {
 
         for (card in cards) {
             if (card.isCategory) {
-                // Placing Category Card to activate slot
                 if (tempActiveCategory == null) {
                     val resolvedCategory = card.category ?: _uiState.value.levelData?.targetCategories?.find { it.id == card.categoryId }
-                    android.util.Log.d("SolitaireDebug", "  Placing Category card: text=${card.text}, categoryId=${card.categoryId}, resolvedCategoryName=${resolvedCategory?.name}")
                     if (resolvedCategory != null) {
                         tempActiveCategory = resolvedCategory
                         successCount++
                         scoreDelta += 10
                     } else {
-                        android.util.Log.e("SolitaireDebug", "  FAILED to resolve category for card: ${card.text}")
                         break
                     }
                 } else {
-                    break // Slot already active, cannot drop category card
+                    break
                 }
             } else {
-                // Placing Word Card
                 val actualCategory = tempActiveCategory ?: _uiState.value.levelData?.targetCategories?.find { it.id == card.categoryId }
                 if (actualCategory != null && (card.categoryId == actualCategory.id || card.categoryId == "joker_wildcard")) {
                     val wordToAdd = card.word ?: _uiState.value.levelData?.targetWords?.find { it.id == card.id.removePrefix("word_") }
@@ -241,26 +224,21 @@ class GameViewModel : ViewModel() {
                         if (!isReplay) {
                             coinsDelta += 2
                         }
-                    } else {
-                        android.util.Log.e("SolitaireDebug", "  FAILED to resolve word for card: ${card.text}")
                     }
                 } else {
-                    break // Category mismatch
+                    break
                 }
             }
         }
 
-        android.util.Log.d("SolitaireDebug", "  successCount=$successCount, cards.size=${cards.size}")
         if (successCount == cards.size) {
-            android.util.Log.d("SolitaireDebug", "  Placement SUCCESS!")
-            // Entire stack successfully matched!
             val newSlot = activeSlot.copy(activeCategory = tempActiveCategory, matchedWords = tempMatchedWords)
             updatedSlots[slotIdx] = newSlot
 
             val (newTableaus, newWaste) = removeCardsFromSource(cards)
             val newTotalMatched = _uiState.value.totalMatchedWordsCount + newlyMatchedWordsCount
 
-            pushToUndoStack() // PUSH UNDO BEFORE PLACE SUCCESS
+            pushToUndoStack()
             _uiState.update {
                 it.copy(
                     foundationSlots = updatedSlots,
@@ -270,26 +248,23 @@ class GameViewModel : ViewModel() {
                     coins = it.coins + coinsDelta,
                     totalMatchedWordsCount = newTotalMatched,
                     movesRemaining = maxOf(0, it.movesRemaining - 1),
-                    selectedCardId = null,
-                    showEntryBanner = false
+                    selectedCardId = null
                 )
             }
             saveCoinsToPrefs(context, _uiState.value.coins)
             
-            if (newTotalMatched >= _uiState.value.totalWordsToMatch && _uiState.value.totalWordsToMatch > 0) {
-                // triggerLevelComplete deletes the session
-            } else {
+            if (newTotalMatched < _uiState.value.totalWordsToMatch || _uiState.value.totalWordsToMatch == 0) {
                 saveActiveSessionToPrefs(context)
             }
 
-            // Check if the Category is completed -> Trigger Auto-Clearance Delay (1 second)
             val targetCategory = tempActiveCategory
             if (targetCategory != null) {
-                val totalForCategory = _uiState.value.levelData?.targetWords?.count { it.categoryId == targetCategory.id } ?: 0
-                if (tempMatchedWords.size >= totalForCategory && totalForCategory > 0) {
+                val totalForCategory = _uiState.value.levelData?.targetWords?.count { it.categoryId == targetCategory.id } ?: 4
+                val requiredCount = if (totalForCategory > 0) totalForCategory else 4
+                if (tempMatchedWords.isNotEmpty() && tempMatchedWords.size >= requiredCount) {
                     _uiState.update { it.copy(completedCategoryName = targetCategory.name) }
                     viewModelScope.launch {
-                        delay(2200) // Display celebration banner
+                        delay(2200)
                         _uiState.update {
                             if (it.completedCategoryName == targetCategory.name) {
                                 it.copy(completedCategoryName = null)
@@ -299,10 +274,9 @@ class GameViewModel : ViewModel() {
                         }
                     }
                     viewModelScope.launch {
-                        delay(1000) // Visual crown exit animation pause
+                        delay(1000)
                         val currentSlots = _uiState.value.foundationSlots.toMutableList()
                         val sIdx = currentSlots.indexOfFirst { it.id == targetSlot.id }
-                        // Clear slot if same category resides
                         if (sIdx != -1 && currentSlots[sIdx].activeCategory?.id == targetCategory.id) {
                             currentSlots[sIdx] = currentSlots[sIdx].copy(activeCategory = null, matchedWords = emptyList())
                             _uiState.update {
@@ -313,50 +287,43 @@ class GameViewModel : ViewModel() {
                 }
             }
 
-            // Check Victory Condition
             if (newTotalMatched >= _uiState.value.totalWordsToMatch && _uiState.value.totalWordsToMatch > 0) {
                 triggerLevelComplete(context)
-            } else {
-                checkMovesRemaining()
             }
             return true
         } else {
-            // Stack contains mismatched cards -> Shake first card grab
-            triggerShakeError(cards.first().id)
+            triggerShakeError(cards.firstOrNull()?.id)
             return false
         }
     }
 
     fun attemptStackCards(cards: List<SolitaireCard>, targetColIdx: Int, context: Context): Boolean {
         if (cards.isEmpty()) return false
+        val tableaus = _uiState.value.tableauPiles.map { it.toMutableList() }
+        if (targetColIdx !in 0..3) return false
+
+        val targetCol = tableaus[targetColIdx]
+        val movingTopCard = cards.first()
         
-        // Prevent same-column drops from auto-flipping the card underneath or losing moves
-        val isFromSameCol = _uiState.value.tableauPiles[targetColIdx].any { it.id == cards.first().id }
-        if (isFromSameCol) {
-            return false // Returns false without shaking so card slides back smoothly
+        var isValidStack = false
+
+        if (targetCol.isEmpty()) {
+            isValidStack = true
+        } else {
+            val destinationBottomCard = targetCol.last()
+            if (destinationBottomCard.isFaceUp) {
+                if (movingTopCard.categoryId == destinationBottomCard.categoryId || 
+                    movingTopCard.categoryId == "joker_wildcard" || 
+                    destinationBottomCard.categoryId == "joker_wildcard") {
+                    isValidStack = true
+                }
+            }
         }
 
-        val targetBottom = _uiState.value.tableauPiles[targetColIdx].lastOrNull()
-        val topDraggedCard = cards.first()
-        val isJokerDragged = topDraggedCard.categoryId == "joker_wildcard"
-        val isTargetBottomJoker = targetBottom?.isFaceUp == true && targetBottom.categoryId == "joker_wildcard"
-
-        // Valid stack check:
-        // 1. target is empty
-        // 2. OR target bottom is face-up and has matching category
-        // 3. OR the dragged card is the Joker wildcard
-        // 4. OR the target bottom card is the Joker wildcard
-        val isValidStack = targetBottom == null || 
-                           isJokerDragged || 
-                           isTargetBottomJoker || 
-                           (targetBottom.isFaceUp && targetBottom.categoryId == topDraggedCard.categoryId)
-
         if (isValidStack) {
-            pushToUndoStack() // PUSH UNDO BEFORE TABLEAU MOVE SUCCESS
+            pushToUndoStack()
             val (newTableaus, newWaste) = removeCardsFromSource(cards)
             val colList = newTableaus[targetColIdx].toMutableList()
-            
-            // Move entire stack
             colList.addAll(cards.map { it.copy(isFaceUp = true) })
             
             val finalTableaus = newTableaus.mapIndexed { idx, col -> 
@@ -368,140 +335,72 @@ class GameViewModel : ViewModel() {
                     tableauPiles = finalTableaus,
                     wastePile = newWaste,
                     movesRemaining = maxOf(0, it.movesRemaining - 1),
-                    selectedCardId = null,
-                    showEntryBanner = false
+                    selectedCardId = null
                 )
             }
             checkMovesRemaining()
             saveActiveSessionToPrefs(context)
             return true
         } else {
-            triggerShakeError(cards.first().id)
+            triggerShakeError(movingTopCard.id)
             return false
         }
     }
 
     private fun removeCardsFromSource(cards: List<SolitaireCard>): Pair<List<List<SolitaireCard>>, List<SolitaireCard>> {
-        val updatedTableaus = _uiState.value.tableauPiles.map { col -> col.toMutableList() }
-        val updatedWaste = _uiState.value.wastePile.toMutableList()
-
-        val firstCard = cards.firstOrNull() ?: return Pair(updatedTableaus, updatedWaste)
-        var foundInTableau = -1
-        for (i in 0..3) {
-            if (updatedTableaus[i].any { it.id == firstCard.id }) {
-                foundInTableau = i
-                break
+        val cardIds = cards.map { it.id }.toSet()
+        val newWaste = _uiState.value.wastePile.filterNot { it.id in cardIds }
+        
+        val newTableaus = _uiState.value.tableauPiles.map { col ->
+            val updatedCol = col.filterNot { it.id in cardIds }.toMutableList()
+            if (updatedCol.isNotEmpty()) {
+                val lastIdx = updatedCol.size - 1
+                updatedCol[lastIdx] = updatedCol[lastIdx].copy(isFaceUp = true)
             }
+            updatedCol.toList()
         }
 
-        if (foundInTableau != -1) {
-            val cardIdsToRemove = cards.map { it.id }.toSet()
-            updatedTableaus[foundInTableau].removeAll { it.id in cardIdsToRemove }
-            val colList = updatedTableaus[foundInTableau]
-            if (colList.isNotEmpty()) {
-                val lastIdx = colList.size - 1
-                colList[lastIdx] = colList[lastIdx].copy(isFaceUp = true) // Auto-flip uncovered card!
-            }
-        } else if (updatedWaste.lastOrNull()?.id == firstCard.id) {
-            updatedWaste.removeAt(updatedWaste.size - 1)
-        }
-
-        return Pair(updatedTableaus, updatedWaste)
+        return Pair(newTableaus, newWaste)
     }
 
-    private fun triggerShakeError(cardId: String) {
+    private fun triggerShakeError(cardId: String?) {
+        if (cardId == null) return
         _uiState.update {
             it.copy(
                 shakingCardId = cardId,
-                errorsInLevel = it.errorsInLevel + 1,
-                movesRemaining = maxOf(0, it.movesRemaining - 1),
-                selectedCardId = null
+                errorsInLevel = it.errorsInLevel + 1
             )
         }
         viewModelScope.launch {
-            delay(600)
-            if (_uiState.value.shakingCardId == cardId) {
-                _uiState.update { it.copy(shakingCardId = null) }
-            }
+            delay(500)
+            _uiState.update { it.copy(shakingCardId = null) }
         }
-        checkMovesRemaining()
     }
 
     private fun checkMovesRemaining() {
-        if (_uiState.value.movesRemaining <= 0) {
+        if (_uiState.value.movesRemaining <= 0 && _uiState.value.totalMatchedWordsCount < _uiState.value.totalWordsToMatch) {
             _uiState.update { it.copy(showOutofMovesDialog = true) }
         }
     }
 
     private fun triggerLevelComplete(context: Context) {
         val currentLvl = _uiState.value.levelNumber
-        val minPossible = _uiState.value.minPossibleMoves
-        val initialMoves = minPossible + 18
-        val remainingMoves = _uiState.value.movesRemaining
-        val usedMoves = initialMoves - remainingMoves
-        val extraMoves = maxOf(0, usedMoves - minPossible)
+        val isReplay = _uiState.value.completedLevels.contains(currentLvl)
+        val bonus = if (isReplay) 0 else 50
 
-        val stars = when {
-            extraMoves <= 5 -> 3   // 3 stars for efficient play (at most 5 extra moves)
-            extraMoves <= 14 -> 2  // 2 stars for moderately efficient play (at most 14 extra moves)
-            else -> 1
-        }
-        
-        val baseBonus = when (stars) {
-            3 -> 50
-            2 -> 30
-            else -> 20
-        }
-
-        val prefs = context.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)
-        val currentStars = prefs.getInt("level_${currentLvl}_stars", 0)
-
-        val isReplay = currentStars > 0
-
-        val bonus = if (isReplay) {
-            if (stars > currentStars) {
-                val newBonus = when (stars) {
-                    3 -> 50
-                    2 -> 30
-                    else -> 20
-                }
-                val oldBonus = when (currentStars) {
-                    3 -> 50
-                    2 -> 30
-                    else -> 20
-                }
-                newBonus - oldBonus
-            } else {
-                0
-            }
-        } else {
-            when (stars) {
-                3 -> 50
-                2 -> 30
-                else -> 20
-            }
-        }
-
-        if (stars > currentStars) {
-            prefs.edit().putInt("level_${currentLvl}_stars", stars).apply()
-        }
-
-        // Reload the progression map in state
-        val updatedMap = _uiState.value.completedLevelsStars.toMutableMap()
-        if (stars > (updatedMap[currentLvl] ?: 0)) {
-            updatedMap[currentLvl] = stars
-        }
+        val updatedSet = _uiState.value.completedLevels + currentLvl
 
         _uiState.update {
             it.copy(
                 screenState = ScreenState.LevelComplete,
-                starsEarned = stars,
                 levelCompletedBonus = bonus,
                 coins = it.coins + bonus,
-                completedLevelsStars = updatedMap
+                completedLevels = updatedSet
             )
         }
+
         saveCoinsToPrefs(context, _uiState.value.coins)
+        saveCompletedLevelsToPrefs(context, updatedSet)
         clearActiveSessionFromPrefs(context, currentLvl)
     }
 
@@ -511,7 +410,7 @@ class GameViewModel : ViewModel() {
                 it.copy(
                     coins = it.coins - 100,
                     movesRemaining = 15,
-                    screenState = ScreenState.Gameplay
+                    showOutofMovesDialog = false
                 )
             }
             saveCoinsToPrefs(activity, _uiState.value.coins)
@@ -526,7 +425,7 @@ class GameViewModel : ViewModel() {
             _uiState.update {
                 it.copy(
                     movesRemaining = 15,
-                    screenState = ScreenState.Gameplay
+                    showOutofMovesDialog = false
                 )
             }
             saveActiveSessionToPrefs(activity)
@@ -563,23 +462,21 @@ class GameViewModel : ViewModel() {
 
     fun initPreferences(context: Context) {
         val prefs = context.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)
-        val map = mutableMapOf<Int, Int>()
+        val completedSet = mutableSetOf<Int>()
         
-        // Dynamically load stars for all levels (e.g. level 101+) by iterating over all entries
         val allPrefs = prefs.all
-        for ((key, value) in allPrefs) {
-            if (key.startsWith("level_") && key.endsWith("_stars")) {
-                val levelNumStr = key.substring(6, key.length - 6)
+        for ((key, _) in allPrefs) {
+            if (key.startsWith("level_") && key.endsWith("_completed")) {
+                val levelNumStr = key.substring(6, key.length - 10)
                 val levelNum = levelNumStr.toIntOrNull()
-                val stars = value as? Int
-                if (levelNum != null && stars != null) {
-                    map[levelNum] = stars
+                if (levelNum != null) {
+                    completedSet.add(levelNum)
                 }
             }
         }
         
         val savedCoins = prefs.getInt("user_coins", 100)
-        _uiState.update { it.copy(completedLevelsStars = map, coins = savedCoins) }
+        _uiState.update { it.copy(completedLevels = completedSet, coins = savedCoins) }
     }
 
     private fun saveCoinsToPrefs(context: Context, newCoins: Int) {
@@ -587,35 +484,19 @@ class GameViewModel : ViewModel() {
         prefs.edit().putInt("user_coins", newCoins).apply()
     }
 
-    fun navigateToLevelSelect() {
-        _uiState.update { it.copy(screenState = ScreenState.LevelSelect) }
-    }
-
-    fun selectLevel(levelNum: Int, activity: Activity) {
-        val savedSession = getSavedSession(activity, levelNum)
-        val hasActiveProgress = savedSession != null
-
-        if (hasActiveProgress) {
-            // There is an active in-progress game for this level! Navigate to level select and show the resume dialog.
-            _uiState.update { 
-                it.copy(
-                    levelNumber = levelNum,
-                    showResumeDialogForLevel = levelNum,
-                    screenState = ScreenState.LevelSelect
-                ) 
-            }
-        } else {
-            // Otherwise, start fresh!
-            _uiState.update { it.copy(levelNumber = levelNum, showResumeDialogForLevel = null) }
-            startNewGame(activity)
+    private fun saveCompletedLevelsToPrefs(context: Context, completedLevels: Set<Int>) {
+        val prefs = context.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)
+        val editor = prefs.edit()
+        completedLevels.forEach { lvl ->
+            editor.putBoolean("level_${lvl}_completed", true)
         }
+        editor.apply()
     }
 
-    fun resumeActiveGame(context: Context) {
-        val levelNum = _uiState.value.levelNumber
-        val session = getSavedSession(context, levelNum)
+    fun playLevel(levelNum: Int, activity: Activity) {
+        val session = getSavedSession(activity, levelNum)
         if (session != null) {
-            undoStack.clear() // Clear undo history on resume
+            undoStack.clear()
             _uiState.update {
                 it.copy(
                     levelNumber = session.levelNumber,
@@ -628,31 +509,14 @@ class GameViewModel : ViewModel() {
                     movesRemaining = session.movesRemaining,
                     totalMatchedWordsCount = session.totalMatchedWordsCount,
                     screenState = ScreenState.Gameplay,
-                    showResumeDialogForLevel = null,
                     selectedCardId = null,
-                    shakingCardId = null,
-                    showEntryBanner = true
+                    shakingCardId = null
                 )
             }
         } else {
-            startNewGame(context as Activity)
+            _uiState.update { it.copy(levelNumber = levelNum) }
+            startNewGame(activity)
         }
-    }
-
-    fun discardAndStartFresh(activity: Activity) {
-        val levelNum = _uiState.value.showResumeDialogForLevel ?: _uiState.value.levelNumber
-        clearActiveSessionFromPrefs(activity, levelNum)
-        _uiState.update {
-            it.copy(
-                levelNumber = levelNum,
-                showResumeDialogForLevel = null
-            )
-        }
-        startNewGame(activity)
-    }
-
-    fun dismissResumeDialog() {
-        _uiState.update { it.copy(showResumeDialogForLevel = null) }
     }
 
     private fun saveActiveSessionToPrefs(context: Context) {
@@ -693,7 +557,6 @@ class GameViewModel : ViewModel() {
         return try {
             Json.decodeFromString<SavedGameSession>(jsonString)
         } catch (e: Exception) {
-            e.printStackTrace()
             null
         }
     }
@@ -701,25 +564,29 @@ class GameViewModel : ViewModel() {
     private fun pushToUndoStack() {
         val state = _uiState.value
         val levelData = state.levelData ?: return
-        val session = SavedGameSession(
-            levelNumber = state.levelNumber,
-            levelData = levelData,
-            foundationSlots = state.foundationSlots,
-            tableauPiles = state.tableauPiles,
-            stockPile = state.stockPile,
-            wastePile = state.wastePile,
-            score = state.score,
-            movesRemaining = state.movesRemaining,
-            totalMatchedWordsCount = state.totalMatchedWordsCount
-        )
-        undoStack.add(session)
-        if (undoStack.size > 30) {
+        if (undoStack.size >= 10) {
             undoStack.removeAt(0)
         }
+        undoStack.add(
+            SavedGameSession(
+                levelNumber = state.levelNumber,
+                levelData = levelData,
+                foundationSlots = state.foundationSlots.map { it.copy() },
+                tableauPiles = state.tableauPiles.map { col -> col.map { it.copy() } },
+                stockPile = state.stockPile.map { it.copy() },
+                wastePile = state.wastePile.map { it.copy() },
+                score = state.score,
+                movesRemaining = state.movesRemaining,
+                totalMatchedWordsCount = state.totalMatchedWordsCount
+            )
+        )
     }
 
     fun undoLastMove(context: Context, onShowToast: (String) -> Unit) {
-        if (undoStack.isEmpty()) return
+        if (undoStack.isEmpty()) {
+            onShowToast("Geri alınacak hamle yok!")
+            return
+        }
         val state = _uiState.value
         if (state.coins < 50) {
             onShowToast("Yetersiz altın! (50 🪙 gerekli)")
@@ -754,122 +621,18 @@ class GameViewModel : ViewModel() {
             return
         }
 
-        // We run the hint engine to see if a hint exists first
-        val activeSlots = state.foundationSlots.filter { it.activeCategory != null }
-        var hintFound = false
-        var hintedCard = ""
-        var hintedTarget = ""
-
-        // Check waste top
-        val topWaste = state.wastePile.lastOrNull()
-        if (topWaste != null) {
-            if (topWaste.isCategory) {
-                val emptySlot = state.foundationSlots.find { it.activeCategory == null }
-                if (emptySlot != null) {
-                    hintedCard = topWaste.id
-                    hintedTarget = "slot_${emptySlot.id}"
-                    hintFound = true
-                }
-            } else {
-                val matchedSlot = activeSlots.find { it.activeCategory?.id == topWaste.categoryId }
-                if (matchedSlot != null) {
-                    hintedCard = topWaste.id
-                    hintedTarget = "slot_${matchedSlot.id}"
-                    hintFound = true
-                }
-            }
-        }
-
-        // Check columns last cards
-        if (!hintFound) {
-            for (colIdx in state.tableauPiles.indices) {
-                val col = state.tableauPiles[colIdx]
-                val lastCard = col.lastOrNull() ?: continue
-                if (lastCard.isFaceUp) {
-                    if (lastCard.isCategory) {
-                        val emptySlot = state.foundationSlots.find { it.activeCategory == null }
-                        if (emptySlot != null) {
-                            hintedCard = lastCard.id
-                            hintedTarget = "slot_${emptySlot.id}"
-                            hintFound = true
-                            break
-                        }
-                    } else {
-                        val matchedSlot = activeSlots.find { it.activeCategory?.id == lastCard.categoryId }
-                        if (matchedSlot != null) {
-                            hintedCard = lastCard.id
-                            hintedTarget = "slot_${matchedSlot.id}"
-                            hintFound = true
-                            break
-                        }
-                    }
-                }
-            }
-        }
-
-        // Check columns stacking
-        if (!hintFound) {
-            for (srcColIdx in state.tableauPiles.indices) {
-                val srcCol = state.tableauPiles[srcColIdx]
-                val topFaceUpIdx = srcCol.indexOfFirst { it.isFaceUp }
-                if (topFaceUpIdx == -1) continue
-                val topCard = srcCol[topFaceUpIdx]
-                
-                for (dstColIdx in state.tableauPiles.indices) {
-                    if (srcColIdx == dstColIdx) continue
-                    val dstCol = state.tableauPiles[dstColIdx]
-                    val dstBottom = dstCol.lastOrNull()
-                    
-                    if (dstBottom == null) {
-                        if (topFaceUpIdx > 0) { // Only move stack if it uncovers something
-                            hintedCard = topCard.id
-                            hintedTarget = "col_$dstColIdx"
-                            hintFound = true
-                            break
-                        }
-                    } else if (dstBottom.isFaceUp && dstBottom.categoryId == topCard.categoryId) {
-                        hintedCard = topCard.id
-                        hintedTarget = "col_$dstColIdx"
-                        hintFound = true
-                        break
-                    }
-                }
-                if (hintFound) break
-            }
-        }
-
-        // Check stock suggestion
-        if (!hintFound && (state.stockPile.isNotEmpty() || state.wastePile.isNotEmpty())) {
-            hintedCard = "stock_pile"
-            hintedTarget = "waste_pile"
-            hintFound = true
-        }
-
-        if (hintFound) {
+        val hint = findPossibleMove()
+        if (hint != null) {
             _uiState.update {
                 it.copy(
+                    hintedCardId = hint.first,
+                    hintedTargetId = hint.second,
                     coins = maxOf(0, it.coins - 50)
                 )
             }
             saveCoinsToPrefs(context, _uiState.value.coins)
-            saveActiveSessionToPrefs(context)
-            onShowToast("İpucu gösterildi! (-50 🪙)")
-            triggerHint(hintedCard, hintedTarget)
-        } else {
-            onShowToast("Yapılabilecek hamle kalmadı!")
-        }
-    }
-
-    private fun triggerHint(cardId: String, targetId: String) {
-        _uiState.update {
-            it.copy(
-                hintedCardId = cardId,
-                hintedTargetId = targetId
-            )
-        }
-        viewModelScope.launch {
-            delay(2500)
-            if (_uiState.value.hintedCardId == cardId) {
+            viewModelScope.launch {
+                delay(3000)
                 _uiState.update {
                     it.copy(
                         hintedCardId = null,
@@ -877,6 +640,9 @@ class GameViewModel : ViewModel() {
                     )
                 }
             }
+            onShowToast("İpucu gösteriliyor! (-50 🪙)")
+        } else {
+            onShowToast("Şu anda hamle yok, desteden kart çekmeyi deneyin!")
         }
     }
 
@@ -887,29 +653,80 @@ class GameViewModel : ViewModel() {
             return
         }
 
-        pushToUndoStack() // PUSH UNDO Snapshots
+        val emptyColIdx = state.tableauPiles.indexOfFirst { it.isEmpty() }
+        if (emptyColIdx == -1) {
+            onShowToast("Joker için boş bir sütun gerekli!")
+            return
+        }
 
-        // Create the connector Joker wildcard card
+        pushToUndoStack()
+
         val jokerCard = SolitaireCard(
-            id = "joker_card_${System.currentTimeMillis()}",
+            id = "joker_${System.currentTimeMillis()}",
             text = "🃏 JOKER",
             categoryId = "joker_wildcard",
             isCategory = false,
-            isFaceUp = true
+            isFaceUp = true,
+            word = Word("joker_word", "joker_wildcard", "JOKER", "Kolay")
         )
 
-        // Add the Joker card to the top of the waste pile
-        val updatedWaste = state.wastePile + jokerCard
+        val newTableaus = state.tableauPiles.mapIndexed { idx, col ->
+            if (idx == emptyColIdx) listOf(jokerCard) else col
+        }
 
         _uiState.update {
             it.copy(
-                wastePile = updatedWaste,
+                tableauPiles = newTableaus,
                 coins = maxOf(0, it.coins - 200)
             )
         }
+
         saveCoinsToPrefs(context, _uiState.value.coins)
         saveActiveSessionToPrefs(context)
-        onShowToast("Joker kartı ıskartaya eklendi! (-200 🪙)")
+        onShowToast("Joker bağlayıcı کارت yerleştirildi! (-200 🪙)")
+    }
+
+    private fun findPossibleMove(): Pair<String, String>? {
+        val state = _uiState.value
+        
+        val wasteTop = state.wastePile.lastOrNull()
+        if (wasteTop != null) {
+            for (slot in state.foundationSlots) {
+                if (slot.activeCategory != null && wasteTop.categoryId == slot.activeCategory.id) {
+                    return Pair(wasteTop.id, "slot_${slot.id}")
+                }
+            }
+        }
+
+        for ((cIdx, col) in state.tableauPiles.withIndex()) {
+            val topCard = col.lastOrNull { it.isFaceUp } ?: continue
+            for (slot in state.foundationSlots) {
+                if (slot.activeCategory != null && topCard.categoryId == slot.activeCategory.id) {
+                    return Pair(topCard.id, "slot_${slot.id}")
+                }
+            }
+        }
+
+        if (wasteTop != null) {
+            for (slot in state.foundationSlots) {
+                if (slot.activeCategory == null && wasteTop.isCategory) {
+                    return Pair(wasteTop.id, "slot_${slot.id}")
+                }
+            }
+        }
+
+        for ((cIdx, col) in state.tableauPiles.withIndex()) {
+            val card = col.lastOrNull { it.isFaceUp } ?: continue
+            if (card.isCategory) {
+                for (slot in state.foundationSlots) {
+                    if (slot.activeCategory == null) {
+                        return Pair(card.id, "slot_${slot.id}")
+                    }
+                }
+            }
+        }
+
+        return null
     }
 
     fun buyExtraMoves(context: Context, onShowToast: (String) -> Unit) {
@@ -928,11 +745,6 @@ class GameViewModel : ViewModel() {
         saveCoinsToPrefs(context, _uiState.value.coins)
         saveActiveSessionToPrefs(context)
         onShowToast("5 Ek Hamle alındı! (-75 🪙)")
-    }
-
-    fun dismissEntryBanner() {
-        android.util.Log.d("SolitaireDebug", "dismissEntryBanner called, setting showEntryBanner to false")
-        _uiState.update { it.copy(showEntryBanner = false) }
     }
 
     fun acceptDefeat() {

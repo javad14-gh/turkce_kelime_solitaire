@@ -3,6 +3,7 @@ package com.turkce.kelimesolitaire
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,12 +16,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.turkce.kelimesolitaire.presentation.ui.screens.GameOverScreen
 import com.turkce.kelimesolitaire.presentation.ui.screens.GameScreen
 import com.turkce.kelimesolitaire.presentation.ui.screens.LevelCompleteScreen
 import com.turkce.kelimesolitaire.presentation.ui.screens.MainMenuScreen
-import com.turkce.kelimesolitaire.presentation.ui.screens.LevelSelectScreen
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.SecondaryNeon
 import com.turkce.kelimesolitaire.presentation.ui.theme.TurkceKelimeSolitaireTheme
@@ -28,22 +27,22 @@ import com.turkce.kelimesolitaire.presentation.viewmodel.GameViewModel
 import com.turkce.kelimesolitaire.presentation.viewmodel.ScreenState
 
 class MainActivity : ComponentActivity() {
+
+    private val viewModel: GameViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        viewModel.initPreferences(this)
+        viewModel.initDatabase(this)
+
         setContent {
             TurkceKelimeSolitaireTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val viewModel: GameViewModel = viewModel()
                     val state by viewModel.uiState.collectAsState()
-
-                    // Initialize levels database, progression, and ads
-                    LaunchedEffect(Unit) {
-                        viewModel.initDatabase(applicationContext)
-                        viewModel.initPreferences(applicationContext)
-                    }
 
                     when (state.screenState) {
                         is ScreenState.Loading -> {
@@ -53,31 +52,15 @@ class MainActivity : ComponentActivity() {
                             MainMenuScreen(
                                 levelNumber = state.levelNumber,
                                 coins = state.coins,
-                                completedLevelsStars = state.completedLevelsStars,
-                                onPlayClicked = { viewModel.navigateToLevelSelect() },
-                                onQuickPlayClicked = { level ->
-                                    viewModel.selectLevel(level, this@MainActivity)
+                                completedLevels = state.completedLevels,
+                                onStartGameClicked = { level ->
+                                    viewModel.playLevel(level, this@MainActivity)
                                 },
                                 onWatchAdForCoins = { viewModel.watchRewardedAdForCoins(this@MainActivity) }
                             )
                         }
-                        is ScreenState.LevelSelect -> {
-                            LevelSelectScreen(
-                                coins = state.coins,
-                                completedLevelsStars = state.completedLevelsStars,
-                                showResumeDialogForLevel = state.showResumeDialogForLevel,
-                                onLevelSelected = { level, activity ->
-                                    viewModel.selectLevel(level, activity)
-                                },
-                                onResumeSelected = { viewModel.resumeActiveGame(this@MainActivity) },
-                                onStartFreshSelected = { viewModel.discardAndStartFresh(this@MainActivity) },
-                                onDismissResumeDialog = { viewModel.dismissResumeDialog() },
-                                onBackClicked = { viewModel.returnToMainMenu() }
-                            )
-                        }
                         is ScreenState.Gameplay -> {
                             state.levelData?.let { level ->
-                                android.util.Log.d("SolitaireDebug", "MainActivity: Gameplay state collected. showEntryBanner=${state.showEntryBanner}")
                                 GameScreen(
                                     levelData = level,
                                     foundationSlots = state.foundationSlots,
@@ -89,15 +72,13 @@ class MainActivity : ComponentActivity() {
                                     shakingCardId = state.shakingCardId,
                                     score = state.score,
                                     coins = state.coins,
-                                    completedLevelsStars = state.completedLevelsStars,
-                                    initialMoves = state.minPossibleMoves + 18,
+                                    completedLevels = state.completedLevels,
                                     movesRemaining = state.movesRemaining,
                                     errors = state.errorsInLevel,
                                     hintedCardId = state.hintedCardId,
                                     hintedTargetId = state.hintedTargetId,
                                     showOutofMovesDialog = state.showOutofMovesDialog,
                                     completedCategoryName = state.completedCategoryName,
-                                    showEntryBanner = state.showEntryBanner,
                                     onCardSelected = { cardId -> viewModel.selectCard(cardId) },
                                     onCardDropped = { cards, slot ->
                                         viewModel.attemptPlaceCards(cards, slot, this@MainActivity)
@@ -130,9 +111,6 @@ class MainActivity : ComponentActivity() {
                                     },
                                     onAcceptDefeat = {
                                         viewModel.acceptDefeat()
-                                    },
-                                    onDismissEntryBanner = {
-                                        viewModel.dismissEntryBanner()
                                     }
                                 )
                             } ?: LoadingView()
@@ -140,7 +118,6 @@ class MainActivity : ComponentActivity() {
                         is ScreenState.LevelComplete -> {
                             LevelCompleteScreen(
                                 levelNumber = state.levelNumber,
-                                stars = state.starsEarned,
                                 bonusCoins = state.levelCompletedBonus,
                                 onNextLevelClicked = { viewModel.advanceToNextLevel(this@MainActivity) },
                                 onMainMenuClicked = { viewModel.returnToMainMenu() }

@@ -1,6 +1,5 @@
 package com.turkce.kelimesolitaire.presentation.ui.screens
 
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.background
@@ -23,7 +22,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -52,18 +50,17 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.TextSecondary
 fun MainMenuScreen(
     levelNumber: Int,
     coins: Int,
-    completedLevelsStars: Map<Int, Int>,
-    onPlayClicked: () -> Unit,
-    onQuickPlayClicked: (Int) -> Unit,
+    completedLevels: Set<Int>,
+    onStartGameClicked: (Int) -> Unit,
     onWatchAdForCoins: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
 
     // Calculate last unsolved level dynamically
-    val lastUnsolvedLevel = remember(completedLevelsStars) {
+    val lastUnsolvedLevel = remember(completedLevels) {
         var lvl = 1
-        while ((completedLevelsStars[lvl] ?: 0) > 0) {
+        while (completedLevels.contains(lvl)) {
             lvl++
         }
         lvl
@@ -87,7 +84,6 @@ fun MainMenuScreen(
             .padding(16.dp),
         contentAlignment = Alignment.Center
     ) {
-        // Space grid background effect
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.SpaceBetween,
@@ -156,19 +152,19 @@ fun MainMenuScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                // 1. QUICK PLAY BUTTON (Play Unsolved Level)
+                // SINGLE PRIMARY PLAY BUTTON
                 Box(
                     contentAlignment = Alignment.TopEnd,
                     modifier = Modifier.padding(vertical = 4.dp)
                 ) {
                     Button(
-                        onClick = { onQuickPlayClicked(lastUnsolvedLevel) },
+                        onClick = { onStartGameClicked(lastUnsolvedLevel) },
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                         contentPadding = ButtonDefaults.ContentPadding,
                         shape = RoundedCornerShape(24.dp),
                         modifier = Modifier
                             .width(240.dp)
-                            .height(60.dp)
+                            .height(64.dp)
                             .background(
                                 Brush.horizontalGradient(
                                     colors = listOf(PrimaryNeon, SecondaryNeon)
@@ -180,7 +176,7 @@ fun MainMenuScreen(
                         Text(
                             text = "OYNA (Seviye $lastUnsolvedLevel)",
                             color = TextPrimary,
-                            fontSize = 16.sp,
+                            fontSize = 17.sp,
                             fontWeight = FontWeight.Black,
                             letterSpacing = 1.sp
                         )
@@ -213,33 +209,7 @@ fun MainMenuScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(14.dp))
-
-                // 2. LEVEL SELECT SCREEN BUTTON (Bölüm Listesi)
-                Button(
-                    onClick = onPlayClicked,
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                    contentPadding = ButtonDefaults.ContentPadding,
-                    shape = RoundedCornerShape(24.dp),
-                    modifier = Modifier
-                        .width(240.dp)
-                        .height(50.dp)
-                        .background(
-                            Color.White.copy(alpha = 0.05f),
-                            shape = RoundedCornerShape(24.dp)
-                        )
-                        .border(1.dp, BorderGlass, RoundedCornerShape(24.dp))
-                ) {
-                    Text(
-                        text = "BÖLÜM LİSTESİ",
-                        color = TextPrimary,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.sp
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
                 // Watch Ad Option
                 Card(
@@ -272,12 +242,10 @@ fun MainMenuScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                // Banner Ad Integration
                 AdBannerPlaceholder()
                 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // Policy / Data Safety Links for Google Play Compliance
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center,

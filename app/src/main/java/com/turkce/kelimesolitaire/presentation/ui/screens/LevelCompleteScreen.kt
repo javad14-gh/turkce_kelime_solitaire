@@ -39,7 +39,6 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.TextSecondary
 @Composable
 fun LevelCompleteScreen(
     levelNumber: Int,
-    stars: Int,
     bonusCoins: Int,
     onNextLevelClicked: () -> Unit,
     onMainMenuClicked: () -> Unit,
@@ -62,12 +61,13 @@ fun LevelCompleteScreen(
             // Victory Title
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = "TEBRİKLER!",
+                    text = "🏆 HARİKA!",
                     color = SuccessGreen,
                     fontSize = 36.sp,
                     fontWeight = FontWeight.Black,
                     letterSpacing = 2.sp
                 )
+                Spacer(modifier = Modifier.height(6.dp))
                 Text(
                     text = "Seviye $levelNumber Tamamlandı",
                     color = TextPrimary,
@@ -76,39 +76,22 @@ fun LevelCompleteScreen(
                 )
             }
 
-            // Star Rating System
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(24.dp)
-            ) {
-                for (i in 1..3) {
-                    val isEarned = i <= stars
-                    Text(
-                        text = "★",
-                        color = if (isEarned) AccentGold else Color.Gray.copy(alpha = 0.4f),
-                        fontSize = if (i == 2) 72.sp else 54.sp, // Make the middle star slightly larger
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
-
             // Reward Summary Card
             Box(
                 modifier = Modifier
                     .width(280.dp)
                     .background(DarkCard, shape = RoundedCornerShape(16.dp))
                     .border(1.dp, BorderGlass, RoundedCornerShape(16.dp))
-                    .padding(20.dp),
+                    .padding(24.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "Kazanılan Ödüller",
+                        text = "KAZANILAN ÖDÜL",
                         color = TextSecondary,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.SemiBold
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 1.sp
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     Row(
@@ -125,63 +108,64 @@ fun LevelCompleteScreen(
                 }
             }
 
-            // Control Buttons
+            // Navigation Actions
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                modifier = Modifier.fillMaxWidth()
             ) {
-                // Next level button
+                // Next Level Button
                 Button(
                     onClick = onNextLevelClicked,
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                     contentPadding = ButtonDefaults.ContentPadding,
-                    shape = RoundedCornerShape(20.dp),
+                    shape = RoundedCornerShape(24.dp),
                     modifier = Modifier
-                        .width(220.dp)
-                        .height(50.dp)
+                        .width(240.dp)
+                        .height(56.dp)
                         .background(
                             Brush.horizontalGradient(
-                                colors = listOf(SuccessGreen, SecondaryNeon)
+                                colors = listOf(PrimaryNeon, SecondaryNeon)
                             ),
-                            shape = RoundedCornerShape(20.dp)
+                            shape = RoundedCornerShape(24.dp)
                         )
                 ) {
                     Text(
                         text = "SONRAKİ SEVİYE",
                         color = TextPrimary,
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Black,
                         letterSpacing = 1.sp
                     )
                 }
 
-                // Return to Main Menu
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Main Menu Button
                 Button(
                     onClick = onMainMenuClicked,
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                     contentPadding = ButtonDefaults.ContentPadding,
-                    shape = RoundedCornerShape(20.dp),
+                    shape = RoundedCornerShape(24.dp),
                     modifier = Modifier
-                        .width(220.dp)
-                        .height(50.dp)
+                        .width(240.dp)
+                        .height(48.dp)
                         .background(
-                            Brush.horizontalGradient(
-                                colors = listOf(BorderGlass, DarkCard)
-                            ),
-                            shape = RoundedCornerShape(20.dp)
+                            Color.White.copy(alpha = 0.05f),
+                            shape = RoundedCornerShape(24.dp)
                         )
-                        .border(1.dp, BorderGlass, RoundedCornerShape(20.dp))
+                        .border(1.dp, BorderGlass, RoundedCornerShape(24.dp))
                 ) {
                     Text(
                         text = "ANA MENÜ",
-                        color = TextSecondary,
+                        color = TextPrimary,
                         fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 1.sp
                     )
                 }
             }
 
-            // Static Bottom Ad
+            // Ad Banner Footer
             AdBannerPlaceholder()
         }
     }
