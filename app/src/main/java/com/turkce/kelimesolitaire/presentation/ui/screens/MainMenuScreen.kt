@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -28,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -90,27 +92,48 @@ fun MainMenuScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             
-            // Top Dashboard HUD
+            // Top Dashboard HUD (Coins Status Pill matching reference design)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 16.dp),
+                    .padding(top = 16.dp, end = 8.dp),
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Coins status bubble
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
-                        .clip(RoundedCornerShape(20.dp))
-                        .background(BorderGlass)
-                        .padding(horizontal = 14.dp, vertical = 6.dp)
+                        .clip(RoundedCornerShape(24.dp))
+                        .background(Color(0xFF2A364F).copy(alpha = 0.9f))
+                        .border(1.5.dp, Color.White.copy(alpha = 0.25f), RoundedCornerShape(24.dp))
+                        .padding(start = 4.dp, end = 16.dp, top = 3.dp, bottom = 3.dp)
                 ) {
+                    // Gold Coin Icon + Green '+' Circle Badge
+                    Box(contentAlignment = Alignment.BottomEnd) {
+                        com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 30.dp)
+                        Box(
+                            modifier = Modifier
+                                .offset(x = 3.dp, y = 3.dp)
+                                .size(14.dp)
+                                .clip(CircleShape)
+                                .background(Color(0xFF4CAF50))
+                                .border(1.dp, Color.White, CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "+",
+                                color = Color.White,
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Black
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.width(10.dp))
                     Text(
-                        text = "🪙 $coins",
-                        color = AccentGold,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold
+                        text = "$coins",
+                        color = Color.White,
+                        fontSize = 17.sp,
+                        fontWeight = FontWeight.Black
                     )
                 }
             }
@@ -147,91 +170,126 @@ fun MainMenuScreen(
                 )
             }
 
-            // Action Buttons
+            // 3D Juicy Play Button with Difficulty Ribbon Banner
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                // SINGLE PRIMARY PLAY BUTTON
                 Box(
-                    contentAlignment = Alignment.TopEnd,
-                    modifier = Modifier.padding(vertical = 4.dp)
+                    contentAlignment = Alignment.TopCenter,
+                    modifier = Modifier.padding(top = 14.dp, bottom = 8.dp)
                 ) {
-                    Button(
-                        onClick = { onStartGameClicked(lastUnsolvedLevel) },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                        contentPadding = ButtonDefaults.ContentPadding,
-                        shape = RoundedCornerShape(24.dp),
+                    // Compact 3D Green Button Shell (10% wider than text with 3D bottom bevel)
+                    Box(
                         modifier = Modifier
-                            .width(240.dp)
-                            .height(64.dp)
+                            .shadow(16.dp, RoundedCornerShape(22.dp))
+                            .clip(RoundedCornerShape(22.dp))
                             .background(
-                                Brush.horizontalGradient(
-                                    colors = listOf(PrimaryNeon, SecondaryNeon)
-                                ),
-                                shape = RoundedCornerShape(24.dp)
+                                Brush.verticalGradient(
+                                    colors = listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1))
+                                )
+                            ) // Cream/white 3D outer rim shell
+                            .padding(4.dp)
+                            .clip(RoundedCornerShape(18.dp))
+                            .background(Color(0xFF1E3A07)) // Dark 3D bottom base shadow
+                            .padding(bottom = 5.dp) // Creates thick 3D bottom bevel
+                            .clip(RoundedCornerShape(14.dp))
+                            .background(
+                                Brush.verticalGradient(
+                                    colors = listOf(
+                                        Color(0xFFA3E635), // Glossy top highlight green
+                                        Color(0xFF65A30D), // Mid vibrant green
+                                        Color(0xFF4D7C0F)  // Inner shade
+                                    )
+                                )
                             )
-                            .border(1.dp, Color.White.copy(alpha = 0.3f), RoundedCornerShape(24.dp))
+                            .clickable { onStartGameClicked(lastUnsolvedLevel) }
+                            .padding(horizontal = 28.dp, vertical = 14.dp),
+                        contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "OYNA (Seviye $lastUnsolvedLevel)",
-                            color = TextPrimary,
-                            fontSize = 17.sp,
+                            text = "SEVİYE $lastUnsolvedLevel",
+                            color = Color.White,
+                            fontSize = 23.sp,
                             fontWeight = FontWeight.Black,
-                            letterSpacing = 1.sp
+                            fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif,
+                            letterSpacing = 1.2.sp
                         )
                     }
 
-                    // Difficulty banner overlay
+                    // Overlapping Difficulty Ribbon Banner (Shown ONLY for Zor and CokZor levels, enlarged size)
                     if (difficulty == "Zor" || difficulty == "CokZor") {
+                        val difficultyText = if (difficulty == "CokZor") "Süper Zor" else "Zor"
+                        val ribbonColor = if (difficulty == "CokZor") Color(0xFFDC2626) else Color(0xFFEA580C)
+
                         Box(
                             modifier = Modifier
-                                .offset(x = 8.dp, y = (-8).dp)
-                                .background(
-                                    color = if (difficulty == "Zor") Color(0xFFFF9F0A) else Color(0xFFFF375F),
-                                    shape = RoundedCornerShape(4.dp)
-                                )
-                                .border(
-                                    width = 1.dp,
-                                    color = Color.White.copy(alpha = 0.4f),
-                                    shape = RoundedCornerShape(4.dp)
-                                )
-                                .padding(horizontal = 8.dp, vertical = 2.dp)
+                                .offset(y = (-14).dp)
+                                .shadow(6.dp, RoundedCornerShape(12.dp))
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(ribbonColor)
+                                .border(1.5.dp, Color.White, RoundedCornerShape(12.dp))
+                                .padding(horizontal = 22.dp, vertical = 5.dp)
                         ) {
                             Text(
-                                text = if (difficulty == "Zor") "ZOR" else "SÜPER ZOR",
-                                color = Color.Black,
-                                fontSize = 9.sp,
+                                text = difficultyText,
+                                color = Color.White,
+                                fontSize = 13.sp,
                                 fontWeight = FontWeight.Black,
+                                fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif,
                                 letterSpacing = 0.5.sp
                             )
                         }
                     }
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-                // Watch Ad Option
-                Card(
-                    colors = CardDefaults.cardColors(containerColor = DarkCard),
+                // 3D Watch Ad Button
+                Box(
                     modifier = Modifier
-                        .width(220.dp)
+                        .shadow(10.dp, RoundedCornerShape(18.dp))
+                        .clip(RoundedCornerShape(18.dp))
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1))
+                            )
+                        )
+                        .padding(3.dp)
+                        .clip(RoundedCornerShape(15.dp))
+                        .background(Color(0xFFB8860B))
+                        .padding(bottom = 4.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(
+                                    Color(0xFFFFD700),
+                                    Color(0xFFF59E0B),
+                                    Color(0xFFD97706)
+                                )
+                            )
+                        )
                         .clickable { onWatchAdForCoins() }
-                        .border(1.dp, BorderGlass, RoundedCornerShape(12.dp)),
-                    shape = RoundedCornerShape(12.dp)
+                        .padding(horizontal = 20.dp, vertical = 10.dp),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 12.dp, vertical = 8.dp),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        com.turkce.kelimesolitaire.presentation.ui.components.AdIcon(size = 20.dp)
+                        Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = "📺 Reklam İzle (+50 🪙)",
-                            color = AccentGold,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold
+                            text = "Reklam İzle (+50 ",
+                            color = Color(0xFF0F172A),
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Black,
+                            fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif
+                        )
+                        com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 18.dp)
+                        Text(
+                            text = ")",
+                            color = Color(0xFF0F172A),
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Black,
+                            fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif
                         )
                     }
                 }

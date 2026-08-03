@@ -2,21 +2,23 @@ package com.turkce.kelimesolitaire.presentation.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -29,8 +31,6 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.BorderGlass
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkCard
 import com.turkce.kelimesolitaire.presentation.ui.theme.ErrorRed
-import com.turkce.kelimesolitaire.presentation.ui.theme.PrimaryNeon
-import com.turkce.kelimesolitaire.presentation.ui.theme.SecondaryNeon
 import com.turkce.kelimesolitaire.presentation.ui.theme.TextPrimary
 import com.turkce.kelimesolitaire.presentation.ui.theme.TextSecondary
 
@@ -78,7 +78,7 @@ fun GameOverScreen(
                 )
             }
 
-            // Central option card
+            // Central Option Card
             Box(
                 modifier = Modifier
                     .width(280.dp)
@@ -97,102 +97,160 @@ fun GameOverScreen(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    // Continue with coins if enough
-                    Button(
-                        onClick = onContinueForCoins,
-                        enabled = coins >= 50,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Transparent,
-                            disabledContainerColor = Color.Gray.copy(alpha = 0.2f)
-                        ),
-                        shape = RoundedCornerShape(16.dp),
+                    // 3D Continue for Coins Button
+                    Box(
                         modifier = Modifier
-                            .width(200.dp)
-                            .height(45.dp)
+                            .shadow(10.dp, RoundedCornerShape(18.dp))
+                            .clip(RoundedCornerShape(18.dp))
                             .background(
-                                if (coins >= 50) Brush.horizontalGradient(listOf(AccentGold, SecondaryNeon))
-                                else Brush.horizontalGradient(listOf(Color.Gray, Color.Gray)),
-                                shape = RoundedCornerShape(16.dp)
+                                Brush.verticalGradient(
+                                    colors = listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1))
+                                )
                             )
+                            .padding(3.dp)
+                            .clip(RoundedCornerShape(15.dp))
+                            .background(if (coins >= 50) Color(0xFFB8860B) else Color(0xFF475569))
+                            .padding(bottom = 4.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(
+                                if (coins >= 50) {
+                                    Brush.verticalGradient(
+                                        colors = listOf(Color(0xFFFFD700), Color(0xFFF59E0B), Color(0xFFD97706))
+                                    )
+                                } else {
+                                    Brush.verticalGradient(
+                                        colors = listOf(Color(0xFF64748B), Color(0xFF475569))
+                                    )
+                                }
+                            )
+                            .clickable(enabled = coins >= 50) { onContinueForCoins() }
+                            .padding(horizontal = 20.dp, vertical = 10.dp),
+                        contentAlignment = Alignment.Center
                     ) {
-                        Text(
-                            text = "🪙 50 Altın Harca",
-                            color = if (coins >= 50) Color.Black else TextSecondary,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.ExtraBold
-                        )
+                        Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+                            com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 20.dp)
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = "50 Altın Harca",
+                                color = if (coins >= 50) Color(0xFF0F172A) else Color(0xFF94A3B8),
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Black,
+                                fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif
+                            )
+                        }
                     }
 
-                    Spacer(modifier = Modifier.height(10.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
 
-                    // Continue with rewarded ad
-                    Button(
-                        onClick = onContinueForAd,
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                        shape = RoundedCornerShape(16.dp),
+                    // 3D Continue for Ad Button
+                    Box(
                         modifier = Modifier
-                            .width(200.dp)
-                            .height(45.dp)
+                            .shadow(10.dp, RoundedCornerShape(18.dp))
+                            .clip(RoundedCornerShape(18.dp))
                             .background(
-                                Brush.horizontalGradient(listOf(SecondaryNeon, PrimaryNeon)),
-                                shape = RoundedCornerShape(16.dp)
+                                Brush.verticalGradient(
+                                    colors = listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1))
+                                )
                             )
+                            .padding(3.dp)
+                            .clip(RoundedCornerShape(15.dp))
+                            .background(Color(0xFF0369A1))
+                            .padding(bottom = 4.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(
+                                Brush.verticalGradient(
+                                    colors = listOf(Color(0xFF38BDF8), Color(0xFF0284C7), Color(0xFF0369A1))
+                                )
+                            )
+                            .clickable { onContinueForAd() }
+                            .padding(horizontal = 18.dp, vertical = 10.dp),
+                        contentAlignment = Alignment.Center
                     ) {
-                        Text(
-                            text = "📺 Ücretsiz (+15 Hamle)",
-                            color = TextPrimary,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold
-                        )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            com.turkce.kelimesolitaire.presentation.ui.components.AdIcon(size = 18.dp)
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = "Ücretsiz (+15 Hamle)",
+                                color = Color.White,
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Black,
+                                fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif
+                            )
+                        }
                     }
                 }
             }
 
-            // Control Buttons
+            // Control Action Buttons
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(10.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                // Restart level
-                Button(
-                    onClick = onRestartClicked,
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                    shape = RoundedCornerShape(16.dp),
+                // 3D Restart Level Button (Red)
+                Box(
                     modifier = Modifier
-                        .width(220.dp)
-                        .height(45.dp)
+                        .shadow(10.dp, RoundedCornerShape(18.dp))
+                        .clip(RoundedCornerShape(18.dp))
                         .background(
-                            Brush.horizontalGradient(listOf(Color(0xFFE57373), ErrorRed)),
-                            shape = RoundedCornerShape(16.dp)
+                            Brush.verticalGradient(
+                                colors = listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1))
+                            )
                         )
+                        .padding(3.dp)
+                        .clip(RoundedCornerShape(15.dp))
+                        .background(Color(0xFF991B1B))
+                        .padding(bottom = 4.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(Color(0xFFAF2626), Color(0xFFDC2626), Color(0xFF991B1B))
+                            )
+                        )
+                        .clickable { onRestartClicked() }
+                        .padding(horizontal = 24.dp, vertical = 12.dp),
+                    contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = "TEKRAR DENE",
-                        color = TextPrimary,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold
+                        color = Color.White,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Black,
+                        fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif,
+                        letterSpacing = 1.sp
                     )
                 }
 
-                // Return to Main Menu
-                Button(
-                    onClick = onMainMenuClicked,
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                    shape = RoundedCornerShape(16.dp),
+                // 3D Main Menu Button (Slate)
+                Box(
                     modifier = Modifier
-                        .width(220.dp)
-                        .height(45.dp)
+                        .shadow(8.dp, RoundedCornerShape(18.dp))
+                        .clip(RoundedCornerShape(18.dp))
                         .background(
-                            Brush.horizontalGradient(listOf(BorderGlass, DarkCard)),
-                            shape = RoundedCornerShape(16.dp)
+                            Brush.verticalGradient(
+                                colors = listOf(Color(0xFF64748B), Color(0xFF334155))
+                            )
                         )
-                        .border(1.dp, BorderGlass, RoundedCornerShape(16.dp))
+                        .padding(2.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(Color(0xFF0F172A))
+                        .padding(bottom = 3.dp)
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(Color(0xFF334155), Color(0xFF1E293B))
+                            )
+                        )
+                        .clickable { onMainMenuClicked() }
+                        .padding(horizontal = 24.dp, vertical = 10.dp),
+                    contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = "ANA MENÜ",
-                        color = TextSecondary,
+                        color = Color.White,
                         fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Black,
+                        fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif,
+                        letterSpacing = 1.sp
                     )
                 }
             }

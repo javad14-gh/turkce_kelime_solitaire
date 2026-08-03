@@ -31,6 +31,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.shadow
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
@@ -203,14 +204,43 @@ fun GameScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Left: Coins (with bouncy pulse scale animation)
-                Text(
-                    text = "🪙 $coins",
-                    color = AccentGold,
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Black,
-                    modifier = Modifier.scale(coinScale.value)
-                )
+                // Left: Coins Status Pill (matching reference design)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .scale(coinScale.value)
+                        .clip(RoundedCornerShape(24.dp))
+                        .background(Color(0xFF2A364F).copy(alpha = 0.9f))
+                        .border(1.5.dp, Color.White.copy(alpha = 0.25f), RoundedCornerShape(24.dp))
+                        .padding(start = 4.dp, end = 12.dp, top = 2.dp, bottom = 2.dp)
+                ) {
+                    Box(contentAlignment = Alignment.BottomEnd) {
+                        com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 24.dp)
+                        Box(
+                            modifier = Modifier
+                                .offset(x = 2.dp, y = 2.dp)
+                                .size(12.dp)
+                                .clip(CircleShape)
+                                .background(Color(0xFF4CAF50))
+                                .border(1.dp, Color.White, CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "+",
+                                color = Color.White,
+                                fontSize = 8.sp,
+                                fontWeight = FontWeight.Black
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = "$coins",
+                        color = Color.White,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Black
+                    )
+                }
 
                 // Center: Level Title
                 Text(
@@ -586,6 +616,59 @@ fun GameScreen(
                                 },
                             contentAlignment = Alignment.TopCenter
                         ) {
+                            if (colList.isEmpty()) {
+                                // Empty Column Card Slot Placeholder
+                                Box(
+                                    modifier = Modifier
+                                        .size(width = 80.dp, height = 108.dp)
+                                        .clip(RoundedCornerShape(10.dp))
+                                        .background(Color.Black.copy(alpha = 0.2f))
+                                        .border(
+                                            width = 1.5.dp,
+                                            brush = Brush.linearGradient(
+                                                listOf(
+                                                    Color.White.copy(alpha = 0.35f),
+                                                    Color.White.copy(alpha = 0.15f)
+                                                )
+                                            ),
+                                            shape = RoundedCornerShape(10.dp)
+                                        )
+                                        .clickable {
+                                            selectedCardId?.let { cardId ->
+                                                val cardFromWaste = wastePile.lastOrNull()?.takeIf { it.id == cardId }
+                                                var cardFromTableau: SolitaireCard? = null
+                                                var sourceColIdx = -1
+                                                var sourceRowIdx = -1
+
+                                                for (cI in 0..3) {
+                                                    val cList = tableauPiles[cI]
+                                                    val idx = cList.indexOfFirst { it.id == cardId && it.isFaceUp }
+                                                    if (idx != -1) {
+                                                        cardFromTableau = cList[idx]
+                                                        sourceColIdx = cI
+                                                        sourceRowIdx = idx
+                                                        break
+                                                    }
+                                                }
+
+                                                if (cardFromWaste != null) {
+                                                    onCardStacked(listOf(cardFromWaste), colIdx)
+                                                } else if (cardFromTableau != null && sourceColIdx != -1) {
+                                                    val group = tableauPiles[sourceColIdx].subList(sourceRowIdx, tableauPiles[sourceColIdx].size)
+                                                    onCardStacked(group, colIdx)
+                                                }
+                                            }
+                                        },
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = "➕",
+                                        fontSize = 22.sp,
+                                        color = Color.White.copy(alpha = 0.35f)
+                                    )
+                                }
+                            }
+
                             colList.forEachIndexed { rowIdx, card ->
                                 key(card.id) {
                                     val isDragged = draggedCards.any { it.id == card.id }
@@ -724,69 +807,181 @@ fun GameScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 6.dp),
-                horizontalArrangement = Arrangement.Center,
+                    .padding(vertical = 10.dp),
+                horizontalArrangement = Arrangement.spacedBy(32.dp, Alignment.CenterHorizontally),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // 1. HINT BUTTON
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                // 1. HINT BUTTON (3D Tactile with Vector HintIcon & Top-Left Circular Coin Badge)
+                Box(contentAlignment = Alignment.TopStart) {
                     Box(
                         modifier = Modifier
+                            .shadow(8.dp, RoundedCornerShape(18.dp))
+                            .clip(RoundedCornerShape(18.dp))
+                            .background(
+                                Brush.verticalGradient(
+                                    colors = listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1))
+                                )
+                            )
+                            .padding(2.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(Color(0xFF0F2B1D))
+                            .padding(bottom = 3.dp)
+                            .clip(RoundedCornerShape(14.dp))
+                            .background(
+                                Brush.verticalGradient(
+                                    colors = listOf(Color(0xFF1E293B), Color(0xFF0F172A))
+                                )
+                            )
+                            .border(1.dp, AccentGold.copy(alpha = 0.5f), RoundedCornerShape(14.dp))
                             .size(56.dp)
                             .clickable { onShowHint() },
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(text = "💡", fontSize = 32.sp)
+                        com.turkce.kelimesolitaire.presentation.ui.components.HintIcon(size = 30.dp)
                     }
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "50 🪙",
-                        color = AccentGold,
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Black
-                    )
-                }
 
-                Spacer(modifier = Modifier.width(24.dp))
-
-                // 2. UNDO BUTTON
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    // Top-Left Circular Coin Cost Badge
                     Box(
                         modifier = Modifier
+                            .offset(x = (-8).dp, y = (-8).dp)
+                            .shadow(4.dp, CircleShape)
+                            .clip(CircleShape)
+                            .background(
+                                Brush.radialGradient(
+                                    listOf(Color(0xFFFFD700), Color(0xFFD97706))
+                                )
+                            )
+                            .border(1.5.dp, Color.White, CircleShape)
+                            .padding(horizontal = 6.dp, vertical = 3.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 11.dp)
+                            Spacer(modifier = Modifier.width(3.dp))
+                            Text(
+                                text = "50",
+                                color = Color(0xFF0F172A),
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Black,
+                                fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif
+                            )
+                        }
+                    }
+                }
+
+                // 2. UNDO BUTTON (3D Tactile with Vector UndoIcon & Top-Left Circular Coin Badge)
+                Box(contentAlignment = Alignment.TopStart) {
+                    Box(
+                        modifier = Modifier
+                            .shadow(8.dp, RoundedCornerShape(18.dp))
+                            .clip(RoundedCornerShape(18.dp))
+                            .background(
+                                Brush.verticalGradient(
+                                    colors = listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1))
+                                )
+                            )
+                            .padding(2.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(Color(0xFF0F2B1D))
+                            .padding(bottom = 3.dp)
+                            .clip(RoundedCornerShape(14.dp))
+                            .background(
+                                Brush.verticalGradient(
+                                    colors = listOf(Color(0xFF1E293B), Color(0xFF0F172A))
+                                )
+                            )
+                            .border(1.dp, AccentGold.copy(alpha = 0.5f), RoundedCornerShape(14.dp))
                             .size(56.dp)
                             .clickable { onUndoLastMove() },
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(text = "↩️", fontSize = 32.sp)
+                        com.turkce.kelimesolitaire.presentation.ui.components.UndoIcon(size = 30.dp)
                     }
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "50 🪙",
-                        color = AccentGold,
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Black
-                    )
-                }
 
-                Spacer(modifier = Modifier.width(24.dp))
-
-                // 3. JOKER BUTTON
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    // Top-Left Circular Coin Cost Badge
                     Box(
                         modifier = Modifier
+                            .offset(x = (-8).dp, y = (-8).dp)
+                            .shadow(4.dp, CircleShape)
+                            .clip(CircleShape)
+                            .background(
+                                Brush.radialGradient(
+                                    listOf(Color(0xFFFFD700), Color(0xFFD97706))
+                                )
+                            )
+                            .border(1.5.dp, Color.White, CircleShape)
+                            .padding(horizontal = 6.dp, vertical = 3.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 11.dp)
+                            Spacer(modifier = Modifier.width(3.dp))
+                            Text(
+                                text = "50",
+                                color = Color(0xFF0F172A),
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Black,
+                                fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif
+                            )
+                        }
+                    }
+                }
+
+                // 3. JOKER BUTTON (3D Tactile Gold with Vector JokerIcon & Top-Left Circular Coin Badge)
+                Box(contentAlignment = Alignment.TopStart) {
+                    Box(
+                        modifier = Modifier
+                            .shadow(8.dp, RoundedCornerShape(18.dp))
+                            .clip(RoundedCornerShape(18.dp))
+                            .background(
+                                Brush.verticalGradient(
+                                    colors = listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1))
+                                )
+                            )
+                            .padding(2.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(Color(0xFFB8860B))
+                            .padding(bottom = 3.dp)
+                            .clip(RoundedCornerShape(14.dp))
+                            .background(
+                                Brush.verticalGradient(
+                                    colors = listOf(Color(0xFFFFD700), Color(0xFFF59E0B), Color(0xFFD97706))
+                                )
+                            )
                             .size(56.dp)
                             .clickable { onUseJoker() },
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(text = "🃏", fontSize = 32.sp)
+                        com.turkce.kelimesolitaire.presentation.ui.components.JokerIcon(size = 30.dp)
                     }
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "200 🪙",
-                        color = AccentGold,
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Black
-                    )
+
+                    // Top-Left Circular Coin Cost Badge
+                    Box(
+                        modifier = Modifier
+                            .offset(x = (-8).dp, y = (-8).dp)
+                            .shadow(4.dp, CircleShape)
+                            .clip(CircleShape)
+                            .background(
+                                Brush.radialGradient(
+                                    listOf(Color(0xFFFFD700), Color(0xFFD97706))
+                                )
+                            )
+                            .border(1.5.dp, Color.White, CircleShape)
+                            .padding(horizontal = 6.dp, vertical = 3.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 11.dp)
+                            Spacer(modifier = Modifier.width(3.dp))
+                            Text(
+                                text = "200",
+                                color = Color(0xFF0F172A),
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Black,
+                                fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif
+                            )
+                        }
+                    }
                 }
             }
         }
