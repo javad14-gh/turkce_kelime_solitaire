@@ -26,6 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.turkce.kelimesolitaire.presentation.ui.components.AdBannerPlaceholder
+import com.turkce.kelimesolitaire.presentation.ui.components.rememberNunitoFont
 import com.turkce.kelimesolitaire.presentation.ui.theme.AccentGold
 import com.turkce.kelimesolitaire.presentation.ui.theme.BorderGlass
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg
@@ -42,8 +43,10 @@ fun GameOverScreen(
     onContinueForAd: () -> Unit,
     onRestartClicked: () -> Unit,
     onMainMenuClicked: () -> Unit,
+    isAdFree: Boolean = false,
     modifier: Modifier = Modifier
 ) {
+    val nunitoFont = rememberNunitoFont()
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -63,8 +66,9 @@ fun GameOverScreen(
                 Text(
                     text = "HAMLELER BİTTİ!",
                     color = ErrorRed,
-                    fontSize = 32.sp,
+                    fontSize = 38.sp,
                     fontWeight = FontWeight.Black,
+                    fontFamily = nunitoFont,
                     letterSpacing = 1.sp,
                     textAlign = TextAlign.Center
                 )
@@ -72,8 +76,9 @@ fun GameOverScreen(
                 Text(
                     text = "Seviye $levelNumber'de hamleleriniz tükendi.",
                     color = TextSecondary,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
+                    fontSize = 17.sp,
+                    fontWeight = FontWeight.Black,
+                    fontFamily = nunitoFont,
                     textAlign = TextAlign.Center
                 )
             }
@@ -81,7 +86,7 @@ fun GameOverScreen(
             // Central Option Card
             Box(
                 modifier = Modifier
-                    .width(280.dp)
+                    .width(290.dp)
                     .background(DarkCard, shape = RoundedCornerShape(16.dp))
                     .border(1.dp, BorderGlass, RoundedCornerShape(16.dp))
                     .padding(20.dp),
@@ -91,8 +96,9 @@ fun GameOverScreen(
                     Text(
                         text = "Oyuna Devam Et (+15 Hamle)",
                         color = TextPrimary,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Black,
+                        fontFamily = nunitoFont,
                         textAlign = TextAlign.Center
                     )
                     Spacer(modifier = Modifier.height(16.dp))
@@ -124,18 +130,18 @@ fun GameOverScreen(
                                 }
                             )
                             .clickable(enabled = coins >= 50) { onContinueForCoins() }
-                            .padding(horizontal = 20.dp, vertical = 10.dp),
+                            .padding(horizontal = 22.dp, vertical = 11.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
-                            com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 20.dp)
+                            com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 22.dp)
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
                                 text = "50 Altın Harca",
                                 color = if (coins >= 50) Color(0xFF0F172A) else Color(0xFF94A3B8),
-                                fontSize = 14.sp,
+                                fontSize = 16.sp,
                                 fontWeight = FontWeight.Black,
-                                fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif
+                                fontFamily = nunitoFont
                             )
                         }
                     }
@@ -163,18 +169,18 @@ fun GameOverScreen(
                                 )
                             )
                             .clickable { onContinueForAd() }
-                            .padding(horizontal = 18.dp, vertical = 10.dp),
+                            .padding(horizontal = 20.dp, vertical = 11.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            com.turkce.kelimesolitaire.presentation.ui.components.AdIcon(size = 18.dp)
+                            com.turkce.kelimesolitaire.presentation.ui.components.AdIcon(size = 20.dp)
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
                                 text = "Ücretsiz (+15 Hamle)",
                                 color = Color.White,
-                                fontSize = 13.sp,
+                                fontSize = 15.sp,
                                 fontWeight = FontWeight.Black,
-                                fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif
+                                fontFamily = nunitoFont
                             )
                         }
                     }
@@ -207,15 +213,15 @@ fun GameOverScreen(
                             )
                         )
                         .clickable { onRestartClicked() }
-                        .padding(horizontal = 24.dp, vertical = 12.dp),
+                        .padding(horizontal = 26.dp, vertical = 12.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = "TEKRAR DENE",
                         color = Color.White,
-                        fontSize = 15.sp,
+                        fontSize = 18.sp,
                         fontWeight = FontWeight.Black,
-                        fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif,
+                        fontFamily = nunitoFont,
                         letterSpacing = 1.sp
                     )
                 }
@@ -241,22 +247,22 @@ fun GameOverScreen(
                             )
                         )
                         .clickable { onMainMenuClicked() }
-                        .padding(horizontal = 24.dp, vertical = 10.dp),
+                        .padding(horizontal = 26.dp, vertical = 10.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = "ANA MENÜ",
                         color = Color.White,
-                        fontSize = 14.sp,
+                        fontSize = 17.sp,
                         fontWeight = FontWeight.Black,
-                        fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif,
+                        fontFamily = nunitoFont,
                         letterSpacing = 1.sp
                     )
                 }
             }
 
             // Static Bottom Ad
-            AdBannerPlaceholder()
+            AdBannerPlaceholder(isAdFree = isAdFree)
         }
     }
 }

@@ -28,8 +28,11 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.TextSecondary
 @Composable
 fun AdBannerPlaceholder(
     modifier: Modifier = Modifier,
+    isAdFree: Boolean = false,
     adUnitId: String = AdManager.TEST_BANNER_ID
 ) {
+    if (isAdFree) return
+
     Box(
         modifier = modifier
             .fillMaxWidth()

@@ -2,6 +2,10 @@ package com.turkce.kelimesolitaire.presentation.ui.components
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.keyframes
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.ui.graphics.graphicsLayer
+import kotlinx.coroutines.launch
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -54,6 +58,7 @@ fun WordCard(
     card: SolitaireCard,
     isSelected: Boolean,
     isShaking: Boolean,
+    isShattering: Boolean = false,
     isDragged: Boolean,
     dragOffset: Offset,
     isInteractionEnabled: Boolean,
@@ -65,6 +70,7 @@ fun WordCard(
     modifier: Modifier = Modifier
 ) {
     val isFaceUp = card.isFaceUp
+    val nunitoFont = rememberNunitoFont()
     
     // Wrap callbacks and value arguments in rememberUpdatedState to prevent capturing stale values
     val currentInteractionEnabled by rememberUpdatedState(isInteractionEnabled)
@@ -97,12 +103,30 @@ fun WordCard(
         }
     }
 
+    // Shatter & Crumble animation for exposed Joker cards
+    val shatterAlpha = remember { Animatable(1f) }
+    val shatterScale = remember { Animatable(1f) }
+    val shatterOffsetY = remember { Animatable(0f) }
+    val shatterRotation = remember { Animatable(0f) }
+
+    LaunchedEffect(isShattering) {
+        if (isShattering) {
+            launch { shatterAlpha.animateTo(0f, tween(600, easing = LinearOutSlowInEasing)) }
+            launch { shatterScale.animateTo(0.3f, tween(600, easing = LinearOutSlowInEasing)) }
+            launch { shatterOffsetY.animateTo(140f, tween(600, easing = LinearOutSlowInEasing)) }
+            launch { shatterRotation.animateTo(30f, tween(600, easing = LinearOutSlowInEasing)) }
+        }
+    }
+
     val scale = if (isDragged) 1.15f else if (isSelected) 1.05f else 1.0f
     val elevation = if (isDragged) 16.dp else if (isSelected) 6.dp else 3.dp
     
+    val isJoker = card.categoryId == "joker_wildcard"
+
     // Board outline styling: category cards get a gold border when face up!
     val borderColor = when {
         isShaking -> ErrorRed
+        isJoker -> Color(0xFF7E22CE) // Vibrant Purple Border for Joker!
         isSelected -> AccentGold
         !isFaceUp -> Color.White // Crisp border for card backs
         card.isCategory -> AccentGold.copy(alpha = 0.8f) // Gold outline for category cards
@@ -113,6 +137,13 @@ fun WordCard(
         !isFaceUp -> Brush.verticalGradient(
             colors = listOf(Color(0xFF1E88E5), Color(0xFF0D47A1))
         )
+        isJoker -> Brush.verticalGradient(
+            colors = listOf(
+                Color(0xFFFEF08A), // Vibrant golden yellow top
+                Color(0xFFFDE047), // Deep yellow middle
+                Color(0xFFEAB308)  // Rich golden bottom
+            )
+        )
         card.isCategory -> Brush.verticalGradient(
             colors = listOf(Color(0xFFFFFDE7), Color(0xFFFFF59D))
         )
@@ -122,9 +153,19 @@ fun WordCard(
     }
 
     Card(
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         colors = CardDefaults.cardColors(containerColor = Color.Transparent),
         shape = RoundedCornerShape(8.dp),
         modifier = modifier
+            .graphicsLayer {
+                if (isShattering) {
+                    alpha = shatterAlpha.value
+                    scaleX = shatterScale.value
+                    scaleY = shatterScale.value
+                    translationY = shatterOffsetY.value
+                    rotationZ = shatterRotation.value
+                }
+            }
             // 1. Measure the static layout slot bounds (placed BEFORE drag offset!)
             .onGloballyPositioned { coordinates ->
                 if (!isDragged) {
@@ -149,7 +190,7 @@ fun WordCard(
             .shadow(elevation, RoundedCornerShape(8.dp), clip = false)
             .background(cardBrush, shape = RoundedCornerShape(8.dp))
             .border(
-                width = if (isSelected || isShaking || !isFaceUp || card.isCategory) 1.5.dp else 1.dp,
+                width = if (isJoker || isSelected || isShaking || !isFaceUp || card.isCategory) 2.dp else 1.dp,
                 color = borderColor,
                 shape = RoundedCornerShape(8.dp)
             )
@@ -160,10 +201,6 @@ fun WordCard(
                             awaitEachGesture {
                                 val down = awaitFirstDown(requireUnconsumed = true)
                                 down.consume() // Consume Down event immediately to prevent touch leaks to overlapping cards!
-                                
-                                if (currentInteractionEnabled) {
-                                    currentOnDragStart()
-                                }
                                 
                                 var isDragging = false
                                 
@@ -183,7 +220,12 @@ fun WordCard(
                                             
                                             val dragAmount = dragChange.position - dragChange.previousPosition
                                             if (dragAmount.getDistanceSquared() > 0.5f) {
-                                                isDragging = true
+                                                if (!isDragging) {
+                                                    isDragging = true
+                                                    if (currentInteractionEnabled) {
+                                                        currentOnDragStart()
+                                                    }
+                                                }
                                                 dragChange.consume()
                                                 if (currentInteractionEnabled) {
                                                     currentOnDrag(dragAmount)
@@ -200,7 +242,7 @@ fun WordCard(
                                             )
                                             currentOnDragEnd(dropCenter)
                                         } else {
-                                            // Simple click/tap!
+                                            // Simple click/tap - do not select or float card!
                                             currentOnTap()
                                         }
                                     }
@@ -223,28 +265,81 @@ fun WordCard(
             contentAlignment = Alignment.Center
         ) {
             if (isFaceUp) {
-                // If it is a Category header card, prefix with tag crown indicator
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(6.dp)
+                    modifier = Modifier.padding(horizontal = 2.dp, vertical = 4.dp)
                 ) {
-                    if (card.isCategory) {
+                    val hasSpace = card.text.contains(" ")
+                    val longestSubword = if (hasSpace) {
+                        card.text.split(" ").maxOfOrNull { it.length } ?: card.text.length
+                    } else {
+                        card.text.length
+                    }
+
+                    val dynamicFontSize = when {
+                        longestSubword >= 12 -> 11.sp
+                        longestSubword >= 10 -> 12.5.sp
+                        longestSubword >= 8 -> 14.sp
+                        longestSubword >= 6 -> 15.5.sp
+                        else -> 17.sp
+                    }
+                    val dynamicLetterSpacing = when {
+                        longestSubword >= 11 -> (-0.5).sp
+                        longestSubword >= 9 -> (-0.2).sp
+                        else -> 0.sp
+                    }
+                    val maxLinesCount = if (hasSpace) 2 else 1
+
+                    if (isJoker) {
+                        Text(
+                            text = "🃏 JOKER",
+                            color = Color(0xFF6B21A8),
+                            fontFamily = nunitoFont,
+                            fontSize = 11.5.sp,
+                            fontWeight = FontWeight.W800,
+                            modifier = Modifier.padding(bottom = 2.dp)
+                        )
+                        Text(
+                            text = "HER KELİME",
+                            color = Color(0xFF991B1B),
+                            fontFamily = nunitoFont,
+                            fontSize = 12.5.sp,
+                            fontWeight = FontWeight.W800,
+                            textAlign = TextAlign.Center
+                        )
+                    } else if (card.isCategory) {
                         Text(
                             text = "👑 KAT",
                             color = AccentGold,
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.ExtraBold,
+                            fontFamily = nunitoFont,
+                            fontSize = 10.5.sp,
+                            fontWeight = FontWeight.W800,
                             modifier = Modifier.padding(bottom = 2.dp)
                         )
+                        Text(
+                            text = card.text,
+                            color = Color.Black,
+                            fontFamily = nunitoFont,
+                            fontSize = dynamicFontSize,
+                            fontWeight = FontWeight.W800,
+                            maxLines = maxLinesCount,
+                            letterSpacing = dynamicLetterSpacing,
+                            textAlign = TextAlign.Center,
+                            lineHeight = (dynamicFontSize.value * 1.15f).sp
+                        )
+                    } else {
+                        Text(
+                            text = card.text,
+                            color = Color.Black,
+                            fontFamily = nunitoFont,
+                            fontSize = dynamicFontSize,
+                            fontWeight = FontWeight.W800,
+                            maxLines = maxLinesCount,
+                            letterSpacing = dynamicLetterSpacing,
+                            textAlign = TextAlign.Center,
+                            lineHeight = (dynamicFontSize.value * 1.15f).sp
+                        )
                     }
-                    Text(
-                        text = card.text,
-                        color = Color.Black,
-                        fontSize = if (card.isCategory) 14.sp else 15.sp,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center,
-                        lineHeight = 17.sp
-                    )
                 }
             } else {
                 Canvas(modifier = Modifier.fillMaxSize()) {

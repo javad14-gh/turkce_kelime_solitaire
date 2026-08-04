@@ -25,7 +25,10 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,7 +41,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import com.turkce.kelimesolitaire.presentation.ui.components.AdBannerPlaceholder
+import com.turkce.kelimesolitaire.presentation.ui.components.OutlinedText
+import com.turkce.kelimesolitaire.presentation.ui.components.rememberNunitoFont
 import com.turkce.kelimesolitaire.presentation.ui.theme.AccentGold
 import com.turkce.kelimesolitaire.presentation.ui.theme.BorderGlass
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg
@@ -48,16 +54,20 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.SecondaryNeon
 import com.turkce.kelimesolitaire.presentation.ui.theme.TextPrimary
 import com.turkce.kelimesolitaire.presentation.ui.theme.TextSecondary
 
+@Suppress("UNUSED_PARAMETER")
 @Composable
 fun MainMenuScreen(
     levelNumber: Int,
     coins: Int,
     completedLevels: Set<Int>,
+    isAdFree: Boolean = false,
     onStartGameClicked: (Int) -> Unit,
     onWatchAdForCoins: () -> Unit,
+    onOpenStore: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
+    val nunitoFont = rememberNunitoFont()
 
     // Calculate last unsolved level dynamically
     val lastUnsolvedLevel = remember(completedLevels) {
@@ -79,6 +89,10 @@ fun MainMenuScreen(
         }
     }
 
+    var showSettingsMenu by remember { androidx.compose.runtime.mutableStateOf(false) }
+    var isSoundEnabled by remember { androidx.compose.runtime.mutableStateOf(true) }
+    var isHapticEnabled by remember { androidx.compose.runtime.mutableStateOf(true) }
+
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -92,12 +106,12 @@ fun MainMenuScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             
-            // Top Dashboard HUD (Coins Status Pill matching reference design)
+            // Top Dashboard HUD (Coins Status Pill left-aligned + Settings button right-aligned)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 16.dp, end = 8.dp),
-                horizontalArrangement = Arrangement.End,
+                    .padding(top = 16.dp, start = 8.dp, end = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(
@@ -106,6 +120,7 @@ fun MainMenuScreen(
                         .clip(RoundedCornerShape(24.dp))
                         .background(Color(0xFF2A364F).copy(alpha = 0.9f))
                         .border(1.5.dp, Color.White.copy(alpha = 0.25f), RoundedCornerShape(24.dp))
+                        .clickable { onOpenStore() }
                         .padding(start = 4.dp, end = 16.dp, top = 3.dp, bottom = 3.dp)
                 ) {
                     // Gold Coin Icon + Green '+' Circle Badge
@@ -132,8 +147,24 @@ fun MainMenuScreen(
                     Text(
                         text = "$coins",
                         color = Color.White,
-                        fontSize = 17.sp,
-                        fontWeight = FontWeight.Black
+                        fontSize = 19.sp,
+                        fontWeight = FontWeight.Black,
+                        fontFamily = nunitoFont
+                    )
+                }
+
+                // Settings Button (⚙️)
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clickable { showSettingsMenu = true }
+                        .border(1.5.dp, BorderGlass, RoundedCornerShape(10.dp))
+                        .background(Color.White.copy(alpha = 0.08f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "⚙️",
+                        fontSize = 20.sp
                     )
                 }
             }
@@ -143,18 +174,22 @@ fun MainMenuScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(
+                OutlinedText(
                     text = "TÜRKÇE KELİME",
-                    color = SecondaryNeon,
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                    letterSpacing = 2.sp,
+                    textColor = SecondaryNeon,
+                    outlineColor = Color(0xFF0F172A),
+                    outlineWidth = 6f,
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.Black,
+                    letterSpacing = 1.5.sp,
                     textAlign = TextAlign.Center
                 )
-                Text(
+                OutlinedText(
                     text = "EŞLEŞTİRME SOLİTAİRE",
-                    color = PrimaryNeon,
-                    fontSize = 32.sp,
+                    textColor = PrimaryNeon,
+                    outlineColor = Color(0xFF0F172A),
+                    outlineWidth = 6f,
+                    fontSize = 34.sp,
                     fontWeight = FontWeight.Black,
                     letterSpacing = 1.sp,
                     textAlign = TextAlign.Center
@@ -163,9 +198,10 @@ fun MainMenuScreen(
                 Text(
                     text = "Kelimeleri sürükle, grupları eşleştir, bölümleri tamamla!",
                     color = TextSecondary,
-                    fontSize = 13.sp,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
-                    lineHeight = 18.sp,
+                    lineHeight = 20.sp,
                     modifier = Modifier.padding(horizontal = 24.dp)
                 )
             }
@@ -204,15 +240,16 @@ fun MainMenuScreen(
                                 )
                             )
                             .clickable { onStartGameClicked(lastUnsolvedLevel) }
-                            .padding(horizontal = 28.dp, vertical = 14.dp),
+                            .padding(horizontal = 30.dp, vertical = 14.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(
+                        OutlinedText(
                             text = "SEVİYE $lastUnsolvedLevel",
-                            color = Color.White,
-                            fontSize = 23.sp,
+                            textColor = Color.White,
+                            outlineColor = Color(0xFF1E3A07),
+                            outlineWidth = 5f,
+                            fontSize = 26.sp,
                             fontWeight = FontWeight.Black,
-                            fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif,
                             letterSpacing = 1.2.sp
                         )
                     }
@@ -229,14 +266,14 @@ fun MainMenuScreen(
                                 .clip(RoundedCornerShape(12.dp))
                                 .background(ribbonColor)
                                 .border(1.5.dp, Color.White, RoundedCornerShape(12.dp))
-                                .padding(horizontal = 22.dp, vertical = 5.dp)
+                                .padding(horizontal = 24.dp, vertical = 5.dp)
                         ) {
                             Text(
                                 text = difficultyText,
                                 color = Color.White,
-                                fontSize = 13.sp,
+                                fontSize = 15.sp,
                                 fontWeight = FontWeight.Black,
-                                fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif,
+                                fontFamily = nunitoFont,
                                 letterSpacing = 0.5.sp
                             )
                         }
@@ -270,26 +307,26 @@ fun MainMenuScreen(
                             )
                         )
                         .clickable { onWatchAdForCoins() }
-                        .padding(horizontal = 20.dp, vertical = 10.dp),
+                        .padding(horizontal = 22.dp, vertical = 11.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        com.turkce.kelimesolitaire.presentation.ui.components.AdIcon(size = 20.dp)
+                        com.turkce.kelimesolitaire.presentation.ui.components.AdIcon(size = 22.dp)
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             text = "Reklam İzle (+50 ",
                             color = Color(0xFF0F172A),
-                            fontSize = 14.sp,
+                            fontSize = 16.sp,
                             fontWeight = FontWeight.Black,
-                            fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif
+                            fontFamily = nunitoFont
                         )
-                        com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 18.dp)
+                        com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 20.dp)
                         Text(
                             text = ")",
                             color = Color(0xFF0F172A),
-                            fontSize = 14.sp,
+                            fontSize = 16.sp,
                             fontWeight = FontWeight.Black,
-                            fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif
+                            fontFamily = nunitoFont
                         )
                     }
                 }
@@ -300,7 +337,7 @@ fun MainMenuScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                AdBannerPlaceholder()
+                AdBannerPlaceholder(isAdFree = isAdFree)
                 
                 Spacer(modifier = Modifier.height(12.dp))
 
@@ -339,6 +376,241 @@ fun MainMenuScreen(
                             }
                             .padding(8.dp)
                     )
+                }
+            }
+        }
+
+        // SETTINGS OVERLAY DIALOG FOR MAIN MENU (MATCHING REFERENCE UI SCREENSHOT)
+        if (showSettingsMenu) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.75f))
+                    .zIndex(200f)
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
+                    ) { showSettingsMenu = false },
+                contentAlignment = Alignment.Center
+            ) {
+                Box(
+                    modifier = Modifier
+                        .width(320.dp)
+                        .shadow(20.dp, RoundedCornerShape(26.dp))
+                        .clip(RoundedCornerShape(26.dp))
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(Color(0xFF3826B4), Color(0xFF241584), Color(0xFF190D69))
+                            )
+                        )
+                        .border(2.dp, Color(0xFF6366F1), RoundedCornerShape(26.dp))
+                        .clickable(enabled = false) {}
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 20.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        // Top Arched Header Bar with Close (X) Button
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(58.dp)
+                                .background(
+                                    Brush.verticalGradient(
+                                        colors = listOf(Color(0xFF4C38CE), Color(0xFF2C1990))
+                                    )
+                                )
+                                .padding(horizontal = 16.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            OutlinedText(
+                                text = "Ayarlar",
+                                textColor = Color.White,
+                                outlineColor = Color(0xFF190D69),
+                                outlineWidth = 5f,
+                                fontSize = 23.sp,
+                                fontWeight = FontWeight.Black,
+                                textAlign = TextAlign.Center
+                            )
+
+                            // Top Right Circular Red 3D Close Button (X)
+                            Box(
+                                modifier = Modifier
+                                    .align(Alignment.CenterEnd)
+                                    .size(34.dp)
+                                    .shadow(6.dp, CircleShape)
+                                    .clip(CircleShape)
+                                    .background(
+                                        Brush.verticalGradient(
+                                            listOf(Color(0xFFEF4444), Color(0xFFDC2626), Color(0xFF991B1B))
+                                        )
+                                    )
+                                    .border(1.5.dp, Color.White, CircleShape)
+                                    .clickable { showSettingsMenu = false },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "✕",
+                                    color = Color.White,
+                                    fontSize = 17.sp,
+                                    fontWeight = FontWeight.Black
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(18.dp))
+
+                        // Sound & Haptic Toggle Square 3D Buttons Container (Matching Top Section)
+                        Box(
+                            modifier = Modifier
+                                .padding(horizontal = 20.dp)
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(18.dp))
+                                .background(Color(0xFF150A54).copy(alpha = 0.85f))
+                                .border(1.dp, Color.White.copy(alpha = 0.15f), RoundedCornerShape(18.dp))
+                                .padding(vertical = 14.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(24.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                // 1. Sound Speaker 3D Toggle Button
+                                Box(
+                                    modifier = Modifier
+                                        .size(64.dp)
+                                        .shadow(8.dp, RoundedCornerShape(16.dp))
+                                        .clip(RoundedCornerShape(16.dp))
+                                        .background(
+                                            if (isSoundEnabled) {
+                                                Brush.verticalGradient(
+                                                    listOf(Color(0xFFA3E635), Color(0xFF65A30D), Color(0xFF4D7C0F))
+                                                )
+                                            } else {
+                                                Brush.verticalGradient(
+                                                    listOf(Color(0xFF64748B), Color(0xFF334155), Color(0xFF1E293B))
+                                                )
+                                            }
+                                        )
+                                        .border(2.dp, Color.White.copy(alpha = 0.8f), RoundedCornerShape(16.dp))
+                                        .clickable { isSoundEnabled = !isSoundEnabled },
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = if (isSoundEnabled) "🔊" else "🔇",
+                                        fontSize = 28.sp
+                                    )
+                                }
+
+                                // 2. Haptic Vibration 3D Toggle Button
+                                Box(
+                                    modifier = Modifier
+                                        .size(64.dp)
+                                        .shadow(8.dp, RoundedCornerShape(16.dp))
+                                        .clip(RoundedCornerShape(16.dp))
+                                        .background(
+                                            if (isHapticEnabled) {
+                                                Brush.verticalGradient(
+                                                    listOf(Color(0xFFA3E635), Color(0xFF65A30D), Color(0xFF4D7C0F))
+                                                )
+                                            } else {
+                                                Brush.verticalGradient(
+                                                    listOf(Color(0xFF64748B), Color(0xFF334155), Color(0xFF1E293B))
+                                                )
+                                            }
+                                        )
+                                        .border(2.dp, Color.White.copy(alpha = 0.8f), RoundedCornerShape(16.dp))
+                                        .clickable { isHapticEnabled = !isHapticEnabled },
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = if (isHapticEnabled) "📳" else "📵",
+                                        fontSize = 28.sp
+                                    )
+                                }
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        // Action Capsule Pills Column
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 20.dp),
+                            verticalArrangement = Arrangement.spacedBy(10.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            // 1. Privacy Policy Pill (Teal 3D Gradient)
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .shadow(6.dp, RoundedCornerShape(16.dp))
+                                    .clip(RoundedCornerShape(16.dp))
+                                    .background(
+                                        Brush.verticalGradient(
+                                            listOf(Color(0xFF38BDF8), Color(0xFF0284C7), Color(0xFF0369A1))
+                                        )
+                                    )
+                                    .border(1.5.dp, Color.White.copy(alpha = 0.6f), RoundedCornerShape(16.dp))
+                                    .clickable {
+                                        showSettingsMenu = false
+                                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(context.getString(com.turkce.kelimesolitaire.R.string.privacy_policy_url)))
+                                        context.startActivity(intent)
+                                    }
+                                    .padding(vertical = 12.dp, horizontal = 16.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(text = "🛡️", fontSize = 18.sp)
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = "Gizlilik Politikası",
+                                        color = Color.White,
+                                        fontSize = 15.sp,
+                                        fontWeight = FontWeight.Black,
+                                        fontFamily = nunitoFont
+                                    )
+                                }
+                            }
+
+                            // 2. Watch Ad for Coins Pill (Magenta/Purple 3D Gradient)
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .shadow(6.dp, RoundedCornerShape(16.dp))
+                                    .clip(RoundedCornerShape(16.dp))
+                                    .background(
+                                        Brush.verticalGradient(
+                                            listOf(Color(0xFFC084FC), Color(0xFF9333EA), Color(0xFF7E22CE))
+                                        )
+                                    )
+                                    .border(1.5.dp, Color.White.copy(alpha = 0.6f), RoundedCornerShape(16.dp))
+                                    .clickable {
+                                        showSettingsMenu = false
+                                        onWatchAdForCoins()
+                                    }
+                                    .padding(vertical = 12.dp, horizontal = 16.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    com.turkce.kelimesolitaire.presentation.ui.components.AdIcon(size = 20.dp)
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = "Ücretsiz Altın Kazan (+50 ",
+                                        color = Color.White,
+                                        fontSize = 15.sp,
+                                        fontWeight = FontWeight.Black,
+                                        fontFamily = nunitoFont
+                                    )
+                                    com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 18.dp)
+                                    Text(text = ")", color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.Black, fontFamily = nunitoFont)
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

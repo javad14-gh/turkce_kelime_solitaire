@@ -35,6 +35,8 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
@@ -73,6 +75,8 @@ import com.turkce.kelimesolitaire.data.model.FoundationSlot
 import com.turkce.kelimesolitaire.data.model.LevelData
 import com.turkce.kelimesolitaire.data.model.SolitaireCard
 import com.turkce.kelimesolitaire.presentation.ui.components.CategoryDropZone
+import com.turkce.kelimesolitaire.presentation.ui.components.OutlinedText
+import com.turkce.kelimesolitaire.presentation.ui.components.rememberNunitoFont
 import com.turkce.kelimesolitaire.presentation.ui.components.WordCard
 import com.turkce.kelimesolitaire.presentation.ui.theme.AccentGold
 import com.turkce.kelimesolitaire.presentation.ui.theme.BorderGlass
@@ -104,6 +108,9 @@ fun GameScreen(
     hintedTargetId: String?,
     showOutofMovesDialog: Boolean,
     completedCategoryName: String?,
+    shatteringJokerId: String? = null,
+    isAdFree: Boolean = false,
+    onOpenStore: () -> Unit = {},
     onCardSelected: (String?) -> Unit,
     onCardDropped: (List<SolitaireCard>, FoundationSlot) -> Boolean,
     onCardStacked: (List<SolitaireCard>, Int) -> Boolean,
@@ -115,8 +122,11 @@ fun GameScreen(
     onUseJoker: () -> Unit,
     onBuyExtraMoves: () -> Unit,
     onAcceptDefeat: () -> Unit,
+    onWatchAdForCoins: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val nunitoFont = rememberNunitoFont()
     var isAnimatingReturn by remember { mutableStateOf(false) }
 
     // Moves counter animated decrement flash and scale
@@ -167,6 +177,9 @@ fun GameScreen(
 
     // List of floating coins text (+2) to animate
     var floatingCoins by remember { mutableStateOf<List<FloatingCoinText>>(emptyList()) }
+    var showHamburgerMenu by remember { mutableStateOf(false) }
+    var isSoundEnabled by rememberSaveable { mutableStateOf(true) }
+    var isHapticEnabled by rememberSaveable { mutableStateOf(true) }
     
     // Group dragging states
     var draggedCards by remember { mutableStateOf<List<SolitaireCard>>(emptyList()) }
@@ -212,6 +225,7 @@ fun GameScreen(
                         .clip(RoundedCornerShape(24.dp))
                         .background(Color(0xFF2A364F).copy(alpha = 0.9f))
                         .border(1.5.dp, Color.White.copy(alpha = 0.25f), RoundedCornerShape(24.dp))
+                        .clickable { onOpenStore() }
                         .padding(start = 4.dp, end = 12.dp, top = 2.dp, bottom = 2.dp)
                 ) {
                     Box(contentAlignment = Alignment.BottomEnd) {
@@ -237,57 +251,37 @@ fun GameScreen(
                     Text(
                         text = "$coins",
                         color = Color.White,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Black
+                        fontSize = 17.sp,
+                        fontWeight = FontWeight.Black,
+                        fontFamily = nunitoFont
                     )
                 }
 
                 // Center: Level Title
-                Text(
-                    text = "Seviye ${levelData.levelNumber}",
-                    color = TextPrimary,
-                    fontSize = 17.sp,
+                OutlinedText(
+                    text = "SEVİYE ${levelData.levelNumber}",
+                    textColor = TextPrimary,
+                    outlineColor = Color(0xFF0F172A),
+                    outlineWidth = 5f,
+                    fontSize = 21.sp,
                     fontWeight = FontWeight.Black
                 )
 
-                // Right: Controls Row (Restart & Hamburger Menu)
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                // Right: Hamburger Menu Button
+                Box(
+                    modifier = Modifier
+                        .size(36.dp)
+                        .clickable { showHamburgerMenu = true }
+                        .border(1.dp, BorderGlass, RoundedCornerShape(8.dp))
+                        .background(Color.White.copy(alpha = 0.05f)),
+                    contentAlignment = Alignment.Center
                 ) {
-                    // Restart Level Button
-                    Box(
-                        modifier = Modifier
-                            .size(36.dp)
-                            .clickable { onRestartLevel() }
-                            .border(1.dp, BorderGlass, RoundedCornerShape(8.dp))
-                            .background(Color.White.copy(alpha = 0.05f)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "↺",
-                            color = TextPrimary,
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-
-                    // Hamburger Menu
-                    Box(
-                        modifier = Modifier
-                            .size(36.dp)
-                            .clickable { showExitConfirmDialog = true }
-                            .border(1.dp, BorderGlass, RoundedCornerShape(8.dp))
-                            .background(Color.White.copy(alpha = 0.05f)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "☰",
-                            color = TextPrimary,
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
+                    Text(
+                        text = "☰",
+                        color = TextPrimary,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             }
 
@@ -322,6 +316,7 @@ fun GameScreen(
                             color = TextSecondary,
                             fontSize = 10.sp,
                             fontWeight = FontWeight.Bold,
+                            fontFamily = nunitoFont,
                             letterSpacing = 0.5.sp
                         )
                         Spacer(modifier = Modifier.height(2.dp))
@@ -330,6 +325,7 @@ fun GameScreen(
                             color = movesColor,
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Black,
+                            fontFamily = nunitoFont,
                             modifier = Modifier.scale(movesScale)
                         )
                     }
@@ -350,13 +346,11 @@ fun GameScreen(
                                 card = topWaste,
                                 isSelected = selectedCardId == topWaste.id || isDragged,
                                 isShaking = shakingCardId == topWaste.id,
+                                isShattering = shatteringJokerId == topWaste.id,
                                 isDragged = isDragged,
                                 dragOffset = if (isDragged) dragOffset else Offset.Zero,
                                 isInteractionEnabled = !isAnimatingReturn && (draggedCards.isEmpty() || isDragged),
-                                onTap = {
-                                    if (selectedCardId == topWaste.id) onCardSelected(null)
-                                    else onCardSelected(topWaste.id)
-                                },
+                                onTap = {},
                                 onDragStart = {
                                     draggedCards = listOf(topWaste)
                                     dragOffset = Offset.Zero
@@ -375,14 +369,14 @@ fun GameScreen(
                                             val success = onCardDropped(finalGroup, matchedSlot)
                                             if (success) {
                                                 draggedCards = emptyList()
-                                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                                if (isHapticEnabled) haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                                 if (!isReplay) {
                                                     val bounds = dropZoneBounds[matchedSlot.id.toString()]
                                                     if (bounds != null) {
                                                         val wordCount = finalGroup.count { !it.isCategory }
                                                         val earnedAmount = wordCount * 2
                                                         if (earnedAmount > 0) {
-                                                            SoundEffects.playCoinSound()
+                                                            if (isSoundEnabled) SoundEffects.playCoinSound()
                                                             floatingCoins = floatingCoins + FloatingCoinText(
                                                                 id = System.currentTimeMillis() + matchedSlot.id,
                                                                 text = "+$earnedAmount",
@@ -523,8 +517,9 @@ fun GameScreen(
                             Text(
                                 text = "♻️\nYenile",
                                 color = AccentGold,
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Bold,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Black,
+                                fontFamily = nunitoFont,
                                 textAlign = TextAlign.Center
                             )
                         }
@@ -571,10 +566,7 @@ fun GameScreen(
                         CategoryDropZone(
                             slot = slot,
                             totalWords = totalWordsForSlot,
-                            isHighlighted = isSlotHinted || (selectedCardId != null && run {
-                                val selected = (tableauPiles.flatten() + wastePile).find { it.id == selectedCardId }
-                                selected != null && selected.categoryId == slot.activeCategory?.id
-                            }),
+                            isHighlighted = isSlotHinted,
                             onTap = {
                                 selectedCardId?.let { cardId ->
                                     val cardFromWaste = wastePile.lastOrNull()?.takeIf { it.id == cardId }
@@ -671,13 +663,11 @@ fun GameScreen(
                                         card = card,
                                         isSelected = selectedCardId == card.id || isDragged,
                                         isShaking = shakingCardId == card.id,
+                                        isShattering = shatteringJokerId == card.id,
                                         isDragged = isDragged,
                                         dragOffset = if (isDragged) dragOffset else Offset.Zero,
                                         isInteractionEnabled = !isAnimatingReturn && (draggedCards.isEmpty() || isDragged),
-                                        onTap = {
-                                            if (selectedCardId == card.id) onCardSelected(null)
-                                            else onCardSelected(card.id)
-                                        },
+                                        onTap = {},
                                         onDragStart = {
                                             val group = colList.subList(rowIdx, colList.size)
                                             draggedCards = group
@@ -697,7 +687,7 @@ fun GameScreen(
                                                     val success = onCardDropped(finalGroup, matchedSlot)
                                                     if (success) {
                                                         draggedCards = emptyList()
-                                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                                        if (isHapticEnabled) haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                                                         if (!isReplay) {
                                                             val bounds = dropZoneBounds[matchedSlot.id.toString()]
                                                             if (bounds != null) {
@@ -849,14 +839,14 @@ fun GameScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 11.dp)
+                            com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 13.dp)
                             Spacer(modifier = Modifier.width(3.dp))
                             Text(
                                 text = "50",
                                 color = Color(0xFF0F172A),
-                                fontSize = 10.sp,
+                                fontSize = 12.sp,
                                 fontWeight = FontWeight.Black,
-                                fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif
+                                fontFamily = nunitoFont
                             )
                         }
                     }
@@ -907,14 +897,14 @@ fun GameScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 11.dp)
+                            com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 13.dp)
                             Spacer(modifier = Modifier.width(3.dp))
                             Text(
                                 text = "50",
                                 color = Color(0xFF0F172A),
-                                fontSize = 10.sp,
+                                fontSize = 12.sp,
                                 fontWeight = FontWeight.Black,
-                                fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif
+                                fontFamily = nunitoFont
                             )
                         }
                     }
@@ -964,14 +954,14 @@ fun GameScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 11.dp)
+                            com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 13.dp)
                             Spacer(modifier = Modifier.width(3.dp))
                             Text(
                                 text = "200",
                                 color = Color(0xFF0F172A),
-                                fontSize = 10.sp,
+                                fontSize = 12.sp,
                                 fontWeight = FontWeight.Black,
-                                fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif
+                                fontFamily = nunitoFont
                             )
                         }
                     }
@@ -1004,9 +994,11 @@ fun GameScreen(
                         modifier = Modifier.padding(24.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(
+                        OutlinedText(
                             text = "Hamle Bitti!",
-                            color = AccentGold,
+                            textColor = AccentGold,
+                            outlineColor = Color(0xFF0F172A),
+                            outlineWidth = 4f,
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Black,
                             textAlign = TextAlign.Center
@@ -1016,7 +1008,8 @@ fun GameScreen(
                             text = "Kelimeleri eşleştirmek için hamleniz kalmadı. Devam etmek için ek hamle alın veya yenilgiyi kabul edin.",
                             color = TextPrimary,
                             fontSize = 13.sp,
-                            fontWeight = FontWeight.Medium,
+                            fontWeight = FontWeight.Bold,
+                            fontFamily = nunitoFont,
                             textAlign = TextAlign.Center,
                             lineHeight = 18.sp
                         )
@@ -1035,7 +1028,8 @@ fun GameScreen(
                                 text = "5 Ek Hamle: 75 🪙",
                                 color = Color.Black,
                                 fontSize = 14.sp,
-                                fontWeight = FontWeight.Black
+                                fontWeight = FontWeight.Black,
+                                fontFamily = nunitoFont
                             )
                         }
 
@@ -1054,7 +1048,8 @@ fun GameScreen(
                                 text = "Yenilgiyi Kabul Et",
                                 color = TextPrimary,
                                 fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.Bold,
+                                fontFamily = nunitoFont
                             )
                         }
                     }
@@ -1084,9 +1079,11 @@ fun GameScreen(
                         modifier = Modifier.padding(24.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(
+                        OutlinedText(
                             text = "Oyundan Çık",
-                            color = AccentGold,
+                            textColor = AccentGold,
+                            outlineColor = Color(0xFF0F172A),
+                            outlineWidth = 4f,
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Black,
                             textAlign = TextAlign.Center
@@ -1096,7 +1093,8 @@ fun GameScreen(
                             text = "Oyundan çıkmak istiyor musunuz? İlerlemeniz kaydedilecektir.",
                             color = TextPrimary,
                             fontSize = 13.sp,
-                            fontWeight = FontWeight.Medium,
+                            fontWeight = FontWeight.Bold,
+                            fontFamily = nunitoFont,
                             textAlign = TextAlign.Center,
                             lineHeight = 18.sp
                         )
@@ -1117,7 +1115,8 @@ fun GameScreen(
                                     text = "İptal",
                                     color = TextPrimary,
                                     fontSize = 12.sp,
-                                    fontWeight = FontWeight.Bold
+                                    fontWeight = FontWeight.Bold,
+                                    fontFamily = nunitoFont
                                 )
                             }
                             
@@ -1136,8 +1135,308 @@ fun GameScreen(
                                     text = "Çıkış Yap",
                                     color = Color.Black,
                                     fontSize = 12.sp,
+                                    fontWeight = FontWeight.Black,
+                                    fontFamily = nunitoFont
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // 6. HAMBURGER MENU / SETTINGS OVERLAY DIALOG (MATCHING REFERENCE UI SCREENSHOT)
+        if (showHamburgerMenu) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.75f))
+                    .zIndex(200f)
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ) { showHamburgerMenu = false },
+                contentAlignment = Alignment.Center
+            ) {
+                Box(
+                    modifier = Modifier
+                        .width(320.dp)
+                        .shadow(20.dp, RoundedCornerShape(26.dp))
+                        .clip(RoundedCornerShape(26.dp))
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(Color(0xFF3826B4), Color(0xFF241584), Color(0xFF190D69))
+                            )
+                        )
+                        .border(2.dp, Color(0xFF6366F1), RoundedCornerShape(26.dp))
+                        .clickable(enabled = false) {}
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 20.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        // Top Arched Header Bar with Close (X) Button
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(58.dp)
+                                .background(
+                                    Brush.verticalGradient(
+                                        colors = listOf(Color(0xFF4C38CE), Color(0xFF2C1990))
+                                    )
+                                )
+                                .padding(horizontal = 16.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            OutlinedText(
+                                text = "Ayarlar",
+                                textColor = Color.White,
+                                outlineColor = Color(0xFF190D69),
+                                outlineWidth = 5f,
+                                fontSize = 23.sp,
+                                fontWeight = FontWeight.Black,
+                                textAlign = TextAlign.Center
+                            )
+
+                            // Top Right Circular Red 3D Close Button (X)
+                            Box(
+                                modifier = Modifier
+                                    .align(Alignment.CenterEnd)
+                                    .size(34.dp)
+                                    .shadow(6.dp, CircleShape)
+                                    .clip(CircleShape)
+                                    .background(
+                                        Brush.verticalGradient(
+                                            listOf(Color(0xFFEF4444), Color(0xFFDC2626), Color(0xFF991B1B))
+                                        )
+                                    )
+                                    .border(1.5.dp, Color.White, CircleShape)
+                                    .clickable { showHamburgerMenu = false },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "✕",
+                                    color = Color.White,
+                                    fontSize = 17.sp,
                                     fontWeight = FontWeight.Black
                                 )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(18.dp))
+
+                        // Sound & Haptic Toggle Square 3D Buttons Container (Matching Top Section)
+                        Box(
+                            modifier = Modifier
+                                .padding(horizontal = 20.dp)
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(18.dp))
+                                .background(Color(0xFF150A54).copy(alpha = 0.85f))
+                                .border(1.dp, Color.White.copy(alpha = 0.15f), RoundedCornerShape(18.dp))
+                                .padding(vertical = 14.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(24.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                // 1. Sound Speaker 3D Toggle Button
+                                Box(
+                                    modifier = Modifier
+                                        .size(64.dp)
+                                        .shadow(8.dp, RoundedCornerShape(16.dp))
+                                        .clip(RoundedCornerShape(16.dp))
+                                        .background(
+                                            if (isSoundEnabled) {
+                                                Brush.verticalGradient(
+                                                    listOf(Color(0xFFA3E635), Color(0xFF65A30D), Color(0xFF4D7C0F))
+                                                )
+                                            } else {
+                                                Brush.verticalGradient(
+                                                    listOf(Color(0xFF64748B), Color(0xFF334155), Color(0xFF1E293B))
+                                                )
+                                            }
+                                        )
+                                        .border(2.dp, Color.White.copy(alpha = 0.8f), RoundedCornerShape(16.dp))
+                                        .clickable { isSoundEnabled = !isSoundEnabled },
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = if (isSoundEnabled) "🔊" else "🔇",
+                                        fontSize = 28.sp
+                                    )
+                                }
+
+                                // 2. Haptic Vibration 3D Toggle Button
+                                Box(
+                                    modifier = Modifier
+                                        .size(64.dp)
+                                        .shadow(8.dp, RoundedCornerShape(16.dp))
+                                        .clip(RoundedCornerShape(16.dp))
+                                        .background(
+                                            if (isHapticEnabled) {
+                                                Brush.verticalGradient(
+                                                    listOf(Color(0xFFA3E635), Color(0xFF65A30D), Color(0xFF4D7C0F))
+                                                )
+                                            } else {
+                                                Brush.verticalGradient(
+                                                    listOf(Color(0xFF64748B), Color(0xFF334155), Color(0xFF1E293B))
+                                                )
+                                            }
+                                        )
+                                        .border(2.dp, Color.White.copy(alpha = 0.8f), RoundedCornerShape(16.dp))
+                                        .clickable { isHapticEnabled = !isHapticEnabled },
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = if (isHapticEnabled) "📳" else "📵",
+                                        fontSize = 28.sp
+                                    )
+                                }
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        // Action Capsule Pills Column
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 20.dp),
+                            verticalArrangement = Arrangement.spacedBy(10.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            // 1. Restart Level Pill (Teal/Cyan 3D Gradient)
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .shadow(6.dp, RoundedCornerShape(16.dp))
+                                    .clip(RoundedCornerShape(16.dp))
+                                    .background(
+                                        Brush.verticalGradient(
+                                            listOf(Color(0xFF2DD4BF), Color(0xFF0D9488), Color(0xFF0F766E))
+                                        )
+                                    )
+                                    .border(1.5.dp, Color.White.copy(alpha = 0.6f), RoundedCornerShape(16.dp))
+                                    .clickable {
+                                        showHamburgerMenu = false
+                                        onRestartLevel()
+                                    }
+                                    .padding(vertical = 12.dp, horizontal = 16.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(text = "🔄", fontSize = 18.sp)
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = "Seviyeyi Restart Et",
+                                        color = Color.White,
+                                        fontSize = 15.sp,
+                                        fontWeight = FontWeight.Black,
+                                        fontFamily = nunitoFont
+                                    )
+                                }
+                            }
+
+                            // 2. Privacy Policy Pill (Teal 3D Gradient)
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .shadow(6.dp, RoundedCornerShape(16.dp))
+                                    .clip(RoundedCornerShape(16.dp))
+                                    .background(
+                                        Brush.verticalGradient(
+                                            listOf(Color(0xFF38BDF8), Color(0xFF0284C7), Color(0xFF0369A1))
+                                        )
+                                    )
+                                    .border(1.5.dp, Color.White.copy(alpha = 0.6f), RoundedCornerShape(16.dp))
+                                    .clickable {
+                                        showHamburgerMenu = false
+                                        val intent = android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse(context.getString(com.turkce.kelimesolitaire.R.string.privacy_policy_url)))
+                                        context.startActivity(intent)
+                                    }
+                                    .padding(vertical = 12.dp, horizontal = 16.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(text = "🛡️", fontSize = 18.sp)
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = "Gizlilik Politikası",
+                                        color = Color.White,
+                                        fontSize = 15.sp,
+                                        fontWeight = FontWeight.Black,
+                                        fontFamily = nunitoFont
+                                    )
+                                }
+                            }
+
+                            // 3. Watch Ad for Coins Pill (Magenta/Purple 3D Gradient)
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .shadow(6.dp, RoundedCornerShape(16.dp))
+                                    .clip(RoundedCornerShape(16.dp))
+                                    .background(
+                                        Brush.verticalGradient(
+                                            listOf(Color(0xFFC084FC), Color(0xFF9333EA), Color(0xFF7E22CE))
+                                        )
+                                    )
+                                    .border(1.5.dp, Color.White.copy(alpha = 0.6f), RoundedCornerShape(16.dp))
+                                    .clickable {
+                                        showHamburgerMenu = false
+                                        onWatchAdForCoins()
+                                    }
+                                    .padding(vertical = 12.dp, horizontal = 16.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    com.turkce.kelimesolitaire.presentation.ui.components.AdIcon(size = 20.dp)
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = "Ücretsiz Altın Kazan (+50 ",
+                                        color = Color.White,
+                                        fontSize = 15.sp,
+                                        fontWeight = FontWeight.Black,
+                                        fontFamily = nunitoFont
+                                    )
+                                    com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 18.dp)
+                                    Text(text = ")", color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.Black, fontFamily = nunitoFont)
+                                }
+                            }
+
+                            // 4. Exit to Main Menu Pill (Red 3D Gradient)
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .shadow(6.dp, RoundedCornerShape(16.dp))
+                                    .clip(RoundedCornerShape(16.dp))
+                                    .background(
+                                        Brush.verticalGradient(
+                                            listOf(Color(0xFFF87171), Color(0xFFEF4444), Color(0xFFDC2626))
+                                        )
+                                    )
+                                    .border(1.5.dp, Color.White.copy(alpha = 0.6f), RoundedCornerShape(16.dp))
+                                    .clickable {
+                                        showHamburgerMenu = false
+                                        onBackToMenu()
+                                    }
+                                    .padding(vertical = 12.dp, horizontal = 16.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(text = "🚪", fontSize = 18.sp)
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = "Ana Menüye Dön",
+                                        color = Color.White,
+                                        fontSize = 15.sp,
+                                        fontWeight = FontWeight.Black,
+                                        fontFamily = nunitoFont
+                                    )
+                                }
                             }
                         }
                     }
@@ -1195,62 +1494,50 @@ fun GameScreen(
                     }
                 }
             }
+        }
 
-            // 5. CATEGORY COMPLETED CELEBRATION OVERLAY
-            completedCategoryName?.let { categoryName ->
+        // 5. CATEGORY COMPLETED CELEBRATION FLOATING BANNER (Non-blocking!)
+        completedCategoryName?.let { categoryName ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 70.dp)
+                    .zIndex(150f),
+                contentAlignment = Alignment.TopCenter
+            ) {
                 Box(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Black.copy(alpha = 0.5f))
-                        .zIndex(150f)
-                        .clickable(
-                            indication = null,
-                            interactionSource = remember { MutableInteractionSource() }
-                        ) {},
+                        .shadow(12.dp, RoundedCornerShape(20.dp))
+                        .clip(RoundedCornerShape(20.dp))
+                        .background(
+                            Brush.horizontalGradient(
+                                colors = listOf(Color(0xFFF59E0B), Color(0xFFD97706), Color(0xFFB45309))
+                            )
+                        )
+                        .border(2.dp, Color.White, RoundedCornerShape(20.dp))
+                        .padding(horizontal = 24.dp, vertical = 10.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier
-                            .background(
-                                Brush.verticalGradient(
-                                    colors = listOf(Color(0xFF0F3620), Color(0xFF071F11))
-                                ),
-                                shape = RoundedCornerShape(16.dp)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(text = "👑", fontSize = 24.sp)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(
+                                text = "KATEGORİ TAMAMLANDI!",
+                                color = AccentGold,
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.Black,
+                                fontFamily = nunitoFont,
+                                letterSpacing = 1.sp
                             )
-                            .border(2.dp, AccentGold, RoundedCornerShape(16.dp))
-                            .padding(24.dp)
-                            .width(260.dp)
-                    ) {
-                        Text(
-                            text = "👑",
-                            fontSize = 48.sp,
-                            modifier = Modifier.padding(bottom = 8.dp)
-                        )
-                        Text(
-                            text = "KATEGORİ TAMAMLANDI!",
-                            color = AccentGold,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Black,
-                            textAlign = TextAlign.Center,
-                            letterSpacing = 1.sp
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = categoryName.uppercase(),
-                            color = Color.White,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Black,
-                            textAlign = TextAlign.Center
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Text(
-                            text = "Harika Eşleştirme! 🌟",
-                            color = Color.White.copy(alpha = 0.7f),
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold,
-                            textAlign = TextAlign.Center
-                        )
+                            Text(
+                                text = categoryName.uppercase(),
+                                color = Color.White,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Black,
+                                fontFamily = nunitoFont
+                            )
+                        }
                     }
                 }
             }

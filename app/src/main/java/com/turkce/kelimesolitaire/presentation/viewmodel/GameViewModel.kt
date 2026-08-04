@@ -58,7 +58,10 @@ data class GameUiState(
     val hintedCardId: String? = null,
     val hintedTargetId: String? = null,
     val showOutofMovesDialog: Boolean = false,
-    val completedCategoryName: String? = null
+    val completedCategoryName: String? = null,
+    val shatteringJokerId: String? = null,
+    val isAdFree: Boolean = false,
+    val showStoreDialog: Boolean = false
 )
 
 class GameViewModel : ViewModel() {
@@ -211,9 +214,19 @@ class GameViewModel : ViewModel() {
                     break
                 }
             } else {
-                val actualCategory = tempActiveCategory ?: _uiState.value.levelData?.targetCategories?.find { it.id == card.categoryId }
-                if (actualCategory != null && (card.categoryId == actualCategory.id || card.categoryId == "joker_wildcard")) {
-                    val wordToAdd = card.word ?: _uiState.value.levelData?.targetWords?.find { it.id == card.id.removePrefix("word_") }
+                // Word cards can ONLY be placed if a category card is ALREADY active in this slot (or placed first in this batch)
+                if (tempActiveCategory == null) {
+                    break
+                }
+
+                val actualCategory = tempActiveCategory
+                if (card.categoryId == actualCategory.id || card.categoryId == "joker_wildcard") {
+                    val wordToAdd = if (card.categoryId == "joker_wildcard") {
+                        card.word ?: com.turkce.kelimesolitaire.data.model.Word(card.id, actualCategory.id, "JOKER", "Kolay")
+                    } else {
+                        card.word ?: _uiState.value.levelData?.targetWords?.find { it.id == card.id.removePrefix("word_") }
+                    }
+
                     if (wordToAdd != null) {
                         if (!tempMatchedWords.any { it.id == wordToAdd.id }) {
                             tempMatchedWords.add(wordToAdd)
@@ -256,6 +269,7 @@ class GameViewModel : ViewModel() {
             if (newTotalMatched < _uiState.value.totalWordsToMatch || _uiState.value.totalWordsToMatch == 0) {
                 saveActiveSessionToPrefs(context)
             }
+            checkExposedJokers()
 
             val targetCategory = tempActiveCategory
             if (targetCategory != null) {
@@ -340,11 +354,73 @@ class GameViewModel : ViewModel() {
             }
             checkMovesRemaining()
             saveActiveSessionToPrefs(context)
+            checkExposedJokers()
             return true
         } else {
             triggerShakeError(movingTopCard.id)
             return false
         }
+    }
+
+    private val coveredJokerIds = mutableSetOf<String>()
+
+    fun checkExposedJokers() {
+        val currentState = _uiState.value
+        if (currentState.shatteringJokerId != null) return
+
+        // 1. Mark any Joker that has cards stacked on top of it as covered
+        for (col in currentState.tableauPiles) {
+            for (i in 0 until col.size - 1) {
+                if (col[i].categoryId == "joker_wildcard") {
+                    coveredJokerIds.add(col[i].id)
+                }
+            }
+        }
+
+        // 2. Find a Joker that WAS covered and is NOW exposed at the top of a column
+        var exposedJokerId: String? = null
+        for (col in currentState.tableauPiles) {
+            if (col.isNotEmpty()) {
+                val lastCard = col.last()
+                if (lastCard.categoryId == "joker_wildcard" && coveredJokerIds.contains(lastCard.id)) {
+                    exposedJokerId = lastCard.id
+                    break
+                }
+            }
+        }
+
+        if (exposedJokerId != null) {
+            coveredJokerIds.remove(exposedJokerId)
+            triggerJokerShatter(exposedJokerId)
+        }
+    }
+
+    private fun triggerJokerShatter(jokerId: String) {
+        _uiState.update { it.copy(shatteringJokerId = jokerId) }
+        viewModelScope.launch {
+            delay(650)
+            consumeAndRemoveJoker(jokerId)
+        }
+    }
+
+    private fun consumeAndRemoveJoker(jokerId: String) {
+        _uiState.update { state ->
+            val newWaste = state.wastePile.filterNot { it.id == jokerId }
+            val newTableaus = state.tableauPiles.map { col ->
+                val filtered = col.filterNot { it.id == jokerId }.toMutableList()
+                if (filtered.isNotEmpty()) {
+                    val lastIdx = filtered.size - 1
+                    filtered[lastIdx] = filtered[lastIdx].copy(isFaceUp = true)
+                }
+                filtered.toList()
+            }
+            state.copy(
+                wastePile = newWaste,
+                tableauPiles = newTableaus,
+                shatteringJokerId = null
+            )
+        }
+        checkExposedJokers()
     }
 
     private fun removeCardsFromSource(cards: List<SolitaireCard>): Pair<List<List<SolitaireCard>>, List<SolitaireCard>> {
@@ -476,7 +552,24 @@ class GameViewModel : ViewModel() {
         }
         
         val savedCoins = prefs.getInt("user_coins", 100)
-        _uiState.update { it.copy(completedLevels = completedSet, coins = savedCoins) }
+        val isAdFree = prefs.getBoolean("is_ad_free", false)
+        _uiState.update { it.copy(completedLevels = completedSet, coins = savedCoins, isAdFree = isAdFree) }
+    }
+
+    fun toggleStoreDialog(show: Boolean) {
+        _uiState.update { it.copy(showStoreDialog = show) }
+    }
+
+    fun buyCoinPack(context: Context, coinAmount: Int) {
+        val newCoins = _uiState.value.coins + coinAmount
+        _uiState.update { it.copy(coins = newCoins, showStoreDialog = false) }
+        saveCoinsToPrefs(context, newCoins)
+    }
+
+    fun buyRemoveAds(context: Context) {
+        val prefs = context.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)
+        prefs.edit().putBoolean("is_ad_free", true).apply()
+        _uiState.update { it.copy(isAdFree = true, showStoreDialog = false) }
     }
 
     private fun saveCoinsToPrefs(context: Context, newCoins: Int) {
@@ -507,6 +600,7 @@ class GameViewModel : ViewModel() {
                     wastePile = session.wastePile,
                     score = session.score,
                     movesRemaining = session.movesRemaining,
+                    totalWordsToMatch = session.levelData.targetWords.size,
                     totalMatchedWordsCount = session.totalMatchedWordsCount,
                     screenState = ScreenState.Gameplay,
                     selectedCardId = null,
@@ -653,37 +747,29 @@ class GameViewModel : ViewModel() {
             return
         }
 
-        val emptyColIdx = state.tableauPiles.indexOfFirst { it.isEmpty() }
-        if (emptyColIdx == -1) {
-            onShowToast("Joker için boş bir sütun gerekli!")
-            return
-        }
-
         pushToUndoStack()
 
         val jokerCard = SolitaireCard(
             id = "joker_${System.currentTimeMillis()}",
-            text = "🃏 JOKER",
+            text = "JOKER",
             categoryId = "joker_wildcard",
             isCategory = false,
             isFaceUp = true,
-            word = Word("joker_word", "joker_wildcard", "JOKER", "Kolay")
+            word = Word("joker_word_${System.currentTimeMillis()}", "joker_wildcard", "JOKER", "Kolay")
         )
 
-        val newTableaus = state.tableauPiles.mapIndexed { idx, col ->
-            if (idx == emptyColIdx) listOf(jokerCard) else col
-        }
+        val newWaste = state.wastePile + jokerCard
 
         _uiState.update {
             it.copy(
-                tableauPiles = newTableaus,
+                wastePile = newWaste,
                 coins = maxOf(0, it.coins - 200)
             )
         }
 
         saveCoinsToPrefs(context, _uiState.value.coins)
         saveActiveSessionToPrefs(context)
-        onShowToast("Joker bağlayıcı کارت yerleştirildi! (-200 🪙)")
+        onShowToast("Joker kartı çekildi! (-200 🪙)")
     }
 
     private fun findPossibleMove(): Pair<String, String>? {

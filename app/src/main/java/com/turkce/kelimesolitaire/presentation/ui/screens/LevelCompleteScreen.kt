@@ -26,6 +26,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.turkce.kelimesolitaire.presentation.ui.components.AdBannerPlaceholder
+import com.turkce.kelimesolitaire.presentation.ui.components.OutlinedText
+import com.turkce.kelimesolitaire.presentation.ui.components.rememberNunitoFont
 import com.turkce.kelimesolitaire.presentation.ui.theme.AccentGold
 import com.turkce.kelimesolitaire.presentation.ui.theme.BorderGlass
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg
@@ -39,8 +41,10 @@ fun LevelCompleteScreen(
     bonusCoins: Int,
     onNextLevelClicked: () -> Unit,
     onMainMenuClicked: () -> Unit,
+    isAdFree: Boolean = false,
     modifier: Modifier = Modifier
 ) {
+    val nunitoFont = rememberNunitoFont()
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -57,10 +61,12 @@ fun LevelCompleteScreen(
 
             // Victory Title
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
+                OutlinedText(
                     text = "🏆 HARİKA!",
-                    color = SuccessGreen,
-                    fontSize = 36.sp,
+                    textColor = SuccessGreen,
+                    outlineColor = Color(0xFF0F172A),
+                    outlineWidth = 6f,
+                    fontSize = 42.sp,
                     fontWeight = FontWeight.Black,
                     letterSpacing = 2.sp
                 )
@@ -68,15 +74,16 @@ fun LevelCompleteScreen(
                 Text(
                     text = "Seviye $levelNumber Tamamlandı",
                     color = TextPrimary,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Black,
+                    fontFamily = nunitoFont
                 )
             }
 
             // Reward Summary Card
             Box(
                 modifier = Modifier
-                    .width(280.dp)
+                    .width(290.dp)
                     .background(DarkCard, shape = RoundedCornerShape(16.dp))
                     .border(1.dp, BorderGlass, RoundedCornerShape(16.dp))
                     .padding(24.dp),
@@ -86,8 +93,9 @@ fun LevelCompleteScreen(
                     Text(
                         text = "KAZANILAN ÖDÜL",
                         color = Color(0xFF94A3B8),
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.Bold,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Black,
+                        fontFamily = nunitoFont,
                         letterSpacing = 1.sp
                     )
                     Spacer(modifier = Modifier.height(12.dp))
@@ -95,13 +103,14 @@ fun LevelCompleteScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
                     ) {
-                        com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 28.dp)
+                        com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 32.dp)
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = "+$bonusCoins Altın",
                             color = AccentGold,
-                            fontSize = 22.sp,
-                            fontWeight = FontWeight.Black
+                            fontSize = 26.sp,
+                            fontWeight = FontWeight.Black,
+                            fontFamily = nunitoFont
                         )
                     }
                 }
@@ -137,15 +146,16 @@ fun LevelCompleteScreen(
                             )
                         )
                         .clickable { onNextLevelClicked() }
-                        .padding(horizontal = 28.dp, vertical = 14.dp),
+                        .padding(horizontal = 30.dp, vertical = 14.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
+                    OutlinedText(
                         text = "SONRAKİ SEVİYE",
-                        color = Color.White,
-                        fontSize = 18.sp,
+                        textColor = Color.White,
+                        outlineColor = Color(0xFF1E3A07),
+                        outlineWidth = 5f,
+                        fontSize = 22.sp,
                         fontWeight = FontWeight.Black,
-                        fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif,
                         letterSpacing = 1.2.sp
                     )
                 }
@@ -176,22 +186,22 @@ fun LevelCompleteScreen(
                             )
                         )
                         .clickable { onMainMenuClicked() }
-                        .padding(horizontal = 24.dp, vertical = 10.dp),
+                        .padding(horizontal = 26.dp, vertical = 10.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = "ANA MENÜ",
                         color = Color.White,
-                        fontSize = 15.sp,
+                        fontSize = 17.sp,
                         fontWeight = FontWeight.Black,
-                        fontFamily = androidx.compose.ui.text.font.FontFamily.SansSerif,
+                        fontFamily = nunitoFont,
                         letterSpacing = 1.sp
                     )
                 }
             }
 
             // Ad Banner Footer
-            AdBannerPlaceholder()
+            AdBannerPlaceholder(isAdFree = isAdFree)
         }
     }
 }

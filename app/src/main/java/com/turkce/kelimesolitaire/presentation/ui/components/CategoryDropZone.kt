@@ -46,6 +46,7 @@ fun CategoryDropZone(
     onBoundsPositioned: (FoundationSlot, Rect) -> Unit, // Window coordinates bounds reporter
     modifier: Modifier = Modifier
 ) {
+    val nunitoFont = rememberNunitoFont()
     val scaleFactor by animateFloatAsState(targetValue = if (isHighlighted) 1.05f else 1.0f)
     val activeCategory = slot.activeCategory
     val matchedWords = slot.matchedWords
@@ -92,7 +93,8 @@ fun CategoryDropZone(
                     text = "Kat. Eşle",
                     color = Color.White.copy(alpha = 0.4f),
                     fontSize = 9.sp,
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight.W800,
+                    fontFamily = nunitoFont,
                     textAlign = TextAlign.Center
                 )
             }
@@ -138,7 +140,8 @@ fun CategoryDropZone(
                         text = activeCategory.name,
                         color = Color.Black,
                         fontSize = 9.sp,
-                        fontWeight = FontWeight.ExtraBold,
+                        fontWeight = FontWeight.W800,
+                        fontFamily = nunitoFont,
                         maxLines = 2,
                         lineHeight = 10.sp,
                         textAlign = TextAlign.Center
@@ -157,7 +160,8 @@ fun CategoryDropZone(
                         text = "${matchedWords.size}/$totalWords",
                         color = Color.DarkGray,
                         fontSize = 9.sp,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.W800,
+                        fontFamily = nunitoFont,
                         modifier = Modifier.align(Alignment.TopEnd)
                     )
 
@@ -177,13 +181,27 @@ fun CategoryDropZone(
                     ) {
                         val lastWord = matchedWords.lastOrNull()
                         if (lastWord != null) {
+                            val length = lastWord.wordText.length
+                            val dropZoneFontSize = when {
+                                length >= 12 -> 8.5.sp
+                                length >= 10 -> 9.5.sp
+                                length >= 8 -> 10.5.sp
+                                else -> 12.sp
+                            }
+                            val dropZoneLetterSpacing = when {
+                                length >= 10 -> (-0.5).sp
+                                else -> 0.sp
+                            }
                             Text(
                                 text = lastWord.wordText,
                                 color = Color.Black,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold,
-                                textAlign = TextAlign.Center,
-                                lineHeight = 15.sp
+                                fontSize = dropZoneFontSize,
+                                fontWeight = FontWeight.W800,
+                                fontFamily = nunitoFont,
+                                maxLines = 1,
+                                softWrap = false,
+                                letterSpacing = dropZoneLetterSpacing,
+                                textAlign = TextAlign.Center
                             )
                         } else {
                             Text(

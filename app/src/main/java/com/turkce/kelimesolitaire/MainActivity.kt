@@ -16,6 +16,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.turkce.kelimesolitaire.presentation.ui.components.StoreDialog
 import com.turkce.kelimesolitaire.presentation.ui.screens.GameOverScreen
 import com.turkce.kelimesolitaire.presentation.ui.screens.GameScreen
 import com.turkce.kelimesolitaire.presentation.ui.screens.LevelCompleteScreen
@@ -53,10 +54,12 @@ class MainActivity : ComponentActivity() {
                                 levelNumber = state.levelNumber,
                                 coins = state.coins,
                                 completedLevels = state.completedLevels,
+                                isAdFree = state.isAdFree,
                                 onStartGameClicked = { level ->
                                     viewModel.playLevel(level, this@MainActivity)
                                 },
-                                onWatchAdForCoins = { viewModel.watchRewardedAdForCoins(this@MainActivity) }
+                                onWatchAdForCoins = { viewModel.watchRewardedAdForCoins(this@MainActivity) },
+                                onOpenStore = { viewModel.toggleStoreDialog(true) }
                             )
                         }
                         is ScreenState.Gameplay -> {
@@ -79,6 +82,9 @@ class MainActivity : ComponentActivity() {
                                     hintedTargetId = state.hintedTargetId,
                                     showOutofMovesDialog = state.showOutofMovesDialog,
                                     completedCategoryName = state.completedCategoryName,
+                                    shatteringJokerId = state.shatteringJokerId,
+                                    isAdFree = state.isAdFree,
+                                    onOpenStore = { viewModel.toggleStoreDialog(true) },
                                     onCardSelected = { cardId -> viewModel.selectCard(cardId) },
                                     onCardDropped = { cards, slot ->
                                         viewModel.attemptPlaceCards(cards, slot, this@MainActivity)
@@ -133,6 +139,16 @@ class MainActivity : ComponentActivity() {
                                 onMainMenuClicked = { viewModel.returnToMainMenu() }
                             )
                         }
+                    }
+
+                    if (state.showStoreDialog) {
+                        StoreDialog(
+                            isAdFree = state.isAdFree,
+                            onClose = { viewModel.toggleStoreDialog(false) },
+                            onWatchAdForCoins = { viewModel.watchRewardedAdForCoins(this@MainActivity) },
+                            onBuyCoinPack = { amount -> viewModel.buyCoinPack(this@MainActivity, amount) },
+                            onBuyRemoveAds = { viewModel.buyRemoveAds(this@MainActivity) }
+                        )
                     }
                 }
             }
