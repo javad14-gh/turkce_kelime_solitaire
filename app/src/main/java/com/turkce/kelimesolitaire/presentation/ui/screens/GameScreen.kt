@@ -385,7 +385,7 @@ fun GameScreen(
                                                             SoundEffects.playCoinSound()
                                                             floatingCoins = floatingCoins + FloatingCoinText(
                                                                 id = System.currentTimeMillis() + matchedSlot.id,
-                                                                text = "+$earnedAmount 🪙",
+                                                                text = "+$earnedAmount",
                                                                 startOffset = Offset(bounds.left + (bounds.width / 2) - 40f, bounds.top - 20f)
                                                             )
                                                         }
@@ -658,15 +658,8 @@ fun GameScreen(
                                                     onCardStacked(group, colIdx)
                                                 }
                                             }
-                                        },
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = "➕",
-                                        fontSize = 22.sp,
-                                        color = Color.White.copy(alpha = 0.35f)
-                                    )
-                                }
+                                        }
+                                )
                             }
 
                             colList.forEachIndexed { rowIdx, card ->
@@ -714,7 +707,7 @@ fun GameScreen(
                                                                     SoundEffects.playCoinSound()
                                                                     floatingCoins = floatingCoins + FloatingCoinText(
                                                                         id = System.currentTimeMillis() + matchedSlot.id.hashCode(),
-                                                                        text = "+$earnedAmount 🪙",
+                                                                        text = "+$earnedAmount",
                                                                         startOffset = Offset(bounds.left + (bounds.width / 2) - 40f, bounds.top - 20f)
                                                                     )
                                                                 }
@@ -1183,19 +1176,23 @@ fun GameScreen(
                             scaleY = 1.1f
                         )
                 ) {
-                    Text(
-                        text = item.text,
-                        color = Color(0xFFF1C40F), // Bright Golden Yellow
-                        fontSize = 22.sp, // Larger, more visible font
-                        fontWeight = FontWeight.Black,
-                        style = TextStyle(
-                            shadow = Shadow(
-                                color = Color.Black.copy(alpha = 0.8f),
-                                offset = Offset(3f, 3f),
-                                blurRadius = 6f
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = item.text,
+                            color = Color(0xFFF1C40F), // Bright Golden Yellow
+                            fontSize = 22.sp, // Larger, more visible font
+                            fontWeight = FontWeight.Black,
+                            style = TextStyle(
+                                shadow = Shadow(
+                                    color = Color.Black.copy(alpha = 0.8f),
+                                    offset = Offset(3f, 3f),
+                                    blurRadius = 6f
+                                )
                             )
                         )
-                    )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 22.dp)
+                    }
                 }
             }
 
