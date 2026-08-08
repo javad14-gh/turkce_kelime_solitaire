@@ -1,5 +1,6 @@
 package com.turkce.kelimesolitaire.presentation.ui.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -28,7 +29,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import com.turkce.kelimesolitaire.R
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -86,39 +89,33 @@ fun StoreDialog(
                         .padding(horizontal = 16.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    OutlinedText(
-                        text = "🛒 MAĞAZA & ÖDÜLLER",
-                        textColor = Color.White,
-                        outlineColor = Color(0xFF78350F),
-                        outlineWidth = 5f,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Black,
-                        textAlign = TextAlign.Center
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Image(
+                            painter = painterResource(id = R.drawable.buy),
+                            contentDescription = "Store",
+                            modifier = Modifier.size(26.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        OutlinedText(
+                            text = "MAĞAZA & ÖDÜLLER",
+                            textColor = Color.White,
+                            outlineColor = Color(0xFF78350F),
+                            outlineWidth = 5f,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Black,
+                            textAlign = TextAlign.Center
+                        )
+                    }
 
                     // Close (X) Button Top Right
-                    Box(
+                    Image(
+                        painter = painterResource(id = R.drawable.cancel),
+                        contentDescription = "Close",
                         modifier = Modifier
                             .align(Alignment.CenterEnd)
                             .size(34.dp)
-                            .shadow(6.dp, CircleShape)
-                            .clip(CircleShape)
-                            .background(
-                                Brush.verticalGradient(
-                                    listOf(Color(0xFFEF4444), Color(0xFFDC2626), Color(0xFF991B1B))
-                                )
-                            )
-                            .border(1.5.dp, Color.White, CircleShape)
-                            .clickable { onClose() },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "✕",
-                            color = Color.White,
-                            fontSize = 17.sp,
-                            fontWeight = FontWeight.Black
-                        )
-                    }
+                            .clickable { onClose() }
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -148,13 +145,21 @@ fun StoreDialog(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = "📺 Ücretsiz Altın",
-                                    color = Color.White,
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Black,
-                                    fontFamily = nunitoFont
-                                )
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.tv),
+                                        contentDescription = "TV Ad",
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text(
+                                        text = "Ücretsiz Altın",
+                                        color = Color.White,
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.Black,
+                                        fontFamily = nunitoFont
+                                    )
+                                }
                                 Text(
                                     text = "Kısa bir reklam izle ve 50 Altın kazan!",
                                     color = Color(0xFFC7D2FE),
@@ -183,7 +188,11 @@ fun StoreDialog(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
-                                    AdIcon(size = 16.dp)
+                                    Image(
+                                        painter = painterResource(id = R.drawable.tv),
+                                        contentDescription = "Watch Ad",
+                                        modifier = Modifier.size(18.dp)
+                                    )
                                     Spacer(modifier = Modifier.width(4.dp))
                                     Text(
                                         text = "+50",
@@ -264,13 +273,21 @@ fun StoreDialog(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = "🚫 Reklamları Kaldır",
-                                    color = Color.White,
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Black,
-                                    fontFamily = nunitoFont
-                                )
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.no_ads),
+                                        contentDescription = "No Ads",
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text(
+                                        text = "Reklamları Kaldır",
+                                        color = Color.White,
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.Black,
+                                        fontFamily = nunitoFont
+                                    )
+                                }
                                 Text(
                                     text = if (isAdFree) "Tüm reklamlar kaldırıldı!" else "Tüm geçiş ve banner reklamlarını sonsuza dek kapat!",
                                     color = Color.White.copy(alpha = 0.9f),
@@ -345,7 +362,11 @@ private fun CoinPackRow(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                CoinIcon(size = 32.dp)
+                Image(
+                    painter = painterResource(id = R.drawable.coins),
+                    contentDescription = "Coins Stack",
+                    modifier = Modifier.size(36.dp)
+                )
                 Spacer(modifier = Modifier.width(10.dp))
                 Column {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -386,13 +407,24 @@ private fun CoinPackRow(
                     .padding(horizontal = 14.dp, vertical = 8.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = priceText,
-                    color = Color.White,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Black,
-                    fontFamily = nunitoFont
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.buy),
+                        contentDescription = "Buy",
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = priceText,
+                        color = Color.White,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Black,
+                        fontFamily = nunitoFont
+                    )
+                }
             }
         }
     }

@@ -2,6 +2,7 @@ package com.turkce.kelimesolitaire.presentation.ui.screens
 
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -35,8 +36,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import com.turkce.kelimesolitaire.R
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -125,11 +130,11 @@ fun MainMenuScreen(
                 ) {
                     // Gold Coin Icon + Green '+' Circle Badge
                     Box(contentAlignment = Alignment.BottomEnd) {
-                        com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 30.dp)
+                        com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 38.dp)
                         Box(
                             modifier = Modifier
                                 .offset(x = 3.dp, y = 3.dp)
-                                .size(14.dp)
+                                .size(16.dp)
                                 .clip(CircleShape)
                                 .background(Color(0xFF4CAF50))
                                 .border(1.dp, Color.White, CircleShape),
@@ -138,7 +143,7 @@ fun MainMenuScreen(
                             Text(
                                 text = "+",
                                 color = Color.White,
-                                fontSize = 10.sp,
+                                fontSize = 12.sp,
                                 fontWeight = FontWeight.Black
                             )
                         }
@@ -147,26 +152,20 @@ fun MainMenuScreen(
                     Text(
                         text = "$coins",
                         color = Color.White,
-                        fontSize = 19.sp,
+                        fontSize = 24.sp,
                         fontWeight = FontWeight.Black,
                         fontFamily = nunitoFont
                     )
                 }
 
-                // Settings Button (⚙️)
-                Box(
+                // Settings Icon (No border box)
+                androidx.compose.foundation.Image(
+                    painter = androidx.compose.ui.res.painterResource(id = com.turkce.kelimesolitaire.R.drawable.setting),
+                    contentDescription = "Settings",
                     modifier = Modifier
-                        .size(40.dp)
+                        .size(42.dp)
                         .clickable { showSettingsMenu = true }
-                        .border(1.5.dp, BorderGlass, RoundedCornerShape(10.dp))
-                        .background(Color.White.copy(alpha = 0.08f)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "⚙️",
-                        fontSize = 20.sp
-                    )
-                }
+                )
             }
 
             // Central Game Branding
@@ -179,7 +178,7 @@ fun MainMenuScreen(
                     textColor = SecondaryNeon,
                     outlineColor = Color(0xFF0F172A),
                     outlineWidth = 6f,
-                    fontSize = 30.sp,
+                    fontSize = 38.sp,
                     fontWeight = FontWeight.Black,
                     letterSpacing = 1.5.sp,
                     textAlign = TextAlign.Center
@@ -189,7 +188,7 @@ fun MainMenuScreen(
                     textColor = PrimaryNeon,
                     outlineColor = Color(0xFF0F172A),
                     outlineWidth = 6f,
-                    fontSize = 34.sp,
+                    fontSize = 42.sp,
                     fontWeight = FontWeight.Black,
                     letterSpacing = 1.sp,
                     textAlign = TextAlign.Center
@@ -198,10 +197,10 @@ fun MainMenuScreen(
                 Text(
                     text = "Kelimeleri sürükle, grupları eşleştir, bölümleri tamamla!",
                     color = TextSecondary,
-                    fontSize = 14.sp,
+                    fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
-                    lineHeight = 20.sp,
+                    lineHeight = 24.sp,
                     modifier = Modifier.padding(horizontal = 24.dp)
                 )
             }
@@ -248,7 +247,7 @@ fun MainMenuScreen(
                             textColor = Color.White,
                             outlineColor = Color(0xFF1E3A07),
                             outlineWidth = 5f,
-                            fontSize = 26.sp,
+                            fontSize = 32.sp,
                             fontWeight = FontWeight.Black,
                             letterSpacing = 1.2.sp
                         )
@@ -282,49 +281,48 @@ fun MainMenuScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // 3D Watch Ad Button
+                // 3D Store Button on Main Screen (with LARGE buy.png icon extending to button edges)
                 Box(
                     modifier = Modifier
-                        .shadow(10.dp, RoundedCornerShape(18.dp))
-                        .clip(RoundedCornerShape(18.dp))
+                        .shadow(12.dp, RoundedCornerShape(22.dp))
+                        .clip(RoundedCornerShape(22.dp))
                         .background(
                             Brush.verticalGradient(
                                 colors = listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1))
                             )
                         )
                         .padding(3.dp)
-                        .clip(RoundedCornerShape(15.dp))
-                        .background(Color(0xFFB8860B))
+                        .clip(RoundedCornerShape(19.dp))
+                        .background(Color(0xFF78350F))
                         .padding(bottom = 4.dp)
-                        .clip(RoundedCornerShape(12.dp))
+                        .clip(RoundedCornerShape(16.dp))
                         .background(
                             Brush.verticalGradient(
                                 colors = listOf(
-                                    Color(0xFFFFD700),
                                     Color(0xFFF59E0B),
-                                    Color(0xFFD97706)
+                                    Color(0xFFD97706),
+                                    Color(0xFFB45309)
                                 )
                             )
                         )
-                        .clickable { onWatchAdForCoins() }
-                        .padding(horizontal = 22.dp, vertical = 11.dp),
+                        .clickable { onOpenStore() }
+                        .height(58.dp)
+                        .padding(horizontal = 24.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        com.turkce.kelimesolitaire.presentation.ui.components.AdIcon(size = 22.dp)
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = "Reklam İzle (+50 ",
-                            color = Color(0xFF0F172A),
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Black,
-                            fontFamily = nunitoFont
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.buy),
+                            contentDescription = "Store",
+                            modifier = Modifier.size(46.dp)
                         )
-                        com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 20.dp)
+                        Spacer(modifier = Modifier.width(10.dp))
                         Text(
-                            text = ")",
-                            color = Color(0xFF0F172A),
-                            fontSize = 16.sp,
+                            text = "Mağaza",
+                            color = Color.White,
+                            fontSize = 22.sp,
                             fontWeight = FontWeight.Black,
                             fontFamily = nunitoFont
                         )
@@ -435,34 +433,20 @@ fun MainMenuScreen(
                                 textAlign = TextAlign.Center
                             )
 
-                            // Top Right Circular Red 3D Close Button (X)
-                            Box(
+                            // Top Right Close Button (cancel.png)
+                            Image(
+                                painter = painterResource(id = R.drawable.cancel),
+                                contentDescription = "Close",
                                 modifier = Modifier
                                     .align(Alignment.CenterEnd)
                                     .size(34.dp)
-                                    .shadow(6.dp, CircleShape)
-                                    .clip(CircleShape)
-                                    .background(
-                                        Brush.verticalGradient(
-                                            listOf(Color(0xFFEF4444), Color(0xFFDC2626), Color(0xFF991B1B))
-                                        )
-                                    )
-                                    .border(1.5.dp, Color.White, CircleShape)
-                                    .clickable { showSettingsMenu = false },
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = "✕",
-                                    color = Color.White,
-                                    fontSize = 17.sp,
-                                    fontWeight = FontWeight.Black
-                                )
-                            }
+                                    .clickable { showSettingsMenu = false }
+                            )
                         }
 
                         Spacer(modifier = Modifier.height(18.dp))
 
-                        // Sound & Haptic Toggle Square 3D Buttons Container (Matching Top Section)
+                        // Sound & Haptic Toggle Outer Container Box
                         Box(
                             modifier = Modifier
                                 .padding(horizontal = 20.dp)
@@ -474,62 +458,30 @@ fun MainMenuScreen(
                             contentAlignment = Alignment.Center
                         ) {
                             Row(
-                                horizontalArrangement = Arrangement.spacedBy(24.dp),
+                                horizontalArrangement = Arrangement.spacedBy(36.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                // 1. Sound Speaker 3D Toggle Button
-                                Box(
+                                // 1. Sound Speaker Toggle
+                                Image(
+                                    painter = painterResource(id = R.drawable.sound),
+                                    contentDescription = "Sound",
                                     modifier = Modifier
-                                        .size(64.dp)
-                                        .shadow(8.dp, RoundedCornerShape(16.dp))
-                                        .clip(RoundedCornerShape(16.dp))
-                                        .background(
-                                            if (isSoundEnabled) {
-                                                Brush.verticalGradient(
-                                                    listOf(Color(0xFFA3E635), Color(0xFF65A30D), Color(0xFF4D7C0F))
-                                                )
-                                            } else {
-                                                Brush.verticalGradient(
-                                                    listOf(Color(0xFF64748B), Color(0xFF334155), Color(0xFF1E293B))
-                                                )
-                                            }
-                                        )
-                                        .border(2.dp, Color.White.copy(alpha = 0.8f), RoundedCornerShape(16.dp))
+                                        .size(44.dp)
                                         .clickable { isSoundEnabled = !isSoundEnabled },
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = if (isSoundEnabled) "🔊" else "🔇",
-                                        fontSize = 28.sp
-                                    )
-                                }
+                                    colorFilter = if (!isSoundEnabled) ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) }) else null,
+                                    alpha = if (isSoundEnabled) 1f else 0.4f
+                                )
 
-                                // 2. Haptic Vibration 3D Toggle Button
-                                Box(
+                                // 2. Haptic Vibration Toggle
+                                Image(
+                                    painter = painterResource(id = R.drawable.vibrate),
+                                    contentDescription = "Vibration",
                                     modifier = Modifier
-                                        .size(64.dp)
-                                        .shadow(8.dp, RoundedCornerShape(16.dp))
-                                        .clip(RoundedCornerShape(16.dp))
-                                        .background(
-                                            if (isHapticEnabled) {
-                                                Brush.verticalGradient(
-                                                    listOf(Color(0xFFA3E635), Color(0xFF65A30D), Color(0xFF4D7C0F))
-                                                )
-                                            } else {
-                                                Brush.verticalGradient(
-                                                    listOf(Color(0xFF64748B), Color(0xFF334155), Color(0xFF1E293B))
-                                                )
-                                            }
-                                        )
-                                        .border(2.dp, Color.White.copy(alpha = 0.8f), RoundedCornerShape(16.dp))
+                                        .size(44.dp)
                                         .clickable { isHapticEnabled = !isHapticEnabled },
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = if (isHapticEnabled) "📳" else "📵",
-                                        fontSize = 28.sp
-                                    )
-                                }
+                                    colorFilter = if (!isHapticEnabled) ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) }) else null,
+                                    alpha = if (isHapticEnabled) 1f else 0.4f
+                                )
                             }
                         }
 
@@ -560,23 +512,27 @@ fun MainMenuScreen(
                                         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(context.getString(com.turkce.kelimesolitaire.R.string.privacy_policy_url)))
                                         context.startActivity(intent)
                                     }
-                                    .padding(vertical = 12.dp, horizontal = 16.dp),
+                                    .padding(vertical = 16.dp, horizontal = 20.dp),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Text(text = "🛡️", fontSize = 18.sp)
-                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Image(
+                                        painter = painterResource(id = R.drawable.shield),
+                                        contentDescription = "Privacy Policy",
+                                        modifier = Modifier.size(26.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(10.dp))
                                     Text(
                                         text = "Gizlilik Politikası",
                                         color = Color.White,
-                                        fontSize = 15.sp,
+                                        fontSize = 19.sp,
                                         fontWeight = FontWeight.Black,
                                         fontFamily = nunitoFont
                                     )
                                 }
                             }
 
-                            // 2. Watch Ad for Coins Pill (Magenta/Purple 3D Gradient)
+                            // 2. Open Store Pill
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -584,29 +540,31 @@ fun MainMenuScreen(
                                     .clip(RoundedCornerShape(16.dp))
                                     .background(
                                         Brush.verticalGradient(
-                                            listOf(Color(0xFFC084FC), Color(0xFF9333EA), Color(0xFF7E22CE))
+                                            listOf(Color(0xFFF59E0B), Color(0xFFD97706), Color(0xFFB45309))
                                         )
                                     )
-                                    .border(1.5.dp, Color.White.copy(alpha = 0.6f), RoundedCornerShape(16.dp))
+                                    .border(1.5.dp, Color(0xFFFFD700), RoundedCornerShape(16.dp))
                                     .clickable {
                                         showSettingsMenu = false
-                                        onWatchAdForCoins()
+                                        onOpenStore()
                                     }
-                                    .padding(vertical = 12.dp, horizontal = 16.dp),
+                                    .padding(vertical = 16.dp, horizontal = 20.dp),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
-                                    com.turkce.kelimesolitaire.presentation.ui.components.AdIcon(size = 20.dp)
-                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Image(
+                                        painter = painterResource(id = R.drawable.buy),
+                                        contentDescription = "Store",
+                                        modifier = Modifier.size(28.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(10.dp))
                                     Text(
-                                        text = "Ücretsiz Altın Kazan (+50 ",
+                                        text = "Mağaza",
                                         color = Color.White,
-                                        fontSize = 15.sp,
+                                        fontSize = 20.sp,
                                         fontWeight = FontWeight.Black,
                                         fontFamily = nunitoFont
                                     )
-                                    com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 18.dp)
-                                    Text(text = ")", color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.Black, fontFamily = nunitoFont)
                                 }
                             }
                         }

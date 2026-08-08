@@ -30,10 +30,12 @@ sealed interface ScreenState {
     object Gameplay : ScreenState
     object LevelComplete : ScreenState
     object GameOver : ScreenState // Defeat screen
+    object Store : ScreenState // Full-screen store
 }
 
 data class GameUiState(
     val screenState: ScreenState = ScreenState.Loading,
+    val previousScreenState: ScreenState = ScreenState.MainMenu,
     val levelNumber: Int = 1,
     val score: Int = 0,
     val coins: Int = 100,
@@ -316,9 +318,15 @@ class GameViewModel : ViewModel() {
         val tableaus = _uiState.value.tableauPiles.map { it.toMutableList() }
         if (targetColIdx !in 0..3) return false
 
-        val targetCol = tableaus[targetColIdx]
         val movingTopCard = cards.first()
+
+        // If cards are dropped back onto the exact same column they came from, it's a no-op
+        val sourceColIdx = _uiState.value.tableauPiles.indexOfFirst { col -> col.any { it.id == movingTopCard.id } }
+        if (sourceColIdx == targetColIdx) {
+            return false
+        }
         
+        val targetCol = tableaus[targetColIdx]
         var isValidStack = false
 
         if (targetCol.isEmpty()) {
@@ -556,20 +564,30 @@ class GameViewModel : ViewModel() {
         _uiState.update { it.copy(completedLevels = completedSet, coins = savedCoins, isAdFree = isAdFree) }
     }
 
+    fun openStore() {
+        val current = _uiState.value.screenState
+        val prev = if (current is ScreenState.Store) _uiState.value.previousScreenState else current
+        _uiState.update { it.copy(previousScreenState = prev, screenState = ScreenState.Store) }
+    }
+
+    fun closeStore() {
+        _uiState.update { it.copy(screenState = it.previousScreenState) }
+    }
+
     fun toggleStoreDialog(show: Boolean) {
-        _uiState.update { it.copy(showStoreDialog = show) }
+        if (show) openStore() else closeStore()
     }
 
     fun buyCoinPack(context: Context, coinAmount: Int) {
         val newCoins = _uiState.value.coins + coinAmount
-        _uiState.update { it.copy(coins = newCoins, showStoreDialog = false) }
+        _uiState.update { it.copy(coins = newCoins) }
         saveCoinsToPrefs(context, newCoins)
     }
 
     fun buyRemoveAds(context: Context) {
         val prefs = context.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)
         prefs.edit().putBoolean("is_ad_free", true).apply()
-        _uiState.update { it.copy(isAdFree = true, showStoreDialog = false) }
+        _uiState.update { it.copy(isAdFree = true) }
     }
 
     private fun saveCoinsToPrefs(context: Context, newCoins: Int) {

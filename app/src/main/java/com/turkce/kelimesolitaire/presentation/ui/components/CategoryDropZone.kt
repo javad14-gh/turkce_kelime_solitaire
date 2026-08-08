@@ -83,10 +83,11 @@ fun CategoryDropZone(
             contentAlignment = Alignment.Center
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
-                    text = "👑",
-                    color = Color.White.copy(alpha = 0.3f),
-                    fontSize = 24.sp
+                androidx.compose.foundation.Image(
+                    painter = androidx.compose.ui.res.painterResource(id = com.turkce.kelimesolitaire.R.drawable.crown),
+                    contentDescription = "Crown",
+                    modifier = Modifier.size(24.dp),
+                    alpha = 0.4f
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
@@ -165,12 +166,13 @@ fun CategoryDropZone(
                         modifier = Modifier.align(Alignment.TopEnd)
                     )
 
-                    // Complete Crown Icon
                     if (isCompleted) {
-                        Text(
-                            text = "👑",
-                            fontSize = 10.sp,
-                            modifier = Modifier.align(Alignment.TopStart)
+                        androidx.compose.foundation.Image(
+                            painter = androidx.compose.ui.res.painterResource(id = com.turkce.kelimesolitaire.R.drawable.crown),
+                            contentDescription = "Completed Crown",
+                            modifier = Modifier
+                                .align(Alignment.TopStart)
+                                .size(14.dp)
                         )
                     }
 
@@ -204,12 +206,10 @@ fun CategoryDropZone(
                                 textAlign = TextAlign.Center
                             )
                         } else {
-                            Text(
-                                text = "👑",
-                                color = AccentGold.copy(alpha = 0.8f),
-                                fontSize = 24.sp,
-                                fontWeight = FontWeight.Bold,
-                                textAlign = TextAlign.Center
+                            androidx.compose.foundation.Image(
+                                painter = androidx.compose.ui.res.painterResource(id = com.turkce.kelimesolitaire.R.drawable.crown),
+                                contentDescription = "Category Crown",
+                                modifier = Modifier.size(26.dp)
                             )
                         }
                     }

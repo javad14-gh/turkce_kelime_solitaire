@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -61,12 +62,18 @@ fun LevelCompleteScreen(
 
             // Victory Title
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                androidx.compose.foundation.Image(
+                    painter = androidx.compose.ui.res.painterResource(id = com.turkce.kelimesolitaire.R.drawable.trophy),
+                    contentDescription = "Trophy",
+                    modifier = Modifier.size(90.dp)
+                )
+                Spacer(modifier = Modifier.height(10.dp))
                 OutlinedText(
-                    text = "🏆 HARİKA!",
+                    text = "HARİKA!",
                     textColor = SuccessGreen,
                     outlineColor = Color(0xFF0F172A),
                     outlineWidth = 6f,
-                    fontSize = 42.sp,
+                    fontSize = 52.sp,
                     fontWeight = FontWeight.Black,
                     letterSpacing = 2.sp
                 )
@@ -74,7 +81,7 @@ fun LevelCompleteScreen(
                 Text(
                     text = "Seviye $levelNumber Tamamlandı",
                     color = TextPrimary,
-                    fontSize = 22.sp,
+                    fontSize = 28.sp,
                     fontWeight = FontWeight.Black,
                     fontFamily = nunitoFont
                 )
@@ -93,7 +100,7 @@ fun LevelCompleteScreen(
                     Text(
                         text = "KAZANILAN ÖDÜL",
                         color = Color(0xFF94A3B8),
-                        fontSize = 15.sp,
+                        fontSize = 19.sp,
                         fontWeight = FontWeight.Black,
                         fontFamily = nunitoFont,
                         letterSpacing = 1.sp
@@ -103,12 +110,12 @@ fun LevelCompleteScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
                     ) {
-                        com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 32.dp)
+                        com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 40.dp)
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = "+$bonusCoins Altın",
                             color = AccentGold,
-                            fontSize = 26.sp,
+                            fontSize = 32.sp,
                             fontWeight = FontWeight.Black,
                             fontFamily = nunitoFont
                         )
@@ -154,7 +161,7 @@ fun LevelCompleteScreen(
                         textColor = Color.White,
                         outlineColor = Color(0xFF1E3A07),
                         outlineWidth = 5f,
-                        fontSize = 22.sp,
+                        fontSize = 28.sp,
                         fontWeight = FontWeight.Black,
                         letterSpacing = 1.2.sp
                     )

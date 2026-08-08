@@ -16,11 +16,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.turkce.kelimesolitaire.presentation.ui.components.StoreDialog
 import com.turkce.kelimesolitaire.presentation.ui.screens.GameOverScreen
 import com.turkce.kelimesolitaire.presentation.ui.screens.GameScreen
 import com.turkce.kelimesolitaire.presentation.ui.screens.LevelCompleteScreen
 import com.turkce.kelimesolitaire.presentation.ui.screens.MainMenuScreen
+import com.turkce.kelimesolitaire.presentation.ui.screens.StoreScreen
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.SecondaryNeon
 import com.turkce.kelimesolitaire.presentation.ui.theme.TurkceKelimeSolitaireTheme
@@ -139,16 +139,16 @@ class MainActivity : ComponentActivity() {
                                 onMainMenuClicked = { viewModel.returnToMainMenu() }
                             )
                         }
-                    }
-
-                    if (state.showStoreDialog) {
-                        StoreDialog(
-                            isAdFree = state.isAdFree,
-                            onClose = { viewModel.toggleStoreDialog(false) },
-                            onWatchAdForCoins = { viewModel.watchRewardedAdForCoins(this@MainActivity) },
-                            onBuyCoinPack = { amount -> viewModel.buyCoinPack(this@MainActivity, amount) },
-                            onBuyRemoveAds = { viewModel.buyRemoveAds(this@MainActivity) }
-                        )
+                        is ScreenState.Store -> {
+                            StoreScreen(
+                                coins = state.coins,
+                                isAdFree = state.isAdFree,
+                                onClose = { viewModel.closeStore() },
+                                onWatchAdForCoins = { viewModel.watchRewardedAdForCoins(this@MainActivity) },
+                                onBuyCoinPack = { amount -> viewModel.buyCoinPack(this@MainActivity, amount) },
+                                onBuyRemoveAds = { viewModel.buyRemoveAds(this@MainActivity) }
+                            )
+                        }
                     }
                 }
             }

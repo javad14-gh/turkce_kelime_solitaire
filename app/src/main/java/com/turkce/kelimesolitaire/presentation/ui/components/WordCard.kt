@@ -157,6 +157,7 @@ fun WordCard(
         colors = CardDefaults.cardColors(containerColor = Color.Transparent),
         shape = RoundedCornerShape(8.dp),
         modifier = modifier
+            .zIndex(if (isDragged) 100f else 0f)
             .graphicsLayer {
                 if (isShattering) {
                     alpha = shatterAlpha.value
