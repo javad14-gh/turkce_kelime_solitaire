@@ -99,7 +99,7 @@ class GameViewModel : ViewModel() {
         undoStack.clear() // Clear undo history on fresh start
         clearActiveSessionFromPrefs(activity, currentLvl)
         
-        if (currentLvl > 1 && currentLvl % 2 == 0) {
+        if (!_uiState.value.isAdFree && currentLvl > 1 && currentLvl % 2 == 0) {
             adManager.showInterstitial(activity) {
                 loadLevelData(currentLvl, db)
                 saveActiveSessionToPrefs(activity)
