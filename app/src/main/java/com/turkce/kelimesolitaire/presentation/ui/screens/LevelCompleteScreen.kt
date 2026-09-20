@@ -69,7 +69,7 @@ fun LevelCompleteScreen(
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 OutlinedText(
-                    text = "HARİKA!",
+                    text = "عالی بود!",
                     textColor = SuccessGreen,
                     outlineColor = Color(0xFF0F172A),
                     outlineWidth = 6f,
@@ -79,7 +79,7 @@ fun LevelCompleteScreen(
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
-                    text = "Seviye $levelNumber Tamamlandı",
+                    text = "مرحله $levelNumber تکمیل شد",
                     color = TextPrimary,
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Black,
@@ -98,7 +98,7 @@ fun LevelCompleteScreen(
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "KAZANILAN ÖDÜL",
+                        text = "پاداش دریافتی",
                         color = Color(0xFF94A3B8),
                         fontSize = 19.sp,
                         fontWeight = FontWeight.Black,
@@ -113,7 +113,7 @@ fun LevelCompleteScreen(
                         com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 40.dp)
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "+$bonusCoins Altın",
+                            text = "+$bonusCoins سکه",
                             color = AccentGold,
                             fontSize = 32.sp,
                             fontWeight = FontWeight.Black,
@@ -157,7 +157,7 @@ fun LevelCompleteScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     OutlinedText(
-                        text = "SONRAKİ SEVİYE",
+                        text = "مرحله بعدی",
                         textColor = Color.White,
                         outlineColor = Color(0xFF1E3A07),
                         outlineWidth = 5f,
@@ -197,7 +197,7 @@ fun LevelCompleteScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "ANA MENÜ",
+                        text = "منوی اصلی",
                         color = Color.White,
                         fontSize = 17.sp,
                         fontWeight = FontWeight.Black,

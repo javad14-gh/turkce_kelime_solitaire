@@ -417,7 +417,7 @@ fun StoreScreen(
 
             // Bottom Ad Banner Placeholder if not ad-free
             if (!isAdFree) {
-                AdBannerPlaceholder()
+                AdBannerPlaceholder(isAdFree = isAdFree)
             }
         }
     }

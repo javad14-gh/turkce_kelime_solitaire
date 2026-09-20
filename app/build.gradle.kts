@@ -21,6 +21,20 @@ android {
         }
     }
 
+    flavorDimensions += "market"
+    productFlavors {
+        create("bazaar") {
+            dimension = "market"
+            applicationId = "com.persian.kelimesolitaire"
+            versionNameSuffix = "-fa"
+        }
+        create("googlePlay") {
+            dimension = "market"
+            applicationId = "com.turkce.kelimesolitaire"
+            versionNameSuffix = "-tr"
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -39,6 +53,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.8"

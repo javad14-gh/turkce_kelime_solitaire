@@ -13,17 +13,29 @@ class WordRepository {
     }
 
     fun loadDatabase(context: Context): WordDatabase? {
-        return try {
-            val jsonString = context.assets.open("word_database.json").bufferedReader().use {
-                it.readText()
+        val isPersianFlavor = context.packageName.contains("persian", ignoreCase = true) ||
+                (try {
+                    val buildConfigClass = Class.forName("com.turkce.kelimesolitaire.BuildConfig")
+                    val flavorField = buildConfigClass.getField("FLAVOR")
+                    flavorField.get(null) == "bazaar"
+                } catch (e: Exception) {
+                    false
+                })
+
+        val targetFileName = if (isPersianFlavor) "word_database_fa.json" else "word_database.json"
+        val fallbackFileName = if (isPersianFlavor) "word_database.json" else "word_database_fa.json"
+
+        val assetNames = listOf(targetFileName, fallbackFileName)
+        for (fileName in assetNames) {
+            try {
+                val jsonString = context.assets.open(fileName).bufferedReader().use {
+                    it.readText()
+                }
+                return json.decodeFromString<WordDatabase>(jsonString)
+            } catch (e: Exception) {
+                // Try next file
             }
-            json.decodeFromString<WordDatabase>(jsonString)
-        } catch (e: IOException) {
-            e.printStackTrace()
-            null
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
         }
+        return null
     }
 }

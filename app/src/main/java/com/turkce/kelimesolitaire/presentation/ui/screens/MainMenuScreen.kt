@@ -174,7 +174,7 @@ fun MainMenuScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 OutlinedText(
-                    text = "TÜRKÇE KELİME",
+                    text = "کلمات فارسی",
                     textColor = SecondaryNeon,
                     outlineColor = Color(0xFF0F172A),
                     outlineWidth = 6f,
@@ -184,20 +184,20 @@ fun MainMenuScreen(
                     textAlign = TextAlign.Center
                 )
                 OutlinedText(
-                    text = "EŞLEŞTİRME SOLİTAİRE",
+                    text = "سولیتر کلمه‌بازی",
                     textColor = PrimaryNeon,
                     outlineColor = Color(0xFF0F172A),
                     outlineWidth = 6f,
-                    fontSize = 42.sp,
+                    fontSize = 40.sp,
                     fontWeight = FontWeight.Black,
                     letterSpacing = 1.sp,
                     textAlign = TextAlign.Center
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = "Kelimeleri sürükle, grupları eşleştir, bölümleri tamamla!",
+                    text = "کارت‌ها را بکشید، دسته‌ها را مرتب کنید و مراحل را فتح کنید!",
                     color = TextSecondary,
-                    fontSize = 18.sp,
+                    fontSize = 17.sp,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
                     lineHeight = 24.sp,
@@ -243,7 +243,7 @@ fun MainMenuScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         OutlinedText(
-                            text = "SEVİYE $lastUnsolvedLevel",
+                            text = "مرحله $lastUnsolvedLevel",
                             textColor = Color.White,
                             outlineColor = Color(0xFF1E3A07),
                             outlineWidth = 5f,
@@ -255,7 +255,7 @@ fun MainMenuScreen(
 
                     // Overlapping Difficulty Ribbon Banner (Shown ONLY for Zor and CokZor levels, enlarged size)
                     if (difficulty == "Zor" || difficulty == "CokZor") {
-                        val difficultyText = if (difficulty == "CokZor") "Süper Zor" else "Zor"
+                        val difficultyText = if (difficulty == "CokZor") "خیلی سخت" else "سخت"
                         val ribbonColor = if (difficulty == "CokZor") Color(0xFFDC2626) else Color(0xFFEA580C)
 
                         Box(
@@ -320,7 +320,7 @@ fun MainMenuScreen(
                         )
                         Spacer(modifier = Modifier.width(10.dp))
                         Text(
-                            text = "Mağaza",
+                            text = "فروشگاه",
                             color = Color.White,
                             fontSize = 22.sp,
                             fontWeight = FontWeight.Black,
@@ -345,7 +345,7 @@ fun MainMenuScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Gizlilik Politikası",
+                        text = "حریم خصوصی",
                         color = TextSecondary,
                         fontSize = 11.sp,
                         textDecoration = TextDecoration.Underline,
@@ -363,7 +363,7 @@ fun MainMenuScreen(
                         modifier = Modifier.padding(horizontal = 4.dp)
                     )
                     Text(
-                        text = "Veri Güvenliği",
+                        text = "امنیت داده‌ها",
                         color = TextSecondary,
                         fontSize = 11.sp,
                         textDecoration = TextDecoration.Underline,

@@ -64,7 +64,7 @@ fun GameOverScreen(
             // Defeat Header
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = "HAMLELER BİTTİ!",
+                    text = "فرصت‌ها تمام شد!",
                     color = ErrorRed,
                     fontSize = 38.sp,
                     fontWeight = FontWeight.Black,
@@ -74,7 +74,7 @@ fun GameOverScreen(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Seviye $levelNumber'de hamleleriniz tükendi.",
+                    text = "فرصت‌های شما در مرحله $levelNumber به پایان رسید.",
                     color = TextSecondary,
                     fontSize = 17.sp,
                     fontWeight = FontWeight.Black,
@@ -94,7 +94,7 @@ fun GameOverScreen(
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "Oyuna Devam Et (+15 Hamle)",
+                        text = "ادامه بازی (+۱۵ فرصت)",
                         color = TextPrimary,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Black,
@@ -137,7 +137,7 @@ fun GameOverScreen(
                             com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 22.dp)
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                text = "50 Altın Harca",
+                                text = "۵۰ سکه",
                                 color = if (coins >= 50) Color(0xFF0F172A) else Color(0xFF94A3B8),
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Black,
@@ -176,9 +176,9 @@ fun GameOverScreen(
                             com.turkce.kelimesolitaire.presentation.ui.components.AdIcon(size = 20.dp)
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                text = "Ücretsiz (+15 Hamle)",
+                                text = "تماشای تبلیغ (+۱۵ فرصت)",
                                 color = Color.White,
-                                fontSize = 15.sp,
+                                fontSize = 14.sp,
                                 fontWeight = FontWeight.Black,
                                 fontFamily = nunitoFont
                             )
@@ -217,7 +217,7 @@ fun GameOverScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "TEKRAR DENE",
+                        text = "تلاش مجدد",
                         color = Color.White,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Black,
@@ -251,7 +251,7 @@ fun GameOverScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "ANA MENÜ",
+                        text = "منوی اصلی",
                         color = Color.White,
                         fontSize = 17.sp,
                         fontWeight = FontWeight.Black,
