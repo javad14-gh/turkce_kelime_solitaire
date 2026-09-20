@@ -132,6 +132,15 @@ class GameViewModel : ViewModel() {
             FoundationSlot(3)
         )
 
+        val baseMoves = allWords.size + generated.targetCategories.size + generated.initialStock.size
+        val buffer = when (generated.difficulty) {
+            "Kolay" -> 8
+            "Orta" -> 5
+            "Zor" -> 2
+            else -> 1 // CokZor
+        }
+        val calculatedMoves = baseMoves + buffer
+
         _uiState.update {
             it.copy(
                 screenState = ScreenState.Gameplay,
@@ -143,7 +152,7 @@ class GameViewModel : ViewModel() {
                 wastePile = emptyList(),
                 totalWordsToMatch = allWords.size,
                 totalMatchedWordsCount = 0,
-                movesRemaining = allWords.size + generated.initialStock.size + 18,
+                movesRemaining = calculatedMoves,
                 selectedCardId = null,
                 shakingCardId = null,
                 errorsInLevel = 0
@@ -207,48 +216,58 @@ class GameViewModel : ViewModel() {
         var coinsDelta = 0
         var newlyMatchedWordsCount = 0
 
-        for (card in cards) {
-            if (card.isCategory) {
-                if (tempActiveCategory == null) {
-                    val resolvedCategory = card.category ?: _uiState.value.levelData?.targetCategories?.find { it.id == card.categoryId }
-                    if (resolvedCategory != null) {
-                        tempActiveCategory = resolvedCategory
-                        successCount++
-                        scoreDelta += 10
-                    } else {
-                        break
-                    }
+        // 1. Process category card first if present in the batch
+        val categoryCardInBatch = cards.find { it.isCategory }
+        if (categoryCardInBatch != null) {
+            if (tempActiveCategory == null) {
+                val resolvedCategory = categoryCardInBatch.category 
+                    ?: _uiState.value.levelData?.targetCategories?.find { it.id == categoryCardInBatch.categoryId }
+                if (resolvedCategory != null) {
+                    tempActiveCategory = resolvedCategory
+                    successCount++
+                    scoreDelta += 10
                 } else {
-                    break
+                    triggerShakeError(cards.firstOrNull()?.id)
+                    return false
+                }
+            } else if (tempActiveCategory.id == categoryCardInBatch.categoryId) {
+                // Category already active and matches
+                successCount++
+            } else {
+                // Slot has a different category
+                triggerShakeError(cards.firstOrNull()?.id)
+                return false
+            }
+        }
+
+        // 2. Process word cards
+        val wordCards = cards.filter { !it.isCategory }
+        for (card in wordCards) {
+            if (tempActiveCategory == null) {
+                break
+            }
+
+            val actualCategory = tempActiveCategory
+            if (card.categoryId == actualCategory.id || card.categoryId == "joker_wildcard") {
+                val wordToAdd = if (card.categoryId == "joker_wildcard") {
+                    card.word ?: com.turkce.kelimesolitaire.data.model.Word(card.id, actualCategory.id, "JOKER", "Kolay")
+                } else {
+                    card.word ?: _uiState.value.levelData?.targetWords?.find { it.id == card.id.removePrefix("word_") }
+                }
+
+                if (wordToAdd != null) {
+                    if (!tempMatchedWords.any { it.id == wordToAdd.id }) {
+                        tempMatchedWords.add(wordToAdd)
+                        newlyMatchedWordsCount++
+                    }
+                    successCount++
+                    scoreDelta += 10
+                    if (!isReplay) {
+                        coinsDelta += 2
+                    }
                 }
             } else {
-                // Word cards can ONLY be placed if a category card is ALREADY active in this slot (or placed first in this batch)
-                if (tempActiveCategory == null) {
-                    break
-                }
-
-                val actualCategory = tempActiveCategory
-                if (card.categoryId == actualCategory.id || card.categoryId == "joker_wildcard") {
-                    val wordToAdd = if (card.categoryId == "joker_wildcard") {
-                        card.word ?: com.turkce.kelimesolitaire.data.model.Word(card.id, actualCategory.id, "JOKER", "Kolay")
-                    } else {
-                        card.word ?: _uiState.value.levelData?.targetWords?.find { it.id == card.id.removePrefix("word_") }
-                    }
-
-                    if (wordToAdd != null) {
-                        if (!tempMatchedWords.any { it.id == wordToAdd.id }) {
-                            tempMatchedWords.add(wordToAdd)
-                            newlyMatchedWordsCount++
-                        }
-                        successCount++
-                        scoreDelta += 10
-                        if (!isReplay) {
-                            coinsDelta += 2
-                        }
-                    }
-                } else {
-                    break
-                }
+                break
             }
         }
 
@@ -340,6 +359,11 @@ class GameViewModel : ViewModel() {
         } else {
             val destinationBottomCard = targetCol.last()
             if (destinationBottomCard.isFaceUp) {
+                // If destination card is a Category card, NO cards can be stacked on top of it!
+                if (destinationBottomCard.isCategory) {
+                    return false
+                }
+
                 if (movingTopCard.categoryId == destinationBottomCard.categoryId || 
                     movingTopCard.categoryId == "joker_wildcard" || 
                     destinationBottomCard.categoryId == "joker_wildcard") {

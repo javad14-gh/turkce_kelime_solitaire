@@ -576,11 +576,16 @@ fun GameScreen(
                                     val cardFromWaste = wastePile.lastOrNull()?.takeIf { it.id == cardId }
                                     
                                     var cardFromTableau: SolitaireCard? = null
-                                    var tabIdx = -1
-                                    for (card in colList) {
-                                        if (card.id == cardId && card.isFaceUp) {
-                                            cardFromTableau = card
-                                            tabIdx = colList.indexOf(card)
+                                    var sourceColIdx = -1
+                                    var sourceRowIdx = -1
+
+                                    for (cI in 0..3) {
+                                        val cList = tableauPiles[cI]
+                                        val idx = cList.indexOfFirst { it.id == cardId && it.isFaceUp }
+                                        if (idx != -1) {
+                                            cardFromTableau = cList[idx]
+                                            sourceColIdx = cI
+                                            sourceRowIdx = idx
                                             break
                                         }
                                     }
@@ -588,8 +593,24 @@ fun GameScreen(
                                     val targetCard = cardFromTableau
                                     if (cardFromWaste != null) {
                                         onCardDropped(listOf(cardFromWaste), slot)
-                                    } else if (targetCard != null && tabIdx != -1) {
-                                        val group = colList.subList(tabIdx, colList.size)
+                                    } else if (targetCard != null && sourceColIdx != -1) {
+                                        val sourceList = tableauPiles[sourceColIdx]
+                                        val targetCatId = targetCard.categoryId
+                                        var startIdx = sourceRowIdx
+                                        while (startIdx > 0) {
+                                            val prevCard = sourceList[startIdx - 1]
+                                            if (!prevCard.isFaceUp) break
+                                            val prevCatId = prevCard.categoryId
+                                            val matches = prevCatId == targetCatId ||
+                                                    prevCatId == "joker_wildcard" ||
+                                                    targetCatId == "joker_wildcard"
+                                            if (matches) {
+                                                startIdx--
+                                            } else {
+                                                break
+                                            }
+                                        }
+                                        val group = sourceList.subList(startIdx, sourceList.size)
                                         onCardDropped(group, slot)
                                     }
                                 }
