@@ -37,6 +37,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 
+import androidx.compose.ui.platform.LocalContext
+import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
+
 @Composable
 fun StoreDialog(
     isAdFree: Boolean,
@@ -45,6 +48,8 @@ fun StoreDialog(
     onBuyCoinPack: (Int) -> Unit,
     onBuyRemoveAds: () -> Unit
 ) {
+    val context = LocalContext.current
+    val isPersian = remember(context) { LocaleHelper.isPersian(context) }
     val nunitoFont = rememberNunitoFont()
     Box(
         modifier = Modifier
@@ -97,7 +102,7 @@ fun StoreDialog(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         OutlinedText(
-                            text = "MAĞAZA & ÖDÜLLER",
+                            text = LocaleHelper.storeHeader(isPersian),
                             textColor = Color.White,
                             outlineColor = Color(0xFF78350F),
                             outlineWidth = 5f,
@@ -153,7 +158,7 @@ fun StoreDialog(
                                     )
                                     Spacer(modifier = Modifier.width(6.dp))
                                     Text(
-                                        text = "Ücretsiz Altın",
+                                        text = LocaleHelper.freeCoinsTitle(isPersian),
                                         color = Color.White,
                                         fontSize = 16.sp,
                                         fontWeight = FontWeight.Black,
@@ -161,7 +166,7 @@ fun StoreDialog(
                                     )
                                 }
                                 Text(
-                                    text = "Kısa bir reklam izle ve 50 Altın kazan!",
+                                    text = LocaleHelper.freeCoinsDesc(isPersian),
                                     color = Color(0xFFC7D2FE),
                                     fontSize = 11.sp,
                                     lineHeight = 15.sp,
@@ -195,7 +200,7 @@ fun StoreDialog(
                                     )
                                     Spacer(modifier = Modifier.width(4.dp))
                                     Text(
-                                        text = "+50",
+                                        text = if (isPersian) "+۵۰" else "+50",
                                         color = Color.White,
                                         fontSize = 14.sp,
                                         fontWeight = FontWeight.Black,
@@ -210,7 +215,7 @@ fun StoreDialog(
 
                     // 2. COIN PACKAGES SECTION
                     Text(
-                        text = "💰 ALTIN PAKETLERİ",
+                        text = "💰 " + LocaleHelper.coinPacksTitle(isPersian),
                         color = Color(0xFFFFD700),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Black,
@@ -223,7 +228,7 @@ fun StoreDialog(
                     // Coin Pack 100
                     CoinPackRow(
                         coinAmount = 100,
-                        priceText = "₺19.99",
+                        priceText = if (isPersian) "۹,۰۰۰ تومان" else "₺19.99",
                         gradientColors = listOf(Color(0xFF38BDF8), Color(0xFF0284C7)),
                         onBuy = { onBuyCoinPack(100) }
                     )
@@ -231,18 +236,18 @@ fun StoreDialog(
                     // Coin Pack 500
                     CoinPackRow(
                         coinAmount = 500,
-                        priceText = "₺49.99",
+                        priceText = if (isPersian) "۱۹,۰۰۰ تومان" else "₺49.99",
                         gradientColors = listOf(Color(0xFFC084FC), Color(0xFF9333EA)),
-                        badgeText = "ÇOK POPÜLER",
+                        badgeText = if (isPersian) "بسیار محبوب" else "ÇOK POPÜLER",
                         onBuy = { onBuyCoinPack(500) }
                     )
 
                     // Coin Pack 1500
                     CoinPackRow(
                         coinAmount = 1500,
-                        priceText = "₺99.99",
+                        priceText = if (isPersian) "۴۹,۰۰۰ تومان" else "₺99.99",
                         gradientColors = listOf(Color(0xFFFFD700), Color(0xFFD97706)),
-                        badgeText = "EN İYİ FİYAT",
+                        badgeText = if (isPersian) "بهترین قیمت" else "EN İYİ FİYAT",
                         onBuy = { onBuyCoinPack(1500) }
                     )
 
@@ -281,7 +286,7 @@ fun StoreDialog(
                                     )
                                     Spacer(modifier = Modifier.width(6.dp))
                                     Text(
-                                        text = "Reklamları Kaldır",
+                                        text = LocaleHelper.removeAdsTitle(isPersian),
                                         color = Color.White,
                                         fontSize = 16.sp,
                                         fontWeight = FontWeight.Black,
@@ -289,7 +294,11 @@ fun StoreDialog(
                                     )
                                 }
                                 Text(
-                                    text = if (isAdFree) "Tüm reklamlar kaldırıldı!" else "Tüm geçiş ve banner reklamlarını sonsuza dek kapat!",
+                                    text = if (isAdFree) {
+                                        if (isPersian) "تمام تبلیغات حذف شدند!\u200F" else "Tüm reklamlar kaldırıldı!"
+                                    } else {
+                                        LocaleHelper.removeAdsDesc(isPersian)
+                                    },
                                     color = Color.White.copy(alpha = 0.9f),
                                     fontSize = 11.sp,
                                     lineHeight = 15.sp,
@@ -300,7 +309,7 @@ fun StoreDialog(
 
                             if (isAdFree) {
                                 Text(
-                                    text = "✅ AKTİF",
+                                    text = "✅ " + LocaleHelper.activeStatus(isPersian),
                                     color = Color(0xFF34D399),
                                     fontSize = 13.sp,
                                     fontWeight = FontWeight.Black,
@@ -322,7 +331,7 @@ fun StoreDialog(
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
-                                        text = "₺39.99",
+                                        text = if (isPersian) "۳۹,۰۰۰ تومان" else "₺39.99",
                                         color = Color.White,
                                         fontSize = 14.sp,
                                         fontWeight = FontWeight.Black,
@@ -368,15 +377,17 @@ private fun CoinPackRow(
                     modifier = Modifier.size(36.dp)
                 )
                 Spacer(modifier = Modifier.width(10.dp))
-                Column {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(
-                            text = "$coinAmount Altın",
-                            color = Color.White,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Black,
-                            fontFamily = nunitoFont
-                        )
+                    val context = LocalContext.current
+                    val isPersian = remember(context) { LocaleHelper.isPersian(context) }
+                    Column {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = "${LocaleHelper.formatNumber(coinAmount, isPersian)} " + (if (isPersian) "سکه" else "Altın"),
+                                color = Color.White,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Black,
+                                fontFamily = nunitoFont
+                            )
                         if (badgeText != null) {
                             Spacer(modifier = Modifier.width(6.dp))
                             Box(

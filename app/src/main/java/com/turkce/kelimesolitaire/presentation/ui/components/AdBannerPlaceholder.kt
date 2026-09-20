@@ -25,13 +25,19 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.DarkCard
 import com.turkce.kelimesolitaire.presentation.ui.theme.SecondaryNeon
 import com.turkce.kelimesolitaire.presentation.ui.theme.TextSecondary
 
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
+import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
+
 @Composable
 fun AdBannerPlaceholder(
     modifier: Modifier = Modifier,
     isAdFree: Boolean = false,
     adUnitId: String = AdManager.TEST_BANNER_ID
 ) {
-    if (isAdFree) return
+    val context = LocalContext.current
+    val isPersian = remember(context) { LocaleHelper.isPersian(context) }
+    if (isAdFree || isPersian) return
 
     Box(
         modifier = modifier

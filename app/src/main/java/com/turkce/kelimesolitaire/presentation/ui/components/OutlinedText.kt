@@ -17,19 +17,15 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 
+import com.turkce.kelimesolitaire.presentation.util.rememberAppFont
+
 @Composable
 fun rememberNunitoFont(): FontFamily {
-    val context = LocalContext.current
-    return remember(context) {
-        try {
-            FontFamily(Font(path = "fonts/nunito_black.ttf", assetManager = context.assets))
-        } catch (e: Throwable) {
-            FontFamily.Serif
-        }
-    }
+    return rememberAppFont()
 }
 
 @Composable
@@ -45,7 +41,8 @@ fun OutlinedText(
     lineHeight: TextUnit = TextUnit.Unspecified,
     letterSpacing: TextUnit = TextUnit.Unspecified,
     shadowColor: Color = Color.Black.copy(alpha = 0.5f),
-    shadowOffsetY: Float = 4f
+    shadowOffsetY: Float = 4f,
+    textDirection: TextDirection = TextDirection.ContentOrRtl
 ) {
     val nunitoFont = rememberNunitoFont()
 
@@ -72,7 +69,8 @@ fun OutlinedText(
                     color = shadowColor,
                     offset = Offset(0f, shadowOffsetY),
                     blurRadius = 6f
-                )
+                ),
+                textDirection = textDirection
             )
         )
         // 2. Foreground Solid Text
@@ -84,7 +82,10 @@ fun OutlinedText(
             fontFamily = nunitoFont,
             textAlign = textAlign,
             lineHeight = lineHeight,
-            letterSpacing = letterSpacing
+            letterSpacing = letterSpacing,
+            style = TextStyle(
+                textDirection = textDirection
+            )
         )
     }
 }

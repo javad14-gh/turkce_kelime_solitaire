@@ -35,6 +35,9 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkCard
 import com.turkce.kelimesolitaire.presentation.ui.theme.SuccessGreen
 import com.turkce.kelimesolitaire.presentation.ui.theme.TextPrimary
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.remember
+import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 
 @Composable
 fun LevelCompleteScreen(
@@ -45,6 +48,8 @@ fun LevelCompleteScreen(
     isAdFree: Boolean = false,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+    val isPersian = remember(context) { LocaleHelper.isPersian(context) }
     val nunitoFont = rememberNunitoFont()
     Box(
         modifier = modifier
@@ -69,7 +74,7 @@ fun LevelCompleteScreen(
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 OutlinedText(
-                    text = "عالی بود!",
+                    text = LocaleHelper.victoryTitle(isPersian),
                     textColor = SuccessGreen,
                     outlineColor = Color(0xFF0F172A),
                     outlineWidth = 6f,
@@ -79,7 +84,7 @@ fun LevelCompleteScreen(
                 )
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
-                    text = "مرحله $levelNumber تکمیل شد",
+                    text = LocaleHelper.victorySubtitle(levelNumber, isPersian),
                     color = TextPrimary,
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Black,
@@ -98,7 +103,7 @@ fun LevelCompleteScreen(
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "پاداش دریافتی",
+                        text = if (isPersian) "پاداش دریافتی" else "KAZANILAN ÖDÜL",
                         color = Color(0xFF94A3B8),
                         fontSize = 19.sp,
                         fontWeight = FontWeight.Black,
@@ -113,7 +118,7 @@ fun LevelCompleteScreen(
                         com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 40.dp)
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "+$bonusCoins سکه",
+                            text = "+${LocaleHelper.formatNumber(bonusCoins, isPersian)} ${if (isPersian) "سکه" else "Altın"}",
                             color = AccentGold,
                             fontSize = 32.sp,
                             fontWeight = FontWeight.Black,
@@ -138,26 +143,27 @@ fun LevelCompleteScreen(
                                 colors = listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1))
                             )
                         )
-                        .padding(4.dp)
-                        .clip(RoundedCornerShape(18.dp))
+                        .padding(2.dp)
+                        .clip(RoundedCornerShape(20.dp))
                         .background(Color(0xFF1E3A07))
-                        .padding(bottom = 5.dp)
-                        .clip(RoundedCornerShape(14.dp))
+                        .padding(bottom = 4.dp)
+                        .clip(RoundedCornerShape(18.dp))
                         .background(
                             Brush.verticalGradient(
                                 colors = listOf(
-                                    Color(0xFFA3E635),
+                                    Color(0xFF84CC16),
                                     Color(0xFF65A30D),
                                     Color(0xFF4D7C0F)
                                 )
                             )
                         )
+                        .border(1.5.dp, Color(0xFFBEF264), RoundedCornerShape(18.dp))
                         .clickable { onNextLevelClicked() }
                         .padding(horizontal = 30.dp, vertical = 14.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     OutlinedText(
-                        text = "مرحله بعدی",
+                        text = LocaleHelper.nextLevel(isPersian),
                         textColor = Color.White,
                         outlineColor = Color(0xFF1E3A07),
                         outlineWidth = 5f,
@@ -197,7 +203,7 @@ fun LevelCompleteScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "منوی اصلی",
+                        text = LocaleHelper.mainMenu(isPersian),
                         color = Color.White,
                         fontSize = 17.sp,
                         fontWeight = FontWeight.Black,

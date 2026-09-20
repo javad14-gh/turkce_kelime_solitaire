@@ -13,6 +13,8 @@ import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 
+import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
+
 class AdManager private constructor() {
 
     companion object {
@@ -37,6 +39,11 @@ class AdManager private constructor() {
     private var isInitialized = false
 
     fun initialize(context: Context, onComplete: () -> Unit = {}) {
+        if (LocaleHelper.isPersian(context)) {
+            isInitialized = true
+            onComplete()
+            return
+        }
         if (isInitialized) {
             onComplete()
             return
@@ -56,6 +63,7 @@ class AdManager private constructor() {
     // --- INTERSTITIAL ADS ---
     
     fun loadInterstitial(context: Context, adUnitId: String = TEST_INTERSTITIAL_ID) {
+        if (LocaleHelper.isPersian(context)) return
         val adRequest = AdRequest.Builder().build()
         InterstitialAd.load(
             context,
@@ -76,6 +84,10 @@ class AdManager private constructor() {
     }
 
     fun showInterstitial(activity: Activity, onDismissed: () -> Unit) {
+        if (LocaleHelper.isPersian(activity)) {
+            onDismissed()
+            return
+        }
         val ad = interstitialAd
         if (ad != null) {
             ad.fullScreenContentCallback = object : FullScreenContentCallback() {
@@ -104,6 +116,7 @@ class AdManager private constructor() {
     // --- REWARDED ADS ---
 
     fun loadRewarded(context: Context, adUnitId: String = TEST_REWARDED_ID) {
+        if (LocaleHelper.isPersian(context)) return
         val adRequest = AdRequest.Builder().build()
         RewardedAd.load(
             context,
@@ -124,6 +137,10 @@ class AdManager private constructor() {
     }
 
     fun showRewarded(activity: Activity, onRewardEarned: (amount: Int) -> Unit) {
+        if (LocaleHelper.isPersian(activity)) {
+            onRewardEarned(50)
+            return
+        }
         val ad = rewardedAd
         if (ad != null) {
             ad.fullScreenContentCallback = object : FullScreenContentCallback() {

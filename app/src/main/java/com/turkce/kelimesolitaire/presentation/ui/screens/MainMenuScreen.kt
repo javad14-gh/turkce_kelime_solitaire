@@ -58,6 +58,7 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.PrimaryNeon
 import com.turkce.kelimesolitaire.presentation.ui.theme.SecondaryNeon
 import com.turkce.kelimesolitaire.presentation.ui.theme.TextPrimary
 import com.turkce.kelimesolitaire.presentation.ui.theme.TextSecondary
+import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 
 @Suppress("UNUSED_PARAMETER")
 @Composable
@@ -72,6 +73,7 @@ fun MainMenuScreen(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
+    val isPersian = remember(context) { LocaleHelper.isPersian(context) }
     val nunitoFont = rememberNunitoFont()
 
     // Calculate last unsolved level dynamically
@@ -150,7 +152,7 @@ fun MainMenuScreen(
                     }
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(
-                        text = "$coins",
+                        text = LocaleHelper.formatNumber(coins, isPersian),
                         color = Color.White,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Black,
@@ -174,7 +176,7 @@ fun MainMenuScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 OutlinedText(
-                    text = "کلمات فارسی",
+                    text = if (isPersian) "کلمات فارسی" else "TÜRKÇE KELİME",
                     textColor = SecondaryNeon,
                     outlineColor = Color(0xFF0F172A),
                     outlineWidth = 6f,
@@ -184,7 +186,7 @@ fun MainMenuScreen(
                     textAlign = TextAlign.Center
                 )
                 OutlinedText(
-                    text = "سولیتر کلمه‌بازی",
+                    text = if (isPersian) "سولیتر کلمه‌بازی" else "SOLİTAİRE",
                     textColor = PrimaryNeon,
                     outlineColor = Color(0xFF0F172A),
                     outlineWidth = 6f,
@@ -195,7 +197,7 @@ fun MainMenuScreen(
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = "کارت‌ها را بکشید، دسته‌ها را مرتب کنید و مراحل را فتح کنید!",
+                    text = if (isPersian) "کارت‌ها را بکشید، دسته‌ها را مرتب کنید و مراحل را فتح کنید!\u200F" else "Kartları sürükle, kategorileri eşleştir ve seviyeleri tamamla!",
                     color = TextSecondary,
                     fontSize = 17.sp,
                     fontWeight = FontWeight.Bold,
@@ -243,7 +245,7 @@ fun MainMenuScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         OutlinedText(
-                            text = "مرحله $lastUnsolvedLevel",
+                            text = LocaleHelper.levelTitle(lastUnsolvedLevel, isPersian),
                             textColor = Color.White,
                             outlineColor = Color(0xFF1E3A07),
                             outlineWidth = 5f,
@@ -255,7 +257,7 @@ fun MainMenuScreen(
 
                     // Overlapping Difficulty Ribbon Banner (Shown ONLY for Zor and CokZor levels, enlarged size)
                     if (difficulty == "Zor" || difficulty == "CokZor") {
-                        val difficultyText = if (difficulty == "CokZor") "خیلی سخت" else "سخت"
+                        val difficultyText = LocaleHelper.difficulty(difficulty, isPersian)
                         val ribbonColor = if (difficulty == "CokZor") Color(0xFFDC2626) else Color(0xFFEA580C)
 
                         Box(
@@ -320,7 +322,7 @@ fun MainMenuScreen(
                         )
                         Spacer(modifier = Modifier.width(10.dp))
                         Text(
-                            text = "فروشگاه",
+                            text = LocaleHelper.storeTitle(isPersian),
                             color = Color.White,
                             fontSize = 22.sp,
                             fontWeight = FontWeight.Black,
@@ -345,7 +347,7 @@ fun MainMenuScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "حریم خصوصی",
+                        text = LocaleHelper.privacyPolicy(isPersian),
                         color = TextSecondary,
                         fontSize = 11.sp,
                         textDecoration = TextDecoration.Underline,
@@ -363,7 +365,7 @@ fun MainMenuScreen(
                         modifier = Modifier.padding(horizontal = 4.dp)
                     )
                     Text(
-                        text = "امنیت داده‌ها",
+                        text = if (isPersian) "امنیت داده‌ها" else "Veri Güvenliği",
                         color = TextSecondary,
                         fontSize = 11.sp,
                         textDecoration = TextDecoration.Underline,
@@ -424,7 +426,7 @@ fun MainMenuScreen(
                             contentAlignment = Alignment.Center
                         ) {
                             OutlinedText(
-                                text = "Ayarlar",
+                                text = LocaleHelper.settingsTitle(isPersian),
                                 textColor = Color.White,
                                 outlineColor = Color(0xFF190D69),
                                 outlineWidth = 5f,
@@ -523,7 +525,7 @@ fun MainMenuScreen(
                                     )
                                     Spacer(modifier = Modifier.width(10.dp))
                                     Text(
-                                        text = "Gizlilik Politikası",
+                                        text = LocaleHelper.privacyPolicy(isPersian),
                                         color = Color.White,
                                         fontSize = 19.sp,
                                         fontWeight = FontWeight.Black,
@@ -559,7 +561,7 @@ fun MainMenuScreen(
                                     )
                                     Spacer(modifier = Modifier.width(10.dp))
                                     Text(
-                                        text = "Mağaza",
+                                        text = LocaleHelper.storeTitle(isPersian),
                                         color = Color.White,
                                         fontSize = 20.sp,
                                         fontWeight = FontWeight.Black,

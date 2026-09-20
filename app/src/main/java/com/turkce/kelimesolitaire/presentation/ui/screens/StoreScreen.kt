@@ -38,6 +38,9 @@ import com.turkce.kelimesolitaire.R
 import com.turkce.kelimesolitaire.presentation.ui.components.AdBannerPlaceholder
 import com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon
 import com.turkce.kelimesolitaire.presentation.ui.components.rememberNunitoFont
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.remember
+import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 import com.turkce.kelimesolitaire.presentation.ui.theme.AccentGold
 
 @Composable
@@ -55,6 +58,8 @@ fun StoreScreen(
 ) {
     BackHandler { onClose() }
 
+    val context = LocalContext.current
+    val isPersian = remember(context) { LocaleHelper.isPersian(context) }
     val nunitoFont = rememberNunitoFont()
 
     Box(
@@ -100,7 +105,7 @@ fun StoreScreen(
                     CoinIcon(size = 24.dp)
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
-                        text = "$coins",
+                        text = LocaleHelper.formatNumber(coins, isPersian),
                         color = Color.White,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Black,
@@ -178,7 +183,7 @@ fun StoreScreen(
                                 .padding(vertical = 12.dp, horizontal = 4.dp)
                         ) {
                             Text(
-                                text = "REKLAMLARI KALDIR",
+                                text = LocaleHelper.removeAdsTitle(isPersian),
                                 color = Color.White,
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Black,
@@ -186,7 +191,11 @@ fun StoreScreen(
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = if (isAdFree) "Tüm reklamlar kaldırıldı!" else "Geçiş ve banner reklamlarını sonsuza dek kapat!",
+                                text = if (isAdFree) {
+                                    if (isPersian) "تمام تبلیغات حذف شدند!\u200F" else "Tüm reklamlar kaldırıldı!"
+                                } else {
+                                    LocaleHelper.removeAdsDesc(isPersian)
+                                },
                                 color = Color.White.copy(alpha = 0.9f),
                                 fontSize = 12.sp,
                                 lineHeight = 16.sp,
@@ -212,9 +221,9 @@ fun StoreScreen(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = if (isAdFree) "AKTİF" else "₺49.99",
+                                text = if (isAdFree) LocaleHelper.activeStatus(isPersian) else if (isPersian) "۳۹,۰۰۰ تومان" else "₺49.99",
                                 color = Color.White,
-                                fontSize = 16.sp,
+                                fontSize = 15.sp,
                                 fontWeight = FontWeight.Black,
                                 fontFamily = nunitoFont
                             )
@@ -226,18 +235,25 @@ fun StoreScreen(
                 // BANNER 2: MEGA PAKET
                 // ------------------------------------------
                 ComboPackCard(
-                    title = "MEGA PAKET",
-                    badge = "EFSANE FIRSAT",
+                    title = if (isPersian) "بسته مگا" else "MEGA PAKET",
+                    badge = if (isPersian) "تخفیف ویژه" else "EFSANE FIRSAT",
                     badgeColor = Color(0xFFDC2626),
-                    price = "₺149.99",
+                    price = if (isPersian) "۱۴۹,۰۰۰ تومان" else "₺149.99",
                     gradientColors = listOf(Color(0xFF581C87), Color(0xFF3B0764), Color(0xFF2E1065)),
                     borderColor = Color(0xFFFFD700),
                     isGoldPriceButton = true,
-                    row1Items = listOf(
+                    row1Items = if (isPersian) listOf(
+                        R.drawable.coins to "۲۰۰۰",
+                        R.drawable.no_ads to "بدون تبلیغ"
+                    ) else listOf(
                         R.drawable.coins to "2000",
                         R.drawable.no_ads to "Reklam Yok"
                     ),
-                    row2Items = listOf(
+                    row2Items = if (isPersian) listOf(
+                        R.drawable.hint to "۳×",
+                        R.drawable.undo to "۳×",
+                        R.drawable.joker to "۳×"
+                    ) else listOf(
                         R.drawable.hint to "3x",
                         R.drawable.undo to "3x",
                         R.drawable.joker to "3x"
@@ -249,17 +265,23 @@ fun StoreScreen(
                 // COMBO 1: SÜPER PAKET
                 // ------------------------------------------
                 ComboPackCard(
-                    title = "SÜPER PAKET",
-                    badge = "ÇOK SATAN",
+                    title = if (isPersian) "بسته ویژه" else "SÜPER PAKET",
+                    badge = if (isPersian) "پرفروش" else "ÇOK SATAN",
                     badgeColor = Color(0xFFDC2626),
-                    price = "₺89.99",
+                    price = if (isPersian) "۸۹,۰۰۰ تومان" else "₺89.99",
                     gradientColors = listOf(Color(0xFF1E3A8A), Color(0xFF1E40AF)),
                     borderColor = Color(0xFF60A5FA),
-                    row1Items = listOf(
+                    row1Items = if (isPersian) listOf(
+                        R.drawable.coins to "۱۰۰۰",
+                        R.drawable.hint to "۲×"
+                    ) else listOf(
                         R.drawable.coins to "1000",
                         R.drawable.hint to "2x"
                     ),
-                    row2Items = listOf(
+                    row2Items = if (isPersian) listOf(
+                        R.drawable.undo to "۲×",
+                        R.drawable.joker to "۲×"
+                    ) else listOf(
                         R.drawable.undo to "2x",
                         R.drawable.joker to "2x"
                     ),
@@ -270,17 +292,23 @@ fun StoreScreen(
                 // COMBO 2: AVANTAJ PAKETİ
                 // ------------------------------------------
                 ComboPackCard(
-                    title = "AVANTAJ PAKETİ",
-                    badge = "FIRSAT",
+                    title = if (isPersian) "بسته اقتصادی" else "AVANTAJ PAKETİ",
+                    badge = if (isPersian) "به‌صرفه" else "FIRSAT",
                     badgeColor = Color(0xFFDC2626),
-                    price = "₺49.99",
+                    price = if (isPersian) "۴۹,۰۰۰ تومان" else "₺49.99",
                     gradientColors = listOf(Color(0xFF065F46), Color(0xFF047857)),
                     borderColor = Color(0xFF34D399),
-                    row1Items = listOf(
+                    row1Items = if (isPersian) listOf(
+                        R.drawable.coins to "۵۰۰",
+                        R.drawable.hint to "۱×"
+                    ) else listOf(
                         R.drawable.coins to "500",
                         R.drawable.hint to "1x"
                     ),
-                    row2Items = listOf(
+                    row2Items = if (isPersian) listOf(
+                        R.drawable.undo to "۱×",
+                        R.drawable.joker to "۱×"
+                    ) else listOf(
                         R.drawable.undo to "1x",
                         R.drawable.joker to "1x"
                     ),
@@ -297,7 +325,7 @@ fun StoreScreen(
                     CoinIcon(size = 28.dp)
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "ALTIN PAKETLERİ",
+                        text = LocaleHelper.coinPacksTitle(isPersian),
                         color = AccentGold,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Black,
@@ -336,14 +364,14 @@ fun StoreScreen(
                             Spacer(modifier = Modifier.width(12.dp))
                             Column {
                                 Text(
-                                    text = "Ücretsiz Altın",
+                                    text = LocaleHelper.freeCoinsTitle(isPersian),
                                     color = Color.White,
                                     fontSize = 18.sp,
                                     fontWeight = FontWeight.Black,
                                     fontFamily = nunitoFont
                                 )
                                 Text(
-                                    text = "Reklam izle & 50 Altın kazan",
+                                    text = LocaleHelper.freeCoinsDesc(isPersian),
                                     color = Color(0xFFDBEAFE),
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Bold
@@ -373,7 +401,7 @@ fun StoreScreen(
                                 )
                                 Spacer(modifier = Modifier.width(6.dp))
                                 Text(
-                                    text = "+50",
+                                    text = if (isPersian) "+۵۰" else "+50",
                                     color = Color.White,
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.Black,
@@ -388,26 +416,26 @@ fun StoreScreen(
                 // PAID COIN BANNERS WITH TOP-CENTER OVERLAPPING RED BADGES
                 // ------------------------------------------
                 CoinPackRow(
-                    amountText = "500",
-                    priceText = "₺39.99",
+                    amountText = if (isPersian) "۵۰۰" else "500",
+                    priceText = if (isPersian) "۱۹,۰۰۰ تومان" else "₺39.99",
                     gradientColors = listOf(Color(0xFF38BDF8), Color(0xFF0284C7)),
                     onBuy = { onBuyCoinPack(500) }
                 )
 
                 CoinPackRow(
-                    amountText = "1000",
-                    priceText = "₺69.99",
+                    amountText = if (isPersian) "۱۰۰۰" else "1000",
+                    priceText = if (isPersian) "۳۹,۰۰۰ تومان" else "₺69.99",
                     gradientColors = listOf(Color(0xFFF59E0B), Color(0xFFD97706)),
-                    badgeText = "POPÜLER",
+                    badgeText = if (isPersian) "محبوب" else "POPÜLER",
                     badgeColor = Color(0xFFDC2626),
                     onBuy = { onBuyCoinPack(1000) }
                 )
 
                 CoinPackRow(
-                    amountText = "2500",
-                    priceText = "₺129.99",
+                    amountText = if (isPersian) "۲۵۰۰" else "2500",
+                    priceText = if (isPersian) "۷۹,۰۰۰ تومان" else "₺129.99",
                     gradientColors = listOf(Color(0xFFFFD700), Color(0xFFD97706)),
-                    badgeText = "EN İYİ FİYAT",
+                    badgeText = if (isPersian) "بهترین ارزش" else "EN İYİ FİYAT",
                     badgeColor = Color(0xFFDC2626),
                     onBuy = { onBuyCoinPack(2500) }
                 )

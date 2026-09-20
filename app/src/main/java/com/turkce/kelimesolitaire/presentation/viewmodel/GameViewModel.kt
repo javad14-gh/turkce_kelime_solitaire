@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 
 sealed interface ScreenState {
     object MainMenu : ScreenState
@@ -695,13 +696,14 @@ class GameViewModel : ViewModel() {
     }
 
     fun undoLastMove(context: Context, onShowToast: (String) -> Unit) {
+        val isPersian = LocaleHelper.isPersian(context)
         if (undoStack.isEmpty()) {
-            onShowToast("Geri alınacak hamle yok!")
+            onShowToast(if (isPersian) "حرکتی برای بازگشت وجود ندارد!\u200F" else "Geri alınacak hamle yok!")
             return
         }
         val state = _uiState.value
         if (state.coins < 50) {
-            onShowToast("Yetersiz altın! (50 🪙 gerekli)")
+            onShowToast(if (isPersian) "سکه ناکافی! (۵۰ 🪙 نیاز است)\u200F" else "Yetersiz altın! (50 🪙 gerekli)")
             return
         }
         val prevSession = undoStack.removeAt(undoStack.size - 1)
@@ -723,13 +725,14 @@ class GameViewModel : ViewModel() {
         }
         saveCoinsToPrefs(context, _uiState.value.coins)
         saveActiveSessionToPrefs(context)
-        onShowToast("Geri alındı! (-50 🪙)")
+        onShowToast(if (isPersian) "حرکت بازگردانده شد! (-۵۰ 🪙)\u200F" else "Geri alındı! (-50 🪙)")
     }
 
     fun showHint(context: Context, onShowToast: (String) -> Unit) {
+        val isPersian = LocaleHelper.isPersian(context)
         val state = _uiState.value
         if (state.coins < 50) {
-            onShowToast("Yetersiz altın! (50 🪙 gerekli)")
+            onShowToast(if (isPersian) "سکه ناکافی! (۵۰ 🪙 نیاز است)\u200F" else "Yetersiz altın! (50 🪙 gerekli)")
             return
         }
 
@@ -752,16 +755,17 @@ class GameViewModel : ViewModel() {
                     )
                 }
             }
-            onShowToast("İpucu gösteriliyor! (-50 🪙)")
+            onShowToast(if (isPersian) "راهنمایی نمایش داده شد! (-۵۰ 🪙)\u200F" else "İpucu gösteriliyor! (-50 🪙)")
         } else {
-            onShowToast("Şu anda hamle yok, desteden kart çekmeyi deneyin!")
+            onShowToast(if (isPersian) "در حال حاضر حرکتی وجود ندارد، از دسته کارت بکشید!\u200F" else "Şu anda hamle yok, desteden kart çekmeyi deneyin!")
         }
     }
 
     fun useJoker(context: Context, onShowToast: (String) -> Unit) {
+        val isPersian = LocaleHelper.isPersian(context)
         val state = _uiState.value
         if (state.coins < 200) {
-            onShowToast("Yetersiz altın! (200 🪙 gerekli)")
+            onShowToast(if (isPersian) "سکه ناکافی! (۲۰۰ 🪙 نیاز است)\u200F" else "Yetersiz altın! (200 🪙 gerekli)")
             return
         }
 
@@ -787,7 +791,7 @@ class GameViewModel : ViewModel() {
 
         saveCoinsToPrefs(context, _uiState.value.coins)
         saveActiveSessionToPrefs(context)
-        onShowToast("Joker kartı çekildi! (-200 🪙)")
+        onShowToast(if (isPersian) "کارت جوکر کشیده شد! (-۲۰۰ 🪙)\u200F" else "Joker kartı çekildi! (-200 🪙)")
     }
 
     private fun findPossibleMove(): Pair<String, String>? {
@@ -834,9 +838,10 @@ class GameViewModel : ViewModel() {
     }
 
     fun buyExtraMoves(context: Context, onShowToast: (String) -> Unit) {
+        val isPersian = LocaleHelper.isPersian(context)
         val state = _uiState.value
         if (state.coins < 75) {
-            onShowToast("Yetersiz altın! (75 🪙 gerekli)")
+            onShowToast(if (isPersian) "سکه ناکافی! (۷۵ 🪙 نیاز است)\u200F" else "Yetersiz altın! (75 🪙 gerekli)")
             return
         }
         _uiState.update {
@@ -848,7 +853,7 @@ class GameViewModel : ViewModel() {
         }
         saveCoinsToPrefs(context, _uiState.value.coins)
         saveActiveSessionToPrefs(context)
-        onShowToast("5 Ek Hamle alındı! (-75 🪙)")
+        onShowToast(if (isPersian) "۵ فرصت اضافه دریافت شد! (-۷۵ 🪙)\u200F" else "5 Ek Hamle alındı! (-75 🪙)")
     }
 
     fun acceptDefeat() {

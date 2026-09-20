@@ -34,6 +34,9 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.DarkCard
 import com.turkce.kelimesolitaire.presentation.ui.theme.ErrorRed
 import com.turkce.kelimesolitaire.presentation.ui.theme.TextPrimary
 import com.turkce.kelimesolitaire.presentation.ui.theme.TextSecondary
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.remember
+import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 
 @Composable
 fun GameOverScreen(
@@ -46,6 +49,8 @@ fun GameOverScreen(
     isAdFree: Boolean = false,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+    val isPersian = remember(context) { LocaleHelper.isPersian(context) }
     val nunitoFont = rememberNunitoFont()
     Box(
         modifier = modifier
@@ -64,7 +69,7 @@ fun GameOverScreen(
             // Defeat Header
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = "فرصت‌ها تمام شد!",
+                    text = LocaleHelper.defeatTitle(isPersian),
                     color = ErrorRed,
                     fontSize = 38.sp,
                     fontWeight = FontWeight.Black,
@@ -74,7 +79,7 @@ fun GameOverScreen(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "فرصت‌های شما در مرحله $levelNumber به پایان رسید.",
+                    text = LocaleHelper.defeatSubtitle(levelNumber, isPersian),
                     color = TextSecondary,
                     fontSize = 17.sp,
                     fontWeight = FontWeight.Black,
@@ -94,7 +99,7 @@ fun GameOverScreen(
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "ادامه بازی (+۱۵ فرصت)",
+                        text = LocaleHelper.continueForCoins(isPersian),
                         color = TextPrimary,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Black,
@@ -137,7 +142,7 @@ fun GameOverScreen(
                             com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 22.dp)
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                text = "۵۰ سکه",
+                                text = "${LocaleHelper.formatNumber(50, isPersian)} ${if (isPersian) "سکه" else "Altın"}",
                                 color = if (coins >= 50) Color(0xFF0F172A) else Color(0xFF94A3B8),
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Black,
@@ -176,7 +181,7 @@ fun GameOverScreen(
                             com.turkce.kelimesolitaire.presentation.ui.components.AdIcon(size = 20.dp)
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                text = "تماشای تبلیغ (+۱۵ فرصت)",
+                                text = if (isPersian) "تماشای تبلیغ (+۱۵ فرصت)" else "Reklam İzle (+15 Hamle)",
                                 color = Color.White,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Black,
@@ -217,7 +222,7 @@ fun GameOverScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "تلاش مجدد",
+                        text = LocaleHelper.retry(isPersian),
                         color = Color.White,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Black,
@@ -251,7 +256,7 @@ fun GameOverScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "منوی اصلی",
+                        text = LocaleHelper.mainMenu(isPersian),
                         color = Color.White,
                         fontSize = 17.sp,
                         fontWeight = FontWeight.Black,

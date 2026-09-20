@@ -63,8 +63,12 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.res.painterResource
 import com.turkce.kelimesolitaire.R
+import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import kotlinx.coroutines.launch
@@ -131,6 +135,7 @@ fun GameScreen(
     modifier: Modifier = Modifier
 ) {
     val context = androidx.compose.ui.platform.LocalContext.current
+    val isPersian = remember(context) { LocaleHelper.isPersian(context) }
     val nunitoFont = rememberNunitoFont()
     var isAnimatingReturn by remember { mutableStateOf(false) }
 
@@ -254,7 +259,7 @@ fun GameScreen(
                     }
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
-                        text = "$coins",
+                        text = LocaleHelper.formatNumber(coins, isPersian),
                         color = Color.White,
                         fontSize = 21.sp,
                         fontWeight = FontWeight.Black,
@@ -264,7 +269,7 @@ fun GameScreen(
 
                 // Center: Level Title
                 OutlinedText(
-                    text = "SEVİYE ${levelData.levelNumber}",
+                    text = LocaleHelper.levelTitle(levelData.levelNumber, isPersian),
                     textColor = TextPrimary,
                     outlineColor = Color(0xFF0F172A),
                     outlineWidth = 5f,
@@ -309,16 +314,16 @@ fun GameScreen(
                         verticalArrangement = Arrangement.Center
                     ) {
                         Text(
-                            text = "KALAN HAMLE",
+                            text = LocaleHelper.remainingMovesTitle(isPersian),
                             color = TextSecondary,
-                            fontSize = 12.sp,
+                            fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
                             fontFamily = nunitoFont,
                             letterSpacing = 0.5.sp
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
-                            text = "$movesRemaining",
+                            text = LocaleHelper.formatNumber(movesRemaining, isPersian),
                             color = movesColor,
                             fontSize = 30.sp,
                             fontWeight = FontWeight.Black,
@@ -465,7 +470,7 @@ fun GameScreen(
                                 ),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text(text = "Boş", color = Color.White.copy(alpha = 0.2f), fontSize = 10.sp)
+                            Text(text = LocaleHelper.emptySlot(isPersian), color = Color.White.copy(alpha = 0.2f), fontSize = 10.sp)
                         }
                     }
 
@@ -645,7 +650,23 @@ fun GameScreen(
                                                 if (cardFromWaste != null) {
                                                     onCardStacked(listOf(cardFromWaste), colIdx)
                                                 } else if (cardFromTableau != null && sourceColIdx != -1) {
-                                                    val group = tableauPiles[sourceColIdx].subList(sourceRowIdx, tableauPiles[sourceColIdx].size)
+                                                    val sourceList = tableauPiles[sourceColIdx]
+                                                    val targetCatId = cardFromTableau.categoryId
+                                                    var startIdx = sourceRowIdx
+                                                    while (startIdx > 0) {
+                                                        val prevCard = sourceList[startIdx - 1]
+                                                        if (!prevCard.isFaceUp) break
+                                                        val prevCatId = prevCard.categoryId
+                                                        val matches = prevCatId == targetCatId ||
+                                                                prevCatId == "joker_wildcard" ||
+                                                                targetCatId == "joker_wildcard"
+                                                        if (matches) {
+                                                            startIdx--
+                                                        } else {
+                                                            break
+                                                        }
+                                                    }
+                                                    val group = sourceList.subList(startIdx, sourceList.size)
                                                     onCardStacked(group, colIdx)
                                                 }
                                             }
@@ -668,7 +689,22 @@ fun GameScreen(
                                         isInteractionEnabled = !isAnimatingReturn && (draggedCards.isEmpty() || isDragged),
                                         onTap = {},
                                         onDragStart = {
-                                            val group = colList.subList(rowIdx, colList.size)
+                                            val targetCatId = card.categoryId
+                                            var startIdx = rowIdx
+                                            while (startIdx > 0) {
+                                                val prevCard = colList[startIdx - 1]
+                                                if (!prevCard.isFaceUp) break
+                                                val prevCatId = prevCard.categoryId
+                                                val matches = prevCatId == targetCatId ||
+                                                        prevCatId == "joker_wildcard" ||
+                                                        targetCatId == "joker_wildcard"
+                                                if (matches) {
+                                                    startIdx--
+                                                } else {
+                                                    break
+                                                }
+                                            }
+                                            val group = colList.subList(startIdx, colList.size)
                                             draggedCards = group
                                             dragOffset = Offset.Zero
                                         },
@@ -841,7 +877,7 @@ fun GameScreen(
                             com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 16.dp)
                             Spacer(modifier = Modifier.width(3.dp))
                             Text(
-                                text = "50",
+                                text = LocaleHelper.formatNumber(50, isPersian),
                                 color = Color(0xFF0F172A),
                                 fontSize = 15.sp,
                                 fontWeight = FontWeight.Black,
@@ -899,7 +935,7 @@ fun GameScreen(
                             com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 16.dp)
                             Spacer(modifier = Modifier.width(3.dp))
                             Text(
-                                text = "50",
+                                text = LocaleHelper.formatNumber(50, isPersian),
                                 color = Color(0xFF0F172A),
                                 fontSize = 15.sp,
                                 fontWeight = FontWeight.Black,
@@ -956,7 +992,7 @@ fun GameScreen(
                             com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 16.dp)
                             Spacer(modifier = Modifier.width(3.dp))
                             Text(
-                                text = "200",
+                                text = LocaleHelper.formatNumber(200, isPersian),
                                 color = Color(0xFF0F172A),
                                 fontSize = 15.sp,
                                 fontWeight = FontWeight.Black,
@@ -994,7 +1030,7 @@ fun GameScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         OutlinedText(
-                            text = "Hamle Bitti!",
+                            text = LocaleHelper.outOfMovesTitle(isPersian),
                             textColor = AccentGold,
                             outlineColor = Color(0xFF0F172A),
                             outlineWidth = 4f,
@@ -1004,7 +1040,7 @@ fun GameScreen(
                         )
                         Spacer(modifier = Modifier.height(12.dp))
                         Text(
-                            text = "Kelimeleri eşleştirmek için hamleniz kalmadı. Devam etmek için ek hamle alın veya yenilgiyi kabul edin.",
+                            text = LocaleHelper.outOfMovesPrompt(isPersian),
                             color = TextPrimary,
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Bold,
@@ -1024,7 +1060,7 @@ fun GameScreen(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = "5 Ek Hamle: 75 🪙",
+                                text = if (isPersian) "+۵ حرکت: ۵۰ 🪙" else "5 Ek Hamle: 50 🪙",
                                 color = Color.Black,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Black,
@@ -1044,7 +1080,7 @@ fun GameScreen(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = "Yenilgiyi Kabul Et",
+                                text = LocaleHelper.giveUp(isPersian),
                                 color = TextPrimary,
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold,
@@ -1079,7 +1115,7 @@ fun GameScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         OutlinedText(
-                            text = "Oyundan Çık",
+                            text = if (isPersian) "خروج از بازی" else "Oyundan Çık",
                             textColor = AccentGold,
                             outlineColor = Color(0xFF0F172A),
                             outlineWidth = 4f,
@@ -1089,7 +1125,7 @@ fun GameScreen(
                         )
                         Spacer(modifier = Modifier.height(12.dp))
                         Text(
-                            text = "Oyundan çıkmak istiyor musunuz? İlerlemeniz kaydedilecektir.",
+                            text = if (isPersian) "آیا می‌خواهید از بازی خارج شوید؟ پیشرفت شما ذخیره خواهد شد." else "Oyundan çıkmak istiyor musunuz? İlerlemeniz kaydedilecektir.",
                             color = TextPrimary,
                             fontSize = 13.sp,
                             fontWeight = FontWeight.Bold,
@@ -1111,7 +1147,7 @@ fun GameScreen(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = "İptal",
+                                    text = if (isPersian) "انصراف" else "İptal",
                                     color = TextPrimary,
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Bold,
@@ -1131,7 +1167,7 @@ fun GameScreen(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = "Çıkış Yap",
+                                    text = if (isPersian) "خروج" else "Çıkış Yap",
                                     color = Color.Black,
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Black,
@@ -1190,7 +1226,7 @@ fun GameScreen(
                             contentAlignment = Alignment.Center
                         ) {
                             OutlinedText(
-                                text = "Ayarlar",
+                                text = LocaleHelper.settingsTitle(isPersian),
                                 textColor = Color.White,
                                 outlineColor = Color(0xFF190D69),
                                 outlineWidth = 5f,
@@ -1288,7 +1324,7 @@ fun GameScreen(
                                     )
                                     Spacer(modifier = Modifier.width(10.dp))
                                     Text(
-                                        text = "Seviyeyi Restart Et",
+                                        text = if (isPersian) "شروع مجدد مرحله" else "Seviyeyi Restart Et",
                                         color = Color.White,
                                         fontSize = 19.sp,
                                         fontWeight = FontWeight.Black,
@@ -1325,7 +1361,7 @@ fun GameScreen(
                                     )
                                     Spacer(modifier = Modifier.width(10.dp))
                                     Text(
-                                        text = "Gizlilik Politikası",
+                                        text = LocaleHelper.privacyPolicy(isPersian),
                                         color = Color.White,
                                         fontSize = 19.sp,
                                         fontWeight = FontWeight.Black,
@@ -1361,7 +1397,7 @@ fun GameScreen(
                                     )
                                     Spacer(modifier = Modifier.width(10.dp))
                                     Text(
-                                        text = "Mağaza",
+                                        text = LocaleHelper.storeTitle(isPersian),
                                         color = Color.White,
                                         fontSize = 20.sp,
                                         fontWeight = FontWeight.Black,
@@ -1397,7 +1433,7 @@ fun GameScreen(
                                     )
                                     Spacer(modifier = Modifier.width(10.dp))
                                     Text(
-                                        text = "Ana Menüye Dön",
+                                        text = if (isPersian) "بازگشت به منوی اصلی" else "Ana Menüye Dön",
                                         color = Color.White,
                                         fontSize = 19.sp,
                                         fontWeight = FontWeight.Black,
@@ -1444,7 +1480,7 @@ fun GameScreen(
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            text = item.text,
+                            text = LocaleHelper.formatNumber(item.text, isPersian),
                             color = Color(0xFFF1C40F), // Bright Golden Yellow
                             fontSize = 22.sp, // Larger, more visible font
                             fontWeight = FontWeight.Black,
@@ -1490,9 +1526,9 @@ fun GameScreen(
                         Spacer(modifier = Modifier.width(8.dp))
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(
-                                text = "KATEGORİ TAMAMLANDI!",
+                                text = LocaleHelper.categoryCompleted(isPersian),
                                 color = AccentGold,
-                                fontSize = 10.sp,
+                                fontSize = 11.sp,
                                 fontWeight = FontWeight.Black,
                                 fontFamily = nunitoFont,
                                 letterSpacing = 1.sp

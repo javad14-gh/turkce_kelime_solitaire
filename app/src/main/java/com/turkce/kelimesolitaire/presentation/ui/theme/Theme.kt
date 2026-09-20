@@ -10,6 +10,10 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.text.style.TextDirection
+
 private val DarkColorScheme = darkColorScheme(
     primary = PrimaryNeon,
     secondary = SecondaryNeon,
@@ -37,9 +41,13 @@ fun TurkceKelimeSolitaireTheme(
         }
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
+    CompositionLocalProvider(
+        LocalTextStyle provides LocalTextStyle.current.copy(textDirection = TextDirection.ContentOrRtl)
+    ) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = Typography,
+            content = content
+        )
+    }
 }
