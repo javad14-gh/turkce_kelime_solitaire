@@ -21,6 +21,8 @@ import com.turkce.kelimesolitaire.presentation.ui.screens.GameScreen
 import com.turkce.kelimesolitaire.presentation.ui.screens.LevelCompleteScreen
 import com.turkce.kelimesolitaire.presentation.ui.screens.MainMenuScreen
 import com.turkce.kelimesolitaire.presentation.ui.screens.StoreScreen
+import android.widget.Toast
+import com.turkce.kelimesolitaire.presentation.ui.components.DailyRewardDialog
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.SecondaryNeon
 import com.turkce.kelimesolitaire.presentation.ui.theme.TurkceKelimeSolitaireTheme
@@ -55,11 +57,13 @@ class MainActivity : ComponentActivity() {
                                 coins = state.coins,
                                 completedLevels = state.completedLevels,
                                 isAdFree = state.isAdFree,
+                                hasUnclaimedDailyReward = state.dailyRewardHasUnclaimed,
                                 onStartGameClicked = { level ->
                                     viewModel.playLevel(level, this@MainActivity)
                                 },
                                 onWatchAdForCoins = { viewModel.watchRewardedAdForCoins(this@MainActivity) },
-                                onOpenStore = { viewModel.toggleStoreDialog(true) }
+                                onOpenStore = { viewModel.toggleStoreDialog(true) },
+                                onOpenDailyReward = { viewModel.openDailyRewardDialog(this@MainActivity) }
                             )
                         }
                         is ScreenState.Gameplay -> {
@@ -149,6 +153,18 @@ class MainActivity : ComponentActivity() {
                                 onBuyRemoveAds = { viewModel.buyRemoveAds(this@MainActivity) }
                             )
                         }
+                    }
+
+                    if (state.showDailyRewardDialog && state.dailyRewardState != null) {
+                        DailyRewardDialog(
+                            state = state.dailyRewardState!!,
+                            onDismiss = { viewModel.dismissDailyRewardDialog() },
+                            onClaim = { doubleReward ->
+                                viewModel.claimDailyReward(this@MainActivity, doubleReward) { msg ->
+                                    Toast.makeText(this@MainActivity, msg, Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        )
                     }
                 }
             }

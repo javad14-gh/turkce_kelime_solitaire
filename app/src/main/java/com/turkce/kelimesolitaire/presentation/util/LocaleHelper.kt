@@ -157,6 +157,30 @@ object LocaleHelper {
 
     fun continueForCoins(isPersian: Boolean): String =
         if (isPersian) "ادامه بازی (+۱۵ فرصت)" else "Oyuna Devam Et (+15 Hamle)"
+
+    fun dailyRewardTitle(isPersian: Boolean): String =
+        if (isPersian) "جایزه ورود روزانه" else "Günlük Giriş Ödülü"
+
+    fun dailyRewardSubtitle(cycle: Int, day: Int, isPersian: Boolean): String =
+        if (isPersian) "دوره ${formatNumber(cycle, true)} • روز ${formatNumber(day, true)} از ۳۰" else "Döngü $cycle • $day / 30. Gün"
+
+    fun claim(isPersian: Boolean): String =
+        if (isPersian) "دریافت هدیه" else "Ödülü Al"
+
+    fun claim2x(isPersian: Boolean): String =
+        if (isPersian) "۲ برابر با ویدیو 🎬" else "2 Katı Al 🎬"
+
+    fun comeBackTomorrow(isPersian: Boolean): String =
+        if (isPersian) "فردا بازگردید!" else "Yarın Tekrar Gel!"
+
+    fun dayLabel(day: Int, isPersian: Boolean): String =
+        if (isPersian) "روز ${formatNumber(day, true)}" else "${day}. Gün"
+
+    fun milestoneChestLabel(isPersian: Boolean): String =
+        if (isPersian) "صندوقچه هدیه" else "Özel Sandık"
+
+    fun claimedText(isPersian: Boolean): String =
+        if (isPersian) "دریافت شد" else "Alındı"
 }
 
 @Composable

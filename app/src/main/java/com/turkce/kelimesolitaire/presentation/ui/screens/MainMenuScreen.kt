@@ -67,9 +67,11 @@ fun MainMenuScreen(
     coins: Int,
     completedLevels: Set<Int>,
     isAdFree: Boolean = false,
+    hasUnclaimedDailyReward: Boolean = false,
     onStartGameClicked: (Int) -> Unit,
     onWatchAdForCoins: () -> Unit,
     onOpenStore: () -> Unit = {},
+    onOpenDailyReward: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -113,7 +115,7 @@ fun MainMenuScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             
-            // Top Dashboard HUD (Coins Status Pill left-aligned + Settings button right-aligned)
+            // Top Dashboard HUD (Coins Status Pill left-aligned + Actions right-aligned)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -160,14 +162,46 @@ fun MainMenuScreen(
                     )
                 }
 
-                // Settings Icon (No border box)
-                androidx.compose.foundation.Image(
-                    painter = androidx.compose.ui.res.painterResource(id = com.turkce.kelimesolitaire.R.drawable.setting),
-                    contentDescription = "Settings",
-                    modifier = Modifier
-                        .size(42.dp)
-                        .clickable { showSettingsMenu = true }
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    // Daily Reward Gift Box
+                    Box(
+                        modifier = Modifier
+                            .size(42.dp)
+                            .clip(RoundedCornerShape(14.dp))
+                            .background(Color(0xFF2A364F).copy(alpha = 0.9f))
+                            .border(1.5.dp, Color.White.copy(alpha = 0.25f), RoundedCornerShape(14.dp))
+                            .clickable { onOpenDailyReward() },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "🎁",
+                            fontSize = 22.sp
+                        )
+                        if (hasUnclaimedDailyReward) {
+                            Box(
+                                modifier = Modifier
+                                    .align(Alignment.TopEnd)
+                                    .offset(x = 2.dp, y = (-2).dp)
+                                    .size(10.dp)
+                                    .clip(CircleShape)
+                                    .background(Color(0xFFFF3366))
+                                    .border(1.dp, Color.White, CircleShape)
+                            )
+                        }
+                    }
+
+                    // Settings Icon
+                    androidx.compose.foundation.Image(
+                        painter = androidx.compose.ui.res.painterResource(id = com.turkce.kelimesolitaire.R.drawable.setting),
+                        contentDescription = "Settings",
+                        modifier = Modifier
+                            .size(42.dp)
+                            .clickable { showSettingsMenu = true }
+                    )
+                }
             }
 
             // Central Game Branding

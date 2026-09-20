@@ -585,9 +585,10 @@ fun GameScreen(
                                         }
                                     }
 
+                                    val targetCard = cardFromTableau
                                     if (cardFromWaste != null) {
                                         onCardDropped(listOf(cardFromWaste), slot)
-                                    } else if (cardFromTableau != null && tabIdx != -1) {
+                                    } else if (targetCard != null && tabIdx != -1) {
                                         val group = colList.subList(tabIdx, colList.size)
                                         onCardDropped(group, slot)
                                     }
@@ -647,11 +648,12 @@ fun GameScreen(
                                                     }
                                                 }
 
+                                                val targetCard = cardFromTableau
                                                 if (cardFromWaste != null) {
                                                     onCardStacked(listOf(cardFromWaste), colIdx)
-                                                } else if (cardFromTableau != null && sourceColIdx != -1) {
+                                                } else if (targetCard != null && sourceColIdx != -1) {
                                                     val sourceList = tableauPiles[sourceColIdx]
-                                                    val targetCatId = cardFromTableau.categoryId
+                                                    val targetCatId = targetCard.categoryId
                                                     var startIdx = sourceRowIdx
                                                     while (startIdx > 0) {
                                                         val prevCard = sourceList[startIdx - 1]

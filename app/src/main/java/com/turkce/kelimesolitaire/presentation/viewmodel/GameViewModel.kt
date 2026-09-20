@@ -24,6 +24,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
+import com.turkce.kelimesolitaire.data.dailyreward.DailyRewardManager
+import com.turkce.kelimesolitaire.data.dailyreward.DailyRewardState
 
 sealed interface ScreenState {
     object MainMenu : ScreenState
@@ -64,7 +66,10 @@ data class GameUiState(
     val completedCategoryName: String? = null,
     val shatteringJokerId: String? = null,
     val isAdFree: Boolean = false,
-    val showStoreDialog: Boolean = false
+    val showStoreDialog: Boolean = false,
+    val showDailyRewardDialog: Boolean = false,
+    val dailyRewardState: DailyRewardState? = null,
+    val dailyRewardHasUnclaimed: Boolean = false
 )
 
 class GameViewModel : ViewModel() {
@@ -562,7 +567,61 @@ class GameViewModel : ViewModel() {
         
         val savedCoins = prefs.getInt("user_coins", 100)
         val isAdFree = prefs.getBoolean("is_ad_free", false)
-        _uiState.update { it.copy(completedLevels = completedSet, coins = savedCoins, isAdFree = isAdFree) }
+        val dailyReward = DailyRewardManager.getDailyRewardState(context)
+        _uiState.update { 
+            it.copy(
+                completedLevels = completedSet, 
+                coins = savedCoins, 
+                isAdFree = isAdFree,
+                dailyRewardState = dailyReward,
+                dailyRewardHasUnclaimed = dailyReward.isReadyToClaimToday,
+                showDailyRewardDialog = dailyReward.isReadyToClaimToday
+            ) 
+        }
+    }
+
+    fun openDailyRewardDialog(context: Context) {
+        val dailyReward = DailyRewardManager.getDailyRewardState(context)
+        _uiState.update {
+            it.copy(
+                dailyRewardState = dailyReward,
+                dailyRewardHasUnclaimed = dailyReward.isReadyToClaimToday,
+                showDailyRewardDialog = true
+            )
+        }
+    }
+
+    fun dismissDailyRewardDialog() {
+        _uiState.update { it.copy(showDailyRewardDialog = false) }
+    }
+
+    fun claimDailyReward(activity: Activity, doubleReward: Boolean, onShowToast: (String) -> Unit = {}) {
+        val isPersian = LocaleHelper.isPersian(activity)
+        if (doubleReward) {
+            adManager.showRewarded(activity) { _ ->
+                executeDailyClaim(activity, doubleReward = true, isPersian = isPersian, onShowToast = onShowToast)
+            }
+        } else {
+            executeDailyClaim(activity, doubleReward = false, isPersian = isPersian, onShowToast = onShowToast)
+        }
+    }
+
+    private fun executeDailyClaim(context: Context, doubleReward: Boolean, isPersian: Boolean, onShowToast: (String) -> Unit) {
+        val awarded = DailyRewardManager.claimDailyReward(context, doubleReward)
+        if (awarded > 0) {
+            val newCoins = _uiState.value.coins + awarded
+            val updatedDailyState = DailyRewardManager.getDailyRewardState(context)
+            _uiState.update {
+                it.copy(
+                    coins = newCoins,
+                    dailyRewardState = updatedDailyState,
+                    dailyRewardHasUnclaimed = false
+                )
+            }
+            saveCoinsToPrefs(context, newCoins)
+            val msg = if (isPersian) "+${LocaleHelper.formatNumber(awarded, true)} سکه دریافت شد!\u200F" else "+$awarded Altın kazanıldı!"
+            onShowToast(msg)
+        }
     }
 
     fun openStore() {
