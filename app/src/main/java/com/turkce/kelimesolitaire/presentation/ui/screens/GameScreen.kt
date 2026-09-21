@@ -352,7 +352,7 @@ fun GameScreen(
                                 isHinted = isWasteHinted,
                                 isDragged = isDragged,
                                 dragOffset = if (isDragged) dragOffset else Offset.Zero,
-                                isInteractionEnabled = !isAnimatingReturn && (draggedCards.isEmpty() || isDragged),
+                                isInteractionEnabled = movesRemaining > 0 && !showOutofMovesDialog && !isAnimatingReturn && (draggedCards.isEmpty() || isDragged),
                                 onTap = {},
                                 onDragStart = {
                                     draggedCards = listOf(topWaste)
@@ -481,7 +481,7 @@ fun GameScreen(
                         Box(
                             modifier = Modifier
                                 .size(width = 85.dp, height = 110.dp)
-                                .clickable { onDrawFromStock() }
+                                .clickable(enabled = movesRemaining > 0 && !showOutofMovesDialog) { onDrawFromStock() }
                                 .then(
                                     if (isStockHinted) Modifier.border(2.5.dp, Color(0xFFF1C40F), RoundedCornerShape(12.dp))
                                     else Modifier
@@ -517,7 +517,7 @@ fun GameScreen(
                                     color = if (isStockHinted) Color(0xFFF1C40F) else AccentGold.copy(alpha = 0.3f),
                                     shape = RoundedCornerShape(8.dp)
                                 )
-                                .clickable { onDrawFromStock() },
+                                .clickable(enabled = movesRemaining > 0 && !showOutofMovesDialog) { onDrawFromStock() },
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
@@ -712,7 +712,7 @@ fun GameScreen(
                                         isHinted = isCardHinted,
                                         isDragged = isDragged,
                                         dragOffset = if (isDragged) dragOffset else Offset.Zero,
-                                        isInteractionEnabled = !isAnimatingReturn && (draggedCards.isEmpty() || isDragged),
+                                        isInteractionEnabled = movesRemaining > 0 && !showOutofMovesDialog && !isAnimatingReturn && (draggedCards.isEmpty() || isDragged),
                                         onTap = {},
                                         onDragStart = {
                                             val targetCatId = card.categoryId

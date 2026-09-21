@@ -165,6 +165,10 @@ class GameViewModel : ViewModel() {
     }
 
     fun drawFromStock(context: Context) {
+        if (_uiState.value.movesRemaining <= 0 || _uiState.value.showOutofMovesDialog) {
+            checkMovesRemaining()
+            return
+        }
         pushToUndoStack() // PUSH UNDO BEFORE DRAW
         val currentStock = _uiState.value.stockPile.toMutableList()
         val currentWaste = _uiState.value.wastePile.toMutableList()
@@ -199,6 +203,10 @@ class GameViewModel : ViewModel() {
 
     fun attemptPlaceCards(cards: List<SolitaireCard>, targetSlot: FoundationSlot, context: Context): Boolean {
         if (cards.isEmpty()) return false
+        if (_uiState.value.movesRemaining <= 0 || _uiState.value.showOutofMovesDialog) {
+            checkMovesRemaining()
+            return false
+        }
 
         val updatedSlots = _uiState.value.foundationSlots.map { it.copy() }.toMutableList()
         val slotIdx = updatedSlots.indexOfFirst { it.id == targetSlot.id }
@@ -327,6 +335,8 @@ class GameViewModel : ViewModel() {
 
             if (newTotalMatched >= _uiState.value.totalWordsToMatch && _uiState.value.totalWordsToMatch > 0) {
                 triggerLevelComplete(context)
+            } else {
+                checkMovesRemaining()
             }
             return true
         } else {
@@ -337,6 +347,10 @@ class GameViewModel : ViewModel() {
 
     fun attemptStackCards(cards: List<SolitaireCard>, targetColIdx: Int, context: Context): Boolean {
         if (cards.isEmpty()) return false
+        if (_uiState.value.movesRemaining <= 0 || _uiState.value.showOutofMovesDialog) {
+            checkMovesRemaining()
+            return false
+        }
         val tableaus = _uiState.value.tableauPiles.map { it.toMutableList() }
         if (targetColIdx !in 0..3) return false
 
@@ -783,6 +797,10 @@ class GameViewModel : ViewModel() {
 
     fun undoLastMove(context: Context, onShowToast: (String) -> Unit) {
         val isPersian = LocaleHelper.isPersian(context)
+        if (_uiState.value.movesRemaining <= 0 || _uiState.value.showOutofMovesDialog) {
+            checkMovesRemaining()
+            return
+        }
         if (undoStack.isEmpty()) {
             onShowToast(if (isPersian) "حرکتی برای بازگشت وجود ندارد!\u200F" else "Geri alınacak hamle yok!")
             return
@@ -816,6 +834,10 @@ class GameViewModel : ViewModel() {
 
     fun showHint(context: Context, onShowToast: (String) -> Unit) {
         val isPersian = LocaleHelper.isPersian(context)
+        if (_uiState.value.movesRemaining <= 0 || _uiState.value.showOutofMovesDialog) {
+            checkMovesRemaining()
+            return
+        }
         val state = _uiState.value
         if (state.coins < 50) {
             onShowToast(if (isPersian) "سکه ناکافی! (۵۰ 🪙 نیاز است)\u200F" else "Yetersiz altın! (50 🪙 gerekli)")
@@ -853,6 +875,10 @@ class GameViewModel : ViewModel() {
 
     fun useJoker(context: Context, onShowToast: (String) -> Unit) {
         val isPersian = LocaleHelper.isPersian(context)
+        if (_uiState.value.movesRemaining <= 0 || _uiState.value.showOutofMovesDialog) {
+            checkMovesRemaining()
+            return
+        }
         val state = _uiState.value
         if (state.coins < 200) {
             onShowToast(if (isPersian) "سکه ناکافی! (۲۰۰ 🪙 نیاز است)\u200F" else "Yetersiz altın! (200 🪙 gerekli)")
