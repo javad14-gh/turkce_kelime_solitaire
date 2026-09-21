@@ -41,7 +41,7 @@ data class GameUiState(
     val previousScreenState: ScreenState = ScreenState.MainMenu,
     val levelNumber: Int = 1,
     val score: Int = 0,
-    val coins: Int = 100,
+    val coins: Int = 50,
     val levelData: LevelData? = null,
     val completedLevels: Set<Int> = emptySet(),
     
@@ -134,10 +134,10 @@ class GameViewModel : ViewModel() {
 
         val baseMoves = allWords.size + generated.targetCategories.size + generated.initialStock.size
         val buffer = when (generated.difficulty) {
-            "Kolay" -> 8
-            "Orta" -> 5
-            "Zor" -> 2
-            else -> 1 // CokZor
+            "Kolay" -> if (levelNum <= 3) 5 else 3
+            "Orta" -> 2
+            "Zor" -> 1
+            else -> 0 // CokZor
         }
         val calculatedMoves = baseMoves + buffer
 
@@ -262,9 +262,6 @@ class GameViewModel : ViewModel() {
                     }
                     successCount++
                     scoreDelta += 10
-                    if (!isReplay) {
-                        coinsDelta += 2
-                    }
                 }
             } else {
                 break
@@ -500,7 +497,13 @@ class GameViewModel : ViewModel() {
     private fun triggerLevelComplete(context: Context) {
         val currentLvl = _uiState.value.levelNumber
         val isReplay = _uiState.value.completedLevels.contains(currentLvl)
-        val bonus = if (isReplay) 0 else 50
+        val bonus = if (isReplay) 0 else when (_uiState.value.levelData?.difficulty) {
+            "Kolay" -> 10
+            "Orta" -> 15
+            "Zor" -> 25
+            "CokZor" -> 35
+            else -> 15
+        }
 
         val updatedSet = _uiState.value.completedLevels + currentLvl
 
@@ -519,11 +522,11 @@ class GameViewModel : ViewModel() {
     }
 
     fun purchaseExtraMoves(activity: Activity) {
-        if (_uiState.value.coins >= 100) {
+        if (_uiState.value.coins >= 75) {
             _uiState.update {
                 it.copy(
-                    coins = it.coins - 100,
-                    movesRemaining = 15,
+                    coins = it.coins - 75,
+                    movesRemaining = 5,
                     showOutofMovesDialog = false
                 )
             }
@@ -538,7 +541,7 @@ class GameViewModel : ViewModel() {
         adManager.showRewarded(activity) {
             _uiState.update {
                 it.copy(
-                    movesRemaining = 15,
+                    movesRemaining = 5,
                     showOutofMovesDialog = false
                 )
             }
@@ -589,7 +592,7 @@ class GameViewModel : ViewModel() {
             }
         }
         
-        val savedCoins = prefs.getInt("user_coins", 100)
+        val savedCoins = prefs.getInt("user_coins", 50)
         val isAdFree = prefs.getBoolean("is_ad_free", false)
         val dailyReward = DailyRewardManager.getDailyRewardState(context)
         _uiState.update { 
@@ -830,7 +833,7 @@ class GameViewModel : ViewModel() {
             }
             saveCoinsToPrefs(context, _uiState.value.coins)
             viewModelScope.launch {
-                delay(3000)
+                delay(4000)
                 _uiState.update {
                     it.copy(
                         hintedCardId = null,
@@ -838,9 +841,13 @@ class GameViewModel : ViewModel() {
                     )
                 }
             }
-            onShowToast(if (isPersian) "راهنمایی نمایش داده شد! (-۵۰ 🪙)\u200F" else "İpucu gösteriliyor! (-50 🪙)")
+            if (hint.first == "stock_pile") {
+                onShowToast(if (isPersian) "روی دسته کارت بزنید و کارت بکشید! (-۵۰ 🪙)\u200F" else "Desteden kart çekin! (-50 🪙)")
+            } else {
+                onShowToast(if (isPersian) "کارت و جایگاه مناسب با رنگ طلایی درخشان مشخص شدند! (-۵۰ 🪙)\u200F" else "Kart ve hedef altın çerçeveyle gösterildi! (-50 🪙)")
+            }
         } else {
-            onShowToast(if (isPersian) "در حال حاضر حرکتی وجود ندارد، از دسته کارت بکشید!\u200F" else "Şu anda hamle yok, desteden kart çekmeyi deneyin!")
+            onShowToast(if (isPersian) "هیچ حرکتی ممکن نیست! می‌توانید از جوکر استفاده کنید.\u200F" else "Hamle kalmadı! Joker kartını deneyin.")
         }
     }
 
@@ -879,42 +886,139 @@ class GameViewModel : ViewModel() {
 
     private fun findPossibleMove(): Pair<String, String>? {
         val state = _uiState.value
-        
-        val wasteTop = state.wastePile.lastOrNull()
-        if (wasteTop != null) {
-            for (slot in state.foundationSlots) {
-                if (slot.activeCategory != null && wasteTop.categoryId == slot.activeCategory.id) {
-                    return Pair(wasteTop.id, "slot_${slot.id}")
+
+        // 1. DIRECT MATCHES TO FOUNDATION
+        // A) Category cards in Tableau to empty Foundation slot
+        val emptySlot = state.foundationSlots.firstOrNull { it.activeCategory == null }
+        if (emptySlot != null) {
+            for (col in state.tableauPiles) {
+                val catCard = col.find { it.isFaceUp && it.isCategory }
+                if (catCard != null) {
+                    return Pair(catCard.id, "slot_${emptySlot.id}")
                 }
+            }
+            val wasteTop = state.wastePile.lastOrNull()
+            if (wasteTop != null && wasteTop.isCategory) {
+                return Pair(wasteTop.id, "slot_${emptySlot.id}")
             }
         }
 
-        for ((cIdx, col) in state.tableauPiles.withIndex()) {
-            val topCard = col.lastOrNull { it.isFaceUp } ?: continue
-            for (slot in state.foundationSlots) {
-                if (slot.activeCategory != null && topCard.categoryId == slot.activeCategory.id) {
-                    return Pair(topCard.id, "slot_${slot.id}")
-                }
-            }
-        }
+        // B) Word cards in Tableau to active Foundation slot
+        for (col in state.tableauPiles) {
+            val faceUpCards = col.filter { it.isFaceUp }
+            if (faceUpCards.isEmpty()) continue
 
-        if (wasteTop != null) {
-            for (slot in state.foundationSlots) {
-                if (slot.activeCategory == null && wasteTop.isCategory) {
-                    return Pair(wasteTop.id, "slot_${slot.id}")
-                }
-            }
-        }
-
-        for ((cIdx, col) in state.tableauPiles.withIndex()) {
-            val card = col.lastOrNull { it.isFaceUp } ?: continue
-            if (card.isCategory) {
+            val topCard = faceUpCards.lastOrNull()
+            if (topCard != null && !topCard.isCategory) {
                 for (slot in state.foundationSlots) {
-                    if (slot.activeCategory == null) {
-                        return Pair(card.id, "slot_${slot.id}")
+                    if (slot.activeCategory != null && 
+                        (topCard.categoryId == slot.activeCategory.id || topCard.categoryId == "joker_wildcard")) {
+                        return Pair(topCard.id, "slot_${slot.id}")
                     }
                 }
             }
+
+            // Check if full face-up group can move to active slot
+            val firstFaceUp = faceUpCards.firstOrNull()
+            if (firstFaceUp != null && !firstFaceUp.isCategory) {
+                for (slot in state.foundationSlots) {
+                    if (slot.activeCategory != null && 
+                        (firstFaceUp.categoryId == slot.activeCategory.id || firstFaceUp.categoryId == "joker_wildcard")) {
+                        val allMatch = faceUpCards.all { it.categoryId == slot.activeCategory.id || it.categoryId == "joker_wildcard" }
+                        if (allMatch) {
+                            return Pair(firstFaceUp.id, "slot_${slot.id}")
+                        }
+                    }
+                }
+            }
+        }
+
+        // C) Waste card to active Foundation slot
+        val wasteTop = state.wastePile.lastOrNull()
+        if (wasteTop != null && !wasteTop.isCategory) {
+            for (slot in state.foundationSlots) {
+                if (slot.activeCategory != null && 
+                    (wasteTop.categoryId == slot.activeCategory.id || wasteTop.categoryId == "joker_wildcard")) {
+                    return Pair(wasteTop.id, "slot_${slot.id}")
+                }
+            }
+        }
+
+        // 2. TABLEAU-TO-TABLEAU MOVES
+        for (sourceIdx in 0..3) {
+            val sourceCol = state.tableauPiles[sourceIdx]
+            val faceUpCards = sourceCol.filter { it.isFaceUp }
+            if (faceUpCards.isEmpty()) continue
+
+            val firstFaceUp = faceUpCards.first()
+
+            for (targetIdx in 0..3) {
+                if (sourceIdx == targetIdx) continue
+                val targetCol = state.tableauPiles[targetIdx]
+
+                if (targetCol.isEmpty()) {
+                    // Moving to empty column is high priority if it uncovers a face-down card
+                    val hasFaceDown = sourceCol.any { !it.isFaceUp }
+                    if (hasFaceDown) {
+                        return Pair(firstFaceUp.id, "col_$targetIdx")
+                    }
+                } else {
+                    val targetBottom = targetCol.last()
+                    if (targetBottom.isFaceUp && !targetBottom.isCategory) {
+                        val canStack = firstFaceUp.categoryId == targetBottom.categoryId || 
+                                       firstFaceUp.categoryId == "joker_wildcard" || 
+                                       targetBottom.categoryId == "joker_wildcard"
+                        if (canStack) {
+                            return Pair(firstFaceUp.id, "col_$targetIdx")
+                        }
+                    }
+                }
+            }
+
+            // Also check moving just the last card of sourceCol if group has > 1 card
+            if (faceUpCards.size > 1) {
+                val lastCard = faceUpCards.last()
+                for (targetIdx in 0..3) {
+                    if (sourceIdx == targetIdx) continue
+                    val targetCol = state.tableauPiles[targetIdx]
+                    if (targetCol.isNotEmpty()) {
+                        val targetBottom = targetCol.last()
+                        if (targetBottom.isFaceUp && !targetBottom.isCategory) {
+                            val canStack = lastCard.categoryId == targetBottom.categoryId || 
+                                           lastCard.categoryId == "joker_wildcard" || 
+                                           targetBottom.categoryId == "joker_wildcard"
+                            if (canStack) {
+                                return Pair(lastCard.id, "col_$targetIdx")
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // 3. WASTE-TO-TABLEAU MOVES
+        if (wasteTop != null) {
+            for (targetIdx in 0..3) {
+                val targetCol = state.tableauPiles[targetIdx]
+                if (targetCol.isEmpty()) {
+                    return Pair(wasteTop.id, "col_$targetIdx")
+                } else {
+                    val targetBottom = targetCol.last()
+                    if (targetBottom.isFaceUp && !targetBottom.isCategory) {
+                        val canStack = wasteTop.categoryId == targetBottom.categoryId || 
+                                       wasteTop.categoryId == "joker_wildcard" || 
+                                       targetBottom.categoryId == "joker_wildcard"
+                        if (canStack) {
+                            return Pair(wasteTop.id, "col_$targetIdx")
+                        }
+                    }
+                }
+            }
+        }
+
+        // 4. DRAW FROM STOCK PILE
+        if (state.stockPile.isNotEmpty() || state.wastePile.isNotEmpty()) {
+            return Pair("stock_pile", "stock_pile")
         }
 
         return null

@@ -134,7 +134,7 @@ fun GameOverScreen(
                                     )
                                 }
                             )
-                            .clickable(enabled = coins >= 50) { onContinueForCoins() }
+                            .clickable(enabled = coins >= 75) { onContinueForCoins() }
                             .padding(horizontal = 22.dp, vertical = 11.dp),
                         contentAlignment = Alignment.Center
                     ) {
@@ -142,8 +142,8 @@ fun GameOverScreen(
                             com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 22.dp)
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                text = "${LocaleHelper.formatNumber(50, isPersian)} ${if (isPersian) "سکه" else "Altın"}",
-                                color = if (coins >= 50) Color(0xFF0F172A) else Color(0xFF94A3B8),
+                                text = "${LocaleHelper.formatNumber(75, isPersian)} ${if (isPersian) "سکه" else "Altın"}",
+                                color = if (coins >= 75) Color(0xFF0F172A) else Color(0xFF94A3B8),
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Black,
                                 fontFamily = nunitoFont

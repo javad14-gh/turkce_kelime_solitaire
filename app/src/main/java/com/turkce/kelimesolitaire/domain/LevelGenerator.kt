@@ -17,17 +17,42 @@ class LevelGenerator {
         val allCategories = database.categories
         val allWords = database.words
 
-        // Determine level configuration parameters based on a repeating 10-level cycle
-        val cycleIndex = (levelNumber - 1) % 10
-        // Cycle Pattern: 0:Easy, 1:Easy, 2:Medium, 3:Easy, 4:Medium, 5:Medium, 6:Hard, 7:Easy, 8:Medium, 9:VeryHard
-        val difficultyLevel = when (cycleIndex) {
-            0, 1, 3, 7 -> "Kolay"
-            2, 4, 5, 8 -> "Orta"
-            6 -> "Zor"
-            else -> "CokZor"
+        // Gradual progression curve
+        val difficultyLevel = when {
+            levelNumber <= 3 -> "Kolay" // Tutorial / Warmup
+            levelNumber in 4..7 -> when (levelNumber) {
+                4 -> "Kolay"
+                else -> "Orta"
+            }
+            levelNumber in 8..10 -> when (levelNumber) {
+                8, 9 -> "Zor"
+                else -> "CokZor" // Level 10 milestone
+            }
+            levelNumber in 11..20 -> {
+                val cycle = (levelNumber - 11) % 10
+                // 11:Orta, 12:Orta, 13:Zor, 14:Orta, 15:Zor, 16:Zor, 17:Zor, 18:Orta, 19:Zor, 20:CokZor
+                when (cycle) {
+                    0, 1, 3, 7 -> "Orta"
+                    9 -> "CokZor"
+                    else -> "Zor"
+                }
+            }
+            else -> {
+                // Levels 21+: Endgame challenge (mostly Zor and CokZor with occasional Orta breather)
+                val cycle = (levelNumber - 21) % 10
+                when (cycle) {
+                    0, 4 -> "Orta"
+                    2, 5, 7 -> "Zor"
+                    else -> "CokZor"
+                }
+            }
         }
 
-        val scaleFactor = (levelNumber - 1) / 30
+        val scaleFactor = when {
+            levelNumber <= 8 -> 0
+            levelNumber <= 20 -> 1
+            else -> 2
+        }
         val baseCategories = when (difficultyLevel) {
             "Kolay" -> 3
             "Orta" -> 4

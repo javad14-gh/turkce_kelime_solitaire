@@ -4,6 +4,11 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.zIndex
 import kotlinx.coroutines.launch
@@ -60,6 +65,7 @@ fun WordCard(
     isSelected: Boolean,
     isShaking: Boolean,
     isShattering: Boolean = false,
+    isHinted: Boolean = false,
     isDragged: Boolean,
     dragOffset: Offset,
     isInteractionEnabled: Boolean,
@@ -119,14 +125,36 @@ fun WordCard(
         }
     }
 
-    val scale = if (isDragged) 1.15f else if (isSelected) 1.05f else 1.0f
-    val elevation = if (isDragged) 16.dp else if (isSelected) 6.dp else 3.dp
+    // Hint pulsing animation
+    val infiniteTransition = rememberInfiniteTransition(label = "hintPulse")
+    val hintPulseScale by infiniteTransition.animateFloat(
+        initialValue = 1.0f,
+        targetValue = 1.08f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(400, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "hintScale"
+    )
+    val hintGlowAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.5f,
+        targetValue = 1.0f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(400, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "hintAlpha"
+    )
+
+    val scale = if (isDragged) 1.15f else if (isSelected) 1.05f else if (isHinted) hintPulseScale else 1.0f
+    val elevation = if (isDragged) 16.dp else if (isHinted) 12.dp else if (isSelected) 6.dp else 3.dp
     
     val isJoker = card.categoryId == "joker_wildcard"
 
     // Board outline styling: category cards get a gold border when face up!
     val borderColor = when {
         isShaking -> ErrorRed
+        isHinted -> Color(0xFFFFD700).copy(alpha = hintGlowAlpha)
         isJoker -> Color(0xFF7E22CE) // Vibrant Purple Border for Joker!
         isSelected -> AccentGold
         !isFaceUp -> Color.White // Crisp border for card backs
@@ -192,7 +220,7 @@ fun WordCard(
             .shadow(elevation, RoundedCornerShape(8.dp), clip = false)
             .background(cardBrush, shape = RoundedCornerShape(8.dp))
             .border(
-                width = if (isJoker || isSelected || isShaking || !isFaceUp || card.isCategory) 2.dp else 1.dp,
+                width = if (isHinted) 3.dp else if (isJoker || isSelected || isShaking || !isFaceUp || card.isCategory) 2.dp else 1.dp,
                 color = borderColor,
                 shape = RoundedCornerShape(8.dp)
             )
