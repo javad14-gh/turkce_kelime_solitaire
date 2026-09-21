@@ -86,6 +86,9 @@ dependencies {
     // Google Mobile Ads (AdMob) SDK
     implementation("com.google.android.gms:play-services-ads:22.6.0")
 
+    // Tapsell Plus SDK (for Persian / Bazaar market)
+    implementation("ir.tapsell.plus:tapsell-plus-sdk-android:2.3.3")
+
     // Test dependencies
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

@@ -10,6 +10,8 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven { url = java.net.URI.create("https://maven.tapsell.ir") }
+        maven { url = java.net.URI.create("https://repo.tapsell.ir/content/repositories/releases/") }
     }
 }
 
