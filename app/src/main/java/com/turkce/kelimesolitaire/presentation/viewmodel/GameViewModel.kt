@@ -863,11 +863,11 @@ class GameViewModel : ViewModel() {
 
         val jokerCard = SolitaireCard(
             id = "joker_${System.currentTimeMillis()}",
-            text = "JOKER",
+            text = if (isPersian) "جوکر" else "JOKER",
             categoryId = "joker_wildcard",
             isCategory = false,
             isFaceUp = true,
-            word = Word("joker_word_${System.currentTimeMillis()}", "joker_wildcard", "JOKER", "Kolay")
+            word = Word("joker_word_${System.currentTimeMillis()}", "joker_wildcard", if (isPersian) "جوکر" else "JOKER", "Kolay")
         )
 
         val newWaste = state.wastePile + jokerCard

@@ -48,6 +48,8 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.platform.LocalContext
+import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
@@ -77,6 +79,8 @@ fun WordCard(
     modifier: Modifier = Modifier
 ) {
     val isFaceUp = card.isFaceUp
+    val context = LocalContext.current
+    val isPersian = remember(context) { LocaleHelper.isPersian(context) }
     val nunitoFont = rememberNunitoFont()
     
     // Wrap callbacks and value arguments in rememberUpdatedState to prevent capturing stale values
@@ -322,7 +326,7 @@ fun WordCard(
 
                     if (isJoker) {
                         Text(
-                            text = "🃏 JOKER",
+                            text = if (isPersian) "🃏 جوکر" else "🃏 JOKER",
                             color = Color(0xFF6B21A8),
                             fontFamily = nunitoFont,
                             fontSize = 11.5.sp,
@@ -330,7 +334,7 @@ fun WordCard(
                             modifier = Modifier.padding(bottom = 2.dp)
                         )
                         Text(
-                            text = "HER KELİME",
+                            text = if (isPersian) "هر کلمه" else "HER KELİME",
                             color = Color(0xFF991B1B),
                             fontFamily = nunitoFont,
                             fontSize = 12.5.sp,
@@ -339,7 +343,7 @@ fun WordCard(
                         )
                     } else if (card.isCategory) {
                         Text(
-                            text = "👑 KAT",
+                            text = if (isPersian) "👑 دسته" else "👑 KAT",
                             color = AccentGold,
                             fontFamily = nunitoFont,
                             fontSize = 10.5.sp,

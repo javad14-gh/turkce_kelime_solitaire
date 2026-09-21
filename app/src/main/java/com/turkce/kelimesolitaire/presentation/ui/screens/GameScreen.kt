@@ -521,7 +521,7 @@ fun GameScreen(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = "♻️\nYenile",
+                                text = if (isPersian) "♻️\nبر زدن" else "♻️\nYenile",
                                 color = AccentGold,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Black,
@@ -1086,7 +1086,7 @@ fun GameScreen(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = if (isPersian) "+۵ حرکت: ۵۰ 🪙" else "5 Ek Hamle: 50 🪙",
+                                text = if (isPersian) "+۵ حرکت: ۷۵ 🪙" else "5 Ek Hamle: 75 🪙",
                                 color = Color.Black,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Black,

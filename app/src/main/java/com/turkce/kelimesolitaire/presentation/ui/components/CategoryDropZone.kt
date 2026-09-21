@@ -32,6 +32,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.remember
+import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 import com.turkce.kelimesolitaire.data.model.FoundationSlot
 import com.turkce.kelimesolitaire.presentation.ui.theme.AccentGold
 import com.turkce.kelimesolitaire.presentation.ui.theme.SecondaryNeon
@@ -46,6 +49,8 @@ fun CategoryDropZone(
     onBoundsPositioned: (FoundationSlot, Rect) -> Unit, // Window coordinates bounds reporter
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+    val isPersian = remember(context) { LocaleHelper.isPersian(context) }
     val nunitoFont = rememberNunitoFont()
     val scaleFactor by animateFloatAsState(targetValue = if (isHighlighted) 1.05f else 1.0f)
     val activeCategory = slot.activeCategory
@@ -91,9 +96,9 @@ fun CategoryDropZone(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Kat. Eşle",
+                    text = if (isPersian) "کارت دسته" else "Kat. Eşle",
                     color = Color.White.copy(alpha = 0.4f),
-                    fontSize = 9.sp,
+                    fontSize = if (isPersian) 10.sp else 9.sp,
                     fontWeight = FontWeight.W800,
                     fontFamily = nunitoFont,
                     textAlign = TextAlign.Center
@@ -158,7 +163,7 @@ fun CategoryDropZone(
                 ) {
                     // Match counter in top-right corner
                     Text(
-                        text = "${matchedWords.size}/$totalWords",
+                        text = "${LocaleHelper.formatNumber(matchedWords.size, isPersian)}/${LocaleHelper.formatNumber(totalWords, isPersian)}",
                         color = Color.DarkGray,
                         fontSize = 9.sp,
                         fontWeight = FontWeight.W800,
