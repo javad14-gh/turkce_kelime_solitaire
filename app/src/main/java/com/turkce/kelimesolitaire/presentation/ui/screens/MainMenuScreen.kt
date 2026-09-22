@@ -100,8 +100,8 @@ fun MainMenuScreen(
     }
 
     var showSettingsMenu by remember { androidx.compose.runtime.mutableStateOf(false) }
-    var isSoundEnabled by remember { androidx.compose.runtime.mutableStateOf(true) }
-    var isHapticEnabled by remember { androidx.compose.runtime.mutableStateOf(true) }
+    var isSoundEnabled by remember { androidx.compose.runtime.mutableStateOf(com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.isSoundEnabled(context)) }
+    var isHapticEnabled by remember { androidx.compose.runtime.mutableStateOf(com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.isHapticEnabled(context)) }
 
     Box(
         modifier = modifier
@@ -509,7 +509,14 @@ fun MainMenuScreen(
                                     contentDescription = "Sound",
                                     modifier = Modifier
                                         .size(44.dp)
-                                        .clickable { isSoundEnabled = !isSoundEnabled },
+                                        .clickable {
+                                            val next = !isSoundEnabled
+                                            isSoundEnabled = next
+                                            com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.setSoundEnabled(context, next)
+                                            if (next) {
+                                                com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playButtonClickSound(context)
+                                            }
+                                        },
                                     colorFilter = if (!isSoundEnabled) ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) }) else null,
                                     alpha = if (isSoundEnabled) 1f else 0.4f
                                 )
@@ -520,7 +527,14 @@ fun MainMenuScreen(
                                     contentDescription = "Vibration",
                                     modifier = Modifier
                                         .size(44.dp)
-                                        .clickable { isHapticEnabled = !isHapticEnabled },
+                                        .clickable {
+                                            val next = !isHapticEnabled
+                                            isHapticEnabled = next
+                                            com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.setHapticEnabled(context, next)
+                                            if (next) {
+                                                com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.vibrateLight(context)
+                                            }
+                                        },
                                     colorFilter = if (!isHapticEnabled) ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) }) else null,
                                     alpha = if (isHapticEnabled) 1f else 0.4f
                                 )

@@ -33,11 +33,10 @@ class AdManager private constructor() {
         const val TEST_REWARDED_ID = "ca-app-pub-3940256099942544/5224354917"
 
         // Tapsell IDs (For Cafe Bazaar / Persian build)
-        // Replace these placeholder strings with your actual keys from dashboard.tapsell.ir
-        const val TAPSELL_APP_KEY = "YOUR_TAPSELL_APP_KEY"
-        const val TAPSELL_BANNER_ZONE_ID = "YOUR_TAPSELL_BANNER_ZONE_ID"
-        const val TAPSELL_INTERSTITIAL_ZONE_ID = "YOUR_TAPSELL_INTERSTITIAL_ZONE_ID"
-        const val TAPSELL_REWARDED_ZONE_ID = "YOUR_TAPSELL_REWARDED_ZONE_ID"
+        const val TAPSELL_APP_KEY = "jqfpqlgflojgicbkqnidhnmppgppjeoqedirholtnaffhkclhoaffepsaphecmrtmhtjnl"
+        const val TAPSELL_BANNER_ZONE_ID = "6ab2ee0ee237e15c69fba7fd"
+        const val TAPSELL_INTERSTITIAL_ZONE_ID = "6ab2ede6e237e15c69fba7fc"
+        const val TAPSELL_REWARDED_ZONE_ID = "6ab2edf6f9c3d5797ba49a96"
 
         @Volatile
         private var instance: AdManager? = null

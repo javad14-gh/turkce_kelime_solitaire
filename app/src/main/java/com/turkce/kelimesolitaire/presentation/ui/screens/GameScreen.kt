@@ -242,8 +242,8 @@ fun GameScreen(
     // List of floating coins text (+2) to animate
     var floatingCoins by remember { mutableStateOf<List<FloatingCoinText>>(emptyList()) }
     var showHamburgerMenu by remember { mutableStateOf(false) }
-    var isSoundEnabled by rememberSaveable { mutableStateOf(true) }
-    var isHapticEnabled by rememberSaveable { mutableStateOf(true) }
+    var isSoundEnabled by rememberSaveable { mutableStateOf(com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.isSoundEnabled(context)) }
+    var isHapticEnabled by rememberSaveable { mutableStateOf(com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.isHapticEnabled(context)) }
     
     // Group dragging states
     var draggedCards by remember { mutableStateOf<List<SolitaireCard>>(emptyList()) }
@@ -443,14 +443,21 @@ fun GameScreen(
                                             val success = onCardDropped(finalGroup, matchedSlot)
                                             if (success) {
                                                 draggedCards = emptyList()
-                                                if (isHapticEnabled) haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                                if (isHapticEnabled) {
+                                                    com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.vibrateCardSnap(context)
+                                                }
+                                                if (isSoundEnabled) {
+                                                    com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playCardSnapSound(context)
+                                                }
                                                 if (!isReplay) {
                                                     val bounds = dropZoneBounds[matchedSlot.id.toString()]
                                                     if (bounds != null) {
                                                         val wordCount = finalGroup.count { !it.isCategory }
                                                         val earnedAmount = wordCount * 2
                                                         if (earnedAmount > 0) {
-                                                            if (isSoundEnabled) SoundEffects.playCoinSound()
+                                                            if (isSoundEnabled) {
+                                                                com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playCoinSound(context)
+                                                            }
                                                             floatingCoins = floatingCoins + FloatingCoinText(
                                                                 id = System.currentTimeMillis() + matchedSlot.id,
                                                                 text = "+$earnedAmount",
@@ -477,7 +484,12 @@ fun GameScreen(
                                                 val success = onCardStacked(finalGroup, matchedColIdx)
                                                 if (success) {
                                                     draggedCards = emptyList()
-                                                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                                    if (isHapticEnabled) {
+                                                        com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.vibrateCardSnap(context)
+                                                    }
+                                                    if (isSoundEnabled) {
+                                                        com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playCardSnapSound(context)
+                                                    }
                                                 } else {
                                                     coroutineScope.launch {
                                                         isAnimatingReturn = true
@@ -830,14 +842,21 @@ fun GameScreen(
                                                     val success = onCardDropped(finalGroup, matchedSlot)
                                                     if (success) {
                                                         draggedCards = emptyList()
-                                                        if (isHapticEnabled) haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                                        if (isHapticEnabled) {
+                                                            com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.vibrateCardSnap(context)
+                                                        }
+                                                        if (isSoundEnabled) {
+                                                            com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playCardSnapSound(context)
+                                                        }
                                                         if (!isReplay) {
                                                             val bounds = dropZoneBounds[matchedSlot.id.toString()]
                                                             if (bounds != null) {
                                                                 val wordCount = finalGroup.count { !it.isCategory }
                                                                 val earnedAmount = wordCount * 2
                                                                 if (earnedAmount > 0) {
-                                                                    SoundEffects.playCoinSound()
+                                                                    if (isSoundEnabled) {
+                                                                        com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playCoinSound(context)
+                                                                    }
                                                                     floatingCoins = floatingCoins + FloatingCoinText(
                                                                         id = System.currentTimeMillis() + matchedSlot.id.hashCode(),
                                                                         text = "+$earnedAmount",
@@ -864,7 +883,12 @@ fun GameScreen(
                                                         val success = onCardStacked(finalGroup, matchedColIdx)
                                                         if (success) {
                                                             draggedCards = emptyList()
-                                                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                                            if (isHapticEnabled) {
+                                                                com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.vibrateCardSnap(context)
+                                                            }
+                                                            if (isSoundEnabled) {
+                                                                com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playCardSnapSound(context)
+                                                            }
                                                         } else {
                                                             coroutineScope.launch {
                                                                 isAnimatingReturn = true
@@ -1491,7 +1515,14 @@ fun GameScreen(
                                     contentDescription = "Sound",
                                     modifier = Modifier
                                         .size(44.dp)
-                                        .clickable { isSoundEnabled = !isSoundEnabled },
+                                        .clickable {
+                                            val next = !isSoundEnabled
+                                            isSoundEnabled = next
+                                            com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.setSoundEnabled(context, next)
+                                            if (next) {
+                                                com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playButtonClickSound(context)
+                                            }
+                                        },
                                     colorFilter = if (!isSoundEnabled) ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) }) else null,
                                     alpha = if (isSoundEnabled) 1f else 0.4f
                                 )
@@ -1502,7 +1533,14 @@ fun GameScreen(
                                     contentDescription = "Vibration",
                                     modifier = Modifier
                                         .size(44.dp)
-                                        .clickable { isHapticEnabled = !isHapticEnabled },
+                                        .clickable {
+                                            val next = !isHapticEnabled
+                                            isHapticEnabled = next
+                                            com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.setHapticEnabled(context, next)
+                                            if (next) {
+                                                com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.vibrateLight(context)
+                                            }
+                                        },
                                     colorFilter = if (!isHapticEnabled) ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) }) else null,
                                     alpha = if (isHapticEnabled) 1f else 0.4f
                                 )
