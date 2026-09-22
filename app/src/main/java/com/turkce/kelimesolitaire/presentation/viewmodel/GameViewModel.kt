@@ -91,6 +91,7 @@ data class GameUiState(
 
 class GameViewModel : ViewModel() {
     private val undoStack = mutableListOf<SavedGameSession>()
+    private var isAdvancingLevel = false
 
     private val _uiState = MutableStateFlow(GameUiState())
     val uiState: StateFlow<GameUiState> = _uiState.asStateFlow()
@@ -116,7 +117,10 @@ class GameViewModel : ViewModel() {
     }
 
     fun startNewGame(activity: Activity) {
-        val db = wordDatabase ?: return
+        val db = wordDatabase ?: run {
+            isAdvancingLevel = false
+            return
+        }
         val currentLvl = _uiState.value.levelNumber
         
         undoStack.clear() // Clear undo history on fresh start
@@ -231,6 +235,7 @@ class GameViewModel : ViewModel() {
                 level1TutorialStep = 0
             )
         }
+        isAdvancingLevel = false
     }
 
     fun dismissTutorial(context: Context) {
@@ -673,9 +678,13 @@ class GameViewModel : ViewModel() {
     }
 
     fun advanceToNextLevel(activity: Activity) {
+        if (isAdvancingLevel || _uiState.value.screenState != ScreenState.LevelComplete) return
+        isAdvancingLevel = true
+        val nextLevel = _uiState.value.levelNumber + 1
         _uiState.update {
             it.copy(
-                levelNumber = it.levelNumber + 1
+                levelNumber = nextLevel,
+                screenState = ScreenState.Loading
             )
         }
         startNewGame(activity)
@@ -853,7 +862,7 @@ class GameViewModel : ViewModel() {
                 )
             }
         } else {
-            _uiState.update { it.copy(levelNumber = levelNum) }
+            _uiState.update { it.copy(levelNumber = levelNum, screenState = ScreenState.Loading) }
             startNewGame(activity)
         }
     }

@@ -1,301 +1,3636 @@
 {
   "categories": [
-    { "id": "cat_hayvanlar", "name": "حیوانات", "difficulty": "Kolay", "group": "jandar" },
-    { "id": "cat_parandegan", "name": "پرندگان", "difficulty": "Kolay", "group": "jandar" },
-    { "id": "cat_miveha", "name": "میوه‌ها", "difficulty": "Kolay", "group": "khoraki" },
-    { "id": "cat_sabzijat", "name": "سبزیجات", "difficulty": "Kolay", "group": "khoraki" },
-    { "id": "cat_ghaza", "name": "غذاها", "difficulty": "Kolay", "group": "khoraki" },
-    { "id": "cat_rangha", "name": "رنگ‌ها", "difficulty": "Kolay", "group": "omoomi" },
-    { "id": "cat_aza_badan", "name": "اعضای بدن", "difficulty": "Kolay", "group": "ansan" },
-    { "id": "cat_poshak", "name": "پوشاک", "difficulty": "Kolay", "group": "ansan" },
-    { "id": "cat_kheshvarha", "name": "کشورها", "difficulty": "Orta", "group": "joghrafia" },
-    { "id": "cat_shahrha", "name": "شهرها", "difficulty": "Orta", "group": "joghrafia" },
-    { "id": "cat_shoghlha", "name": "شغل‌ها", "difficulty": "Orta", "group": "ejtemai" },
-    { "id": "cat_varzesh", "name": "ورزش‌ها", "difficulty": "Orta", "group": "ejtemai" },
-    { "id": "cat_goolha", "name": "گل‌ها و گیاهان", "difficulty": "Orta", "group": "tabiat" },
-    { "id": "cat_khodro", "name": "وسایل نقلیه", "difficulty": "Orta", "group": "fanavari" },
-    { "id": "cat_abzar", "name": "ابزارها", "difficulty": "Orta", "group": "fanavari" },
-    { "id": "cat_ashamashami", "name": "نوشیدنی‌ها", "difficulty": "Orta", "group": "khoraki" },
-    { "id": "cat_sayarat", "name": "سیارات و فضا", "difficulty": "Zor", "group": "danesh" },
-    { "id": "cat_lavazem_tahrir", "name": "لوازم تحریر", "difficulty": "Zor", "group": "danesh" },
-    { "id": "cat_musiki", "name": "سازهای موسیقی", "difficulty": "Zor", "group": "honar" },
-    { "id": "cat_tabiat", "name": "عناصر طبیعت", "difficulty": "Zor", "group": "tabiat" },
-    { "id": "cat_shiriniha", "name": "شیرینی‌ها و دسرها", "difficulty": "Kolay", "group": "khoraki" },
-    { "id": "cat_ashpazkhaneh", "name": "لوازم آشپزخانه", "difficulty": "Kolay", "group": "khaneh" },
-    { "id": "cat_mobleman", "name": "مبلمان و اثاثیه", "difficulty": "Kolay", "group": "khaneh" },
-    { "id": "cat_hasharat", "name": "حشرات", "difficulty": "Kolay", "group": "jandar" },
-    { "id": "cat_khanevadeh", "name": "اعضای خانواده", "difficulty": "Kolay", "group": "ansan" },
-    { "id": "cat_advieh", "name": "ادویه‌ها و چاشنی‌ها", "difficulty": "Orta", "group": "khoraki" },
-    { "id": "cat_cinema", "name": "سینما و نمایش", "difficulty": "Orta", "group": "honar" },
-    { "id": "cat_bana_tarikhi", "name": "بناهای تاریخی ایران", "difficulty": "Orta", "group": "joghrafia" },
-    { "id": "cat_shoghl_sonnati", "name": "مشاغل سنتی", "difficulty": "Orta", "group": "ejtemai" },
-    { "id": "cat_ab_hava", "name": "پدیده‌های جوی", "difficulty": "Orta", "group": "tabiat" },
-    { "id": "cat_khoshkbar", "name": "خشکبار و تنقلات", "difficulty": "Orta", "group": "khoraki" },
-    { "id": "cat_estelahat", "name": "اصطلاحات عامیانه", "difficulty": "Zor", "group": "adabiat" },
-    { "id": "cat_felezat", "name": "فلزات و کانی‌ها", "difficulty": "Zor", "group": "danesh" },
-    { "id": "cat_reshte_honar", "name": "رشته‌های هنری", "difficulty": "Zor", "group": "honar" },
-    { "id": "cat_football_terms", "name": "اصطلاحات فوتبال", "difficulty": "Zor", "group": "ejtemai" },
-    { "id": "cat_pezeshki", "name": "اصطلاحات پزشکی", "difficulty": "Zor", "group": "danesh" },
-    { "id": "cat_adabiat", "name": "آرایه‌های ادبی", "difficulty": "Zor", "group": "adabiat" }
+    {
+      "id": "cat_hayvanlar",
+      "name": "حیوانات",
+      "difficulty": "Kolay",
+      "group": "jandar"
+    },
+    {
+      "id": "cat_parandegan",
+      "name": "پرندگان",
+      "difficulty": "Kolay",
+      "group": "jandar"
+    },
+    {
+      "id": "cat_miveha",
+      "name": "میوه‌ها",
+      "difficulty": "Kolay",
+      "group": "khoraki"
+    },
+    {
+      "id": "cat_sabzijat",
+      "name": "سبزیجات",
+      "difficulty": "Kolay",
+      "group": "khoraki"
+    },
+    {
+      "id": "cat_ghaza",
+      "name": "غذاها",
+      "difficulty": "Kolay",
+      "group": "khoraki"
+    },
+    {
+      "id": "cat_rangha",
+      "name": "رنگ‌ها",
+      "difficulty": "Kolay",
+      "group": "omoomi"
+    },
+    {
+      "id": "cat_aza_badan",
+      "name": "اعضای بدن",
+      "difficulty": "Kolay",
+      "group": "ansan"
+    },
+    {
+      "id": "cat_poshak",
+      "name": "پوشاک",
+      "difficulty": "Kolay",
+      "group": "ansan"
+    },
+    {
+      "id": "cat_kheshvarha",
+      "name": "کشورها",
+      "difficulty": "Orta",
+      "group": "joghrafia"
+    },
+    {
+      "id": "cat_shahrha",
+      "name": "شهرها",
+      "difficulty": "Orta",
+      "group": "joghrafia"
+    },
+    {
+      "id": "cat_shoghlha",
+      "name": "شغل‌ها",
+      "difficulty": "Orta",
+      "group": "ejtemai"
+    },
+    {
+      "id": "cat_varzesh",
+      "name": "ورزش‌ها",
+      "difficulty": "Orta",
+      "group": "ejtemai"
+    },
+    {
+      "id": "cat_goolha",
+      "name": "گل‌ها و گیاهان",
+      "difficulty": "Orta",
+      "group": "tabiat"
+    },
+    {
+      "id": "cat_khodro",
+      "name": "وسایل نقلیه",
+      "difficulty": "Orta",
+      "group": "fanavari"
+    },
+    {
+      "id": "cat_abzar",
+      "name": "ابزارها",
+      "difficulty": "Orta",
+      "group": "fanavari"
+    },
+    {
+      "id": "cat_ashamashami",
+      "name": "نوشیدنی‌ها",
+      "difficulty": "Orta",
+      "group": "khoraki"
+    },
+    {
+      "id": "cat_sayarat",
+      "name": "سیارات و فضا",
+      "difficulty": "Zor",
+      "group": "danesh"
+    },
+    {
+      "id": "cat_lavazem_tahrir",
+      "name": "لوازم تحریر",
+      "difficulty": "Zor",
+      "group": "danesh"
+    },
+    {
+      "id": "cat_musiki",
+      "name": "سازهای موسیقی",
+      "difficulty": "Zor",
+      "group": "honar"
+    },
+    {
+      "id": "cat_tabiat",
+      "name": "عناصر طبیعت",
+      "difficulty": "Zor",
+      "group": "tabiat"
+    },
+    {
+      "id": "cat_shiriniha",
+      "name": "شیرینی‌ها و دسرها",
+      "difficulty": "Kolay",
+      "group": "khoraki"
+    },
+    {
+      "id": "cat_ashpazkhaneh",
+      "name": "لوازم آشپزخانه",
+      "difficulty": "Kolay",
+      "group": "khaneh"
+    },
+    {
+      "id": "cat_mobleman",
+      "name": "مبلمان و اثاثیه",
+      "difficulty": "Kolay",
+      "group": "khaneh"
+    },
+    {
+      "id": "cat_hasharat",
+      "name": "حشرات",
+      "difficulty": "Kolay",
+      "group": "jandar"
+    },
+    {
+      "id": "cat_khanevadeh",
+      "name": "اعضای خانواده",
+      "difficulty": "Kolay",
+      "group": "ansan"
+    },
+    {
+      "id": "cat_advieh",
+      "name": "ادویه‌ها و چاشنی‌ها",
+      "difficulty": "Orta",
+      "group": "khoraki"
+    },
+    {
+      "id": "cat_cinema",
+      "name": "سینما و نمایش",
+      "difficulty": "Orta",
+      "group": "honar"
+    },
+    {
+      "id": "cat_bana_tarikhi",
+      "name": "بناهای تاریخی ایران",
+      "difficulty": "Orta",
+      "group": "joghrafia"
+    },
+    {
+      "id": "cat_shoghl_sonnati",
+      "name": "مشاغل سنتی",
+      "difficulty": "Orta",
+      "group": "ejtemai"
+    },
+    {
+      "id": "cat_ab_hava",
+      "name": "پدیده‌های جوی",
+      "difficulty": "Orta",
+      "group": "tabiat"
+    },
+    {
+      "id": "cat_khoshkbar",
+      "name": "خشکبار و تنقلات",
+      "difficulty": "Orta",
+      "group": "khoraki"
+    },
+    {
+      "id": "cat_estelahat",
+      "name": "اصطلاحات عامیانه",
+      "difficulty": "Zor",
+      "group": "adabiat"
+    },
+    {
+      "id": "cat_felezat",
+      "name": "فلزات و کانی‌ها",
+      "difficulty": "Zor",
+      "group": "danesh"
+    },
+    {
+      "id": "cat_reshte_honar",
+      "name": "رشته‌های هنری",
+      "difficulty": "Zor",
+      "group": "honar"
+    },
+    {
+      "id": "cat_football_terms",
+      "name": "اصطلاحات فوتبال",
+      "difficulty": "Zor",
+      "group": "ejtemai"
+    },
+    {
+      "id": "cat_pezeshki",
+      "name": "اصطلاحات پزشکی",
+      "difficulty": "Zor",
+      "group": "danesh"
+    },
+    {
+      "id": "cat_adabiat",
+      "name": "آرایه‌های ادبی",
+      "difficulty": "Zor",
+      "group": "adabiat"
+    },
+    {
+      "id": "cat_digital",
+      "name": "وسایل دیجیتال",
+      "difficulty": "Kolay",
+      "group": "fanavari"
+    },
+    {
+      "id": "cat_dorehami",
+      "name": "سرگرمی‌های دورهمی",
+      "difficulty": "Kolay",
+      "group": "ejtemai"
+    },
+    {
+      "id": "cat_behdasht",
+      "name": "حمام و بهداشت",
+      "difficulty": "Kolay",
+      "group": "omoomi"
+    },
+    {
+      "id": "cat_sobhaneh",
+      "name": "لبنیات و صبحانه",
+      "difficulty": "Kolay",
+      "group": "khoraki"
+    },
+    {
+      "id": "cat_zivaralat",
+      "name": "زیورآلات و اکسسوری",
+      "difficulty": "Kolay",
+      "group": "ansan"
+    },
+    {
+      "id": "cat_genre_cinema",
+      "name": "ژانرهای سینما",
+      "difficulty": "Orta",
+      "group": "honar"
+    },
+    {
+      "id": "cat_ghataat_khodro",
+      "name": "قطعات خودرو",
+      "difficulty": "Orta",
+      "group": "fanavari"
+    },
+    {
+      "id": "cat_mali_bank",
+      "name": "مفاهیم مالی و بانکی",
+      "difficulty": "Orta",
+      "group": "ejtemai"
+    },
+    {
+      "id": "cat_video_games",
+      "name": "بازی‌های ویدیویی",
+      "difficulty": "Orta",
+      "group": "fanavari"
+    },
+    {
+      "id": "cat_bana_jahan",
+      "name": "بناهای مشهور جهان",
+      "difficulty": "Orta",
+      "group": "joghrafia"
+    },
+    {
+      "id": "cat_sanaye_dasti",
+      "name": "صنایع دستی ایران",
+      "difficulty": "Orta",
+      "group": "honar"
+    },
+    {
+      "id": "cat_varzesh_zemestani",
+      "name": "ورزش‌های زمستانی",
+      "difficulty": "Orta",
+      "group": "ejtemai"
+    },
+    {
+      "id": "cat_barnamenevisi",
+      "name": "فناوری و برنامه‌نویسی",
+      "difficulty": "Zor",
+      "group": "danesh"
+    },
+    {
+      "id": "cat_musiki_jahan",
+      "name": "سازهای جهان",
+      "difficulty": "Zor",
+      "group": "honar"
+    },
+    {
+      "id": "cat_falsafeh",
+      "name": "مکاتب فلسفی",
+      "difficulty": "Zor",
+      "group": "danesh"
+    },
+    {
+      "id": "cat_shimi",
+      "name": "عناصر شیمیایی",
+      "difficulty": "Zor",
+      "group": "danesh"
+    },
+    {
+      "id": "cat_zarbolmasal",
+      "name": "ضرب‌المثل‌های کهن",
+      "difficulty": "Zor",
+      "group": "adabiat"
+    },
+    {
+      "id": "cat_memari_sabk",
+      "name": "سبک‌های معماری",
+      "difficulty": "Zor",
+      "group": "honar"
+    }
   ],
   "words": [
-    { "id": "w_1", "categoryId": "cat_hayvanlar", "wordText": "شیر", "difficulty": "Kolay" },
-    { "id": "w_2", "categoryId": "cat_hayvanlar", "wordText": "پلنگ", "difficulty": "Kolay" },
-    { "id": "w_3", "categoryId": "cat_hayvanlar", "wordText": "خرس", "difficulty": "Kolay" },
-    { "id": "w_4", "categoryId": "cat_hayvanlar", "wordText": "گرگ", "difficulty": "Kolay" },
-    { "id": "w_5", "categoryId": "cat_hayvanlar", "wordText": "آهو", "difficulty": "Kolay" },
-    { "id": "w_6", "categoryId": "cat_hayvanlar", "wordText": "روباه", "difficulty": "Kolay" },
-
-    { "id": "w_7", "categoryId": "cat_parandegan", "wordText": "عقاب", "difficulty": "Kolay" },
-    { "id": "w_8", "categoryId": "cat_parandegan", "wordText": "شاهین", "difficulty": "Kolay" },
-    { "id": "w_9", "categoryId": "cat_parandegan", "wordText": "کبوتر", "difficulty": "Kolay" },
-    { "id": "w_10", "categoryId": "cat_parandegan", "wordText": "طوطی", "difficulty": "Kolay" },
-    { "id": "w_11", "categoryId": "cat_parandegan", "wordText": "قناری", "difficulty": "Kolay" },
-    { "id": "w_12", "categoryId": "cat_parandegan", "wordText": "بلبل", "difficulty": "Kolay" },
-
-    { "id": "w_13", "categoryId": "cat_miveha", "wordText": "سیب", "difficulty": "Kolay" },
-    { "id": "w_14", "categoryId": "cat_miveha", "wordText": "موز", "difficulty": "Kolay" },
-    { "id": "w_15", "categoryId": "cat_miveha", "wordText": "پرتقال", "difficulty": "Kolay" },
-    { "id": "w_16", "categoryId": "cat_miveha", "wordText": "گیلاس", "difficulty": "Kolay" },
-    { "id": "w_17", "categoryId": "cat_miveha", "wordText": "انگور", "difficulty": "Kolay" },
-    { "id": "w_18", "categoryId": "cat_miveha", "wordText": "انار", "difficulty": "Kolay" },
-
-    { "id": "w_19", "categoryId": "cat_sabzijat", "wordText": "کاهو", "difficulty": "Kolay" },
-    { "id": "w_20", "categoryId": "cat_sabzijat", "wordText": "خیار", "difficulty": "Kolay" },
-    { "id": "w_21", "categoryId": "cat_sabzijat", "wordText": "گوجه", "difficulty": "Kolay" },
-    { "id": "w_22", "categoryId": "cat_sabzijat", "wordText": "هویج", "difficulty": "Kolay" },
-    { "id": "w_23", "categoryId": "cat_sabzijat", "wordText": "پیاز", "difficulty": "Kolay" },
-    { "id": "w_24", "categoryId": "cat_sabzijat", "wordText": "سیر", "difficulty": "Kolay" },
-
-    { "id": "w_25", "categoryId": "cat_ghaza", "wordText": "کباب", "difficulty": "Kolay" },
-    { "id": "w_26", "categoryId": "cat_ghaza", "wordText": "قرمه سبزی", "difficulty": "Kolay" },
-    { "id": "w_27", "categoryId": "cat_ghaza", "wordText": "قیمه", "difficulty": "Kolay" },
-    { "id": "w_28", "categoryId": "cat_ghaza", "wordText": "آبگوشت", "difficulty": "Kolay" },
-    { "id": "w_29", "categoryId": "cat_ghaza", "wordText": "ته‌چین", "difficulty": "Kolay" },
-    { "id": "w_30", "categoryId": "cat_ghaza", "wordText": "زرشک پلو", "difficulty": "Kolay" },
-
-    { "id": "w_31", "categoryId": "cat_rangha", "wordText": "قرمز", "difficulty": "Kolay" },
-    { "id": "w_32", "categoryId": "cat_rangha", "wordText": "آبی", "difficulty": "Kolay" },
-    { "id": "w_33", "categoryId": "cat_rangha", "wordText": "سبز", "difficulty": "Kolay" },
-    { "id": "w_34", "categoryId": "cat_rangha", "wordText": "زرد", "difficulty": "Kolay" },
-    { "id": "w_35", "categoryId": "cat_rangha", "wordText": "بنفش", "difficulty": "Kolay" },
-    { "id": "w_36", "categoryId": "cat_rangha", "wordText": "نارنجی", "difficulty": "Kolay" },
-
-    { "id": "w_37", "categoryId": "cat_aza_badan", "wordText": "چشم", "difficulty": "Kolay" },
-    { "id": "w_38", "categoryId": "cat_aza_badan", "wordText": "گوش", "difficulty": "Kolay" },
-    { "id": "w_39", "categoryId": "cat_aza_badan", "wordText": "دست", "difficulty": "Kolay" },
-    { "id": "w_40", "categoryId": "cat_aza_badan", "wordText": "پا", "difficulty": "Kolay" },
-    { "id": "w_41", "categoryId": "cat_aza_badan", "wordText": "قلب", "difficulty": "Kolay" },
-    { "id": "w_42", "categoryId": "cat_aza_badan", "wordText": "صورت", "difficulty": "Kolay" },
-
-    { "id": "w_43", "categoryId": "cat_poshak", "wordText": "پیراهن", "difficulty": "Kolay" },
-    { "id": "w_44", "categoryId": "cat_poshak", "wordText": "شلوار", "difficulty": "Kolay" },
-    { "id": "w_45", "categoryId": "cat_poshak", "wordText": "کفش", "difficulty": "Kolay" },
-    { "id": "w_46", "categoryId": "cat_poshak", "wordText": "کاپشن", "difficulty": "Kolay" },
-    { "id": "w_47", "categoryId": "cat_poshak", "wordText": "جوراب", "difficulty": "Kolay" },
-    { "id": "w_48", "categoryId": "cat_poshak", "wordText": "کلاه", "difficulty": "Kolay" },
-
-    { "id": "w_49", "categoryId": "cat_kheshvarha", "wordText": "ایران", "difficulty": "Orta" },
-    { "id": "w_50", "categoryId": "cat_kheshvarha", "wordText": "آلمان", "difficulty": "Orta" },
-    { "id": "w_51", "categoryId": "cat_kheshvarha", "wordText": "ژاپن", "difficulty": "Orta" },
-    { "id": "w_52", "categoryId": "cat_kheshvarha", "wordText": "ایتالیا", "difficulty": "Orta" },
-    { "id": "w_53", "categoryId": "cat_kheshvarha", "wordText": "فرانسه", "difficulty": "Orta" },
-    { "id": "w_54", "categoryId": "cat_kheshvarha", "wordText": "برزیل", "difficulty": "Orta" },
-
-    { "id": "w_55", "categoryId": "cat_shahrha", "wordText": "تهران", "difficulty": "Orta" },
-    { "id": "w_56", "categoryId": "cat_shahrha", "wordText": "شیراز", "difficulty": "Orta" },
-    { "id": "w_57", "categoryId": "cat_shahrha", "wordText": "اصفهان", "difficulty": "Orta" },
-    { "id": "w_58", "categoryId": "cat_shahrha", "wordText": "مشهد", "difficulty": "Orta" },
-    { "id": "w_59", "categoryId": "cat_shahrha", "wordText": "تبریز", "difficulty": "Orta" },
-    { "id": "w_60", "categoryId": "cat_shahrha", "wordText": "یزد", "difficulty": "Orta" },
-
-    { "id": "w_61", "categoryId": "cat_shoghlha", "wordText": "پزشک", "difficulty": "Orta" },
-    { "id": "w_62", "categoryId": "cat_shoghlha", "wordText": "معلم", "difficulty": "Orta" },
-    { "id": "w_63", "categoryId": "cat_shoghlha", "wordText": "مهندس", "difficulty": "Orta" },
-    { "id": "w_64", "categoryId": "cat_shoghlha", "wordText": "خلبان", "difficulty": "Orta" },
-    { "id": "w_65", "categoryId": "cat_shoghlha", "wordText": "پرستار", "difficulty": "Orta" },
-    { "id": "w_66", "categoryId": "cat_shoghlha", "wordText": "نجار", "difficulty": "Orta" },
-
-    { "id": "w_67", "categoryId": "cat_varzesh", "wordText": "فوتبال", "difficulty": "Orta" },
-    { "id": "w_68", "categoryId": "cat_varzesh", "wordText": "والیبال", "difficulty": "Orta" },
-    { "id": "w_69", "categoryId": "cat_varzesh", "wordText": "بسکتبال", "difficulty": "Orta" },
-    { "id": "w_70", "categoryId": "cat_varzesh", "wordText": "کشتی", "difficulty": "Orta" },
-    { "id": "w_71", "categoryId": "cat_varzesh", "wordText": "شنا", "difficulty": "Orta" },
-    { "id": "w_72", "categoryId": "cat_varzesh", "wordText": "تنس", "difficulty": "Orta" },
-
-    { "id": "w_73", "categoryId": "cat_goolha", "wordText": "رز", "difficulty": "Orta" },
-    { "id": "w_74", "categoryId": "cat_goolha", "wordText": "مریم", "difficulty": "Orta" },
-    { "id": "w_75", "categoryId": "cat_goolha", "wordText": "نرگس", "difficulty": "Orta" },
-    { "id": "w_76", "categoryId": "cat_goolha", "wordText": "یاس", "difficulty": "Orta" },
-    { "id": "w_77", "categoryId": "cat_goolha", "wordText": "لاله", "difficulty": "Orta" },
-    { "id": "w_78", "categoryId": "cat_goolha", "wordText": "نیلوفر", "difficulty": "Orta" },
-
-    { "id": "w_79", "categoryId": "cat_khodro", "wordText": "اتومبیل", "difficulty": "Orta" },
-    { "id": "w_80", "categoryId": "cat_khodro", "wordText": "اتوبوس", "difficulty": "Orta" },
-    { "id": "w_81", "categoryId": "cat_khodro", "wordText": "قطار", "difficulty": "Orta" },
-    { "id": "w_82", "categoryId": "cat_khodro", "wordText": "هواپیما", "difficulty": "Orta" },
-    { "id": "w_83", "categoryId": "cat_khodro", "wordText": "موتورسیکلت", "difficulty": "Orta" },
-    { "id": "w_84", "categoryId": "cat_khodro", "wordText": "کشتی", "difficulty": "Orta" },
-
-    { "id": "w_85", "categoryId": "cat_abzar", "wordText": "چکش", "difficulty": "Orta" },
-    { "id": "w_86", "categoryId": "cat_abzar", "wordText": "آچار", "difficulty": "Orta" },
-    { "id": "w_87", "categoryId": "cat_abzar", "wordText": "پیچ‌گوشتی", "difficulty": "Orta" },
-    { "id": "w_88", "categoryId": "cat_abzar", "wordText": "اره", "difficulty": "Orta" },
-    { "id": "w_89", "categoryId": "cat_abzar", "wordText": "انبردست", "difficulty": "Orta" },
-    { "id": "w_90", "categoryId": "cat_abzar", "wordText": "مته", "difficulty": "Orta" },
-
-    { "id": "w_91", "categoryId": "cat_ashamashami", "wordText": "چای", "difficulty": "Orta" },
-    { "id": "w_92", "categoryId": "cat_ashamashami", "wordText": "قهوه", "difficulty": "Orta" },
-    { "id": "w_93", "categoryId": "cat_ashamashami", "wordText": "شیر", "difficulty": "Orta" },
-    { "id": "w_94", "categoryId": "cat_ashamashami", "wordText": "آبمیوه", "difficulty": "Orta" },
-    { "id": "w_95", "categoryId": "cat_ashamashami", "wordText": "دوغ", "difficulty": "Orta" },
-    { "id": "w_96", "categoryId": "cat_ashamashami", "wordText": "شربت", "difficulty": "Orta" },
-
-    { "id": "w_97", "categoryId": "cat_sayarat", "wordText": "خورشید", "difficulty": "Zor" },
-    { "id": "w_98", "categoryId": "cat_sayarat", "wordText": "ماه", "difficulty": "Zor" },
-    { "id": "w_99", "categoryId": "cat_sayarat", "wordText": "مریخ", "difficulty": "Zor" },
-    { "id": "w_100", "categoryId": "cat_sayarat", "wordText": "مشتری", "difficulty": "Zor" },
-    { "id": "w_101", "categoryId": "cat_sayarat", "wordText": "زحل", "difficulty": "Zor" },
-    { "id": "w_102", "categoryId": "cat_sayarat", "wordText": "عطارد", "difficulty": "Zor" },
-
-    { "id": "w_103", "categoryId": "cat_lavazem_tahrir", "wordText": "مداد", "difficulty": "Zor" },
-    { "id": "w_104", "categoryId": "cat_lavazem_tahrir", "wordText": "خودکار", "difficulty": "Zor" },
-    { "id": "w_105", "categoryId": "cat_lavazem_tahrir", "wordText": "دفتر", "difficulty": "Zor" },
-    { "id": "w_106", "categoryId": "cat_lavazem_tahrir", "wordText": "خط‌کش", "difficulty": "Zor" },
-    { "id": "w_107", "categoryId": "cat_lavazem_tahrir", "wordText": "پاک‌کن", "difficulty": "Zor" },
-    { "id": "w_108", "categoryId": "cat_lavazem_tahrir", "wordText": "تراش", "difficulty": "Zor" },
-
-    { "id": "w_109", "categoryId": "cat_musiki", "wordText": "تار", "difficulty": "Zor" },
-    { "id": "w_110", "categoryId": "cat_musiki", "wordText": "سنتور", "difficulty": "Zor" },
-    { "id": "w_111", "categoryId": "cat_musiki", "wordText": "ویلن", "difficulty": "Zor" },
-    { "id": "w_112", "categoryId": "cat_musiki", "wordText": "پیانو", "difficulty": "Zor" },
-    { "id": "w_113", "categoryId": "cat_musiki", "wordText": "تنبک", "difficulty": "Zor" },
-    { "id": "w_114", "categoryId": "cat_musiki", "wordText": "نی", "difficulty": "Zor" },
-
-    { "id": "w_115", "categoryId": "cat_tabiat", "wordText": "کوه", "difficulty": "Zor" },
-    { "id": "w_116", "categoryId": "cat_tabiat", "wordText": "دریا", "difficulty": "Zor" },
-    { "id": "w_117", "categoryId": "cat_tabiat", "wordText": "جنگل", "difficulty": "Zor" },
-    { "id": "w_118", "categoryId": "cat_tabiat", "wordText": "رودخانه", "difficulty": "Zor" },
-    { "id": "w_119", "categoryId": "cat_tabiat", "wordText": "کویر", "difficulty": "Zor" },
-    { "id": "w_120", "categoryId": "cat_tabiat", "wordText": "آبشار", "difficulty": "Zor" },
-
-    { "id": "w_121", "categoryId": "cat_shiriniha", "wordText": "باقلوا", "difficulty": "Kolay" },
-    { "id": "w_122", "categoryId": "cat_shiriniha", "wordText": "زولبیا", "difficulty": "Kolay" },
-    { "id": "w_123", "categoryId": "cat_shiriniha", "wordText": "بامیه", "difficulty": "Kolay" },
-    { "id": "w_124", "categoryId": "cat_shiriniha", "wordText": "کیک", "difficulty": "Kolay" },
-    { "id": "w_125", "categoryId": "cat_shiriniha", "wordText": "شله‌زرد", "difficulty": "Kolay" },
-    { "id": "w_126", "categoryId": "cat_shiriniha", "wordText": "حلوا", "difficulty": "Kolay" },
-
-    { "id": "w_127", "categoryId": "cat_ashpazkhaneh", "wordText": "بشقاب", "difficulty": "Kolay" },
-    { "id": "w_128", "categoryId": "cat_ashpazkhaneh", "wordText": "قاشق", "difficulty": "Kolay" },
-    { "id": "w_129", "categoryId": "cat_ashpazkhaneh", "wordText": "چنگال", "difficulty": "Kolay" },
-    { "id": "w_130", "categoryId": "cat_ashpazkhaneh", "wordText": "چاقو", "difficulty": "Kolay" },
-    { "id": "w_131", "categoryId": "cat_ashpazkhaneh", "wordText": "قابلمه", "difficulty": "Kolay" },
-    { "id": "w_132", "categoryId": "cat_ashpazkhaneh", "wordText": "لیوان", "difficulty": "Kolay" },
-
-    { "id": "w_133", "categoryId": "cat_mobleman", "wordText": "مبل", "difficulty": "Kolay" },
-    { "id": "w_134", "categoryId": "cat_mobleman", "wordText": "میز", "difficulty": "Kolay" },
-    { "id": "w_135", "categoryId": "cat_mobleman", "wordText": "صندلی", "difficulty": "Kolay" },
-    { "id": "w_136", "categoryId": "cat_mobleman", "wordText": "تخت", "difficulty": "Kolay" },
-    { "id": "w_137", "categoryId": "cat_mobleman", "wordText": "کمد", "difficulty": "Kolay" },
-    { "id": "w_138", "categoryId": "cat_mobleman", "wordText": "فرش", "difficulty": "Kolay" },
-
-    { "id": "w_139", "categoryId": "cat_hasharat", "wordText": "مورچه", "difficulty": "Kolay" },
-    { "id": "w_140", "categoryId": "cat_hasharat", "wordText": "پروانه", "difficulty": "Kolay" },
-    { "id": "w_141", "categoryId": "cat_hasharat", "wordText": "زنبور", "difficulty": "Kolay" },
-    { "id": "w_142", "categoryId": "cat_hasharat", "wordText": "سوسک", "difficulty": "Kolay" },
-    { "id": "w_143", "categoryId": "cat_hasharat", "wordText": "پشه", "difficulty": "Kolay" },
-    { "id": "w_144", "categoryId": "cat_hasharat", "wordText": "مگس", "difficulty": "Kolay" },
-
-    { "id": "w_145", "categoryId": "cat_khanevadeh", "wordText": "پدر", "difficulty": "Kolay" },
-    { "id": "w_146", "categoryId": "cat_khanevadeh", "wordText": "مادر", "difficulty": "Kolay" },
-    { "id": "w_147", "categoryId": "cat_khanevadeh", "wordText": "برادر", "difficulty": "Kolay" },
-    { "id": "w_148", "categoryId": "cat_khanevadeh", "wordText": "خواهر", "difficulty": "Kolay" },
-    { "id": "w_149", "categoryId": "cat_khanevadeh", "wordText": "عمو", "difficulty": "Kolay" },
-    { "id": "w_150", "categoryId": "cat_khanevadeh", "wordText": "دایی", "difficulty": "Kolay" },
-
-    { "id": "w_151", "categoryId": "cat_advieh", "wordText": "زعفران", "difficulty": "Orta" },
-    { "id": "w_152", "categoryId": "cat_advieh", "wordText": "دارچین", "difficulty": "Orta" },
-    { "id": "w_153", "categoryId": "cat_advieh", "wordText": "زردچوبه", "difficulty": "Orta" },
-    { "id": "w_154", "categoryId": "cat_advieh", "wordText": "فلفل", "difficulty": "Orta" },
-    { "id": "w_155", "categoryId": "cat_advieh", "wordText": "زنجبیل", "difficulty": "Orta" },
-    { "id": "w_156", "categoryId": "cat_advieh", "wordText": "هل", "difficulty": "Orta" },
-
-    { "id": "w_157", "categoryId": "cat_cinema", "wordText": "کارگردان", "difficulty": "Orta" },
-    { "id": "w_158", "categoryId": "cat_cinema", "wordText": "بازیگر", "difficulty": "Orta" },
-    { "id": "w_159", "categoryId": "cat_cinema", "wordText": "دوربین", "difficulty": "Orta" },
-    { "id": "w_160", "categoryId": "cat_cinema", "wordText": "فیلمنامه", "difficulty": "Orta" },
-    { "id": "w_161", "categoryId": "cat_cinema", "wordText": "گریم", "difficulty": "Orta" },
-    { "id": "w_162", "categoryId": "cat_cinema", "wordText": "تدوین", "difficulty": "Orta" },
-
-    { "id": "w_163", "categoryId": "cat_bana_tarikhi", "wordText": "تخت جمشید", "difficulty": "Orta" },
-    { "id": "w_164", "categoryId": "cat_bana_tarikhi", "wordText": "سی و سه پل", "difficulty": "Orta" },
-    { "id": "w_165", "categoryId": "cat_bana_tarikhi", "wordText": "حافظیه", "difficulty": "Orta" },
-    { "id": "w_166", "categoryId": "cat_bana_tarikhi", "wordText": "بیستون", "difficulty": "Orta" },
-    { "id": "w_167", "categoryId": "cat_bana_tarikhi", "wordText": "عالی قاپو", "difficulty": "Orta" },
-    { "id": "w_168", "categoryId": "cat_bana_tarikhi", "wordText": "ارگ بم", "difficulty": "Orta" },
-
-    { "id": "w_169", "categoryId": "cat_shoghl_sonnati", "wordText": "مسگری", "difficulty": "Orta" },
-    { "id": "w_170", "categoryId": "cat_shoghl_sonnati", "wordText": "سفالگری", "difficulty": "Orta" },
-    { "id": "w_171", "categoryId": "cat_shoghl_sonnati", "wordText": "فرش‌بافی", "difficulty": "Orta" },
-    { "id": "w_172", "categoryId": "cat_shoghl_sonnati", "wordText": "گیوه‌دوزی", "difficulty": "Orta" },
-    { "id": "w_173", "categoryId": "cat_shoghl_sonnati", "wordText": "میناکاری", "difficulty": "Orta" },
-    { "id": "w_174", "categoryId": "cat_shoghl_sonnati", "wordText": "خاتم‌کاری", "difficulty": "Orta" },
-
-    { "id": "w_175", "categoryId": "cat_ab_hava", "wordText": "باران", "difficulty": "Orta" },
-    { "id": "w_176", "categoryId": "cat_ab_hava", "wordText": "برف", "difficulty": "Orta" },
-    { "id": "w_177", "categoryId": "cat_ab_hava", "wordText": "تگرگ", "difficulty": "Orta" },
-    { "id": "w_178", "categoryId": "cat_ab_hava", "wordText": "رعد و برق", "difficulty": "Orta" },
-    { "id": "w_179", "categoryId": "cat_ab_hava", "wordText": "طوفان", "difficulty": "Orta" },
-    { "id": "w_180", "categoryId": "cat_ab_hava", "wordText": "مه", "difficulty": "Orta" },
-
-    { "id": "w_181", "categoryId": "cat_khoshkbar", "wordText": "پسته", "difficulty": "Orta" },
-    { "id": "w_182", "categoryId": "cat_khoshkbar", "wordText": "بادام", "difficulty": "Orta" },
-    { "id": "w_183", "categoryId": "cat_khoshkbar", "wordText": "گردو", "difficulty": "Orta" },
-    { "id": "w_184", "categoryId": "cat_khoshkbar", "wordText": "فندق", "difficulty": "Orta" },
-    { "id": "w_185", "categoryId": "cat_khoshkbar", "wordText": "کشمش", "difficulty": "Orta" },
-    { "id": "w_186", "categoryId": "cat_khoshkbar", "wordText": "تخمه", "difficulty": "Orta" },
-
-    { "id": "w_187", "categoryId": "cat_estelahat", "wordText": "زاغ سیاه", "difficulty": "Zor" },
-    { "id": "w_188", "categoryId": "cat_estelahat", "wordText": "زیرآب‌زنی", "difficulty": "Zor" },
-    { "id": "w_189", "categoryId": "cat_estelahat", "wordText": "دست‌گرمی", "difficulty": "Zor" },
-    { "id": "w_190", "categoryId": "cat_estelahat", "wordText": "چانه زدن", "difficulty": "Zor" },
-    { "id": "w_191", "categoryId": "cat_estelahat", "wordText": "پیازداغ", "difficulty": "Zor" },
-    { "id": "w_192", "categoryId": "cat_estelahat", "wordText": "چشم‌روشنی", "difficulty": "Zor" },
-
-    { "id": "w_193", "categoryId": "cat_felezat", "wordText": "طلا", "difficulty": "Zor" },
-    { "id": "w_194", "categoryId": "cat_felezat", "wordText": "نقره", "difficulty": "Zor" },
-    { "id": "w_195", "categoryId": "cat_felezat", "wordText": "مس", "difficulty": "Zor" },
-    { "id": "w_196", "categoryId": "cat_felezat", "wordText": "آهن", "difficulty": "Zor" },
-    { "id": "w_197", "categoryId": "cat_felezat", "wordText": "آلومینیوم", "difficulty": "Zor" },
-    { "id": "w_198", "categoryId": "cat_felezat", "wordText": "فولاد", "difficulty": "Zor" },
-
-    { "id": "w_199", "categoryId": "cat_reshte_honar", "wordText": "نقاشی", "difficulty": "Zor" },
-    { "id": "w_200", "categoryId": "cat_reshte_honar", "wordText": "مجسمه‌سازی", "difficulty": "Zor" },
-    { "id": "w_201", "categoryId": "cat_reshte_honar", "wordText": "عکاسی", "difficulty": "Zor" },
-    { "id": "w_202", "categoryId": "cat_reshte_honar", "wordText": "خوشنویسی", "difficulty": "Zor" },
-    { "id": "w_203", "categoryId": "cat_reshte_honar", "wordText": "معماری", "difficulty": "Zor" },
-    { "id": "w_204", "categoryId": "cat_reshte_honar", "wordText": "تئاتر", "difficulty": "Zor" },
-
-    { "id": "w_205", "categoryId": "cat_football_terms", "wordText": "آفساید", "difficulty": "Zor" },
-    { "id": "w_206", "categoryId": "cat_football_terms", "wordText": "پنالتی", "difficulty": "Zor" },
-    { "id": "w_207", "categoryId": "cat_football_terms", "wordText": "کرنر", "difficulty": "Zor" },
-    { "id": "w_208", "categoryId": "cat_football_terms", "wordText": "دریبل", "difficulty": "Zor" },
-    { "id": "w_209", "categoryId": "cat_football_terms", "wordText": "پاس گل", "difficulty": "Zor" },
-    { "id": "w_210", "categoryId": "cat_football_terms", "wordText": "هت‌تریک", "difficulty": "Zor" },
-
-    { "id": "w_211", "categoryId": "cat_pezeshki", "wordText": "فشار خون", "difficulty": "Zor" },
-    { "id": "w_212", "categoryId": "cat_pezeshki", "wordText": "دیابت", "difficulty": "Zor" },
-    { "id": "w_213", "categoryId": "cat_pezeshki", "wordText": "بیهوشی", "difficulty": "Zor" },
-    { "id": "w_214", "categoryId": "cat_pezeshki", "wordText": "آنتی‌بیوتیک", "difficulty": "Zor" },
-    { "id": "w_215", "categoryId": "cat_pezeshki", "wordText": "پرتودرمانی", "difficulty": "Zor" },
-    { "id": "w_216", "categoryId": "cat_pezeshki", "wordText": "جراحی", "difficulty": "Zor" },
-
-    { "id": "w_217", "categoryId": "cat_adabiat", "wordText": "تشبیه", "difficulty": "Zor" },
-    { "id": "w_218", "categoryId": "cat_adabiat", "wordText": "استعاره", "difficulty": "Zor" },
-    { "id": "w_219", "categoryId": "cat_adabiat", "wordText": "کنایه", "difficulty": "Zor" },
-    { "id": "w_220", "categoryId": "cat_adabiat", "wordText": "ایهام", "difficulty": "Zor" },
-    { "id": "w_221", "categoryId": "cat_adabiat", "wordText": "جناس", "difficulty": "Zor" },
-    { "id": "w_222", "categoryId": "cat_adabiat", "wordText": "مراعات نظیر", "difficulty": "Zor" }
+    {
+      "id": "w_1",
+      "categoryId": "cat_hayvanlar",
+      "wordText": "شیر",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_2",
+      "categoryId": "cat_hayvanlar",
+      "wordText": "پلنگ",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_3",
+      "categoryId": "cat_hayvanlar",
+      "wordText": "خرس",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_4",
+      "categoryId": "cat_hayvanlar",
+      "wordText": "گرگ",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_5",
+      "categoryId": "cat_hayvanlar",
+      "wordText": "آهو",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_6",
+      "categoryId": "cat_hayvanlar",
+      "wordText": "روباه",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_7",
+      "categoryId": "cat_hayvanlar",
+      "wordText": "شتر",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_8",
+      "categoryId": "cat_hayvanlar",
+      "wordText": "اسب",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_9",
+      "categoryId": "cat_hayvanlar",
+      "wordText": "گربه",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_10",
+      "categoryId": "cat_hayvanlar",
+      "wordText": "سگ",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_11",
+      "categoryId": "cat_parandegan",
+      "wordText": "عقاب",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_12",
+      "categoryId": "cat_parandegan",
+      "wordText": "شاهین",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_13",
+      "categoryId": "cat_parandegan",
+      "wordText": "کبوتر",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_14",
+      "categoryId": "cat_parandegan",
+      "wordText": "طوطی",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_15",
+      "categoryId": "cat_parandegan",
+      "wordText": "قناری",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_16",
+      "categoryId": "cat_parandegan",
+      "wordText": "بلبل",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_17",
+      "categoryId": "cat_parandegan",
+      "wordText": "کلاغ",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_18",
+      "categoryId": "cat_parandegan",
+      "wordText": "گنجشک",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_19",
+      "categoryId": "cat_parandegan",
+      "wordText": "جغد",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_20",
+      "categoryId": "cat_parandegan",
+      "wordText": "لک‌لک",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_21",
+      "categoryId": "cat_miveha",
+      "wordText": "سیب",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_22",
+      "categoryId": "cat_miveha",
+      "wordText": "موز",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_23",
+      "categoryId": "cat_miveha",
+      "wordText": "پرتقال",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_24",
+      "categoryId": "cat_miveha",
+      "wordText": "گیلاس",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_25",
+      "categoryId": "cat_miveha",
+      "wordText": "انگور",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_26",
+      "categoryId": "cat_miveha",
+      "wordText": "انار",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_27",
+      "categoryId": "cat_miveha",
+      "wordText": "هلو",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_28",
+      "categoryId": "cat_miveha",
+      "wordText": "گلابی",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_29",
+      "categoryId": "cat_miveha",
+      "wordText": "هندوانه",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_30",
+      "categoryId": "cat_miveha",
+      "wordText": "طالبی",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_31",
+      "categoryId": "cat_sabzijat",
+      "wordText": "کاهو",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_32",
+      "categoryId": "cat_sabzijat",
+      "wordText": "خیار",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_33",
+      "categoryId": "cat_sabzijat",
+      "wordText": "گوجه",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_34",
+      "categoryId": "cat_sabzijat",
+      "wordText": "هویج",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_35",
+      "categoryId": "cat_sabzijat",
+      "wordText": "پیاز",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_36",
+      "categoryId": "cat_sabzijat",
+      "wordText": "سیر",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_37",
+      "categoryId": "cat_sabzijat",
+      "wordText": "سیب‌زمینی",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_38",
+      "categoryId": "cat_sabzijat",
+      "wordText": "بادمجان",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_39",
+      "categoryId": "cat_sabzijat",
+      "wordText": "کدو",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_40",
+      "categoryId": "cat_sabzijat",
+      "wordText": "کلم",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_41",
+      "categoryId": "cat_ghaza",
+      "wordText": "کباب",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_42",
+      "categoryId": "cat_ghaza",
+      "wordText": "قرمه سبزی",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_43",
+      "categoryId": "cat_ghaza",
+      "wordText": "قیمه",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_44",
+      "categoryId": "cat_ghaza",
+      "wordText": "آبگوشت",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_45",
+      "categoryId": "cat_ghaza",
+      "wordText": "ته‌چین",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_46",
+      "categoryId": "cat_ghaza",
+      "wordText": "زرشک پلو",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_47",
+      "categoryId": "cat_ghaza",
+      "wordText": "فسنجان",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_48",
+      "categoryId": "cat_ghaza",
+      "wordText": "دلمه",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_49",
+      "categoryId": "cat_ghaza",
+      "wordText": "کوکو سبزی",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_50",
+      "categoryId": "cat_ghaza",
+      "wordText": "کتلت",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_51",
+      "categoryId": "cat_rangha",
+      "wordText": "قرمز",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_52",
+      "categoryId": "cat_rangha",
+      "wordText": "آبی",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_53",
+      "categoryId": "cat_rangha",
+      "wordText": "سبز",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_54",
+      "categoryId": "cat_rangha",
+      "wordText": "زرد",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_55",
+      "categoryId": "cat_rangha",
+      "wordText": "بنفش",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_56",
+      "categoryId": "cat_rangha",
+      "wordText": "نارنجی",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_57",
+      "categoryId": "cat_rangha",
+      "wordText": "قهوه‌ای",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_58",
+      "categoryId": "cat_rangha",
+      "wordText": "سفید",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_59",
+      "categoryId": "cat_rangha",
+      "wordText": "سیاه",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_60",
+      "categoryId": "cat_rangha",
+      "wordText": "صورتی",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_61",
+      "categoryId": "cat_aza_badan",
+      "wordText": "چشم",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_62",
+      "categoryId": "cat_aza_badan",
+      "wordText": "گوش",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_63",
+      "categoryId": "cat_aza_badan",
+      "wordText": "دست",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_64",
+      "categoryId": "cat_aza_badan",
+      "wordText": "پا",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_65",
+      "categoryId": "cat_aza_badan",
+      "wordText": "قلب",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_66",
+      "categoryId": "cat_aza_badan",
+      "wordText": "صورت",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_67",
+      "categoryId": "cat_aza_badan",
+      "wordText": "بینی",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_68",
+      "categoryId": "cat_aza_badan",
+      "wordText": "دهان",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_69",
+      "categoryId": "cat_aza_badan",
+      "wordText": "گردن",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_70",
+      "categoryId": "cat_aza_badan",
+      "wordText": "زانو",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_71",
+      "categoryId": "cat_poshak",
+      "wordText": "پیراهن",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_72",
+      "categoryId": "cat_poshak",
+      "wordText": "شلوار",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_73",
+      "categoryId": "cat_poshak",
+      "wordText": "کفش",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_74",
+      "categoryId": "cat_poshak",
+      "wordText": "کاپشن",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_75",
+      "categoryId": "cat_poshak",
+      "wordText": "جوراب",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_76",
+      "categoryId": "cat_poshak",
+      "wordText": "کلاه",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_77",
+      "categoryId": "cat_poshak",
+      "wordText": "دستکش",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_78",
+      "categoryId": "cat_poshak",
+      "wordText": "کت",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_79",
+      "categoryId": "cat_poshak",
+      "wordText": "دامن",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_80",
+      "categoryId": "cat_poshak",
+      "wordText": "شال",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_81",
+      "categoryId": "cat_kheshvarha",
+      "wordText": "ایران",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_82",
+      "categoryId": "cat_kheshvarha",
+      "wordText": "آلمان",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_83",
+      "categoryId": "cat_kheshvarha",
+      "wordText": "ژاپن",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_84",
+      "categoryId": "cat_kheshvarha",
+      "wordText": "ایتالیا",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_85",
+      "categoryId": "cat_kheshvarha",
+      "wordText": "فرانسه",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_86",
+      "categoryId": "cat_kheshvarha",
+      "wordText": "برزیل",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_87",
+      "categoryId": "cat_kheshvarha",
+      "wordText": "کانادا",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_88",
+      "categoryId": "cat_kheshvarha",
+      "wordText": "ترکیه",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_89",
+      "categoryId": "cat_kheshvarha",
+      "wordText": "اسپانیا",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_90",
+      "categoryId": "cat_kheshvarha",
+      "wordText": "هند",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_91",
+      "categoryId": "cat_shahrha",
+      "wordText": "تهران",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_92",
+      "categoryId": "cat_shahrha",
+      "wordText": "شیراز",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_93",
+      "categoryId": "cat_shahrha",
+      "wordText": "اصفهان",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_94",
+      "categoryId": "cat_shahrha",
+      "wordText": "مشهد",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_95",
+      "categoryId": "cat_shahrha",
+      "wordText": "تبریز",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_96",
+      "categoryId": "cat_shahrha",
+      "wordText": "یزد",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_97",
+      "categoryId": "cat_shahrha",
+      "wordText": "اهواز",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_98",
+      "categoryId": "cat_shahrha",
+      "wordText": "رشت",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_99",
+      "categoryId": "cat_shahrha",
+      "wordText": "کرمان",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_100",
+      "categoryId": "cat_shahrha",
+      "wordText": "همدان",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_101",
+      "categoryId": "cat_shoghlha",
+      "wordText": "پزشک",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_102",
+      "categoryId": "cat_shoghlha",
+      "wordText": "معلم",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_103",
+      "categoryId": "cat_shoghlha",
+      "wordText": "مهندس",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_104",
+      "categoryId": "cat_shoghlha",
+      "wordText": "خلبان",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_105",
+      "categoryId": "cat_shoghlha",
+      "wordText": "پرستار",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_106",
+      "categoryId": "cat_shoghlha",
+      "wordText": "نجار",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_107",
+      "categoryId": "cat_shoghlha",
+      "wordText": "وکیل",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_108",
+      "categoryId": "cat_shoghlha",
+      "wordText": "نانوا",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_109",
+      "categoryId": "cat_shoghlha",
+      "wordText": "آهنگر",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_110",
+      "categoryId": "cat_shoghlha",
+      "wordText": "حسابدار",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_111",
+      "categoryId": "cat_varzesh",
+      "wordText": "فوتبال",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_112",
+      "categoryId": "cat_varzesh",
+      "wordText": "والیبال",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_113",
+      "categoryId": "cat_varzesh",
+      "wordText": "بسکتبال",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_114",
+      "categoryId": "cat_varzesh",
+      "wordText": "کشتی",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_115",
+      "categoryId": "cat_varzesh",
+      "wordText": "شنا",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_116",
+      "categoryId": "cat_varzesh",
+      "wordText": "تنس",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_117",
+      "categoryId": "cat_varzesh",
+      "wordText": "بوکس",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_118",
+      "categoryId": "cat_varzesh",
+      "wordText": "تکواندو",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_119",
+      "categoryId": "cat_varzesh",
+      "wordText": "بدمینتون",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_120",
+      "categoryId": "cat_varzesh",
+      "wordText": "ژیمناستیک",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_121",
+      "categoryId": "cat_goolha",
+      "wordText": "رز",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_122",
+      "categoryId": "cat_goolha",
+      "wordText": "مریم",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_123",
+      "categoryId": "cat_goolha",
+      "wordText": "نرگس",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_124",
+      "categoryId": "cat_goolha",
+      "wordText": "یاس",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_125",
+      "categoryId": "cat_goolha",
+      "wordText": "لاله",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_126",
+      "categoryId": "cat_goolha",
+      "wordText": "نیلوفر",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_127",
+      "categoryId": "cat_goolha",
+      "wordText": "آفتابگردان",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_128",
+      "categoryId": "cat_goolha",
+      "wordText": "بابونه",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_129",
+      "categoryId": "cat_goolha",
+      "wordText": "ارکیده",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_130",
+      "categoryId": "cat_goolha",
+      "wordText": "کاکتوس",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_131",
+      "categoryId": "cat_khodro",
+      "wordText": "اتومبیل",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_132",
+      "categoryId": "cat_khodro",
+      "wordText": "اتوبوس",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_133",
+      "categoryId": "cat_khodro",
+      "wordText": "قطار",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_134",
+      "categoryId": "cat_khodro",
+      "wordText": "هواپیما",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_135",
+      "categoryId": "cat_khodro",
+      "wordText": "موتورسیکلت",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_136",
+      "categoryId": "cat_khodro",
+      "wordText": "کشتی",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_137",
+      "categoryId": "cat_khodro",
+      "wordText": "دوچرخه",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_138",
+      "categoryId": "cat_khodro",
+      "wordText": "کامیون",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_139",
+      "categoryId": "cat_khodro",
+      "wordText": "بالگرد",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_140",
+      "categoryId": "cat_khodro",
+      "wordText": "مترو",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_141",
+      "categoryId": "cat_abzar",
+      "wordText": "چکش",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_142",
+      "categoryId": "cat_abzar",
+      "wordText": "آچار",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_143",
+      "categoryId": "cat_abzar",
+      "wordText": "پیچ‌گوشتی",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_144",
+      "categoryId": "cat_abzar",
+      "wordText": "اره",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_145",
+      "categoryId": "cat_abzar",
+      "wordText": "انبردست",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_146",
+      "categoryId": "cat_abzar",
+      "wordText": "مته",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_147",
+      "categoryId": "cat_abzar",
+      "wordText": "سندان",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_148",
+      "categoryId": "cat_abzar",
+      "wordText": "فازمتر",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_149",
+      "categoryId": "cat_abzar",
+      "wordText": "سوهان",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_150",
+      "categoryId": "cat_abzar",
+      "wordText": "متر",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_151",
+      "categoryId": "cat_ashamashami",
+      "wordText": "چای",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_152",
+      "categoryId": "cat_ashamashami",
+      "wordText": "قهوه",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_153",
+      "categoryId": "cat_ashamashami",
+      "wordText": "شیر",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_154",
+      "categoryId": "cat_ashamashami",
+      "wordText": "آبمیوه",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_155",
+      "categoryId": "cat_ashamashami",
+      "wordText": "دوغ",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_156",
+      "categoryId": "cat_ashamashami",
+      "wordText": "شربت",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_157",
+      "categoryId": "cat_ashamashami",
+      "wordText": "نسکافه",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_158",
+      "categoryId": "cat_ashamashami",
+      "wordText": "نوشابه",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_159",
+      "categoryId": "cat_ashamashami",
+      "wordText": "دم‌نوش",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_160",
+      "categoryId": "cat_ashamashami",
+      "wordText": "آب‌معدنی",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_161",
+      "categoryId": "cat_sayarat",
+      "wordText": "خورشید",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_162",
+      "categoryId": "cat_sayarat",
+      "wordText": "ماه",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_163",
+      "categoryId": "cat_sayarat",
+      "wordText": "مریخ",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_164",
+      "categoryId": "cat_sayarat",
+      "wordText": "مشتری",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_165",
+      "categoryId": "cat_sayarat",
+      "wordText": "زحل",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_166",
+      "categoryId": "cat_sayarat",
+      "wordText": "عطارد",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_167",
+      "categoryId": "cat_sayarat",
+      "wordText": "ناهید",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_168",
+      "categoryId": "cat_sayarat",
+      "wordText": "اورانوس",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_169",
+      "categoryId": "cat_sayarat",
+      "wordText": "نپتون",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_170",
+      "categoryId": "cat_sayarat",
+      "wordText": "شهاب‌سنگ",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_171",
+      "categoryId": "cat_lavazem_tahrir",
+      "wordText": "مداد",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_172",
+      "categoryId": "cat_lavazem_tahrir",
+      "wordText": "خودکار",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_173",
+      "categoryId": "cat_lavazem_tahrir",
+      "wordText": "دفتر",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_174",
+      "categoryId": "cat_lavazem_tahrir",
+      "wordText": "خط‌کش",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_175",
+      "categoryId": "cat_lavazem_tahrir",
+      "wordText": "پاک‌کن",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_176",
+      "categoryId": "cat_lavazem_tahrir",
+      "wordText": "تراش",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_177",
+      "categoryId": "cat_lavazem_tahrir",
+      "wordText": "پرگار",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_178",
+      "categoryId": "cat_lavazem_tahrir",
+      "wordText": "گونیا",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_179",
+      "categoryId": "cat_lavazem_tahrir",
+      "wordText": "ماژیک",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_180",
+      "categoryId": "cat_lavazem_tahrir",
+      "wordText": "منگنه",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_181",
+      "categoryId": "cat_musiki",
+      "wordText": "تار",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_182",
+      "categoryId": "cat_musiki",
+      "wordText": "سنتور",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_183",
+      "categoryId": "cat_musiki",
+      "wordText": "ویلن",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_184",
+      "categoryId": "cat_musiki",
+      "wordText": "پیانو",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_185",
+      "categoryId": "cat_musiki",
+      "wordText": "تنبک",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_186",
+      "categoryId": "cat_musiki",
+      "wordText": "نی",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_187",
+      "categoryId": "cat_musiki",
+      "wordText": "دف",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_188",
+      "categoryId": "cat_musiki",
+      "wordText": "کمانچه",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_189",
+      "categoryId": "cat_musiki",
+      "wordText": "سه تار",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_190",
+      "categoryId": "cat_musiki",
+      "wordText": "گیتار",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_191",
+      "categoryId": "cat_tabiat",
+      "wordText": "کوه",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_192",
+      "categoryId": "cat_tabiat",
+      "wordText": "دریا",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_193",
+      "categoryId": "cat_tabiat",
+      "wordText": "جنگل",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_194",
+      "categoryId": "cat_tabiat",
+      "wordText": "رودخانه",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_195",
+      "categoryId": "cat_tabiat",
+      "wordText": "کویر",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_196",
+      "categoryId": "cat_tabiat",
+      "wordText": "آبشار",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_197",
+      "categoryId": "cat_tabiat",
+      "wordText": "آتشفشان",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_198",
+      "categoryId": "cat_tabiat",
+      "wordText": "دره",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_199",
+      "categoryId": "cat_tabiat",
+      "wordText": "جزیره",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_200",
+      "categoryId": "cat_tabiat",
+      "wordText": "مرداب",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_201",
+      "categoryId": "cat_shiriniha",
+      "wordText": "باقلوا",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_202",
+      "categoryId": "cat_shiriniha",
+      "wordText": "زولبیا",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_203",
+      "categoryId": "cat_shiriniha",
+      "wordText": "بامیه",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_204",
+      "categoryId": "cat_shiriniha",
+      "wordText": "کیک",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_205",
+      "categoryId": "cat_shiriniha",
+      "wordText": "شله‌زرد",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_206",
+      "categoryId": "cat_shiriniha",
+      "wordText": "حلوا",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_207",
+      "categoryId": "cat_shiriniha",
+      "wordText": "گز",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_208",
+      "categoryId": "cat_shiriniha",
+      "wordText": "سوهان",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_209",
+      "categoryId": "cat_shiriniha",
+      "wordText": "بستنی",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_210",
+      "categoryId": "cat_shiriniha",
+      "wordText": "قطاب",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_211",
+      "categoryId": "cat_ashpazkhaneh",
+      "wordText": "بشقاب",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_212",
+      "categoryId": "cat_ashpazkhaneh",
+      "wordText": "قاشق",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_213",
+      "categoryId": "cat_ashpazkhaneh",
+      "wordText": "چنگال",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_214",
+      "categoryId": "cat_ashpazkhaneh",
+      "wordText": "چاقو",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_215",
+      "categoryId": "cat_ashpazkhaneh",
+      "wordText": "قابلمه",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_216",
+      "categoryId": "cat_ashpazkhaneh",
+      "wordText": "لیوان",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_217",
+      "categoryId": "cat_ashpazkhaneh",
+      "wordText": "ماهیتابه",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_218",
+      "categoryId": "cat_ashpazkhaneh",
+      "wordText": "کاسه",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_219",
+      "categoryId": "cat_ashpazkhaneh",
+      "wordText": "قوری",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_220",
+      "categoryId": "cat_ashpazkhaneh",
+      "wordText": "سماور",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_221",
+      "categoryId": "cat_mobleman",
+      "wordText": "مبل",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_222",
+      "categoryId": "cat_mobleman",
+      "wordText": "میز",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_223",
+      "categoryId": "cat_mobleman",
+      "wordText": "صندلی",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_224",
+      "categoryId": "cat_mobleman",
+      "wordText": "تخت",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_225",
+      "categoryId": "cat_mobleman",
+      "wordText": "کمد",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_226",
+      "categoryId": "cat_mobleman",
+      "wordText": "فرش",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_227",
+      "categoryId": "cat_mobleman",
+      "wordText": "پرده",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_228",
+      "categoryId": "cat_mobleman",
+      "wordText": "بوفه",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_229",
+      "categoryId": "cat_mobleman",
+      "wordText": "آباژور",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_230",
+      "categoryId": "cat_mobleman",
+      "wordText": "کتابخانه",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_231",
+      "categoryId": "cat_hasharat",
+      "wordText": "مورچه",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_232",
+      "categoryId": "cat_hasharat",
+      "wordText": "پروانه",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_233",
+      "categoryId": "cat_hasharat",
+      "wordText": "زنبور",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_234",
+      "categoryId": "cat_hasharat",
+      "wordText": "سوسک",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_235",
+      "categoryId": "cat_hasharat",
+      "wordText": "پشه",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_236",
+      "categoryId": "cat_hasharat",
+      "wordText": "مگس",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_237",
+      "categoryId": "cat_hasharat",
+      "wordText": "ملخ",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_238",
+      "categoryId": "cat_hasharat",
+      "wordText": "کفش‌دوزک",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_239",
+      "categoryId": "cat_hasharat",
+      "wordText": "عنکبوت",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_240",
+      "categoryId": "cat_hasharat",
+      "wordText": "سنجاقک",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_241",
+      "categoryId": "cat_khanevadeh",
+      "wordText": "پدر",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_242",
+      "categoryId": "cat_khanevadeh",
+      "wordText": "مادر",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_243",
+      "categoryId": "cat_khanevadeh",
+      "wordText": "برادر",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_244",
+      "categoryId": "cat_khanevadeh",
+      "wordText": "خواهر",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_245",
+      "categoryId": "cat_khanevadeh",
+      "wordText": "عمو",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_246",
+      "categoryId": "cat_khanevadeh",
+      "wordText": "دایی",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_247",
+      "categoryId": "cat_khanevadeh",
+      "wordText": "عمه",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_248",
+      "categoryId": "cat_khanevadeh",
+      "wordText": "خاله",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_249",
+      "categoryId": "cat_khanevadeh",
+      "wordText": "پدربزرگ",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_250",
+      "categoryId": "cat_khanevadeh",
+      "wordText": "مادربزرگ",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_251",
+      "categoryId": "cat_advieh",
+      "wordText": "زعفران",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_252",
+      "categoryId": "cat_advieh",
+      "wordText": "دارچین",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_253",
+      "categoryId": "cat_advieh",
+      "wordText": "زردچوبه",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_254",
+      "categoryId": "cat_advieh",
+      "wordText": "فلفل",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_255",
+      "categoryId": "cat_advieh",
+      "wordText": "زنجبیل",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_256",
+      "categoryId": "cat_advieh",
+      "wordText": "هل",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_257",
+      "categoryId": "cat_advieh",
+      "wordText": "آویشن",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_258",
+      "categoryId": "cat_advieh",
+      "wordText": "سماق",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_259",
+      "categoryId": "cat_advieh",
+      "wordText": "کاری",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_260",
+      "categoryId": "cat_advieh",
+      "wordText": "زیره",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_261",
+      "categoryId": "cat_cinema",
+      "wordText": "کارگردان",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_262",
+      "categoryId": "cat_cinema",
+      "wordText": "بازیگر",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_263",
+      "categoryId": "cat_cinema",
+      "wordText": "دوربین",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_264",
+      "categoryId": "cat_cinema",
+      "wordText": "فیلمنامه",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_265",
+      "categoryId": "cat_cinema",
+      "wordText": "گریم",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_266",
+      "categoryId": "cat_cinema",
+      "wordText": "تدوین",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_267",
+      "categoryId": "cat_cinema",
+      "wordText": "تهیه‌کننده",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_268",
+      "categoryId": "cat_cinema",
+      "wordText": "صداگذار",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_269",
+      "categoryId": "cat_cinema",
+      "wordText": "صحنه",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_270",
+      "categoryId": "cat_cinema",
+      "wordText": "دیالوگ",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_271",
+      "categoryId": "cat_bana_tarikhi",
+      "wordText": "تخت جمشید",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_272",
+      "categoryId": "cat_bana_tarikhi",
+      "wordText": "سی و سه پل",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_273",
+      "categoryId": "cat_bana_tarikhi",
+      "wordText": "حافظیه",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_274",
+      "categoryId": "cat_bana_tarikhi",
+      "wordText": "بیستون",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_275",
+      "categoryId": "cat_bana_tarikhi",
+      "wordText": "عالی قاپو",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_276",
+      "categoryId": "cat_bana_tarikhi",
+      "wordText": "ارگ بم",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_277",
+      "categoryId": "cat_bana_tarikhi",
+      "wordText": "میدان نقش جهان",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_278",
+      "categoryId": "cat_bana_tarikhi",
+      "wordText": "کاخ گلستان",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_279",
+      "categoryId": "cat_bana_tarikhi",
+      "wordText": "طاق بستان",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_280",
+      "categoryId": "cat_bana_tarikhi",
+      "wordText": "پاسارگاد",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_281",
+      "categoryId": "cat_shoghl_sonnati",
+      "wordText": "مسگری",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_282",
+      "categoryId": "cat_shoghl_sonnati",
+      "wordText": "سفالگری",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_283",
+      "categoryId": "cat_shoghl_sonnati",
+      "wordText": "فرش‌بافی",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_284",
+      "categoryId": "cat_shoghl_sonnati",
+      "wordText": "گیوه‌دوزی",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_285",
+      "categoryId": "cat_shoghl_sonnati",
+      "wordText": "میناکاری",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_286",
+      "categoryId": "cat_shoghl_sonnati",
+      "wordText": "خاتم‌کاری",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_287",
+      "categoryId": "cat_shoghl_sonnati",
+      "wordText": "نمدبافی",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_288",
+      "categoryId": "cat_shoghl_sonnati",
+      "wordText": "حریربافی",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_289",
+      "categoryId": "cat_shoghl_sonnati",
+      "wordText": "قلم‌زنی",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_290",
+      "categoryId": "cat_shoghl_sonnati",
+      "wordText": "دباغی",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_291",
+      "categoryId": "cat_ab_hava",
+      "wordText": "باران",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_292",
+      "categoryId": "cat_ab_hava",
+      "wordText": "برف",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_293",
+      "categoryId": "cat_ab_hava",
+      "wordText": "تگرگ",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_294",
+      "categoryId": "cat_ab_hava",
+      "wordText": "رعد و برق",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_295",
+      "categoryId": "cat_ab_hava",
+      "wordText": "طوفان",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_296",
+      "categoryId": "cat_ab_hava",
+      "wordText": "مه",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_297",
+      "categoryId": "cat_ab_hava",
+      "wordText": "گردباد",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_298",
+      "categoryId": "cat_ab_hava",
+      "wordText": "نسیم",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_299",
+      "categoryId": "cat_ab_hava",
+      "wordText": "کولاک",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_300",
+      "categoryId": "cat_ab_hava",
+      "wordText": "شبنم",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_301",
+      "categoryId": "cat_khoshkbar",
+      "wordText": "پسته",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_302",
+      "categoryId": "cat_khoshkbar",
+      "wordText": "بادام",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_303",
+      "categoryId": "cat_khoshkbar",
+      "wordText": "گردو",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_304",
+      "categoryId": "cat_khoshkbar",
+      "wordText": "فندق",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_305",
+      "categoryId": "cat_khoshkbar",
+      "wordText": "کشمش",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_306",
+      "categoryId": "cat_khoshkbar",
+      "wordText": "تخمه",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_307",
+      "categoryId": "cat_khoshkbar",
+      "wordText": "آلوچه",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_308",
+      "categoryId": "cat_khoshkbar",
+      "wordText": "قیصی",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_309",
+      "categoryId": "cat_khoshkbar",
+      "wordText": "انجیر خشک",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_310",
+      "categoryId": "cat_khoshkbar",
+      "wordText": "بادام هندی",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_311",
+      "categoryId": "cat_estelahat",
+      "wordText": "زاغ سیاه",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_312",
+      "categoryId": "cat_estelahat",
+      "wordText": "زیرآب‌زنی",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_313",
+      "categoryId": "cat_estelahat",
+      "wordText": "دست‌گرمی",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_314",
+      "categoryId": "cat_estelahat",
+      "wordText": "چانه زدن",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_315",
+      "categoryId": "cat_estelahat",
+      "wordText": "پیازداغ",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_316",
+      "categoryId": "cat_estelahat",
+      "wordText": "چشم‌روشنی",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_317",
+      "categoryId": "cat_estelahat",
+      "wordText": "دم‌بخت",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_318",
+      "categoryId": "cat_estelahat",
+      "wordText": "سرکوفت",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_319",
+      "categoryId": "cat_estelahat",
+      "wordText": "دست‌انداز",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_320",
+      "categoryId": "cat_estelahat",
+      "wordText": "کاسه‌کوزه",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_321",
+      "categoryId": "cat_felezat",
+      "wordText": "طلا",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_322",
+      "categoryId": "cat_felezat",
+      "wordText": "نقره",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_323",
+      "categoryId": "cat_felezat",
+      "wordText": "مس",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_324",
+      "categoryId": "cat_felezat",
+      "wordText": "آهن",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_325",
+      "categoryId": "cat_felezat",
+      "wordText": "آلومینیوم",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_326",
+      "categoryId": "cat_felezat",
+      "wordText": "فولاد",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_327",
+      "categoryId": "cat_felezat",
+      "wordText": "روی",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_328",
+      "categoryId": "cat_felezat",
+      "wordText": "سرب",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_329",
+      "categoryId": "cat_felezat",
+      "wordText": "پلاتین",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_330",
+      "categoryId": "cat_felezat",
+      "wordText": "جیوه",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_331",
+      "categoryId": "cat_reshte_honar",
+      "wordText": "نقاشی",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_332",
+      "categoryId": "cat_reshte_honar",
+      "wordText": "مجسمه‌سازی",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_333",
+      "categoryId": "cat_reshte_honar",
+      "wordText": "عکاسی",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_334",
+      "categoryId": "cat_reshte_honar",
+      "wordText": "خوشنویسی",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_335",
+      "categoryId": "cat_reshte_honar",
+      "wordText": "معماری",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_336",
+      "categoryId": "cat_reshte_honar",
+      "wordText": "تئاتر",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_337",
+      "categoryId": "cat_reshte_honar",
+      "wordText": "گرافیک",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_338",
+      "categoryId": "cat_reshte_honar",
+      "wordText": "طراحی صحنه",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_339",
+      "categoryId": "cat_reshte_honar",
+      "wordText": "نگارگری",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_340",
+      "categoryId": "cat_reshte_honar",
+      "wordText": "انیمیشن",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_341",
+      "categoryId": "cat_football_terms",
+      "wordText": "آفساید",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_342",
+      "categoryId": "cat_football_terms",
+      "wordText": "پنالتی",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_343",
+      "categoryId": "cat_football_terms",
+      "wordText": "کرنر",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_344",
+      "categoryId": "cat_football_terms",
+      "wordText": "دریبل",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_345",
+      "categoryId": "cat_football_terms",
+      "wordText": "پاس گل",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_346",
+      "categoryId": "cat_football_terms",
+      "wordText": "هت‌تریک",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_347",
+      "categoryId": "cat_football_terms",
+      "wordText": "تکل",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_348",
+      "categoryId": "cat_football_terms",
+      "wordText": "ضربه‌آزاد",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_349",
+      "categoryId": "cat_football_terms",
+      "wordText": "تیرک",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_350",
+      "categoryId": "cat_football_terms",
+      "wordText": "کارت قرمز",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_351",
+      "categoryId": "cat_pezeshki",
+      "wordText": "فشار خون",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_352",
+      "categoryId": "cat_pezeshki",
+      "wordText": "دیابت",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_353",
+      "categoryId": "cat_pezeshki",
+      "wordText": "بیهوشی",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_354",
+      "categoryId": "cat_pezeshki",
+      "wordText": "آنتی‌بیوتیک",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_355",
+      "categoryId": "cat_pezeshki",
+      "wordText": "پرتودرمانی",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_356",
+      "categoryId": "cat_pezeshki",
+      "wordText": "جراحی",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_357",
+      "categoryId": "cat_pezeshki",
+      "wordText": "واکسن",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_358",
+      "categoryId": "cat_pezeshki",
+      "wordText": "سرم",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_359",
+      "categoryId": "cat_pezeshki",
+      "wordText": "پانسمان",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_360",
+      "categoryId": "cat_pezeshki",
+      "wordText": "ارتوپدی",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_361",
+      "categoryId": "cat_adabiat",
+      "wordText": "تشبیه",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_362",
+      "categoryId": "cat_adabiat",
+      "wordText": "استعاره",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_363",
+      "categoryId": "cat_adabiat",
+      "wordText": "کنایه",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_364",
+      "categoryId": "cat_adabiat",
+      "wordText": "ایهام",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_365",
+      "categoryId": "cat_adabiat",
+      "wordText": "جناس",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_366",
+      "categoryId": "cat_adabiat",
+      "wordText": "مراعات نظیر",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_367",
+      "categoryId": "cat_adabiat",
+      "wordText": "تضاد",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_368",
+      "categoryId": "cat_adabiat",
+      "wordText": "اغراق",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_369",
+      "categoryId": "cat_adabiat",
+      "wordText": "تلمیح",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_370",
+      "categoryId": "cat_adabiat",
+      "wordText": "سجع",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_371",
+      "categoryId": "cat_digital",
+      "wordText": "موبایل",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_372",
+      "categoryId": "cat_digital",
+      "wordText": "لپ‌تاپ",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_373",
+      "categoryId": "cat_digital",
+      "wordText": "تبلت",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_374",
+      "categoryId": "cat_digital",
+      "wordText": "هدفون",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_375",
+      "categoryId": "cat_digital",
+      "wordText": "کیبورد",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_376",
+      "categoryId": "cat_digital",
+      "wordText": "ماوس",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_377",
+      "categoryId": "cat_digital",
+      "wordText": "مانیتور",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_378",
+      "categoryId": "cat_digital",
+      "wordText": "اسپیکر",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_379",
+      "categoryId": "cat_digital",
+      "wordText": "فلش",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_380",
+      "categoryId": "cat_digital",
+      "wordText": "شارژر",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_381",
+      "categoryId": "cat_dorehami",
+      "wordText": "مافیا",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_382",
+      "categoryId": "cat_dorehami",
+      "wordText": "منچ",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_383",
+      "categoryId": "cat_dorehami",
+      "wordText": "مار و پله",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_384",
+      "categoryId": "cat_dorehami",
+      "wordText": "تخته نرد",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_385",
+      "categoryId": "cat_dorehami",
+      "wordText": "شطرنج",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_386",
+      "categoryId": "cat_dorehami",
+      "wordText": "اسم فامیل",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_387",
+      "categoryId": "cat_dorehami",
+      "wordText": "پانتومیم",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_388",
+      "categoryId": "cat_dorehami",
+      "wordText": "دومینو",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_389",
+      "categoryId": "cat_dorehami",
+      "wordText": "پوکر",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_390",
+      "categoryId": "cat_dorehami",
+      "wordText": "اونو",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_391",
+      "categoryId": "cat_behdasht",
+      "wordText": "صابون",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_392",
+      "categoryId": "cat_behdasht",
+      "wordText": "شامپو",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_393",
+      "categoryId": "cat_behdasht",
+      "wordText": "مسواک",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_394",
+      "categoryId": "cat_behdasht",
+      "wordText": "خمیردندان",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_395",
+      "categoryId": "cat_behdasht",
+      "wordText": "حوله",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_396",
+      "categoryId": "cat_behdasht",
+      "wordText": "لیف",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_397",
+      "categoryId": "cat_behdasht",
+      "wordText": "شانه",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_398",
+      "categoryId": "cat_behdasht",
+      "wordText": "سشوار",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_399",
+      "categoryId": "cat_behdasht",
+      "wordText": "آینه",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_400",
+      "categoryId": "cat_behdasht",
+      "wordText": "عطر",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_401",
+      "categoryId": "cat_sobhaneh",
+      "wordText": "پنیر",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_402",
+      "categoryId": "cat_sobhaneh",
+      "wordText": "کره",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_403",
+      "categoryId": "cat_sobhaneh",
+      "wordText": "مربا",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_404",
+      "categoryId": "cat_sobhaneh",
+      "wordText": "عسل",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_405",
+      "categoryId": "cat_sobhaneh",
+      "wordText": "خامه",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_406",
+      "categoryId": "cat_sobhaneh",
+      "wordText": "تخم‌مرغ",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_407",
+      "categoryId": "cat_sobhaneh",
+      "wordText": "نان سنگک",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_408",
+      "categoryId": "cat_sobhaneh",
+      "wordText": "نان بربری",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_409",
+      "categoryId": "cat_sobhaneh",
+      "wordText": "حلوا ارده",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_410",
+      "categoryId": "cat_sobhaneh",
+      "wordText": "ماست",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_411",
+      "categoryId": "cat_zivaralat",
+      "wordText": "انگشتر",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_412",
+      "categoryId": "cat_zivaralat",
+      "wordText": "گردنبند",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_413",
+      "categoryId": "cat_zivaralat",
+      "wordText": "دستبند",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_414",
+      "categoryId": "cat_zivaralat",
+      "wordText": "گوشواره",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_415",
+      "categoryId": "cat_zivaralat",
+      "wordText": "ساعت مچی",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_416",
+      "categoryId": "cat_zivaralat",
+      "wordText": "عینک آفتابی",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_417",
+      "categoryId": "cat_zivaralat",
+      "wordText": "النگو",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_418",
+      "categoryId": "cat_zivaralat",
+      "wordText": "پابند",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_419",
+      "categoryId": "cat_zivaralat",
+      "wordText": "سنجاق سینه",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_420",
+      "categoryId": "cat_zivaralat",
+      "wordText": "کراوات",
+      "difficulty": "Kolay"
+    },
+    {
+      "id": "w_421",
+      "categoryId": "cat_genre_cinema",
+      "wordText": "کمدی",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_422",
+      "categoryId": "cat_genre_cinema",
+      "wordText": "اکشن",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_423",
+      "categoryId": "cat_genre_cinema",
+      "wordText": "درام",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_424",
+      "categoryId": "cat_genre_cinema",
+      "wordText": "وحشت",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_425",
+      "categoryId": "cat_genre_cinema",
+      "wordText": "علمی تخیلی",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_426",
+      "categoryId": "cat_genre_cinema",
+      "wordText": "مستند",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_427",
+      "categoryId": "cat_genre_cinema",
+      "wordText": "عاشقانه",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_428",
+      "categoryId": "cat_genre_cinema",
+      "wordText": "جنایی",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_429",
+      "categoryId": "cat_genre_cinema",
+      "wordText": "تاریخی",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_430",
+      "categoryId": "cat_genre_cinema",
+      "wordText": "انیمیشن",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_431",
+      "categoryId": "cat_ghataat_khodro",
+      "wordText": "موتور",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_432",
+      "categoryId": "cat_ghataat_khodro",
+      "wordText": "گیربکس",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_433",
+      "categoryId": "cat_ghataat_khodro",
+      "wordText": "رادیاتور",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_434",
+      "categoryId": "cat_ghataat_khodro",
+      "wordText": "لنت ترمز",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_435",
+      "categoryId": "cat_ghataat_khodro",
+      "wordText": "فرمان",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_436",
+      "categoryId": "cat_ghataat_khodro",
+      "wordText": "کلاچ",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_437",
+      "categoryId": "cat_ghataat_khodro",
+      "wordText": "شمع",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_438",
+      "categoryId": "cat_ghataat_khodro",
+      "wordText": "دینام",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_439",
+      "categoryId": "cat_ghataat_khodro",
+      "wordText": "باک بنزین",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_440",
+      "categoryId": "cat_ghataat_khodro",
+      "wordText": "اگزوز",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_441",
+      "categoryId": "cat_mali_bank",
+      "wordText": "سپرده",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_442",
+      "categoryId": "cat_mali_bank",
+      "wordText": "تسهیلات",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_443",
+      "categoryId": "cat_mali_bank",
+      "wordText": "ضامن",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_444",
+      "categoryId": "cat_mali_bank",
+      "wordText": "سود بانکی",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_445",
+      "categoryId": "cat_mali_bank",
+      "wordText": "چک",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_446",
+      "categoryId": "cat_mali_bank",
+      "wordText": "سفته",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_447",
+      "categoryId": "cat_mali_bank",
+      "wordText": "تورم",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_448",
+      "categoryId": "cat_mali_bank",
+      "wordText": "بورس",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_449",
+      "categoryId": "cat_mali_bank",
+      "wordText": "کارت اعتباری",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_450",
+      "categoryId": "cat_mali_bank",
+      "wordText": "ارز",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_451",
+      "categoryId": "cat_video_games",
+      "wordText": "ماریو",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_452",
+      "categoryId": "cat_video_games",
+      "wordText": "سونیک",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_453",
+      "categoryId": "cat_video_games",
+      "wordText": "تتریس",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_454",
+      "categoryId": "cat_video_games",
+      "wordText": "پک‌من",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_455",
+      "categoryId": "cat_video_games",
+      "wordText": "ماینکرفت",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_456",
+      "categoryId": "cat_video_games",
+      "wordText": "جی‌تی‌ای",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_457",
+      "categoryId": "cat_video_games",
+      "wordText": "وارکرافت",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_458",
+      "categoryId": "cat_video_games",
+      "wordText": "کال آف دیوتی",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_459",
+      "categoryId": "cat_video_games",
+      "wordText": "فیفا",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_460",
+      "categoryId": "cat_video_games",
+      "wordText": "مورتال کامبت",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_461",
+      "categoryId": "cat_bana_jahan",
+      "wordText": "برج ایفل",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_462",
+      "categoryId": "cat_bana_jahan",
+      "wordText": "تاج محل",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_463",
+      "categoryId": "cat_bana_jahan",
+      "wordText": "دیوار چین",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_464",
+      "categoryId": "cat_bana_jahan",
+      "wordText": "اهرام مصر",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_465",
+      "categoryId": "cat_bana_jahan",
+      "wordText": "کولوسئوم",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_466",
+      "categoryId": "cat_bana_jahan",
+      "wordText": "برج پیزا",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_467",
+      "categoryId": "cat_bana_jahan",
+      "wordText": "مجسمه آزادی",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_468",
+      "categoryId": "cat_bana_jahan",
+      "wordText": "کعبه",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_469",
+      "categoryId": "cat_bana_jahan",
+      "wordText": "پترا",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_470",
+      "categoryId": "cat_bana_jahan",
+      "wordText": "برج خلیفه",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_471",
+      "categoryId": "cat_sanaye_dasti",
+      "wordText": "ترمه",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_472",
+      "categoryId": "cat_sanaye_dasti",
+      "wordText": "قلم‌کار",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_473",
+      "categoryId": "cat_sanaye_dasti",
+      "wordText": "منبت",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_474",
+      "categoryId": "cat_sanaye_dasti",
+      "wordText": "ملیله‌کاری",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_475",
+      "categoryId": "cat_sanaye_dasti",
+      "wordText": "جاجیم",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_476",
+      "categoryId": "cat_sanaye_dasti",
+      "wordText": "گلیم",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_477",
+      "categoryId": "cat_sanaye_dasti",
+      "wordText": "حصیربافی",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_478",
+      "categoryId": "cat_sanaye_dasti",
+      "wordText": "پته‌دوزی",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_479",
+      "categoryId": "cat_sanaye_dasti",
+      "wordText": "فیروزه‌کوبی",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_480",
+      "categoryId": "cat_sanaye_dasti",
+      "wordText": "سوزن‌دوزی",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_481",
+      "categoryId": "cat_varzesh_zemestani",
+      "wordText": "اسکی آلپاین",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_482",
+      "categoryId": "cat_varzesh_zemestani",
+      "wordText": "اسنوبرد",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_483",
+      "categoryId": "cat_varzesh_zemestani",
+      "wordText": "پاتیناژ",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_484",
+      "categoryId": "cat_varzesh_zemestani",
+      "wordText": "هاکی روی یخ",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_485",
+      "categoryId": "cat_varzesh_zemestani",
+      "wordText": "سورتمه‌سواری",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_486",
+      "categoryId": "cat_varzesh_zemestani",
+      "wordText": "کرلینگ",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_487",
+      "categoryId": "cat_varzesh_zemestani",
+      "wordText": "پرش با اسکی",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_488",
+      "categoryId": "cat_varzesh_zemestani",
+      "wordText": "یخ‌نوردی",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_489",
+      "categoryId": "cat_varzesh_zemestani",
+      "wordText": "تیراندازی با اسکی",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_490",
+      "categoryId": "cat_varzesh_zemestani",
+      "wordText": "اسنوموبیل",
+      "difficulty": "Orta"
+    },
+    {
+      "id": "w_491",
+      "categoryId": "cat_barnamenevisi",
+      "wordText": "الگوریتم",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_492",
+      "categoryId": "cat_barnamenevisi",
+      "wordText": "پایتون",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_493",
+      "categoryId": "cat_barnamenevisi",
+      "wordText": "جاوا اسکریپت",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_494",
+      "categoryId": "cat_barnamenevisi",
+      "wordText": "دیتابیس",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_495",
+      "categoryId": "cat_barnamenevisi",
+      "wordText": "سرور",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_496",
+      "categoryId": "cat_barnamenevisi",
+      "wordText": "کامپایلر",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_497",
+      "categoryId": "cat_barnamenevisi",
+      "wordText": "کتابخانه",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_498",
+      "categoryId": "cat_barnamenevisi",
+      "wordText": "گیت",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_499",
+      "categoryId": "cat_barnamenevisi",
+      "wordText": "فریم‌ورک",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_500",
+      "categoryId": "cat_barnamenevisi",
+      "wordText": "دیباگ",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_501",
+      "categoryId": "cat_musiki_jahan",
+      "wordText": "ساکسیفون",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_502",
+      "categoryId": "cat_musiki_jahan",
+      "wordText": "کلارینت",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_503",
+      "categoryId": "cat_musiki_jahan",
+      "wordText": "ترومپت",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_504",
+      "categoryId": "cat_musiki_jahan",
+      "wordText": "چلو",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_505",
+      "categoryId": "cat_musiki_jahan",
+      "wordText": "فلوت",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_506",
+      "categoryId": "cat_musiki_jahan",
+      "wordText": "هارپ",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_507",
+      "categoryId": "cat_musiki_jahan",
+      "wordText": "آکاردئون",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_508",
+      "categoryId": "cat_musiki_jahan",
+      "wordText": "درامز",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_509",
+      "categoryId": "cat_musiki_jahan",
+      "wordText": "ساز دهنی",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_510",
+      "categoryId": "cat_musiki_jahan",
+      "wordText": "کونگا",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_511",
+      "categoryId": "cat_falsafeh",
+      "wordText": "اگزیستانسیالیسم",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_512",
+      "categoryId": "cat_falsafeh",
+      "wordText": "ایده‌آلیسم",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_513",
+      "categoryId": "cat_falsafeh",
+      "wordText": "رئالیسم",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_514",
+      "categoryId": "cat_falsafeh",
+      "wordText": "ماتریالیسم",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_515",
+      "categoryId": "cat_falsafeh",
+      "wordText": "پراگماتیسم",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_516",
+      "categoryId": "cat_falsafeh",
+      "wordText": "پوچ‌گرایی",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_517",
+      "categoryId": "cat_falsafeh",
+      "wordText": "رواقی‌گری",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_518",
+      "categoryId": "cat_falsafeh",
+      "wordText": "نسبی‌گرایی",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_519",
+      "categoryId": "cat_falsafeh",
+      "wordText": "عقل‌گرایی",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_520",
+      "categoryId": "cat_falsafeh",
+      "wordText": "تجربه‌گرایی",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_521",
+      "categoryId": "cat_shimi",
+      "wordText": "هیدروژن",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_522",
+      "categoryId": "cat_shimi",
+      "wordText": "اکسیژن",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_523",
+      "categoryId": "cat_shimi",
+      "wordText": "کربن",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_524",
+      "categoryId": "cat_shimi",
+      "wordText": "نیتروژن",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_525",
+      "categoryId": "cat_shimi",
+      "wordText": "هلیوم",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_526",
+      "categoryId": "cat_shimi",
+      "wordText": "کلر",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_527",
+      "categoryId": "cat_shimi",
+      "wordText": "سدیم",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_528",
+      "categoryId": "cat_shimi",
+      "wordText": "پتاسیم",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_529",
+      "categoryId": "cat_shimi",
+      "wordText": "اورانیوم",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_530",
+      "categoryId": "cat_shimi",
+      "wordText": "گوگرد",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_531",
+      "categoryId": "cat_zarbolmasal",
+      "wordText": "آب در هاون کوبیدن",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_532",
+      "categoryId": "cat_zarbolmasal",
+      "wordText": "اشک تمساح ریختن",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_533",
+      "categoryId": "cat_zarbolmasal",
+      "wordText": "از آب کره گرفتن",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_534",
+      "categoryId": "cat_zarbolmasal",
+      "wordText": "شتر دیدی ندیدی",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_535",
+      "categoryId": "cat_zarbolmasal",
+      "wordText": "بادنجان بم آفت ندارد",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_536",
+      "categoryId": "cat_zarbolmasal",
+      "wordText": "کاسه داغ‌تر از آش",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_537",
+      "categoryId": "cat_zarbolmasal",
+      "wordText": "فیل و فنجان",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_538",
+      "categoryId": "cat_zarbolmasal",
+      "wordText": "کج‌دار و مریز",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_539",
+      "categoryId": "cat_zarbolmasal",
+      "wordText": "شاهنامه آخرش خوشه",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_540",
+      "categoryId": "cat_zarbolmasal",
+      "wordText": "آشپز دوتا شد",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_541",
+      "categoryId": "cat_memari_sabk",
+      "wordText": "گوتیگ",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_542",
+      "categoryId": "cat_memari_sabk",
+      "wordText": "باروک",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_543",
+      "categoryId": "cat_memari_sabk",
+      "wordText": "مدرنیسم",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_544",
+      "categoryId": "cat_memari_sabk",
+      "wordText": "پست مدرن",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_545",
+      "categoryId": "cat_memari_sabk",
+      "wordText": "رنسانس",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_546",
+      "categoryId": "cat_memari_sabk",
+      "wordText": "کلاسیک",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_547",
+      "categoryId": "cat_memari_sabk",
+      "wordText": "سنتی ایرانی",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_548",
+      "categoryId": "cat_memari_sabk",
+      "wordText": "اسلیمی",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_549",
+      "categoryId": "cat_memari_sabk",
+      "wordText": "روکوکو",
+      "difficulty": "Zor"
+    },
+    {
+      "id": "w_550",
+      "categoryId": "cat_memari_sabk",
+      "wordText": "بروتالیسم",
+      "difficulty": "Zor"
+    }
   ]
 }

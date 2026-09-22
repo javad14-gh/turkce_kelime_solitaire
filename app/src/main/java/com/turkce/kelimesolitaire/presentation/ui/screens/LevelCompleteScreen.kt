@@ -37,6 +37,9 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.SuccessGreen
 import com.turkce.kelimesolitaire.presentation.ui.theme.TextPrimary
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 
 @Composable
@@ -51,6 +54,7 @@ fun LevelCompleteScreen(
     val context = LocalContext.current
     val isPersian = remember(context) { LocaleHelper.isPersian(context) }
     val nunitoFont = rememberNunitoFont()
+    var isActionTriggered by remember { mutableStateOf(false) }
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -158,7 +162,12 @@ fun LevelCompleteScreen(
                             )
                         )
                         .border(1.5.dp, Color(0xFFBEF264), RoundedCornerShape(18.dp))
-                        .clickable { onNextLevelClicked() }
+                        .clickable(enabled = !isActionTriggered) {
+                            if (!isActionTriggered) {
+                                isActionTriggered = true
+                                onNextLevelClicked()
+                            }
+                        }
                         .padding(horizontal = 30.dp, vertical = 14.dp),
                     contentAlignment = Alignment.Center
                 ) {
@@ -198,7 +207,12 @@ fun LevelCompleteScreen(
                                 )
                             )
                         )
-                        .clickable { onMainMenuClicked() }
+                        .clickable(enabled = !isActionTriggered) {
+                            if (!isActionTriggered) {
+                                isActionTriggered = true
+                                onMainMenuClicked()
+                            }
+                        }
                         .padding(horizontal = 26.dp, vertical = 10.dp),
                     contentAlignment = Alignment.Center
                 ) {

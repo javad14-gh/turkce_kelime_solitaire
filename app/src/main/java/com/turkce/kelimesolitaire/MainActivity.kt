@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import com.turkce.kelimesolitaire.presentation.ui.screens.GameOverScreen
 import com.turkce.kelimesolitaire.presentation.ui.screens.GameScreen
 import com.turkce.kelimesolitaire.presentation.ui.screens.LevelCompleteScreen
+import com.turkce.kelimesolitaire.presentation.ui.screens.LevelLoadingScreen
 import com.turkce.kelimesolitaire.presentation.ui.screens.MainMenuScreen
 import com.turkce.kelimesolitaire.presentation.ui.screens.StoreScreen
 import android.widget.Toast
@@ -49,7 +50,10 @@ class MainActivity : ComponentActivity() {
 
                     when (state.screenState) {
                         is ScreenState.Loading -> {
-                            LoadingView()
+                            LevelLoadingScreen(
+                                levelNumber = state.levelNumber,
+                                isPersian = state.isPersian
+                            )
                         }
                         is ScreenState.MainMenu -> {
                             MainMenuScreen(
@@ -132,7 +136,10 @@ class MainActivity : ComponentActivity() {
                                         viewModel.acceptDefeat()
                                     }
                                 )
-                            } ?: LoadingView()
+                            } ?: LevelLoadingScreen(
+                                levelNumber = state.levelNumber,
+                                isPersian = state.isPersian
+                            )
                         }
                         is ScreenState.LevelComplete -> {
                             LevelCompleteScreen(
