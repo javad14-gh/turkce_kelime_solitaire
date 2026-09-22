@@ -36,6 +36,13 @@ sealed interface ScreenState {
     object Store : ScreenState // Full-screen store
 }
 
+enum class TutorialType {
+    LEVEL_1_GUIDE,
+    UNDO_UNLOCK,
+    HINT_UNLOCK,
+    JOKER_UNLOCK
+}
+
 data class GameUiState(
     val screenState: ScreenState = ScreenState.Loading,
     val previousScreenState: ScreenState = ScreenState.MainMenu,
@@ -69,7 +76,17 @@ data class GameUiState(
     val showStoreDialog: Boolean = false,
     val showDailyRewardDialog: Boolean = false,
     val dailyRewardState: DailyRewardState? = null,
-    val dailyRewardHasUnclaimed: Boolean = false
+    val dailyRewardHasUnclaimed: Boolean = false,
+
+    // Booster progressive unlocks & free gifts
+    val isUndoUnlocked: Boolean = false,
+    val isHintUnlocked: Boolean = false,
+    val isJokerUnlocked: Boolean = false,
+    val hasFreeUndo: Boolean = false,
+    val hasFreeHint: Boolean = false,
+    val hasFreeJoker: Boolean = false,
+    val activeTutorial: TutorialType? = null,
+    val level1TutorialStep: Int = 0
 )
 
 class GameViewModel : ViewModel() {
@@ -107,16 +124,16 @@ class GameViewModel : ViewModel() {
         
         if (!_uiState.value.isAdFree && currentLvl > 1 && currentLvl % 2 == 0) {
             adManager.showInterstitial(activity) {
-                loadLevelData(currentLvl, db)
+                loadLevelData(currentLvl, db, activity)
                 saveActiveSessionToPrefs(activity)
             }
         } else {
-            loadLevelData(currentLvl, db)
+            loadLevelData(currentLvl, db, activity)
             saveActiveSessionToPrefs(activity)
         }
     }
 
-    private fun loadLevelData(levelNum: Int, db: WordDatabase) {
+    private fun loadLevelData(levelNum: Int, db: WordDatabase, context: Context) {
         val lastCategoryIds = if (levelNum != _uiState.value.levelNumber) {
             _uiState.value.levelData?.targetCategories?.map { it.id }?.toSet() ?: emptySet()
         } else {
@@ -141,6 +158,53 @@ class GameViewModel : ViewModel() {
         }
         val calculatedMoves = baseMoves + buffer
 
+        val prefs = context.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)
+
+        val isUndoUnlocked = levelNum >= 2
+        val isHintUnlocked = levelNum >= 8
+        val isJokerUnlocked = levelNum >= 10
+
+        var hasFreeUndo = prefs.getBoolean("has_free_undo", false)
+        var hasFreeHint = prefs.getBoolean("has_free_hint", false)
+        var hasFreeJoker = prefs.getBoolean("has_free_joker", false)
+
+        var activeTutorial: TutorialType? = null
+
+        // Check Level 1 interactive guide
+        if (levelNum == 1 && !prefs.getBoolean("tutorial_lvl1_completed", false)) {
+            activeTutorial = TutorialType.LEVEL_1_GUIDE
+        }
+
+        // Check Undo tutorial (Level 2)
+        if (levelNum >= 2 && !prefs.getBoolean("tutorial_undo_seen", false)) {
+            activeTutorial = TutorialType.UNDO_UNLOCK
+            hasFreeUndo = true
+            prefs.edit()
+                .putBoolean("tutorial_undo_seen", true)
+                .putBoolean("has_free_undo", true)
+                .apply()
+        }
+
+        // Check Hint tutorial (Level 8 - first Hard level)
+        if (levelNum >= 8 && !prefs.getBoolean("tutorial_hint_seen", false)) {
+            activeTutorial = TutorialType.HINT_UNLOCK
+            hasFreeHint = true
+            prefs.edit()
+                .putBoolean("tutorial_hint_seen", true)
+                .putBoolean("has_free_hint", true)
+                .apply()
+        }
+
+        // Check Joker tutorial (Level 10 - first Very Hard level)
+        if (levelNum >= 10 && !prefs.getBoolean("tutorial_joker_seen", false)) {
+            activeTutorial = TutorialType.JOKER_UNLOCK
+            hasFreeJoker = true
+            prefs.edit()
+                .putBoolean("tutorial_joker_seen", true)
+                .putBoolean("has_free_joker", true)
+                .apply()
+        }
+
         _uiState.update {
             it.copy(
                 screenState = ScreenState.Gameplay,
@@ -155,9 +219,26 @@ class GameViewModel : ViewModel() {
                 movesRemaining = calculatedMoves,
                 selectedCardId = null,
                 shakingCardId = null,
-                errorsInLevel = 0
+                errorsInLevel = 0,
+                isUndoUnlocked = isUndoUnlocked,
+                isHintUnlocked = isHintUnlocked,
+                isJokerUnlocked = isJokerUnlocked,
+                hasFreeUndo = hasFreeUndo,
+                hasFreeHint = hasFreeHint,
+                hasFreeJoker = hasFreeJoker,
+                activeTutorial = activeTutorial,
+                level1TutorialStep = 0
             )
         }
+    }
+
+    fun dismissTutorial(context: Context) {
+        val currentTut = _uiState.value.activeTutorial
+        if (currentTut == TutorialType.LEVEL_1_GUIDE) {
+            val prefs = context.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)
+            prefs.edit().putBoolean("tutorial_lvl1_completed", true).apply()
+        }
+        _uiState.update { it.copy(activeTutorial = null) }
     }
 
     fun selectCard(cardId: String?) {
@@ -283,6 +364,12 @@ class GameViewModel : ViewModel() {
             val (newTableaus, newWaste) = removeCardsFromSource(cards)
             val newTotalMatched = _uiState.value.totalMatchedWordsCount + newlyMatchedWordsCount
 
+            val nextTutStep = if (_uiState.value.levelNumber == 1 && _uiState.value.activeTutorial == TutorialType.LEVEL_1_GUIDE) {
+                if (cards.any { it.isCategory }) 1 else 2
+            } else {
+                _uiState.value.level1TutorialStep
+            }
+
             pushToUndoStack()
             _uiState.update {
                 it.copy(
@@ -293,7 +380,8 @@ class GameViewModel : ViewModel() {
                     coins = it.coins + coinsDelta,
                     totalMatchedWordsCount = newTotalMatched,
                     movesRemaining = maxOf(0, it.movesRemaining - 1),
-                    selectedCardId = null
+                    selectedCardId = null,
+                    level1TutorialStep = nextTutStep
                 )
             }
             saveCoinsToPrefs(context, _uiState.value.coins)
@@ -521,12 +609,18 @@ class GameViewModel : ViewModel() {
 
         val updatedSet = _uiState.value.completedLevels + currentLvl
 
+        if (currentLvl == 1) {
+            val prefs = context.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)
+            prefs.edit().putBoolean("tutorial_lvl1_completed", true).apply()
+        }
+
         _uiState.update {
             it.copy(
                 screenState = ScreenState.LevelComplete,
                 levelCompletedBonus = bonus,
                 coins = it.coins + bonus,
-                completedLevels = updatedSet
+                completedLevels = updatedSet,
+                activeTutorial = null
             )
         }
 
@@ -565,7 +659,7 @@ class GameViewModel : ViewModel() {
 
     fun restartLevel(activity: Activity) {
         val db = wordDatabase ?: return
-        loadLevelData(_uiState.value.levelNumber, db)
+        loadLevelData(_uiState.value.levelNumber, db, activity)
         saveActiveSessionToPrefs(activity)
     }
 
@@ -676,13 +770,21 @@ class GameViewModel : ViewModel() {
     }
 
     fun toggleStoreDialog(show: Boolean) {
-        if (show) openStore() else closeStore()
+        _uiState.update { it.copy(showStoreDialog = show) }
     }
 
-    fun buyCoinPack(context: Context, coinAmount: Int) {
-        val newCoins = _uiState.value.coins + coinAmount
+    fun toggleDailyRewardDialog(show: Boolean) {
+        _uiState.update { it.copy(showDailyRewardDialog = show) }
+    }
+
+    fun addCoins(context: Context, amount: Int) {
+        val newCoins = _uiState.value.coins + amount
         _uiState.update { it.copy(coins = newCoins) }
         saveCoinsToPrefs(context, newCoins)
+    }
+
+    fun buyCoinPack(context: Context, amount: Int) {
+        addCoins(context, amount)
     }
 
     fun buyRemoveAds(context: Context) {
@@ -709,6 +811,14 @@ class GameViewModel : ViewModel() {
         val session = getSavedSession(activity, levelNum)
         if (session != null) {
             undoStack.clear()
+            val prefs = activity.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)
+            val isUndoUnlocked = session.levelNumber >= 2
+            val isHintUnlocked = session.levelNumber >= 8
+            val isJokerUnlocked = session.levelNumber >= 10
+            val hasFreeUndo = prefs.getBoolean("has_free_undo", false)
+            val hasFreeHint = prefs.getBoolean("has_free_hint", false)
+            val hasFreeJoker = prefs.getBoolean("has_free_joker", false)
+
             _uiState.update {
                 it.copy(
                     levelNumber = session.levelNumber,
@@ -723,7 +833,14 @@ class GameViewModel : ViewModel() {
                     totalMatchedWordsCount = session.totalMatchedWordsCount,
                     screenState = ScreenState.Gameplay,
                     selectedCardId = null,
-                    shakingCardId = null
+                    shakingCardId = null,
+                    isUndoUnlocked = isUndoUnlocked,
+                    isHintUnlocked = isHintUnlocked,
+                    isJokerUnlocked = isJokerUnlocked,
+                    hasFreeUndo = hasFreeUndo,
+                    hasFreeHint = hasFreeHint,
+                    hasFreeJoker = hasFreeJoker,
+                    activeTutorial = null
                 )
             }
         } else {
@@ -797,6 +914,10 @@ class GameViewModel : ViewModel() {
 
     fun undoLastMove(context: Context, onShowToast: (String) -> Unit) {
         val isPersian = LocaleHelper.isPersian(context)
+        if (!_uiState.value.isUndoUnlocked) {
+            onShowToast(if (isPersian) "قابلیت بازگشت در مرحله ۲ باز می‌شود!\u200F" else "Geri Al özelliği 2. seviyede açılır!")
+            return
+        }
         if (_uiState.value.movesRemaining <= 0 || _uiState.value.showOutofMovesDialog) {
             checkMovesRemaining()
             return
@@ -806,11 +927,13 @@ class GameViewModel : ViewModel() {
             return
         }
         val state = _uiState.value
-        if (state.coins < 50) {
+        val isFree = state.hasFreeUndo
+        if (!isFree && state.coins < 50) {
             onShowToast(if (isPersian) "سکه ناکافی! (۵۰ 🪙 نیاز است)\u200F" else "Yetersiz altın! (50 🪙 gerekli)")
             return
         }
         val prevSession = undoStack.removeAt(undoStack.size - 1)
+        val newCoins = if (isFree) state.coins else maxOf(0, state.coins - 50)
         _uiState.update {
             it.copy(
                 levelNumber = prevSession.levelNumber,
@@ -822,36 +945,57 @@ class GameViewModel : ViewModel() {
                 score = prevSession.score,
                 movesRemaining = prevSession.movesRemaining,
                 totalMatchedWordsCount = prevSession.totalMatchedWordsCount,
-                coins = maxOf(0, it.coins - 50),
+                coins = newCoins,
+                hasFreeUndo = false,
                 selectedCardId = null,
                 shakingCardId = null
             )
         }
+        if (isFree) {
+            val prefs = context.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)
+            prefs.edit().putBoolean("has_free_undo", false).apply()
+        }
         saveCoinsToPrefs(context, _uiState.value.coins)
         saveActiveSessionToPrefs(context)
-        onShowToast(if (isPersian) "حرکت بازگردانده شد! (-۵۰ 🪙)\u200F" else "Geri alındı! (-50 🪙)")
+        val toastMsg = if (isFree) {
+            if (isPersian) "حرکت با استفاده از هدیه رایگان بازگردانده شد! 🎁\u200F" else "Geri alma ücretsiz kullanıldı! 🎁"
+        } else {
+            if (isPersian) "حرکت بازگردانده شد! (-۵۰ 🪙)\u200F" else "Geri alındı! (-50 🪙)"
+        }
+        onShowToast(toastMsg)
     }
 
     fun showHint(context: Context, onShowToast: (String) -> Unit) {
         val isPersian = LocaleHelper.isPersian(context)
+        if (!_uiState.value.isHintUnlocked) {
+            onShowToast(if (isPersian) "قابلیت راهنما در مرحله ۸ (سخت) باز می‌شود!\u200F" else "İpucu özelliği 8. seviyede açılır!")
+            return
+        }
         if (_uiState.value.movesRemaining <= 0 || _uiState.value.showOutofMovesDialog) {
             checkMovesRemaining()
             return
         }
         val state = _uiState.value
-        if (state.coins < 50) {
+        val isFree = state.hasFreeHint
+        if (!isFree && state.coins < 50) {
             onShowToast(if (isPersian) "سکه ناکافی! (۵۰ 🪙 نیاز است)\u200F" else "Yetersiz altın! (50 🪙 gerekli)")
             return
         }
 
         val hint = findPossibleMove()
         if (hint != null) {
+            val newCoins = if (isFree) state.coins else maxOf(0, state.coins - 50)
             _uiState.update {
                 it.copy(
                     hintedCardId = hint.first,
                     hintedTargetId = hint.second,
-                    coins = maxOf(0, it.coins - 50)
+                    coins = newCoins,
+                    hasFreeHint = false
                 )
+            }
+            if (isFree) {
+                val prefs = context.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)
+                prefs.edit().putBoolean("has_free_hint", false).apply()
             }
             saveCoinsToPrefs(context, _uiState.value.coins)
             viewModelScope.launch {
@@ -863,7 +1007,9 @@ class GameViewModel : ViewModel() {
                     )
                 }
             }
-            if (hint.first == "stock_pile") {
+            if (isFree) {
+                onShowToast(if (isPersian) "راهنمایی رایگان فعال شد! 🎁\u200F" else "Ücretsiz ipucu kullanıldı! 🎁")
+            } else if (hint.first == "stock_pile") {
                 onShowToast(if (isPersian) "روی دسته کارت بزنید و کارت بکشید! (-۵۰ 🪙)\u200F" else "Desteden kart çekin! (-50 🪙)")
             } else {
                 onShowToast(if (isPersian) "کارت و جایگاه مناسب با رنگ طلایی درخشان مشخص شدند! (-۵۰ 🪙)\u200F" else "Kart ve hedef altın çerçeveyle gösterildi! (-50 🪙)")
@@ -875,12 +1021,17 @@ class GameViewModel : ViewModel() {
 
     fun useJoker(context: Context, onShowToast: (String) -> Unit) {
         val isPersian = LocaleHelper.isPersian(context)
+        if (!_uiState.value.isJokerUnlocked) {
+            onShowToast(if (isPersian) "کارت جوکر در مرحله ۱۰ (خیلی سخت) باز می‌شود!\u200F" else "Joker kartı 10. seviyede açılır!")
+            return
+        }
         if (_uiState.value.movesRemaining <= 0 || _uiState.value.showOutofMovesDialog) {
             checkMovesRemaining()
             return
         }
         val state = _uiState.value
-        if (state.coins < 200) {
+        val isFree = state.hasFreeJoker
+        if (!isFree && state.coins < 200) {
             onShowToast(if (isPersian) "سکه ناکافی! (۲۰۰ 🪙 نیاز است)\u200F" else "Yetersiz altın! (200 🪙 gerekli)")
             return
         }
@@ -897,17 +1048,29 @@ class GameViewModel : ViewModel() {
         )
 
         val newWaste = state.wastePile + jokerCard
+        val newCoins = if (isFree) state.coins else maxOf(0, state.coins - 200)
 
         _uiState.update {
             it.copy(
                 wastePile = newWaste,
-                coins = maxOf(0, it.coins - 200)
+                coins = newCoins,
+                hasFreeJoker = false
             )
+        }
+
+        if (isFree) {
+            val prefs = context.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)
+            prefs.edit().putBoolean("has_free_joker", false).apply()
         }
 
         saveCoinsToPrefs(context, _uiState.value.coins)
         saveActiveSessionToPrefs(context)
-        onShowToast(if (isPersian) "کارت جوکر کشیده شد! (-۲۰۰ 🪙)\u200F" else "Joker kartı çekildi! (-200 🪙)")
+        val toastMsg = if (isFree) {
+            if (isPersian) "کارت جوکر با هدیه رایگان کشیده شد! 🃏🎁\u200F" else "Ücretsiz Joker kartı çekildi! 🃏🎁"
+        } else {
+            if (isPersian) "کارت جوکر کشیده شد! (-۲۰۰ 🪙)\u200F" else "Joker kartı çekildi! (-200 🪙)"
+        }
+        onShowToast(toastMsg)
     }
 
     private fun findPossibleMove(): Pair<String, String>? {
