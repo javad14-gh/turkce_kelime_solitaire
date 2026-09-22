@@ -98,6 +98,50 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.TextPrimary
 import com.turkce.kelimesolitaire.presentation.ui.theme.TextSecondary
 import kotlinx.coroutines.launch
 
+private fun findBestFoundationSlot(
+    foundationSlots: List<FoundationSlot>,
+    dropZoneBounds: Map<String, Rect>,
+    testPoints: List<Offset>
+): FoundationSlot? {
+    return foundationSlots
+        .mapNotNull { slot ->
+            val bounds = dropZoneBounds[slot.id.toString()] ?: return@mapNotNull null
+            val inflated = bounds.inflate(45f)
+            val matchedPoint = testPoints.find { inflated.contains(it) }
+            if (matchedPoint != null) {
+                val dx = bounds.center.x - matchedPoint.x
+                val dy = bounds.center.y - matchedPoint.y
+                Pair(slot, dx * dx + dy * dy)
+            } else null
+        }
+        .minByOrNull { it.second }
+        ?.first
+}
+
+private fun findBestTableauColumn(
+    tableauBounds: Map<Int, Rect>,
+    testPoints: List<Offset>
+): Int {
+    return (0..3)
+        .mapNotNull { cIdx ->
+            val bounds = tableauBounds[cIdx] ?: return@mapNotNull null
+            val inflated = Rect(
+                left = bounds.left - 25f,
+                top = bounds.top - 20f,
+                right = bounds.right + 25f,
+                bottom = bounds.bottom + 50f
+            )
+            val matchedPoint = testPoints.find { inflated.contains(it) }
+            if (matchedPoint != null) {
+                val dx = bounds.center.x - matchedPoint.x
+                val dy = bounds.center.y - matchedPoint.y
+                Pair(cIdx, dx * dx + dy * dy)
+            } else null
+        }
+        .minByOrNull { it.second }
+        ?.first ?: -1
+}
+
 @Suppress("UNUSED_PARAMETER")
 @Composable
 fun GameScreen(
@@ -386,10 +430,15 @@ fun GameScreen(
                                 onDragEnd = { dropCenter ->
                                     val finalGroup = draggedCards
                                     if (finalGroup.isNotEmpty()) {
-                                        val matchedSlot = foundationSlots.find { slot ->
-                                            val bounds = dropZoneBounds[slot.id.toString()]
-                                            bounds != null && bounds.contains(dropCenter)
+                                        val testPoints = if (finalGroup.size > 1) {
+                                            listOf(
+                                                dropCenter,
+                                                Offset(dropCenter.x, dropCenter.y - ((finalGroup.size - 1) * 35f))
+                                            )
+                                        } else {
+                                            listOf(dropCenter)
                                         }
+                                        val matchedSlot = findBestFoundationSlot(foundationSlots, dropZoneBounds, testPoints)
                                         if (matchedSlot != null) {
                                             val success = onCardDropped(finalGroup, matchedSlot)
                                             if (success) {
@@ -423,14 +472,7 @@ fun GameScreen(
                                                 }
                                             }
                                         } else {
-                                            var matchedColIdx = -1
-                                            for (cIdx in 0..3) {
-                                                val bounds = tableauBounds[cIdx]
-                                                if (bounds != null && bounds.contains(dropCenter)) {
-                                                    matchedColIdx = cIdx
-                                                    break
-                                                }
-                                            }
+                                            val matchedColIdx = findBestTableauColumn(tableauBounds, testPoints)
                                             if (matchedColIdx != -1) {
                                                 val success = onCardStacked(finalGroup, matchedColIdx)
                                                 if (success) {
@@ -654,8 +696,17 @@ fun GameScreen(
                                 .fillMaxWidth()
                                 .weight(1f)
                                 .onGloballyPositioned { coordinates ->
-                                    if (colList.isEmpty()) {
-                                        tableauBounds[colIdx] = coordinates.boundsInRoot()
+                                    val boxBounds = coordinates.boundsInRoot()
+                                    val existing = tableauBounds[colIdx]
+                                    tableauBounds[colIdx] = if (existing != null) {
+                                        Rect(
+                                            left = boxBounds.left,
+                                            top = boxBounds.top,
+                                            right = boxBounds.right,
+                                            bottom = maxOf(boxBounds.bottom, existing.bottom)
+                                        )
+                                    } else {
+                                        boxBounds
                                     }
                                 },
                             contentAlignment = Alignment.TopCenter
@@ -766,10 +817,15 @@ fun GameScreen(
                                         onDragEnd = { dropCenter ->
                                             val finalGroup = draggedCards
                                             if (finalGroup.isNotEmpty()) {
-                                                val matchedSlot = foundationSlots.find { slot ->
-                                                    val bounds = dropZoneBounds[slot.id.toString()]
-                                                    bounds != null && bounds.contains(dropCenter)
+                                                val testPoints = if (finalGroup.size > 1) {
+                                                    listOf(
+                                                        dropCenter,
+                                                        Offset(dropCenter.x, dropCenter.y - ((finalGroup.size - 1) * 35f))
+                                                    )
+                                                } else {
+                                                    listOf(dropCenter)
                                                 }
+                                                val matchedSlot = findBestFoundationSlot(foundationSlots, dropZoneBounds, testPoints)
                                                 if (matchedSlot != null) {
                                                     val success = onCardDropped(finalGroup, matchedSlot)
                                                     if (success) {
@@ -803,14 +859,7 @@ fun GameScreen(
                                                         }
                                                     }
                                                 } else {
-                                                    var matchedColIdx = -1
-                                                    for (cIdx in 0..3) {
-                                                        val bounds = tableauBounds[cIdx]
-                                                        if (bounds != null && bounds.contains(dropCenter)) {
-                                                            matchedColIdx = cIdx
-                                                            break
-                                                        }
-                                                    }
+                                                    val matchedColIdx = findBestTableauColumn(tableauBounds, testPoints)
                                                     if (matchedColIdx != -1) {
                                                         val success = onCardStacked(finalGroup, matchedColIdx)
                                                         if (success) {
@@ -858,7 +907,18 @@ fun GameScreen(
                                             .offset(y = (rowIdx * 25).dp)
                                             .onGloballyPositioned { coordinates ->
                                                 if (rowIdx == colList.size - 1) {
-                                                    tableauBounds[colIdx] = coordinates.boundsInRoot()
+                                                    val cardBounds = coordinates.boundsInRoot()
+                                                    val boxBounds = tableauBounds[colIdx]
+                                                    tableauBounds[colIdx] = if (boxBounds != null) {
+                                                        Rect(
+                                                            left = boxBounds.left,
+                                                            top = boxBounds.top,
+                                                            right = boxBounds.right,
+                                                            bottom = maxOf(boxBounds.bottom, cardBounds.bottom + 50f)
+                                                        )
+                                                    } else {
+                                                        cardBounds
+                                                    }
                                                 }
                                             }
                                             .then(

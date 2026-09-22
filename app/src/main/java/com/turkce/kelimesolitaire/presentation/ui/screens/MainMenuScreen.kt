@@ -211,7 +211,7 @@ fun MainMenuScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 OutlinedText(
-                    text = if (isPersian) "کلمات فارسی" else "TÜRKÇE KELİME",
+                    text = if (isPersian) "پاسور" else "TÜRKÇE KELİME",
                     textColor = SecondaryNeon,
                     outlineColor = Color(0xFF0F172A),
                     outlineWidth = 6f,
@@ -221,7 +221,7 @@ fun MainMenuScreen(
                     textAlign = TextAlign.Center
                 )
                 OutlinedText(
-                    text = if (isPersian) "سولیتر کلمه‌بازی" else "SOLİTAİRE",
+                    text = if (isPersian) "کلمات" else "SOLİTAİRE",
                     textColor = PrimaryNeon,
                     outlineColor = Color(0xFF0F172A),
                     outlineWidth = 6f,
@@ -232,7 +232,7 @@ fun MainMenuScreen(
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = if (isPersian) "کارت‌ها را بکشید، دسته‌ها را مرتب کنید و مراحل را فتح کنید!\u200F" else "Kartları sürükle, kategorileri eşleştir ve seviyeleri tamamla!",
+                    text = if (isPersian) "بازی کلمات و سولیتیر" else "Kartları sürükle, kategorileri eşleştir ve seviyeleri tamamla!",
                     color = TextSecondary,
                     fontSize = 17.sp,
                     fontWeight = FontWeight.Bold,
