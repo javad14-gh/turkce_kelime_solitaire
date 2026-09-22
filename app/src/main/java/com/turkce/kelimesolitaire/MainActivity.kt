@@ -51,8 +51,7 @@ class MainActivity : ComponentActivity() {
                     when (state.screenState) {
                         is ScreenState.Loading -> {
                             LevelLoadingScreen(
-                                levelNumber = state.levelNumber,
-                                isPersian = state.isPersian
+                                levelNumber = state.levelNumber
                             )
                         }
                         is ScreenState.MainMenu -> {
@@ -137,8 +136,7 @@ class MainActivity : ComponentActivity() {
                                     }
                                 )
                             } ?: LevelLoadingScreen(
-                                levelNumber = state.levelNumber,
-                                isPersian = state.isPersian
+                                levelNumber = state.levelNumber
                             )
                         }
                         is ScreenState.LevelComplete -> {

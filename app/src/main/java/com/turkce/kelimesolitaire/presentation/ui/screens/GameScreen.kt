@@ -373,7 +373,7 @@ fun GameScreen(
                                 isShattering = shatteringJokerId == topWaste.id,
                                 isHinted = isWasteHinted,
                                 isDragged = isDragged,
-                                dragOffset = if (isDragged) dragOffset else Offset.Zero,
+                                dragOffsetProvider = { dragOffset },
                                 isInteractionEnabled = movesRemaining > 0 && !showOutofMovesDialog && !isAnimatingReturn && (draggedCards.isEmpty() || isDragged),
                                 onTap = {},
                                 onDragStart = {
@@ -521,7 +521,7 @@ fun GameScreen(
                                 isShaking = false,
                                 isHinted = isStockHinted,
                                 isDragged = false,
-                                dragOffset = Offset.Zero,
+                                dragOffsetProvider = { Offset.Zero },
                                 isInteractionEnabled = false,
                                 onTap = {},
                                 onDragStart = {},
@@ -737,7 +737,7 @@ fun GameScreen(
                                         isShattering = shatteringJokerId == card.id,
                                         isHinted = isCardHinted,
                                         isDragged = isDragged,
-                                        dragOffset = if (isDragged) dragOffset else Offset.Zero,
+                                        dragOffsetProvider = { dragOffset },
                                         isInteractionEnabled = movesRemaining > 0 && !showOutofMovesDialog && !isAnimatingReturn && (draggedCards.isEmpty() || isDragged),
                                         onTap = {},
                                         onDragStart = {

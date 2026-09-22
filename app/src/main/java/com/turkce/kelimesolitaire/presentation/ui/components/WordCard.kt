@@ -69,7 +69,7 @@ fun WordCard(
     isShattering: Boolean = false,
     isHinted: Boolean = false,
     isDragged: Boolean,
-    dragOffset: Offset,
+    dragOffsetProvider: () -> Offset = { Offset.Zero },
     isInteractionEnabled: Boolean,
     onTap: () -> Unit,
     onDragStart: () -> Unit,
@@ -85,7 +85,7 @@ fun WordCard(
     
     // Wrap callbacks and value arguments in rememberUpdatedState to prevent capturing stale values
     val currentInteractionEnabled by rememberUpdatedState(isInteractionEnabled)
-    val currentDragOffset by rememberUpdatedState(dragOffset)
+    val currentDragOffsetProvider by rememberUpdatedState(dragOffsetProvider)
     val currentOnTap by rememberUpdatedState(onTap)
     val currentOnDragStart by rememberUpdatedState(onDragStart)
     val currentOnDrag by rememberUpdatedState(onDrag)
@@ -129,29 +129,39 @@ fun WordCard(
         }
     }
 
-    // Hint pulsing animation
-    val infiniteTransition = rememberInfiniteTransition(label = "hintPulse")
-    val hintPulseScale by infiniteTransition.animateFloat(
-        initialValue = 1.0f,
-        targetValue = 1.08f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(400, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "hintScale"
-    )
-    val hintGlowAlpha by infiniteTransition.animateFloat(
-        initialValue = 0.5f,
-        targetValue = 1.0f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(400, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "hintAlpha"
-    )
+    // Hint pulsing animation - only allocated & ticked when card is actually hinted!
+    val (hintPulseScale, hintGlowAlpha) = if (isHinted) {
+        val infiniteTransition = rememberInfiniteTransition(label = "hintPulse")
+        val pScale by infiniteTransition.animateFloat(
+            initialValue = 1.0f,
+            targetValue = 1.08f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(400, easing = FastOutSlowInEasing),
+                repeatMode = RepeatMode.Reverse
+            ),
+            label = "hintScale"
+        )
+        val pAlpha by infiniteTransition.animateFloat(
+            initialValue = 0.5f,
+            targetValue = 1.0f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(400, easing = FastOutSlowInEasing),
+                repeatMode = RepeatMode.Reverse
+            ),
+            label = "hintAlpha"
+        )
+        Pair(pScale, pAlpha)
+    } else {
+        Pair(1.0f, 1.0f)
+    }
 
     val scale = if (isDragged) 1.15f else if (isSelected) 1.05f else if (isHinted) hintPulseScale else 1.0f
-    val elevation = if (isDragged) 16.dp else if (isHinted) 12.dp else if (isSelected) 6.dp else 3.dp
+    val elevation = when {
+        isDragged -> 12.dp
+        isHinted -> 8.dp
+        isSelected -> 4.dp
+        else -> 0.dp
+    }
     
     val isJoker = card.categoryId == "joker_wildcard"
 
@@ -198,6 +208,9 @@ fun WordCard(
                     scaleY = shatterScale.value
                     translationY = shatterOffsetY.value
                     rotationZ = shatterRotation.value
+                } else {
+                    scaleX = scale
+                    scaleY = scale
                 }
             }
             // 1. Measure the static layout slot bounds (placed BEFORE drag offset!)
@@ -215,13 +228,20 @@ fun WordCard(
             }
             // 2. Apply drag offset here (BEFORE gesture detection and clicks so the hit area moves with the card!)
             .offset {
-                IntOffset(
-                    x = dragOffset.x.roundToInt(),
-                    y = dragOffset.y.roundToInt()
-                )
+                if (isDragged) {
+                    val offset = dragOffsetProvider()
+                    IntOffset(
+                        x = offset.x.roundToInt(),
+                        y = offset.y.roundToInt()
+                    )
+                } else {
+                    IntOffset.Zero
+                }
             }
-            .scale(scale)
-            .shadow(elevation, RoundedCornerShape(8.dp), clip = false)
+            .then(
+                if (elevation > 0.dp) Modifier.shadow(elevation, RoundedCornerShape(8.dp), clip = false)
+                else Modifier
+            )
             .background(cardBrush, shape = RoundedCornerShape(8.dp))
             .border(
                 width = if (isHinted) 3.dp else if (isJoker || isSelected || isShaking || !isFaceUp || card.isCategory) 2.dp else 1.dp,
@@ -270,9 +290,10 @@ fun WordCard(
                                     
                                     if (currentInteractionEnabled) {
                                         if (isDragging) {
+                                            val currentOffset = currentDragOffsetProvider()
                                             val dropCenter = Offset(
-                                                cardPositionInRoot.x + currentDragOffset.x + (cardSize.width / 2),
-                                                cardPositionInRoot.y + currentDragOffset.y + (cardSize.height / 2)
+                                                cardPositionInRoot.x + currentOffset.x + (cardSize.width / 2),
+                                                cardPositionInRoot.y + currentOffset.y + (cardSize.height / 2)
                                             )
                                             currentOnDragEnd(dropCenter)
                                         } else {

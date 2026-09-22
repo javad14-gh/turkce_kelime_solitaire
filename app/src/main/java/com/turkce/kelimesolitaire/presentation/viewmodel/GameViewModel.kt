@@ -17,12 +17,14 @@ import com.turkce.kelimesolitaire.data.model.SavedGameSession
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.decodeFromString
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 import com.turkce.kelimesolitaire.data.dailyreward.DailyRewardManager
 import com.turkce.kelimesolitaire.data.dailyreward.DailyRewardState
@@ -128,22 +130,34 @@ class GameViewModel : ViewModel() {
         
         if (!_uiState.value.isAdFree && currentLvl > 1 && currentLvl % 2 == 0) {
             adManager.showInterstitial(activity) {
-                loadLevelData(currentLvl, db, activity)
-                saveActiveSessionToPrefs(activity)
+                viewModelScope.launch {
+                    loadLevelData(currentLvl, db, activity, minDisplayTimeMs = 600L)
+                    saveActiveSessionToPrefs(activity)
+                }
             }
         } else {
-            loadLevelData(currentLvl, db, activity)
-            saveActiveSessionToPrefs(activity)
+            viewModelScope.launch {
+                loadLevelData(currentLvl, db, activity, minDisplayTimeMs = 800L)
+                saveActiveSessionToPrefs(activity)
+            }
         }
     }
 
-    private fun loadLevelData(levelNum: Int, db: WordDatabase, context: Context) {
+    private suspend fun loadLevelData(
+        levelNum: Int,
+        db: WordDatabase,
+        context: Context,
+        minDisplayTimeMs: Long = 0L
+    ) {
+        val startTime = System.currentTimeMillis()
         val lastCategoryIds = if (levelNum != _uiState.value.levelNumber) {
             _uiState.value.levelData?.targetCategories?.map { it.id }?.toSet() ?: emptySet()
         } else {
             emptySet()
         }
-        val generated = levelGenerator.generateLevel(db, levelNum, lastCategoryIds)
+        val generated = withContext(Dispatchers.Default) {
+            levelGenerator.generateLevel(db, levelNum, lastCategoryIds)
+        }
         val allWords = generated.targetWords
 
         val initialSlots = listOf(
@@ -208,6 +222,13 @@ class GameViewModel : ViewModel() {
                 .putBoolean("tutorial_joker_seen", true)
                 .putBoolean("has_free_joker", true)
                 .apply()
+        }
+
+        if (minDisplayTimeMs > 0L) {
+            val elapsed = System.currentTimeMillis() - startTime
+            if (elapsed < minDisplayTimeMs) {
+                delay(minDisplayTimeMs - elapsed)
+            }
         }
 
         _uiState.update {
@@ -673,8 +694,11 @@ class GameViewModel : ViewModel() {
 
     fun restartLevel(activity: Activity) {
         val db = wordDatabase ?: return
-        loadLevelData(_uiState.value.levelNumber, db, activity)
-        saveActiveSessionToPrefs(activity)
+        _uiState.update { it.copy(screenState = ScreenState.Loading) }
+        viewModelScope.launch {
+            loadLevelData(_uiState.value.levelNumber, db, activity, minDisplayTimeMs = 600L)
+            saveActiveSessionToPrefs(activity)
+        }
     }
 
     fun advanceToNextLevel(activity: Activity) {
@@ -826,6 +850,7 @@ class GameViewModel : ViewModel() {
     }
 
     fun playLevel(levelNum: Int, activity: Activity) {
+        _uiState.update { it.copy(levelNumber = levelNum, screenState = ScreenState.Loading) }
         val session = getSavedSession(activity, levelNum)
         if (session != null) {
             undoStack.clear()
@@ -837,32 +862,34 @@ class GameViewModel : ViewModel() {
             val hasFreeHint = prefs.getBoolean("has_free_hint", false)
             val hasFreeJoker = prefs.getBoolean("has_free_joker", false)
 
-            _uiState.update {
-                it.copy(
-                    levelNumber = session.levelNumber,
-                    levelData = session.levelData,
-                    foundationSlots = session.foundationSlots,
-                    tableauPiles = session.tableauPiles,
-                    stockPile = session.stockPile,
-                    wastePile = session.wastePile,
-                    score = session.score,
-                    movesRemaining = session.movesRemaining,
-                    totalWordsToMatch = session.levelData.targetWords.size,
-                    totalMatchedWordsCount = session.totalMatchedWordsCount,
-                    screenState = ScreenState.Gameplay,
-                    selectedCardId = null,
-                    shakingCardId = null,
-                    isUndoUnlocked = isUndoUnlocked,
-                    isHintUnlocked = isHintUnlocked,
-                    isJokerUnlocked = isJokerUnlocked,
-                    hasFreeUndo = hasFreeUndo,
-                    hasFreeHint = hasFreeHint,
-                    hasFreeJoker = hasFreeJoker,
-                    activeTutorial = null
-                )
+            viewModelScope.launch {
+                delay(700L)
+                _uiState.update {
+                    it.copy(
+                        levelNumber = session.levelNumber,
+                        levelData = session.levelData,
+                        foundationSlots = session.foundationSlots,
+                        tableauPiles = session.tableauPiles,
+                        stockPile = session.stockPile,
+                        wastePile = session.wastePile,
+                        score = session.score,
+                        movesRemaining = session.movesRemaining,
+                        totalWordsToMatch = session.levelData.targetWords.size,
+                        totalMatchedWordsCount = session.totalMatchedWordsCount,
+                        screenState = ScreenState.Gameplay,
+                        selectedCardId = null,
+                        shakingCardId = null,
+                        isUndoUnlocked = isUndoUnlocked,
+                        isHintUnlocked = isHintUnlocked,
+                        isJokerUnlocked = isJokerUnlocked,
+                        hasFreeUndo = hasFreeUndo,
+                        hasFreeHint = hasFreeHint,
+                        hasFreeJoker = hasFreeJoker,
+                        activeTutorial = null
+                    )
+                }
             }
         } else {
-            _uiState.update { it.copy(levelNumber = levelNum, screenState = ScreenState.Loading) }
             startNewGame(activity)
         }
     }

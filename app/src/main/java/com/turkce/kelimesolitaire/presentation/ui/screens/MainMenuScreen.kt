@@ -77,6 +77,7 @@ fun MainMenuScreen(
     val context = LocalContext.current
     val isPersian = remember(context) { LocaleHelper.isPersian(context) }
     val nunitoFont = rememberNunitoFont()
+    var isPlayClicked by remember { mutableStateOf(false) }
 
     // Calculate last unsolved level dynamically
     val lastUnsolvedLevel = remember(completedLevels) {
@@ -274,7 +275,12 @@ fun MainMenuScreen(
                                     )
                                 )
                             )
-                            .clickable { onStartGameClicked(lastUnsolvedLevel) }
+                            .clickable(enabled = !isPlayClicked) {
+                                if (!isPlayClicked) {
+                                    isPlayClicked = true
+                                    onStartGameClicked(lastUnsolvedLevel)
+                                }
+                            }
                             .padding(horizontal = 30.dp, vertical = 14.dp),
                         contentAlignment = Alignment.Center
                     ) {

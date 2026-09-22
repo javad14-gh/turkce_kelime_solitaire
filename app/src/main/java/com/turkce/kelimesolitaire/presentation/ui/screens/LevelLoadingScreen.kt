@@ -38,6 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.platform.LocalContext
 import com.turkce.kelimesolitaire.presentation.ui.components.OutlinedText
 import com.turkce.kelimesolitaire.presentation.ui.components.rememberNunitoFont
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
@@ -45,8 +46,8 @@ import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 @Composable
 fun LevelLoadingScreen(
     levelNumber: Int,
-    isPersian: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isPersian: Boolean = LocaleHelper.isPersian(LocalContext.current)
 ) {
     val nunitoFont = rememberNunitoFont()
     val infiniteTransition = rememberInfiniteTransition(label = "LoadingAnimation")
