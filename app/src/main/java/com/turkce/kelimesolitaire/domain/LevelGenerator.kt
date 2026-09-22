@@ -183,7 +183,8 @@ class LevelGenerator {
             val stock = if (shuffled.size > tableauSize) shuffled.drop(tableauSize) else emptyList()
 
             // Run Solvability Simulation
-            if (verifySolvability(targetWords.size, tableaus, stock)) {
+            val categoryWordCounts = targetWords.groupBy { it.categoryId }.mapValues { it.value.size }
+            if (verifySolvability(targetWords.size, categoryWordCounts, tableaus, stock)) {
                 // Solvable configuration successfully generated!
                 return LevelData(
                     levelNumber = levelNumber,
@@ -225,6 +226,7 @@ class LevelGenerator {
      */
     private fun verifySolvability(
         totalWordsToMatch: Int,
+        categoryWordCounts: Map<String, Int>,
         initialTableaus: List<List<SolitaireCard>>,
         initialStock: List<SolitaireCard>
     ): Boolean {
@@ -233,10 +235,12 @@ class LevelGenerator {
             tableaus = initialTableaus,
             stock = initialStock,
             waste = emptyList(),
-            activeCategories = emptySet(),
+            activeSlots = emptyMap(),
+            completedCategories = emptySet(),
             matchedCount = 0,
             visited = visited,
-            totalWordsToMatch = totalWordsToMatch
+            totalWordsToMatch = totalWordsToMatch,
+            categoryWordCounts = categoryWordCounts
         )
     }
 
@@ -244,7 +248,7 @@ class LevelGenerator {
         tableaus: List<List<SolitaireCard>>,
         stock: List<SolitaireCard>,
         waste: List<SolitaireCard>,
-        activeCategories: Set<String>
+        activeSlots: Map<String, Int>
     ): String {
         val tStr = tableaus.joinToString(";") { col ->
             col.joinToString(",") { card ->
@@ -253,7 +257,7 @@ class LevelGenerator {
         }
         val sStr = stock.joinToString(",") { it.id }
         val wStr = waste.joinToString(",") { it.id }
-        val aStr = activeCategories.sorted().joinToString(",")
+        val aStr = activeSlots.entries.sortedBy { it.key }.joinToString(",") { "${it.key}:${it.value}" }
         return "T:$tStr|S:$sStr|W:$wStr|A:$aStr"
     }
 
@@ -261,29 +265,30 @@ class LevelGenerator {
         tableaus: List<List<SolitaireCard>>,
         stock: List<SolitaireCard>,
         waste: List<SolitaireCard>,
-        activeCategories: Set<String>,
+        activeSlots: Map<String, Int>, // maps active categoryId -> count of matched words (strictly size <= 4)
+        completedCategories: Set<String>,
         matchedCount: Int,
         visited: MutableSet<String>,
-        totalWordsToMatch: Int
+        totalWordsToMatch: Int,
+        categoryWordCounts: Map<String, Int>
     ): Boolean {
         if (matchedCount >= totalWordsToMatch) return true
 
-        // Safety threshold limit to prevent UI hanging on complex unsolvable configurations
-        if (visited.size > 2000) return false
+        // Safety threshold limit to prevent UI hanging on complex layouts
+        if (visited.size > 4000) return false
 
-        val stateKey = generateStateKey(tableaus, stock, waste, activeCategories)
+        val stateKey = generateStateKey(tableaus, stock, waste, activeSlots)
         if (visited.contains(stateKey)) return false
         visited.add(stateKey)
 
-        // Try all valid moves:
-
-        // 1. Play bottom Tableau card to slots
+        // 1. Play bottom Tableau card to Foundation slots
         for (colIdx in 0..3) {
             val col = tableaus[colIdx]
             val bottomCard = col.lastOrNull() ?: continue
             if (bottomCard.isFaceUp) {
                 if (bottomCard.isCategory) {
-                    if (!activeCategories.contains(bottomCard.categoryId)) {
+                    // Category card can ONLY be placed if foundation slots have room (< 4) and category isn't already active/completed
+                    if (activeSlots.size < 4 && !activeSlots.containsKey(bottomCard.categoryId) && !completedCategories.contains(bottomCard.categoryId)) {
                         val nextTableaus = tableaus.mapIndexed { idx, list ->
                             if (idx == colIdx) {
                                 val newList = list.toMutableList()
@@ -294,12 +299,14 @@ class LevelGenerator {
                                 newList
                             } else list
                         }
-                        if (solveDfs(nextTableaus, stock, waste, activeCategories + bottomCard.categoryId, matchedCount, visited, totalWordsToMatch)) {
+                        val nextActiveSlots = activeSlots + (bottomCard.categoryId to 0)
+                        if (solveDfs(nextTableaus, stock, waste, nextActiveSlots, completedCategories, matchedCount, visited, totalWordsToMatch, categoryWordCounts)) {
                             return true
                         }
                     }
                 } else {
-                    if (activeCategories.contains(bottomCard.categoryId)) {
+                    // Word card can ONLY be placed if its category is currently active in one of the 4 slots
+                    if (activeSlots.containsKey(bottomCard.categoryId)) {
                         val nextTableaus = tableaus.mapIndexed { idx, list ->
                             if (idx == colIdx) {
                                 val newList = list.toMutableList()
@@ -310,7 +317,15 @@ class LevelGenerator {
                                 newList
                             } else list
                         }
-                        if (solveDfs(nextTableaus, stock, waste, activeCategories, matchedCount + 1, visited, totalWordsToMatch)) {
+                        val currentMatched = activeSlots[bottomCard.categoryId] ?: 0
+                        val req = categoryWordCounts[bottomCard.categoryId] ?: 4
+                        val newMatched = currentMatched + 1
+                        val isComplete = newMatched >= req
+                        // When category is completed, clear slot so a new category can be placed!
+                        val nextActiveSlots = if (isComplete) activeSlots - bottomCard.categoryId else activeSlots + (bottomCard.categoryId to newMatched)
+                        val nextCompleted = if (isComplete) completedCategories + bottomCard.categoryId else completedCategories
+
+                        if (solveDfs(nextTableaus, stock, waste, nextActiveSlots, nextCompleted, matchedCount + 1, visited, totalWordsToMatch, categoryWordCounts)) {
                             return true
                         }
                     }
@@ -318,56 +333,107 @@ class LevelGenerator {
             }
         }
 
-        // 2. Play top Waste card to slots
+        // 2. Play top Waste card to Foundation slots
         val topWaste = waste.lastOrNull()
         if (topWaste != null) {
             if (topWaste.isCategory) {
-                if (!activeCategories.contains(topWaste.categoryId)) {
+                if (activeSlots.size < 4 && !activeSlots.containsKey(topWaste.categoryId) && !completedCategories.contains(topWaste.categoryId)) {
                     val nextWaste = waste.toMutableList()
                     nextWaste.removeAt(nextWaste.size - 1)
-                    if (solveDfs(tableaus, stock, nextWaste, activeCategories + topWaste.categoryId, matchedCount, visited, totalWordsToMatch)) {
+                    val nextActiveSlots = activeSlots + (topWaste.categoryId to 0)
+                    if (solveDfs(tableaus, stock, nextWaste, nextActiveSlots, completedCategories, matchedCount, visited, totalWordsToMatch, categoryWordCounts)) {
                         return true
                     }
                 }
             } else {
-                if (activeCategories.contains(topWaste.categoryId)) {
+                if (activeSlots.containsKey(topWaste.categoryId)) {
                     val nextWaste = waste.toMutableList()
                     nextWaste.removeAt(nextWaste.size - 1)
-                    if (solveDfs(tableaus, stock, nextWaste, activeCategories, matchedCount + 1, visited, totalWordsToMatch)) {
+                    val currentMatched = activeSlots[topWaste.categoryId] ?: 0
+                    val req = categoryWordCounts[topWaste.categoryId] ?: 4
+                    val newMatched = currentMatched + 1
+                    val isComplete = newMatched >= req
+                    val nextActiveSlots = if (isComplete) activeSlots - topWaste.categoryId else activeSlots + (topWaste.categoryId to newMatched)
+                    val nextCompleted = if (isComplete) completedCategories + topWaste.categoryId else completedCategories
+
+                    if (solveDfs(tableaus, stock, nextWaste, nextActiveSlots, nextCompleted, matchedCount + 1, visited, totalWordsToMatch, categoryWordCounts)) {
                         return true
                     }
                 }
             }
         }
 
-        // 3. Stacking Tableau card to another column if categories match
+        // 3. Stacking Tableau card / group to another column (matching category OR empty column)
         for (colIdx in 0..3) {
             val col = tableaus[colIdx]
-            val bottomCard = col.lastOrNull() ?: continue
-            if (bottomCard.isFaceUp && !bottomCard.isCategory) {
-                for (targetColIdx in 0..3) {
-                    if (targetColIdx == colIdx) continue
-                    val targetBottom = tableaus[targetColIdx].lastOrNull()
-                    val hasFaceDownUnder = col.size > 1 && !col[col.size - 2].isFaceUp
-                    if (hasFaceDownUnder && targetBottom != null && targetBottom.isFaceUp && targetBottom.categoryId == bottomCard.categoryId) {
+            if (col.isEmpty()) continue
+
+            val lastCard = col.last()
+            if (!lastCard.isFaceUp) continue
+
+            val targetCatId = lastCard.categoryId
+            var startIdx = col.size - 1
+            while (startIdx > 0) {
+                val prevCard = col[startIdx - 1]
+                if (!prevCard.isFaceUp || prevCard.categoryId != targetCatId) break
+                startIdx--
+            }
+
+            val groupToMove = col.subList(startIdx, col.size)
+            val hasFaceDownUnder = startIdx > 0 && !col[startIdx - 1].isFaceUp
+            val hasDifferentFaceUpUnder = startIdx > 0 && col[startIdx - 1].isFaceUp && col[startIdx - 1].categoryId != targetCatId
+
+            for (targetColIdx in 0..3) {
+                if (targetColIdx == colIdx) continue
+                val targetCol = tableaus[targetColIdx]
+
+                // Option 3A: Target column is empty (can park group to reveal face-down card underneath)
+                if (targetCol.isEmpty()) {
+                    if (hasFaceDownUnder || hasDifferentFaceUpUnder) {
                         val nextTableaus = tableaus.mapIndexed { idx, list ->
                             when (idx) {
                                 colIdx -> {
-                                    val newList = list.toMutableList()
-                                    newList.removeAt(newList.size - 1)
-                                    newList[newList.size - 1] = newList[newList.size - 1].copy(isFaceUp = true)
+                                    val newList = list.subList(0, startIdx).toMutableList()
+                                    if (newList.isNotEmpty()) {
+                                        val lIdx = newList.size - 1
+                                        newList[lIdx] = newList[lIdx].copy(isFaceUp = true)
+                                    }
                                     newList
                                 }
-                                targetColIdx -> {
-                                    val newList = list.toMutableList()
-                                    newList.add(bottomCard)
-                                    newList
-                                }
+                                targetColIdx -> groupToMove.toList()
                                 else -> list
                             }
                         }
-                        if (solveDfs(nextTableaus, stock, waste, activeCategories, matchedCount, visited, totalWordsToMatch)) {
+                        if (solveDfs(nextTableaus, stock, waste, activeSlots, completedCategories, matchedCount, visited, totalWordsToMatch, categoryWordCounts)) {
                             return true
+                        }
+                    }
+                } else {
+                    // Option 3B: Target column has matching category on top
+                    val targetBottom = targetCol.last()
+                    if (targetBottom.isFaceUp && targetBottom.categoryId == targetCatId) {
+                        if (hasFaceDownUnder || hasDifferentFaceUpUnder) {
+                            val nextTableaus = tableaus.mapIndexed { idx, list ->
+                                when (idx) {
+                                    colIdx -> {
+                                        val newList = list.subList(0, startIdx).toMutableList()
+                                        if (newList.isNotEmpty()) {
+                                            val lIdx = newList.size - 1
+                                            newList[lIdx] = newList[lIdx].copy(isFaceUp = true)
+                                        }
+                                        newList
+                                    }
+                                    targetColIdx -> {
+                                        val newList = list.toMutableList()
+                                        newList.addAll(groupToMove)
+                                        newList
+                                    }
+                                    else -> list
+                                }
+                            }
+                            if (solveDfs(nextTableaus, stock, waste, activeSlots, completedCategories, matchedCount, visited, totalWordsToMatch, categoryWordCounts)) {
+                                return true
+                            }
                         }
                     }
                 }
@@ -377,8 +443,11 @@ class LevelGenerator {
         // 4. Stacking Waste card onto a Tableau column
         if (topWaste != null && !topWaste.isCategory) {
             for (targetColIdx in 0..3) {
-                val targetBottom = tableaus[targetColIdx].lastOrNull()
-                if (targetBottom != null && targetBottom.isFaceUp && targetBottom.categoryId == topWaste.categoryId) {
+                val targetCol = tableaus[targetColIdx]
+                val targetBottom = targetCol.lastOrNull()
+                val canStack = (targetBottom != null && targetBottom.isFaceUp && targetBottom.categoryId == topWaste.categoryId) ||
+                               (targetBottom == null)
+                if (canStack) {
                     val nextWaste = waste.toMutableList()
                     nextWaste.removeAt(nextWaste.size - 1)
                     val nextTableaus = tableaus.mapIndexed { idx, list ->
@@ -388,7 +457,7 @@ class LevelGenerator {
                             newList
                         } else list
                     }
-                    if (solveDfs(nextTableaus, stock, nextWaste, activeCategories, matchedCount, visited, totalWordsToMatch)) {
+                    if (solveDfs(nextTableaus, stock, nextWaste, activeSlots, completedCategories, matchedCount, visited, totalWordsToMatch, categoryWordCounts)) {
                         return true
                     }
                 }
@@ -401,7 +470,7 @@ class LevelGenerator {
             val drawn = nextStock.removeAt(nextStock.size - 1)
             val nextWaste = waste.toMutableList()
             nextWaste.add(drawn.copy(isFaceUp = true))
-            if (solveDfs(tableaus, nextStock, nextWaste, activeCategories, matchedCount, visited, totalWordsToMatch)) {
+            if (solveDfs(tableaus, nextStock, nextWaste, activeSlots, completedCategories, matchedCount, visited, totalWordsToMatch, categoryWordCounts)) {
                 return true
             }
         }
@@ -409,10 +478,11 @@ class LevelGenerator {
         // 6. Recycle waste back to stock
         if (stock.isEmpty() && waste.isNotEmpty()) {
             val nextStock = waste.reversed().map { it.copy(isFaceUp = false) }
-            if (solveDfs(tableaus, nextStock, emptyList(), activeCategories, matchedCount, visited, totalWordsToMatch)) {
+            if (solveDfs(tableaus, nextStock, emptyList(), activeSlots, completedCategories, matchedCount, visited, totalWordsToMatch, categoryWordCounts)) {
                 return true
             }
         }
+
         return false
     }
 }
