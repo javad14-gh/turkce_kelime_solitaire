@@ -63,9 +63,9 @@ class LevelGenerator {
 
         val wordsPerCategory = when (difficultyLevel) {
             "Kolay" -> 4
-            "Orta" -> 4
-            "Zor" -> 4
-            else -> 5 // CokZor
+            "Orta" -> 5
+            "Zor" -> 6
+            else -> 7 // CokZor
         }
 
         val allowedDifficulties = when (difficultyLevel) {
@@ -161,9 +161,10 @@ class LevelGenerator {
             // Shuffle full deck
             val shuffled = cards.shuffled(random)
 
-            // Deal 4 Tableau columns (cascaded piles, up to 16 cards)
+            // Deal 4 Tableau columns and Stock (30% to stock, remaining to tableau)
             val tableaus = List(4) { mutableListOf<SolitaireCard>() }
-            val tableauSize = if (shuffled.size > 8) shuffled.size - 6 else shuffled.size / 2
+            val stockSize = maxOf(5, (shuffled.size * 0.30).toInt())
+            val tableauSize = shuffled.size - stockSize
             
             for (i in 0 until tableauSize) {
                 val col = i % 4

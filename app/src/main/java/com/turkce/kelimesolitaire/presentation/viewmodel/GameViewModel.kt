@@ -461,6 +461,14 @@ class GameViewModel : ViewModel() {
             if (destinationBottomCard.isFaceUp) {
                 // If destination card is a Category card, NO cards can be stacked on top of it!
                 if (destinationBottomCard.isCategory) {
+                    triggerShakeError(movingTopCard.id)
+                    val isPersian = LocaleHelper.isPersian(context)
+                    val msg = if (isPersian) {
+                        "روی کارت دسته‌بندی نمی‌توان کارتی چید! کارت دسته را به اسلات‌های بالا منتقل کنید.\u200F"
+                    } else {
+                        "Kategori kartının üzerine kart konulamaz! Kategori kartını yukarı taşıyın."
+                    }
+                    android.widget.Toast.makeText(context, msg, android.widget.Toast.LENGTH_SHORT).show()
                     return false
                 }
 
