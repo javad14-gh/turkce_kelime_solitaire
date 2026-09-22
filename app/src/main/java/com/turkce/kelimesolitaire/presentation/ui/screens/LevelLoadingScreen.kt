@@ -39,6 +39,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.CompositionLocalProvider
 import com.turkce.kelimesolitaire.presentation.ui.components.OutlinedText
 import com.turkce.kelimesolitaire.presentation.ui.components.rememberNunitoFont
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
@@ -72,16 +77,19 @@ fun LevelLoadingScreen(
         label = "CardTilt"
     )
 
-    // Shimmer progress bar fill animation (looping from 15% to 95%)
-    val progressFraction by infiniteTransition.animateFloat(
-        initialValue = 0.15f,
-        targetValue = 0.95f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1400, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "ProgressFill"
-    )
+    // Progressive loading fill (always fills up steadily, never reverses or drains!)
+    val progressAnim = remember { androidx.compose.animation.core.Animatable(0.08f) }
+    LaunchedEffect(Unit) {
+        progressAnim.animateTo(
+            targetValue = 0.50f,
+            animationSpec = tween(280, easing = FastOutSlowInEasing)
+        )
+        progressAnim.animateTo(
+            targetValue = 0.96f,
+            animationSpec = tween(550, easing = androidx.compose.animation.core.LinearOutSlowInEasing)
+        )
+    }
+    val progressFraction = progressAnim.value
 
     // Shimmer sweep across progress bar
     val shimmerOffset by infiniteTransition.animateFloat(
@@ -201,53 +209,55 @@ fun LevelLoadingScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Sleek 3D Progress Bar Container
-            Box(
-                modifier = Modifier
-                    .width(240.dp)
-                    .height(20.dp)
-                    .shadow(8.dp, RoundedCornerShape(10.dp))
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(Color(0xFF061A0E), Color(0xFF0E301A))
-                        )
-                    )
-                    .border(1.5.dp, Color(0x6686EFAC), RoundedCornerShape(10.dp))
-                    .padding(2.5.dp)
-            ) {
-                // Active Progress Fill
+            // Sleek 3D Progress Bar Container (Forced LTR so it always fills from left to right)
+            CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                 Box(
                     modifier = Modifier
-                        .fillMaxHeight()
-                        .fillMaxWidth(progressFraction)
-                        .clip(RoundedCornerShape(8.dp))
+                        .width(240.dp)
+                        .height(20.dp)
+                        .shadow(8.dp, RoundedCornerShape(10.dp))
+                        .clip(RoundedCornerShape(10.dp))
                         .background(
-                            Brush.horizontalGradient(
-                                colors = listOf(
-                                    Color(0xFF84CC16),
-                                    Color(0xFF22C55E),
-                                    Color(0xFFF59E0B)
-                                )
+                            Brush.verticalGradient(
+                                colors = listOf(Color(0xFF061A0E), Color(0xFF0E301A))
                             )
                         )
+                        .border(1.5.dp, Color(0x6686EFAC), RoundedCornerShape(10.dp))
+                        .padding(2.5.dp)
                 ) {
-                    // Shimmer Gleam Layer
+                    // Active Progress Fill
                     Box(
                         modifier = Modifier
-                            .fillMaxSize()
+                            .fillMaxHeight()
+                            .fillMaxWidth(progressFraction)
+                            .clip(RoundedCornerShape(8.dp))
                             .background(
-                                Brush.linearGradient(
+                                Brush.horizontalGradient(
                                     colors = listOf(
-                                        Color.Transparent,
-                                        Color.White.copy(alpha = 0.45f),
-                                        Color.Transparent
-                                    ),
-                                    start = Offset(shimmerOffset, 0f),
-                                    end = Offset(shimmerOffset + 120f, 0f)
+                                        Color(0xFF84CC16),
+                                        Color(0xFF22C55E),
+                                        Color(0xFFF59E0B)
+                                    )
                                 )
                             )
-                    )
+                    ) {
+                        // Shimmer Gleam Layer
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(
+                                    Brush.linearGradient(
+                                        colors = listOf(
+                                            Color.Transparent,
+                                            Color.White.copy(alpha = 0.45f),
+                                            Color.Transparent
+                                        ),
+                                        start = Offset(shimmerOffset, 0f),
+                                        end = Offset(shimmerOffset + 120f, 0f)
+                                    )
+                                )
+                        )
+                    }
                 }
             }
         }

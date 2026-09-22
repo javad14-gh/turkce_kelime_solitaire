@@ -69,10 +69,10 @@ object GameSettingsManager {
 
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                vibrator.vibrate(VibrationEffect.createOneShot(18, VibrationEffect.DEFAULT_AMPLITUDE))
+                vibrator.vibrate(VibrationEffect.createOneShot(45, 255))
             } else {
                 @Suppress("DEPRECATION")
-                vibrator.vibrate(18)
+                vibrator.vibrate(45)
             }
         } catch (_: Throwable) {}
     }
@@ -87,10 +87,10 @@ object GameSettingsManager {
 
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                vibrator.vibrate(VibrationEffect.createOneShot(32, VibrationEffect.DEFAULT_AMPLITUDE))
+                vibrator.vibrate(VibrationEffect.createOneShot(65, 255))
             } else {
                 @Suppress("DEPRECATION")
-                vibrator.vibrate(32)
+                vibrator.vibrate(65)
             }
         } catch (_: Throwable) {}
     }
@@ -105,12 +105,12 @@ object GameSettingsManager {
 
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                val timings = longArrayOf(0, 35, 60, 50)
-                val amplitudes = intArrayOf(0, 180, 0, 255)
+                val timings = longArrayOf(0, 50, 70, 70)
+                val amplitudes = intArrayOf(0, 255, 0, 255)
                 vibrator.vibrate(VibrationEffect.createWaveform(timings, amplitudes, -1))
             } else {
                 @Suppress("DEPRECATION")
-                vibrator.vibrate(longArrayOf(0, 35, 60, 50), -1)
+                vibrator.vibrate(longArrayOf(0, 50, 70, 70), -1)
             }
         } catch (_: Throwable) {}
     }
@@ -118,24 +118,27 @@ object GameSettingsManager {
     // --- Audio Synthesis ---
 
     /**
-     * Crisp, soft card placement / snap sound.
+     * Crisp, punchy playing card placement / snap sound (audible on all phone speakers).
      */
     fun playCardSnapSound(context: Context) {
         if (!isSoundEnabled(context)) return
         audioExecutor.execute {
             try {
                 val sampleRate = 44100
-                val durationMs = 45
+                val durationMs = 70
                 val numSamples = (sampleRate * (durationMs / 1000.0)).toInt()
                 val sample = DoubleArray(numSamples)
                 val generatedSnd = ByteArray(2 * numSamples)
 
                 for (i in 0 until numSamples) {
                     val progress = i.toDouble() / numSamples
-                    // Pitch sweeps down quickly from 520Hz to 180Hz (wood/card tap sound)
-                    val freq = 520.0 - (progress * 340.0)
-                    val decay = Math.exp(-progress * 7.0) // sharp natural decay
-                    sample[i] = Math.sin(2.0 * Math.PI * i * freq / sampleRate) * decay * 0.35
+                    // Pitch sweeps down from 1650Hz to 650Hz for sharp playing card impact
+                    val freq = 1650.0 - (progress * 1000.0)
+                    val decay = Math.exp(-progress * 4.5)
+                    // Combine fundamental and overtone for full acoustic presence
+                    val wave = 0.7 * Math.sin(2.0 * Math.PI * i * freq / sampleRate) +
+                               0.3 * Math.sin(2.0 * Math.PI * i * (freq * 1.6) / sampleRate)
+                    sample[i] = wave * decay * 0.90
                 }
 
                 var idx = 0
@@ -151,7 +154,7 @@ object GameSettingsManager {
     }
 
     /**
-     * Cheerful two-tone coin chime.
+     * Cheerful two-tone coin chime (full volume).
      */
     fun playCoinSound(context: Context) {
         if (!isSoundEnabled(context)) return
@@ -170,7 +173,7 @@ object GameSettingsManager {
                     } else {
                         1.0
                     }
-                    sample[i] = Math.sin(2.0 * Math.PI * i / (sampleRate / freq)) * fadePercent * 0.4
+                    sample[i] = Math.sin(2.0 * Math.PI * i / (sampleRate / freq)) * fadePercent * 0.85
                 }
 
                 var idx = 0
@@ -186,23 +189,23 @@ object GameSettingsManager {
     }
 
     /**
-     * Soft UI click/pop sound.
+     * Crisp, clear UI click/pop sound.
      */
     fun playButtonClickSound(context: Context) {
         if (!isSoundEnabled(context)) return
         audioExecutor.execute {
             try {
                 val sampleRate = 44100
-                val durationMs = 30
+                val durationMs = 50
                 val numSamples = (sampleRate * (durationMs / 1000.0)).toInt()
                 val sample = DoubleArray(numSamples)
                 val generatedSnd = ByteArray(2 * numSamples)
 
                 for (i in 0 until numSamples) {
                     val progress = i.toDouble() / numSamples
-                    val freq = 880.0 - (progress * 440.0)
-                    val decay = Math.exp(-progress * 8.0)
-                    sample[i] = Math.sin(2.0 * Math.PI * i * freq / sampleRate) * decay * 0.25
+                    val freq = 1200.0 - (progress * 550.0)
+                    val decay = Math.exp(-progress * 5.0)
+                    sample[i] = Math.sin(2.0 * Math.PI * i * freq / sampleRate) * decay * 0.85
                 }
 
                 var idx = 0
