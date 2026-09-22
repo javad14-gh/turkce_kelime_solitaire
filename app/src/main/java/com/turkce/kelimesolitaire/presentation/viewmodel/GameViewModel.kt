@@ -150,13 +150,14 @@ class GameViewModel : ViewModel() {
         )
 
         val baseMoves = allWords.size + generated.targetCategories.size + generated.initialStock.size
-        val buffer = when (generated.difficulty) {
-            "Kolay" -> if (levelNum <= 3) 5 else 3
-            "Orta" -> 2
-            "Zor" -> 1
-            else -> 0 // CokZor
+        val (bufferRatio, minBuffer) = when (generated.difficulty) {
+            "Kolay" -> Pair(0.25, 4)
+            "Orta"  -> Pair(0.35, 6)
+            "Zor"   -> Pair(0.45, 8)
+            else    -> Pair(0.50, 10) // CokZor
         }
-        val calculatedMoves = baseMoves + buffer
+        val bufferMoves = maxOf(minBuffer, (baseMoves * bufferRatio).toInt())
+        val calculatedMoves = baseMoves + bufferMoves
 
         val prefs = context.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)
 
@@ -770,7 +771,7 @@ class GameViewModel : ViewModel() {
     }
 
     fun toggleStoreDialog(show: Boolean) {
-        _uiState.update { it.copy(showStoreDialog = show) }
+        if (show) openStore() else closeStore()
     }
 
     fun toggleDailyRewardDialog(show: Boolean) {
