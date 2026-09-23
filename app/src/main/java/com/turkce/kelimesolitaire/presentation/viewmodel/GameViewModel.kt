@@ -127,6 +127,7 @@ class GameViewModel : ViewModel() {
             return
         }
         val currentLvl = _uiState.value.levelNumber
+        coveredJokerIds.clear()
         _uiState.update { it.copy(restartCountInLevel = 0, showRestartDialog = false) }
         
         undoStack.clear() // Clear undo history on fresh start
@@ -368,12 +369,8 @@ class GameViewModel : ViewModel() {
             }
 
             val actualCategory = tempActiveCategory
-            if (card.categoryId == actualCategory.id || card.categoryId == "joker_wildcard") {
-                val wordToAdd = if (card.categoryId == "joker_wildcard") {
-                    card.word ?: com.turkce.kelimesolitaire.data.model.Word(card.id, actualCategory.id, "JOKER", "Kolay")
-                } else {
-                    card.word ?: _uiState.value.levelData?.targetWords?.find { it.id == card.id.removePrefix("word_") }
-                }
+            if (card.categoryId == actualCategory.id) {
+                val wordToAdd = card.word ?: _uiState.value.levelData?.targetWords?.find { it.id == card.id.removePrefix("word_") }
 
                 if (wordToAdd != null) {
                     if (!tempMatchedWords.any { it.id == wordToAdd.id }) {
@@ -1211,8 +1208,7 @@ class GameViewModel : ViewModel() {
             val topCard = faceUpCards.lastOrNull()
             if (topCard != null && !topCard.isCategory) {
                 for (slot in state.foundationSlots) {
-                    if (slot.activeCategory != null && 
-                        (topCard.categoryId == slot.activeCategory.id || topCard.categoryId == "joker_wildcard")) {
+                    if (slot.activeCategory != null && topCard.categoryId == slot.activeCategory.id) {
                         return Pair(topCard.id, "slot_${slot.id}")
                     }
                 }
@@ -1222,9 +1218,8 @@ class GameViewModel : ViewModel() {
             val firstFaceUp = faceUpCards.firstOrNull()
             if (firstFaceUp != null && !firstFaceUp.isCategory) {
                 for (slot in state.foundationSlots) {
-                    if (slot.activeCategory != null && 
-                        (firstFaceUp.categoryId == slot.activeCategory.id || firstFaceUp.categoryId == "joker_wildcard")) {
-                        val allMatch = faceUpCards.all { it.categoryId == slot.activeCategory.id || it.categoryId == "joker_wildcard" }
+                    if (slot.activeCategory != null && firstFaceUp.categoryId == slot.activeCategory.id) {
+                        val allMatch = faceUpCards.all { it.categoryId == slot.activeCategory.id }
                         if (allMatch) {
                             return Pair(firstFaceUp.id, "slot_${slot.id}")
                         }
@@ -1237,8 +1232,7 @@ class GameViewModel : ViewModel() {
         val wasteTop = state.wastePile.lastOrNull()
         if (wasteTop != null && !wasteTop.isCategory) {
             for (slot in state.foundationSlots) {
-                if (slot.activeCategory != null && 
-                    (wasteTop.categoryId == slot.activeCategory.id || wasteTop.categoryId == "joker_wildcard")) {
+                if (slot.activeCategory != null && wasteTop.categoryId == slot.activeCategory.id) {
                     return Pair(wasteTop.id, "slot_${slot.id}")
                 }
             }

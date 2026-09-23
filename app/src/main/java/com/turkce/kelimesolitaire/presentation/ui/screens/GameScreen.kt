@@ -810,6 +810,9 @@ fun GameScreen(
                                                 val prevCard = colList[startIdx - 1]
                                                 if (!prevCard.isFaceUp) break
                                                 val prevCatId = prevCard.categoryId
+                                                if (targetCatId != "joker_wildcard" && prevCatId == "joker_wildcard") {
+                                                    break
+                                                }
                                                 val matches = prevCatId == targetCatId ||
                                                         prevCatId == "joker_wildcard" ||
                                                         targetCatId == "joker_wildcard"

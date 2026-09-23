@@ -36,6 +36,7 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.AccentGold
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkCard
 import com.turkce.kelimesolitaire.presentation.util.GameSettingsManager
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
+import com.turkce.kelimesolitaire.presentation.util.rememberAppFont
 
 @Composable
 fun RestartLevelDialog(
