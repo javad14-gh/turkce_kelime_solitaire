@@ -181,6 +181,12 @@ object LocaleHelper {
 
     fun claimedText(isPersian: Boolean): String =
         if (isPersian) "دریافت شد" else "Alındı"
+
+    fun doubleReward(isPersian: Boolean): String =
+        if (isPersian) "۲ برابر کردن پاداش" else "Ödülü 2 Katına Çıkar"
+
+    fun rewardDoubled(isPersian: Boolean): String =
+        if (isPersian) "✓ پاداش ۲ برابر دریافت شد" else "✓ Ödül 2 Katına Çıktı"
 }
 
 @Composable

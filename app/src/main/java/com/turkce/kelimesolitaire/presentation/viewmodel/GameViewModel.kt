@@ -68,6 +68,7 @@ data class GameUiState(
     val selectedCardId: String? = null,
     val shakingCardId: String? = null,
     val levelCompletedBonus: Int = 50,
+    val isLevelRewardDoubled: Boolean = false,
     val errorsInLevel: Int = 0,
     val hintedCardId: String? = null,
     val hintedTargetId: String? = null,
@@ -653,6 +654,7 @@ class GameViewModel : ViewModel() {
             it.copy(
                 screenState = ScreenState.LevelComplete,
                 levelCompletedBonus = bonus,
+                isLevelRewardDoubled = false,
                 coins = it.coins + bonus,
                 completedLevels = updatedSet,
                 activeTutorial = null
@@ -722,6 +724,20 @@ class GameViewModel : ViewModel() {
         adManager.showRewarded(activity) { rewardAmount ->
             _uiState.update {
                 it.copy(coins = it.coins + rewardAmount)
+            }
+            saveCoinsToPrefs(activity, _uiState.value.coins)
+        }
+    }
+
+    fun doubleLevelRewardWithAd(activity: Activity) {
+        val bonus = _uiState.value.levelCompletedBonus
+        if (bonus <= 0 || _uiState.value.isLevelRewardDoubled) return
+        adManager.showRewarded(activity) { _ ->
+            _uiState.update {
+                it.copy(
+                    coins = it.coins + bonus,
+                    isLevelRewardDoubled = true
+                )
             }
             saveCoinsToPrefs(activity, _uiState.value.coins)
         }

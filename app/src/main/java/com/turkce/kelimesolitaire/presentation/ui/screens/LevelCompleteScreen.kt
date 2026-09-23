@@ -46,6 +46,8 @@ import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 fun LevelCompleteScreen(
     levelNumber: Int,
     bonusCoins: Int,
+    isRewardDoubled: Boolean = false,
+    onDoubleRewardClicked: () -> Unit = {},
     onNextLevelClicked: () -> Unit,
     onMainMenuClicked: () -> Unit,
     isAdFree: Boolean = false,
@@ -121,11 +123,84 @@ fun LevelCompleteScreen(
                     ) {
                         com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 40.dp)
                         Spacer(modifier = Modifier.width(8.dp))
+                        val currentCoinsDisplay = if (isRewardDoubled) bonusCoins * 2 else bonusCoins
                         Text(
-                            text = "+${LocaleHelper.formatNumber(bonusCoins, isPersian)} ${if (isPersian) "سکه" else "Altın"}",
+                            text = "+${LocaleHelper.formatNumber(currentCoinsDisplay, isPersian)} ${if (isPersian) "سکه" else "Altın"}",
                             color = AccentGold,
                             fontSize = 32.sp,
                             fontWeight = FontWeight.Black,
+                            fontFamily = nunitoFont
+                        )
+                    }
+                }
+            }
+
+            // 2X Reward Doubler Button with Rewarded Ad
+            if (bonusCoins > 0) {
+                if (!isRewardDoubled) {
+                    Box(
+                        modifier = Modifier
+                            .shadow(12.dp, RoundedCornerShape(18.dp))
+                            .clip(RoundedCornerShape(18.dp))
+                            .background(
+                                Brush.verticalGradient(
+                                    colors = listOf(Color(0xFFE0E7FF), Color(0xFFC7D2FE))
+                                )
+                            )
+                            .padding(2.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(Color(0xFF31104D))
+                            .padding(bottom = 3.5.dp)
+                            .clip(RoundedCornerShape(14.dp))
+                            .background(
+                                Brush.horizontalGradient(
+                                    colors = listOf(
+                                        Color(0xFF7C3AED), // Royal Purple
+                                        Color(0xFFD97706)  // Vibrant Amber Gold
+                                    )
+                                )
+                            )
+                            .border(1.5.dp, Color(0xFFFDE68A), RoundedCornerShape(14.dp))
+                            .clickable {
+                                com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playButtonClickSound(context)
+                                onDoubleRewardClicked()
+                            }
+                            .padding(horizontal = 24.dp, vertical = 12.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            androidx.compose.foundation.Image(
+                                painter = androidx.compose.ui.res.painterResource(id = com.turkce.kelimesolitaire.R.drawable.tv),
+                                contentDescription = "Watch Ad",
+                                modifier = Modifier.size(26.dp)
+                            )
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Text(
+                                text = "${LocaleHelper.doubleReward(isPersian)} (+${LocaleHelper.formatNumber(bonusCoins, isPersian)} 🪙)",
+                                color = Color.White,
+                                fontSize = 17.sp,
+                                fontWeight = FontWeight.Black,
+                                fontFamily = nunitoFont
+                            )
+                        }
+                    }
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(14.dp))
+                            .background(Color(0x3310B981))
+                            .border(1.5.dp, Color(0xFF34D399), RoundedCornerShape(14.dp))
+                            .padding(horizontal = 20.dp, vertical = 8.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = LocaleHelper.rewardDoubled(isPersian),
+                            color = Color(0xFF34D399),
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
                             fontFamily = nunitoFont
                         )
                     }
