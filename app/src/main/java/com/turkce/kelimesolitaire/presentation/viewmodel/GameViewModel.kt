@@ -80,6 +80,8 @@ data class GameUiState(
     val showDailyRewardDialog: Boolean = false,
     val dailyRewardState: DailyRewardState? = null,
     val dailyRewardHasUnclaimed: Boolean = false,
+    val restartCountInLevel: Int = 0,
+    val showRestartDialog: Boolean = false,
 
     // Booster progressive unlocks & free gifts
     val isUndoUnlocked: Boolean = false,
@@ -125,6 +127,7 @@ class GameViewModel : ViewModel() {
             return
         }
         val currentLvl = _uiState.value.levelNumber
+        _uiState.update { it.copy(restartCountInLevel = 0, showRestartDialog = false) }
         
         undoStack.clear() // Clear undo history on fresh start
         clearActiveSessionFromPrefs(activity, currentLvl)
@@ -701,6 +704,53 @@ class GameViewModel : ViewModel() {
             loadLevelData(_uiState.value.levelNumber, db, activity, minDisplayTimeMs = 600L)
             saveActiveSessionToPrefs(activity)
         }
+    }
+
+    fun requestRestartLevel(activity: Activity) {
+        val currentRestarts = _uiState.value.restartCountInLevel
+        if (currentRestarts == 0) {
+            _uiState.update { it.copy(restartCountInLevel = 1) }
+            val isPersian = LocaleHelper.isPersian(activity)
+            val msg = if (isPersian) "شروع مجدد مرحله (اولین بار رایگان) 🔄" else "Seviye Yeniden Başlatıldı (İlk Sefer Ücretsiz) 🔄"
+            android.widget.Toast.makeText(activity, msg, android.widget.Toast.LENGTH_SHORT).show()
+            restartLevel(activity)
+        } else {
+            _uiState.update { it.copy(showRestartDialog = true) }
+        }
+    }
+
+    fun confirmRestartWithCoins(activity: Activity, onShowToast: (String) -> Unit = {}) {
+        val cost = 15
+        if (_uiState.value.coins < cost) {
+            val isPersian = LocaleHelper.isPersian(activity)
+            onShowToast(if (isPersian) "سکه ناکافی! می‌توانید با تماشای ویدیو ریستارت کنید.\u200F" else "Yetersiz altın! Reklam izleyerek yeniden başlatabilirsiniz.")
+            return
+        }
+        _uiState.update {
+            it.copy(
+                coins = it.coins - cost,
+                showRestartDialog = false,
+                restartCountInLevel = it.restartCountInLevel + 1
+            )
+        }
+        saveCoinsToPrefs(activity, _uiState.value.coins)
+        restartLevel(activity)
+    }
+
+    fun confirmRestartWithAd(activity: Activity) {
+        adManager.showRewarded(activity) { _ ->
+            _uiState.update {
+                it.copy(
+                    showRestartDialog = false,
+                    restartCountInLevel = it.restartCountInLevel + 1
+                )
+            }
+            restartLevel(activity)
+        }
+    }
+
+    fun dismissRestartDialog() {
+        _uiState.update { it.copy(showRestartDialog = false) }
     }
 
     fun advanceToNextLevel(activity: Activity) {

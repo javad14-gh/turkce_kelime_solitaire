@@ -24,6 +24,7 @@ import com.turkce.kelimesolitaire.presentation.ui.screens.MainMenuScreen
 import com.turkce.kelimesolitaire.presentation.ui.screens.StoreScreen
 import android.widget.Toast
 import com.turkce.kelimesolitaire.presentation.ui.components.DailyRewardDialog
+import com.turkce.kelimesolitaire.presentation.ui.components.RestartLevelDialog
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.SecondaryNeon
 import com.turkce.kelimesolitaire.presentation.ui.theme.TurkceKelimeSolitaireTheme
@@ -109,7 +110,7 @@ class MainActivity : ComponentActivity() {
                                         viewModel.attemptStackCards(cards, colIdx, this@MainActivity)
                                     },
                                     onDrawFromStock = { viewModel.drawFromStock(this@MainActivity) },
-                                    onRestartLevel = { viewModel.restartLevel(this@MainActivity) },
+                                    onRestartLevel = { viewModel.requestRestartLevel(this@MainActivity) },
                                     onBackToMenu = { viewModel.returnToMainMenu() },
                                     onShowHint = {
                                         viewModel.showHint(this@MainActivity) { msg ->
@@ -179,6 +180,24 @@ class MainActivity : ComponentActivity() {
                                 viewModel.claimDailyReward(this@MainActivity, doubleReward) { msg ->
                                     Toast.makeText(this@MainActivity, msg, Toast.LENGTH_SHORT).show()
                                 }
+                            }
+                        )
+                    }
+
+                    if (state.showRestartDialog) {
+                        RestartLevelDialog(
+                            coins = state.coins,
+                            cost = 15,
+                            onRestartWithCoins = {
+                                viewModel.confirmRestartWithCoins(this@MainActivity) { msg ->
+                                    Toast.makeText(this@MainActivity, msg, Toast.LENGTH_SHORT).show()
+                                }
+                            },
+                            onRestartWithAd = {
+                                viewModel.confirmRestartWithAd(this@MainActivity)
+                            },
+                            onDismiss = {
+                                viewModel.dismissRestartDialog()
                             }
                         )
                     }

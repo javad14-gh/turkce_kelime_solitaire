@@ -187,6 +187,21 @@ object LocaleHelper {
 
     fun rewardDoubled(isPersian: Boolean): String =
         if (isPersian) "✓ پاداش ۲ برابر دریافت شد" else "✓ Ödül 2 Katına Çıktı"
+
+    fun restartDialogTitle(isPersian: Boolean): String =
+        if (isPersian) "شروع مجدد مرحله" else "Seviyeyi Yeniden Başlat"
+
+    fun restartDialogPrompt(isPersian: Boolean): String =
+        if (isPersian) "شروع مجدد اول رایگان بود! برای شروع دوباره این مرحله یکی از روش‌های زیر را انتخاب کنید:" else "İlk yeniden başlatma ücretsizdi! Bu seviyeyi tekrar başlatmak için bir yöntem seçin:"
+
+    fun restartWithCoinsBtn(cost: Int, isPersian: Boolean): String =
+        if (isPersian) "پرداخت ${formatNumber(cost, true)} سکه 🪙" else "${cost} Altın Öde 🪙"
+
+    fun restartWithAdBtn(isPersian: Boolean): String =
+        if (isPersian) "تماشای ویدیو 🎬 (رایگان)" else "Video İzle 🎬 (Ücretsiz)"
+
+    fun continuePlayingBtn(isPersian: Boolean): String =
+        if (isPersian) "ادامه بازی" else "Oyuna Devam Et"
 }
 
 @Composable
