@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -35,7 +36,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.turkce.kelimesolitaire.R
-import com.turkce.kelimesolitaire.presentation.ui.components.AdBannerPlaceholder
 import com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon
 import com.turkce.kelimesolitaire.presentation.ui.components.rememberNunitoFont
 import androidx.compose.ui.platform.LocalContext
@@ -442,11 +442,6 @@ fun StoreScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
             }
-
-            // Bottom Ad Banner Placeholder if not ad-free
-            if (!isAdFree) {
-                AdBannerPlaceholder(isAdFree = isAdFree)
-            }
         }
     }
 }
@@ -460,15 +455,17 @@ private fun BundleItemChip(iconRes: Int, text: String) {
         Image(
             painter = painterResource(id = iconRes),
             contentDescription = text,
-            modifier = Modifier.size(52.dp)
+            modifier = Modifier.size(42.dp)
         )
         Spacer(modifier = Modifier.height(2.dp))
         Text(
             text = text,
             color = Color.White,
-            fontSize = 13.sp,
+            fontSize = 12.sp,
             fontWeight = FontWeight.Black,
-            fontFamily = nunitoFont
+            fontFamily = nunitoFont,
+            maxLines = 1,
+            softWrap = false
         )
     }
 }
@@ -494,7 +491,7 @@ private fun ComboPackCard(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(175.dp)
+                .defaultMinSize(minHeight = 165.dp)
                 .shadow(10.dp, RoundedCornerShape(22.dp))
                 .clip(RoundedCornerShape(22.dp))
                 .background(Brush.verticalGradient(gradientColors))
@@ -502,14 +499,16 @@ private fun ComboPackCard(
                 .padding(horizontal = 14.dp, vertical = 12.dp)
         ) {
             Row(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .defaultMinSize(minHeight = 140.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 // LEFT 2/3 PORTION: 2 Lines of Items Spaced Evenly
                 Column(
                     modifier = Modifier
                         .weight(2.1f)
-                        .fillMaxHeight(),
+                        .padding(vertical = 4.dp),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -524,7 +523,7 @@ private fun ComboPackCard(
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(10.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
                     // Items Line 2 (Spaced Evenly across full width)
                     Row(
@@ -542,7 +541,7 @@ private fun ComboPackCard(
                 Spacer(
                     modifier = Modifier
                         .width(1.dp)
-                        .fillMaxHeight(0.85f)
+                        .height(115.dp)
                         .background(Color.White.copy(alpha = 0.15f))
                 )
 
@@ -550,7 +549,7 @@ private fun ComboPackCard(
                 Column(
                     modifier = Modifier
                         .weight(1.1f)
-                        .fillMaxHeight(),
+                        .padding(vertical = 4.dp),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
