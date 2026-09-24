@@ -15,7 +15,8 @@ object LocaleHelper {
                 (try {
                     val buildConfigClass = Class.forName("com.turkce.kelimesolitaire.BuildConfig")
                     val flavorField = buildConfigClass.getField("FLAVOR")
-                    flavorField.get(null) == "bazaar"
+                    val flavor = flavorField.get(null) as? String
+                    flavor == "bazaar" || flavor == "myket"
                 } catch (e: Exception) {
                     false
                 })

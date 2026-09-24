@@ -29,7 +29,12 @@ android {
         create("bazaar") {
             dimension = "market"
             applicationId = "com.persian.kelimesolitaire"
-            versionNameSuffix = "-fa"
+            versionNameSuffix = "-bazaar"
+        }
+        create("myket") {
+            dimension = "market"
+            applicationId = "com.persian.kelimesolitaire"
+            versionNameSuffix = "-myket"
         }
         create("googlePlay") {
             dimension = "market"

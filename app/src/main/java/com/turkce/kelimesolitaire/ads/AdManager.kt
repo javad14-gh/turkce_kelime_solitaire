@@ -306,6 +306,31 @@ class AdManager private constructor() {
             return
         }
 
+        val ad = rewardedAd
+        if (ad != null) {
+            ad.fullScreenContentCallback = object : FullScreenContentCallback() {
+                override fun onAdDismissedFullScreenContent() {
+                    Log.d(TAG, "Rewarded ad dismissed.")
+                    rewardedAd = null
+                    loadRewarded(activity)
+                }
+
+                override fun onAdFailedToShowFullScreenContent(adError: AdError) {
+                    Log.e(TAG, "Rewarded ad failed to show: ${adError.message}")
+                    rewardedAd = null
+                }
+            }
+            ad.show(activity) { rewardItem ->
+                Log.d(TAG, "User earned reward: ${rewardItem.amount} ${rewardItem.type}")
+                onRewardEarned(rewardItem.amount)
+            }
+        } else {
+            Log.d(TAG, "Rewarded ad not ready yet. Simulating reward for fallback.")
+            onRewardEarned(50)
+            loadRewarded(activity)
+        }
+    }
+
     private fun showTapsellRewardedAdInternal(
         adId: String,
         activity: Activity,
@@ -350,31 +375,6 @@ class AdManager private constructor() {
             )
         } catch (e: Throwable) {
             Log.e(TAG, "Tapsell showRewardedAd error: ${e.message}")
-        }
-    }
-
-        val ad = rewardedAd
-        if (ad != null) {
-            ad.fullScreenContentCallback = object : FullScreenContentCallback() {
-                override fun onAdDismissedFullScreenContent() {
-                    Log.d(TAG, "Rewarded ad dismissed.")
-                    rewardedAd = null
-                    loadRewarded(activity)
-                }
-
-                override fun onAdFailedToShowFullScreenContent(adError: AdError) {
-                    Log.e(TAG, "Rewarded ad failed to show: ${adError.message}")
-                    rewardedAd = null
-                }
-            }
-            ad.show(activity) { rewardItem ->
-                Log.d(TAG, "User earned reward: ${rewardItem.amount} ${rewardItem.type}")
-                onRewardEarned(rewardItem.amount)
-            }
-        } else {
-            Log.d(TAG, "Rewarded ad not ready yet. Simulating reward for fallback.")
-            onRewardEarned(50)
-            loadRewarded(activity)
         }
     }
 }
