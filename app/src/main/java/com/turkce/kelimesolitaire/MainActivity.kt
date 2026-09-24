@@ -107,6 +107,7 @@ class MainActivity : ComponentActivity() {
                                     activeTutorial = state.activeTutorial,
                                     level1TutorialStep = state.level1TutorialStep,
                                     onDismissTutorial = { viewModel.dismissTutorial(this@MainActivity) },
+                                    onDismissCategoryCelebration = { viewModel.dismissCategoryCelebration() },
                                     onOpenStore = { viewModel.toggleStoreDialog(true) },
                                     onCardSelected = { cardId -> viewModel.selectCard(cardId) },
                                     onCardDropped = { cards, slot ->

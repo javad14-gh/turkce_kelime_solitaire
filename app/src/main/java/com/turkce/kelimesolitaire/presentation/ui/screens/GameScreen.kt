@@ -186,6 +186,7 @@ fun GameScreen(
     activeTutorial: com.turkce.kelimesolitaire.presentation.viewmodel.TutorialType? = null,
     level1TutorialStep: Int = 0,
     onDismissTutorial: () -> Unit = {},
+    onDismissCategoryCelebration: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val context = androidx.compose.ui.platform.LocalContext.current
@@ -1762,47 +1763,55 @@ fun GameScreen(
             }
         }
 
-        // 5. CATEGORY COMPLETED CELEBRATION FLOATING BANNER (Non-blocking!)
-        completedCategoryName?.let { categoryName ->
+        // 5. CATEGORY COMPLETED CELEBRATION FLOATING BANNER (Non-blocking & Above HUD)
+        androidx.compose.animation.AnimatedVisibility(
+            visible = completedCategoryName != null,
+            enter = androidx.compose.animation.slideInVertically(initialOffsetY = { -it }) + androidx.compose.animation.fadeIn(),
+            exit = androidx.compose.animation.slideOutVertically(targetOffsetY = { -it }) + androidx.compose.animation.fadeOut(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 10.dp)
+                .zIndex(200f)
+        ) {
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = 70.dp)
-                    .zIndex(150f),
+                modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.TopCenter
             ) {
-                Box(
-                    modifier = Modifier
-                        .shadow(12.dp, RoundedCornerShape(20.dp))
-                        .clip(RoundedCornerShape(20.dp))
-                        .background(
-                            Brush.horizontalGradient(
-                                colors = listOf(Color(0xFFF59E0B), Color(0xFFD97706), Color(0xFFB45309))
+                completedCategoryName?.let { categoryName ->
+                    Box(
+                        modifier = Modifier
+                            .shadow(12.dp, RoundedCornerShape(20.dp))
+                            .clip(RoundedCornerShape(20.dp))
+                            .background(
+                                Brush.horizontalGradient(
+                                    colors = listOf(Color(0xFFF59E0B), Color(0xFFD97706), Color(0xFFB45309))
+                                )
                             )
-                        )
-                        .border(2.dp, Color.White, RoundedCornerShape(20.dp))
-                        .padding(horizontal = 24.dp, vertical = 10.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(text = "👑", fontSize = 24.sp)
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(
-                                text = LocaleHelper.categoryCompleted(isPersian),
-                                color = AccentGold,
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Black,
-                                fontFamily = nunitoFont,
-                                letterSpacing = 1.sp
-                            )
-                            Text(
-                                text = categoryName.uppercase(),
-                                color = Color.White,
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Black,
-                                fontFamily = nunitoFont
-                            )
+                            .border(2.dp, Color.White, RoundedCornerShape(20.dp))
+                            .clickable { onDismissCategoryCelebration() }
+                            .padding(horizontal = 20.dp, vertical = 7.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(text = "👑", fontSize = 22.sp)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text(
+                                    text = LocaleHelper.categoryCompleted(isPersian),
+                                    color = AccentGold,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Black,
+                                    fontFamily = nunitoFont,
+                                    letterSpacing = 1.sp
+                                )
+                                Text(
+                                    text = categoryName.uppercase(),
+                                    color = Color.White,
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.Black,
+                                    fontFamily = nunitoFont
+                                )
+                            }
                         }
                     }
                 }

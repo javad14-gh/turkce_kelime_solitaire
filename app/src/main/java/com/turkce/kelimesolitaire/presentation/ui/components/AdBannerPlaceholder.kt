@@ -80,14 +80,18 @@ fun AdBannerPlaceholder(
                         ).apply {
                             gravity = android.view.Gravity.CENTER
                         }
-                        val activity = ctx as? Activity
+                        val activity = generateSequence(ctx) { if (it is android.content.ContextWrapper) it.baseContext else null }
+                            .filterIsInstance<Activity>()
+                            .firstOrNull()
                         if (activity != null) {
                             try {
                                 Tapsell.requestBannerAd(
                                     AdManager.TAPSELL_BANNER_ZONE_ID,
                                     BannerSize.BANNER_320_50,
+                                    activity,
                                     object : RequestResultListener {
                                         override fun onSuccess(adId: String) {
+                                            Log.d("AdBanner", "Tapsell banner adId: $adId")
                                             Tapsell.showBannerAd(
                                                 adId,
                                                 this@apply,
@@ -116,6 +120,8 @@ fun AdBannerPlaceholder(
                             } catch (e: Throwable) {
                                 Log.e("AdBanner", "Tapsell banner exception: ${e.message}")
                             }
+                        } else {
+                            Log.e("AdBanner", "Could not find Activity for BannerContainer")
                         }
                     }
                 }

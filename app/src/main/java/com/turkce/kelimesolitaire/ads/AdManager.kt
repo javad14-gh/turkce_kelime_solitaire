@@ -103,22 +103,27 @@ class AdManager private constructor() {
     
     fun loadInterstitial(context: Context, adUnitId: String = TEST_INTERSTITIAL_ID) {
         if (LocaleHelper.isPersian(context)) {
-            if (isTapsellConfigured() && isTapsellInitialized) {
+            if (isTapsellConfigured()) {
                 try {
-                    Tapsell.requestInterstitialAd(
-                        TAPSELL_INTERSTITIAL_ZONE_ID,
-                        object : RequestResultListener {
-                            override fun onSuccess(adId: String) {
-                                tapsellInterstitialResponseId = adId
-                                Log.d(TAG, "Tapsell Interstitial loaded: $adId")
-                            }
-
-                            override fun onFailure(message: String) {
-                                Log.e(TAG, "Tapsell Interstitial load error: $message")
-                                tapsellInterstitialResponseId = null
-                            }
+                    val activity = generateSequence(context) { if (it is android.content.ContextWrapper) it.baseContext else null }
+                        .filterIsInstance<Activity>()
+                        .firstOrNull()
+                    val listener = object : RequestResultListener {
+                        override fun onSuccess(adId: String) {
+                            tapsellInterstitialResponseId = adId
+                            Log.d(TAG, "Tapsell Interstitial loaded: $adId")
                         }
-                    )
+
+                        override fun onFailure(message: String) {
+                            Log.e(TAG, "Tapsell Interstitial load error: $message")
+                            tapsellInterstitialResponseId = null
+                        }
+                    }
+                    if (activity != null) {
+                        Tapsell.requestInterstitialAd(TAPSELL_INTERSTITIAL_ZONE_ID, activity, listener)
+                    } else {
+                        Tapsell.requestInterstitialAd(TAPSELL_INTERSTITIAL_ZONE_ID, listener)
+                    }
                 } catch (e: Throwable) {
                     Log.e(TAG, "Tapsell requestInterstitialAd exception: ${e.message}")
                 }
@@ -216,22 +221,27 @@ class AdManager private constructor() {
 
     fun loadRewarded(context: Context, adUnitId: String = TEST_REWARDED_ID) {
         if (LocaleHelper.isPersian(context)) {
-            if (isTapsellConfigured() && isTapsellInitialized) {
+            if (isTapsellConfigured()) {
                 try {
-                    Tapsell.requestRewardedAd(
-                        TAPSELL_REWARDED_ZONE_ID,
-                        object : RequestResultListener {
-                            override fun onSuccess(adId: String) {
-                                tapsellRewardedResponseId = adId
-                                Log.d(TAG, "Tapsell Rewarded ad loaded: $adId")
-                            }
-
-                            override fun onFailure(message: String) {
-                                Log.e(TAG, "Tapsell Rewarded ad load error: $message")
-                                tapsellRewardedResponseId = null
-                            }
+                    val activity = generateSequence(context) { if (it is android.content.ContextWrapper) it.baseContext else null }
+                        .filterIsInstance<Activity>()
+                        .firstOrNull()
+                    val listener = object : RequestResultListener {
+                        override fun onSuccess(adId: String) {
+                            tapsellRewardedResponseId = adId
+                            Log.d(TAG, "Tapsell Rewarded ad loaded: $adId")
                         }
-                    )
+
+                        override fun onFailure(message: String) {
+                            Log.e(TAG, "Tapsell Rewarded ad load error: $message")
+                            tapsellRewardedResponseId = null
+                        }
+                    }
+                    if (activity != null) {
+                        Tapsell.requestRewardedAd(TAPSELL_REWARDED_ZONE_ID, activity, listener)
+                    } else {
+                        Tapsell.requestRewardedAd(TAPSELL_REWARDED_ZONE_ID, listener)
+                    }
                 } catch (e: Throwable) {
                     Log.e(TAG, "Tapsell requestRewardedAd exception: ${e.message}")
                 }
@@ -261,57 +271,87 @@ class AdManager private constructor() {
     fun showRewarded(activity: Activity, onRewardEarned: (amount: Int) -> Unit) {
         if (LocaleHelper.isPersian(activity)) {
             val respId = tapsellRewardedResponseId
-            if (isTapsellConfigured() && isTapsellInitialized && !respId.isNullOrEmpty()) {
+            if (isTapsellConfigured() && !respId.isNullOrEmpty()) {
+                showTapsellRewardedAdInternal(respId, activity, onRewardEarned)
+            } else if (isTapsellConfigured()) {
+                android.widget.Toast.makeText(activity, "در حال دریافت ویدیو تبلیغاتی...", android.widget.Toast.LENGTH_SHORT).show()
                 try {
-                    var rewarded = false
-                    Tapsell.showRewardedAd(
-                        respId,
+                    Tapsell.requestRewardedAd(
+                        TAPSELL_REWARDED_ZONE_ID,
                         activity,
-                        object : AdStateListener.Rewarded {
-                            override fun onRewarded() {
-                                Log.d(TAG, "Tapsell onRewarded")
-                                rewarded = true
-                                onRewardEarned(50)
+                        object : RequestResultListener {
+                            override fun onSuccess(adId: String) {
+                                Log.d(TAG, "Tapsell Rewarded ad loaded on demand: $adId")
+                                tapsellRewardedResponseId = adId
+                                showTapsellRewardedAdInternal(adId, activity, onRewardEarned)
                             }
 
-                            override fun onAdClosed(completionState: AdShowCompletionState) {
-                                Log.d(TAG, "Tapsell rewarded closed: ${completionState.name}")
-                                tapsellRewardedResponseId = null
-                                loadRewarded(activity)
-                                if (!rewarded && completionState == AdShowCompletionState.COMPLETED) {
-                                    onRewardEarned(50)
-                                }
-                            }
-
-                            override fun onAdImpression() {
-                                Log.d(TAG, "Tapsell rewarded impression")
-                            }
-
-                            override fun onAdClicked() {
-                                Log.d(TAG, "Tapsell rewarded clicked")
-                            }
-
-                            override fun onAdFailed(message: String) {
-                                Log.e(TAG, "Tapsell rewarded show error: $message")
-                                tapsellRewardedResponseId = null
-                                loadRewarded(activity)
-                                onRewardEarned(50) // Safe simulation fallback
+                            override fun onFailure(message: String) {
+                                Log.e(TAG, "Tapsell Rewarded ad load on demand error: $message")
+                                android.widget.Toast.makeText(
+                                    activity,
+                                    "ویدیویی برای نمایش موجود نیست. لطفاً مجدداً امتحان کنید.",
+                                    android.widget.Toast.LENGTH_LONG
+                                ).show()
                             }
                         }
                     )
                 } catch (e: Throwable) {
-                    Log.e(TAG, "Tapsell showRewardedVideoAd error: ${e.message}")
-                    onRewardEarned(50)
+                    Log.e(TAG, "Tapsell requestRewardedAd exception: ${e.message}")
+                    android.widget.Toast.makeText(activity, "خطا در اتصال به سرویس تبلیغات", android.widget.Toast.LENGTH_SHORT).show()
                 }
             } else {
-                // Safe simulation when in placeholder/test mode
-                onRewardEarned(50)
-                if (isTapsellConfigured()) {
-                    loadRewarded(activity)
-                }
+                android.widget.Toast.makeText(activity, "سرویس تبلیغات پیکربندی نشده است.", android.widget.Toast.LENGTH_SHORT).show()
             }
             return
         }
+
+    private fun showTapsellRewardedAdInternal(
+        adId: String,
+        activity: Activity,
+        onRewardEarned: (amount: Int) -> Unit
+    ) {
+        try {
+            var rewarded = false
+            Tapsell.showRewardedAd(
+                adId,
+                activity,
+                object : AdStateListener.Rewarded {
+                    override fun onRewarded() {
+                        Log.d(TAG, "Tapsell onRewarded")
+                        rewarded = true
+                        onRewardEarned(50)
+                    }
+
+                    override fun onAdClosed(completionState: AdShowCompletionState) {
+                        Log.d(TAG, "Tapsell rewarded closed: ${completionState.name}")
+                        tapsellRewardedResponseId = null
+                        loadRewarded(activity)
+                        if (!rewarded && completionState == AdShowCompletionState.COMPLETED) {
+                            onRewardEarned(50)
+                        }
+                    }
+
+                    override fun onAdImpression() {
+                        Log.d(TAG, "Tapsell rewarded impression")
+                    }
+
+                    override fun onAdClicked() {
+                        Log.d(TAG, "Tapsell rewarded clicked")
+                    }
+
+                    override fun onAdFailed(message: String) {
+                        Log.e(TAG, "Tapsell rewarded show error: $message")
+                        tapsellRewardedResponseId = null
+                        loadRewarded(activity)
+                        android.widget.Toast.makeText(activity, "خطا در پخش ویدیو: $message", android.widget.Toast.LENGTH_SHORT).show()
+                    }
+                }
+            )
+        } catch (e: Throwable) {
+            Log.e(TAG, "Tapsell showRewardedAd error: ${e.message}")
+        }
+    }
 
         val ad = rewardedAd
         if (ad != null) {

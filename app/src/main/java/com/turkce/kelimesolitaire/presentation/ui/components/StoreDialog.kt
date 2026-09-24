@@ -229,30 +229,30 @@ fun StoreDialog(
                             .padding(top = 4.dp)
                     )
 
-                    // Coin Pack 100
-                    CoinPackRow(
-                        coinAmount = 100,
-                        priceText = if (isPersian) "۹,۰۰۰ تومان" else "₺19.99",
-                        gradientColors = listOf(Color(0xFF38BDF8), Color(0xFF0284C7)),
-                        onBuy = { onBuyCoinPack(100) }
-                    )
-
                     // Coin Pack 500
                     CoinPackRow(
                         coinAmount = 500,
-                        priceText = if (isPersian) "۱۹,۰۰۰ تومان" else "₺49.99",
-                        gradientColors = listOf(Color(0xFFC084FC), Color(0xFF9333EA)),
-                        badgeText = if (isPersian) "بسیار محبوب" else "ÇOK POPÜLER",
+                        priceText = if (isPersian) "۱۹,۰۰۰ تومان" else "₺39.99",
+                        gradientColors = listOf(Color(0xFF38BDF8), Color(0xFF0284C7)),
                         onBuy = { onBuyCoinPack(500) }
                     )
 
-                    // Coin Pack 1500
+                    // Coin Pack 1200
                     CoinPackRow(
-                        coinAmount = 1500,
-                        priceText = if (isPersian) "۴۹,۰۰۰ تومان" else "₺99.99",
+                        coinAmount = 1200,
+                        priceText = if (isPersian) "۳۹,۰۰۰ تومان" else "₺69.99",
+                        gradientColors = listOf(Color(0xFFC084FC), Color(0xFF9333EA)),
+                        badgeText = if (isPersian) "بسیار محبوب" else "ÇOK POPÜLER",
+                        onBuy = { onBuyCoinPack(1200) }
+                    )
+
+                    // Coin Pack 3000
+                    CoinPackRow(
+                        coinAmount = 3000,
+                        priceText = if (isPersian) "۷۹,۰۰۰ تومان" else "₺129.99",
                         gradientColors = listOf(Color(0xFFFFD700), Color(0xFFD97706)),
                         badgeText = if (isPersian) "بهترین قیمت" else "EN İYİ FİYAT",
-                        onBuy = { onBuyCoinPack(1500) }
+                        onBuy = { onBuyCoinPack(3000) }
                     )
 
                     // 3. REMOVE ADS PERMANENT UPGRADE CARD

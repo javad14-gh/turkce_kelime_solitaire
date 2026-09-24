@@ -232,13 +232,15 @@ fun StoreScreen(
                 }
 
                 // ------------------------------------------
-                // BANNER 2: MEGA PAKET
+                // BANNER 2: STARTER PACK (بسته شروع / BAŞLANGIÇ PAKETİ - ONE TIME OFFER)
                 // ------------------------------------------
                 ComboPackCard(
-                    title = if (isPersian) "بسته مگا" else "MEGA PAKET",
-                    badge = if (isPersian) "تخفیف ویژه" else "EFSANE FIRSAT",
-                    badgeColor = Color(0xFFDC2626),
-                    price = if (isPersian) "۱۴۹,۰۰۰ تومان" else "₺149.99",
+                    title = if (isPersian) "بسته شروع" else "BAŞLANGIÇ PAKETİ",
+                    badge = if (isPersian) (if (isAdFree) "خریداری شد" else "پیشنهاد ویژه") else (if (isAdFree) "ALINDI" else "ÖZEL FIRSAT"),
+                    badgeColor = if (isAdFree) Color(0xFF059669) else Color(0xFFDC2626),
+                    price = if (isPersian) "۹۹,۰۰۰ تومان" else "₺99.99",
+                    buttonText = if (isAdFree) (if (isPersian) "فعال شد" else "Aktif") else null,
+                    enabled = !isAdFree,
                     gradientColors = listOf(Color(0xFF581C87), Color(0xFF3B0764), Color(0xFF2E1065)),
                     borderColor = Color(0xFFFFD700),
                     isGoldPriceButton = true,
@@ -262,7 +264,35 @@ fun StoreScreen(
                 )
 
                 // ------------------------------------------
-                // COMBO 1: SÜPER PAKET
+                // BANNER 3: NEW MEGA PAKET (CONSUMABLE, 4000 COINS + 4x BOOSTERS)
+                // ------------------------------------------
+                ComboPackCard(
+                    title = if (isPersian) "بسته مگا" else "MEGA PAKET",
+                    badge = if (isPersian) "پرقدرت‌ترین" else "EFSANE FIRSAT",
+                    badgeColor = Color(0xFFD97706),
+                    price = if (isPersian) "۱۴۹,۰۰۰ تومان" else "₺149.99",
+                    gradientColors = listOf(Color(0xFF701A75), Color(0xFF4C0519), Color(0xFF2E0213)),
+                    borderColor = Color(0xFFF472B6),
+                    isGoldPriceButton = true,
+                    row1Items = if (isPersian) listOf(
+                        R.drawable.coins to "۴۰۰۰",
+                        R.drawable.hint to "۴×"
+                    ) else listOf(
+                        R.drawable.coins to "4000",
+                        R.drawable.hint to "4x"
+                    ),
+                    row2Items = if (isPersian) listOf(
+                        R.drawable.undo to "۴×",
+                        R.drawable.joker to "۴×"
+                    ) else listOf(
+                        R.drawable.undo to "4x",
+                        R.drawable.joker to "4x"
+                    ),
+                    onBuy = { onBuyBundle(5200, false) }
+                )
+
+                // ------------------------------------------
+                // COMBO 1: SÜPER PAKET (بسته ویژه)
                 // ------------------------------------------
                 ComboPackCard(
                     title = if (isPersian) "بسته ویژه" else "SÜPER PAKET",
@@ -289,7 +319,7 @@ fun StoreScreen(
                 )
 
                 // ------------------------------------------
-                // COMBO 2: AVANTAJ PAKETİ
+                // COMBO 2: AVANTAJ PAKETİ (بسته اقتصادی)
                 // ------------------------------------------
                 ComboPackCard(
                     title = if (isPersian) "بسته اقتصادی" else "AVANTAJ PAKETİ",
@@ -423,7 +453,7 @@ fun StoreScreen(
                 }
 
                 // ------------------------------------------
-                // PAID COIN BANNERS WITH TOP-CENTER OVERLAPPING RED BADGES
+                // PAID COIN BANNERS: 500, 1200, 3000
                 // ------------------------------------------
                 CoinPackRow(
                     amountText = if (isPersian) "۵۰۰" else "500",
@@ -433,21 +463,21 @@ fun StoreScreen(
                 )
 
                 CoinPackRow(
-                    amountText = if (isPersian) "۱۰۰۰" else "1000",
+                    amountText = if (isPersian) "۱۲۰۰" else "1200",
                     priceText = if (isPersian) "۳۹,۰۰۰ تومان" else "₺69.99",
                     gradientColors = listOf(Color(0xFFF59E0B), Color(0xFFD97706)),
                     badgeText = if (isPersian) "محبوب" else "POPÜLER",
                     badgeColor = Color(0xFFDC2626),
-                    onBuy = { onBuyCoinPack(1000) }
+                    onBuy = { onBuyCoinPack(1200) }
                 )
 
                 CoinPackRow(
-                    amountText = if (isPersian) "۲۵۰۰" else "2500",
+                    amountText = if (isPersian) "۳۰۰۰" else "3000",
                     priceText = if (isPersian) "۷۹,۰۰۰ تومان" else "₺129.99",
                     gradientColors = listOf(Color(0xFFFFD700), Color(0xFFD97706)),
                     badgeText = if (isPersian) "بهترین ارزش" else "EN İYİ FİYAT",
                     badgeColor = Color(0xFFDC2626),
-                    onBuy = { onBuyCoinPack(2500) }
+                    onBuy = { onBuyCoinPack(3000) }
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -489,6 +519,8 @@ private fun ComboPackCard(
     gradientColors: List<Color>,
     borderColor: Color,
     isGoldPriceButton: Boolean = false,
+    enabled: Boolean = true,
+    buttonText: String? = null,
     row1Items: List<Pair<Int, String>>,
     row2Items: List<Pair<Int, String>>,
     onBuy: () -> Unit
@@ -579,7 +611,11 @@ private fun ComboPackCard(
                             .shadow(6.dp, RoundedCornerShape(14.dp))
                             .clip(RoundedCornerShape(14.dp))
                             .background(
-                                if (isGoldPriceButton) {
+                                if (!enabled) {
+                                    Brush.verticalGradient(
+                                        listOf(Color(0xFF059669), Color(0xFF047857))
+                                    )
+                                } else if (isGoldPriceButton) {
                                     Brush.verticalGradient(
                                         listOf(Color(0xFFFFD700), Color(0xFFF59E0B), Color(0xFFD97706))
                                     )
@@ -590,14 +626,14 @@ private fun ComboPackCard(
                                 }
                             )
                             .border(1.dp, Color.White, RoundedCornerShape(14.dp))
-                            .clickable { onBuy() }
+                            .clickable(enabled = enabled) { onBuy() }
                             .padding(horizontal = 16.dp, vertical = 10.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = price,
-                            color = if (isGoldPriceButton) Color(0xFF0F172A) else Color.White,
-                            fontSize = 16.sp,
+                            text = buttonText ?: price,
+                            color = if (!enabled || !isGoldPriceButton) Color.White else Color(0xFF0F172A),
+                            fontSize = 15.sp,
                             fontWeight = FontWeight.Black,
                             fontFamily = nunitoFont
                         )

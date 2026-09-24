@@ -294,6 +294,10 @@ class GameViewModel : ViewModel() {
         _uiState.update { it.copy(activeTutorial = null) }
     }
 
+    fun dismissCategoryCelebration() {
+        _uiState.update { it.copy(completedCategoryName = null) }
+    }
+
     fun selectCard(cardId: String?) {
         _uiState.update { it.copy(selectedCardId = cardId) }
     }
@@ -447,7 +451,7 @@ class GameViewModel : ViewModel() {
                 if (tempMatchedWords.isNotEmpty() && tempMatchedWords.size >= requiredCount) {
                     _uiState.update { it.copy(completedCategoryName = targetCategory.name) }
                     viewModelScope.launch {
-                        delay(2200)
+                        delay(1800)
                         _uiState.update {
                             if (it.completedCategoryName == targetCategory.name) {
                                 it.copy(completedCategoryName = null)
@@ -798,6 +802,9 @@ class GameViewModel : ViewModel() {
                 it.copy(coins = it.coins + rewardAmount)
             }
             saveCoinsToPrefs(activity, _uiState.value.coins)
+            val isPersian = LocaleHelper.isPersian(activity)
+            val msg = if (isPersian) "+${LocaleHelper.formatNumber(rewardAmount, true)} سکه رایگان دریافت شد!\u200F" else "+$rewardAmount Altın kazanıldı!"
+            android.widget.Toast.makeText(activity, msg, android.widget.Toast.LENGTH_SHORT).show()
         }
     }
 
