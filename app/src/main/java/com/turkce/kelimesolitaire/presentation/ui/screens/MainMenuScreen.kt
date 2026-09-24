@@ -171,25 +171,23 @@ fun MainMenuScreen(
                     Box(
                         modifier = Modifier
                             .size(42.dp)
-                            .clip(RoundedCornerShape(14.dp))
-                            .background(Color(0xFF2A364F).copy(alpha = 0.9f))
-                            .border(1.5.dp, Color.White.copy(alpha = 0.25f), RoundedCornerShape(14.dp))
                             .clickable { onOpenDailyReward() },
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(
-                            text = "🎁",
-                            fontSize = 22.sp
+                        Image(
+                            painter = painterResource(id = R.drawable.gift),
+                            contentDescription = "Daily Reward",
+                            modifier = Modifier.fillMaxSize()
                         )
                         if (hasUnclaimedDailyReward) {
                             Box(
                                 modifier = Modifier
                                     .align(Alignment.TopEnd)
-                                    .offset(x = 2.dp, y = (-2).dp)
-                                    .size(10.dp)
+                                    .offset(x = 1.dp, y = (-1).dp)
+                                    .size(11.dp)
                                     .clip(CircleShape)
                                     .background(Color(0xFFFF3366))
-                                    .border(1.dp, Color.White, CircleShape)
+                                    .border(1.5.dp, Color.White, CircleShape)
                             )
                         }
                     }

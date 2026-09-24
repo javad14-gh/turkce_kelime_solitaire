@@ -106,6 +106,7 @@ class MainActivity : ComponentActivity() {
                                     hasFreeJoker = state.hasFreeJoker,
                                     activeTutorial = state.activeTutorial,
                                     level1TutorialStep = state.level1TutorialStep,
+                                    shouldAnimateDeal = state.shouldAnimateDeal,
                                     onDismissTutorial = { viewModel.dismissTutorial(this@MainActivity) },
                                     onDismissCategoryCelebration = { viewModel.dismissCategoryCelebration() },
                                     onOpenStore = { viewModel.toggleStoreDialog(true) },
@@ -179,7 +180,7 @@ class MainActivity : ComponentActivity() {
                         }
                     }
 
-                    if (state.showDailyRewardDialog && state.dailyRewardState != null) {
+                    if (state.screenState is ScreenState.MainMenu && state.showDailyRewardDialog && state.dailyRewardState != null) {
                         DailyRewardDialog(
                             state = state.dailyRewardState!!,
                             onDismiss = { viewModel.dismissDailyRewardDialog() },

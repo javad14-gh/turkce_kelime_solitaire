@@ -9,6 +9,7 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -187,6 +188,7 @@ fun GameScreen(
     level1TutorialStep: Int = 0,
     onDismissTutorial: () -> Unit = {},
     onDismissCategoryCelebration: () -> Unit = {},
+    shouldAnimateDeal: Boolean = true,
     modifier: Modifier = Modifier
 ) {
     val context = androidx.compose.ui.platform.LocalContext.current
@@ -257,6 +259,38 @@ fun GameScreen(
 
     // Detect if user is dragging a waste pile card (need higher z-index overlay!)
     val isWasteDragging = wastePile.lastOrNull()?.let { top -> draggedCards.any { it.id == top.id } } ?: false
+
+    // Card Dealing Animation state at level start / restart (bypassed if entering in-progress game)
+    val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
+    var isDealingFinished by remember(levelData.levelNumber, shouldAnimateDeal) { mutableStateOf(!shouldAnimateDeal) }
+    val dealAnimProgress = remember(levelData.levelNumber, shouldAnimateDeal) { Animatable(if (shouldAnimateDeal) 0f else 1f) }
+
+    LaunchedEffect(levelData.levelNumber, shouldAnimateDeal) {
+        if (!shouldAnimateDeal) {
+            isDealingFinished = true
+            dealAnimProgress.snapTo(1f)
+            return@LaunchedEffect
+        }
+        dealAnimProgress.snapTo(0f)
+        isDealingFinished = false
+        // Smooth, clearly visible card deal flight over 1300ms
+        launch {
+            dealAnimProgress.animateTo(
+                targetValue = 1f,
+                animationSpec = tween(durationMillis = 1300, easing = LinearEasing)
+            )
+            isDealingFinished = true
+        }
+        // Rapid rhythmic card snap audio during deal
+        if (isSoundEnabled) {
+            val totalCards = tableauPiles.sumOf { it.size }
+            val soundCount = minOf(totalCards, 10)
+            for (i in 0 until soundCount) {
+                delay(95L)
+                com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playCardSnapSound(context)
+            }
+        }
+    }
 
     Box(
         modifier = modifier
@@ -419,7 +453,7 @@ fun GameScreen(
                                 isHinted = isWasteHinted,
                                 isDragged = isDragged,
                                 dragOffsetProvider = { dragOffset },
-                                isInteractionEnabled = movesRemaining > 0 && !showOutofMovesDialog && !isAnimatingReturn && (draggedCards.isEmpty() || isDragged),
+                                isInteractionEnabled = isDealingFinished && movesRemaining > 0 && !showOutofMovesDialog && !isAnimatingReturn && (draggedCards.isEmpty() || isDragged),
                                 onTap = {},
                                 onDragStart = {
                                     draggedCards = listOf(topWaste)
@@ -558,7 +592,7 @@ fun GameScreen(
                         Box(
                             modifier = Modifier
                                 .size(width = 85.dp, height = 110.dp)
-                                .clickable(enabled = movesRemaining > 0 && !showOutofMovesDialog) { onDrawFromStock() }
+                                .clickable(enabled = isDealingFinished && movesRemaining > 0 && !showOutofMovesDialog) { onDrawFromStock() }
                                 .then(
                                     if (isStockHinted) Modifier.border(2.5.dp, Color(0xFFF1C40F), RoundedCornerShape(12.dp))
                                     else Modifier
@@ -594,7 +628,7 @@ fun GameScreen(
                                     color = if (isStockHinted) Color(0xFFF1C40F) else AccentGold.copy(alpha = 0.3f),
                                     shape = RoundedCornerShape(8.dp)
                                 )
-                                .clickable(enabled = movesRemaining > 0 && !showOutofMovesDialog) { onDrawFromStock() },
+                                .clickable(enabled = isDealingFinished && movesRemaining > 0 && !showOutofMovesDialog) { onDrawFromStock() },
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
@@ -653,6 +687,7 @@ fun GameScreen(
                             totalWords = totalWordsForSlot,
                             isHighlighted = isSlotHinted,
                             onTap = {
+                                if (!isDealingFinished) return@CategoryDropZone
                                 selectedCardId?.let { cardId ->
                                     val cardFromWaste = wastePile.lastOrNull()?.takeIf { it.id == cardId }
                                     
@@ -741,7 +776,7 @@ fun GameScreen(
                                             ),
                                             shape = RoundedCornerShape(10.dp)
                                         )
-                                        .clickable {
+                                        .clickable(enabled = isDealingFinished) {
                                             selectedCardId?.let { cardId ->
                                                 val cardFromWaste = wastePile.lastOrNull()?.takeIf { it.id == cardId }
                                                 var cardFromTableau: SolitaireCard? = null
@@ -789,6 +824,26 @@ fun GameScreen(
 
                             colList.forEachIndexed { rowIdx, card ->
                                 key(card.id) {
+                                    val dealIndex = rowIdx * 4 + colIdx
+                                    val totalTableauCards = remember(tableauPiles) {
+                                        tableauPiles.mapIndexed { cIdx, list -> list.indices.map { rIdx -> rIdx * 4 + cIdx } }.flatten().maxOrNull() ?: 1
+                                    }
+                                    val cardStart = if (totalTableauCards > 0) (dealIndex.toFloat() / (totalTableauCards + 2.5f)) * 0.56f else 0f
+                                    val cardDuration = 0.44f
+                                    val cardProgress = if (isDealingFinished) 1f else ((dealAnimProgress.value - cardStart) / cardDuration).coerceIn(0f, 1f)
+                                    val eased = FastOutSlowInEasing.transform(cardProgress)
+
+                                    val currentAlpha = if (isDealingFinished) 1f else if (cardProgress <= 0f) 0f else minOf(1f, cardProgress * 3.5f)
+                                    val dirMultiplier = if (isRtl) -1f else 1f
+                                    val startOffsetX = dirMultiplier * ((3 - colIdx) * 88f + 16f)
+                                    val startOffsetY = -(210f + rowIdx * 25f)
+                                    val arcLiftY = if (isDealingFinished) 0.dp else (kotlin.math.sin(cardProgress * Math.PI).toFloat() * -24f).dp
+                                    val currentDealX = if (isDealingFinished) 0.dp else (startOffsetX * (1f - eased)).dp
+                                    val currentDealY = if (isDealingFinished) (rowIdx * 25).dp else (((rowIdx * 25f) + startOffsetY * (1f - eased)).dp + arcLiftY)
+                                    val startRotation = dirMultiplier * (if (colIdx < 2) (-14f + colIdx * 4f) else (6f + (colIdx - 2) * 5f))
+                                    val currentRotation = if (isDealingFinished) 0f else (startRotation * (1f - eased))
+                                    val currentScale = if (isDealingFinished) 1f else (0.80f + (0.20f * eased))
+
                                     val isDragged = draggedCards.any { it.id == card.id }
                                     val isCardTutorialHinted = (levelData.levelNumber == 1 && level1TutorialStep == 0 && card.isFaceUp && card.isCategory) ||
                                             (levelData.levelNumber == 1 && level1TutorialStep == 1 && card.isFaceUp && !card.isCategory && foundationSlots.any { it.activeCategory != null && it.activeCategory.id == card.categoryId })
@@ -802,7 +857,7 @@ fun GameScreen(
                                         isHinted = isCardHinted,
                                         isDragged = isDragged,
                                         dragOffsetProvider = { dragOffset },
-                                        isInteractionEnabled = movesRemaining > 0 && !showOutofMovesDialog && !isAnimatingReturn && (draggedCards.isEmpty() || isDragged),
+                                        isInteractionEnabled = isDealingFinished && movesRemaining > 0 && !showOutofMovesDialog && !isAnimatingReturn && (draggedCards.isEmpty() || isDragged),
                                         onTap = {},
                                         onDragStart = {
                                             val targetCatId = card.categoryId
@@ -932,9 +987,15 @@ fun GameScreen(
                                             }
                                         },
                                         modifier = Modifier
-                                            .offset(y = (rowIdx * 25).dp)
+                                            .offset(x = currentDealX, y = currentDealY)
+                                            .graphicsLayer {
+                                                rotationZ = currentRotation
+                                                scaleX = currentScale
+                                                scaleY = currentScale
+                                                alpha = currentAlpha
+                                            }
                                             .onGloballyPositioned { coordinates ->
-                                                if (rowIdx == colList.size - 1) {
+                                                if (isDealingFinished && rowIdx == colList.size - 1) {
                                                     val cardBounds = coordinates.boundsInRoot()
                                                     val boxBounds = tableauBounds[colIdx]
                                                     tableauBounds[colIdx] = if (boxBounds != null) {

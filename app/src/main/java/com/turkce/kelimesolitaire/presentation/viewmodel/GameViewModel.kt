@@ -92,7 +92,8 @@ data class GameUiState(
     val hasFreeHint: Boolean = false,
     val hasFreeJoker: Boolean = false,
     val activeTutorial: TutorialType? = null,
-    val level1TutorialStep: Int = 0
+    val level1TutorialStep: Int = 0,
+    val shouldAnimateDeal: Boolean = true
 )
 
 class GameViewModel : ViewModel() {
@@ -130,7 +131,13 @@ class GameViewModel : ViewModel() {
     }
 
     fun onSplashFinished() {
-        _uiState.update { it.copy(screenState = ScreenState.MainMenu) }
+        val hasUnclaimed = _uiState.value.dailyRewardState?.isReadyToClaimToday == true
+        _uiState.update { 
+            it.copy(
+                screenState = ScreenState.MainMenu,
+                showDailyRewardDialog = hasUnclaimed
+            ) 
+        }
     }
 
     fun startNewGame(activity: Activity) {
@@ -260,6 +267,7 @@ class GameViewModel : ViewModel() {
         _uiState.update {
             it.copy(
                 screenState = ScreenState.Gameplay,
+                shouldAnimateDeal = true,
                 levelNumber = levelNum,
                 levelData = generated,
                 foundationSlots = initialSlots,
@@ -852,7 +860,7 @@ class GameViewModel : ViewModel() {
                 isAdFree = isAdFree,
                 dailyRewardState = dailyReward,
                 dailyRewardHasUnclaimed = dailyReward.isReadyToClaimToday,
-                showDailyRewardDialog = dailyReward.isReadyToClaimToday
+                showDailyRewardDialog = false
             ) 
         }
     }
@@ -977,6 +985,7 @@ class GameViewModel : ViewModel() {
                         totalWordsToMatch = session.levelData.targetWords.size,
                         totalMatchedWordsCount = session.totalMatchedWordsCount,
                         screenState = ScreenState.Gameplay,
+                        shouldAnimateDeal = false,
                         selectedCardId = null,
                         shakingCardId = null,
                         isUndoUnlocked = isUndoUnlocked,
