@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base application theme for Android 12+ (API 31+). -->
+    <style name="Theme.TurkceKelimeSolitaire" parent="android:Theme.Material.NoActionBar">
+        <item name="android:statusBarColor">#07080B</item>
+        <item name="android:navigationBarColor">#07080B</item>
+        <item name="android:windowBackground">#07080B</item>
+
+        <!-- Android 12+ System Splash Screen: Seamless black cold-start window with zero icon flash -->
+        <item name="android:windowSplashScreenBackground">#07080B</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@android:color/transparent</item>
+        <item name="android:windowSplashScreenIconBackgroundColor">@android:color/transparent</item>
+    </style>
+</resources>

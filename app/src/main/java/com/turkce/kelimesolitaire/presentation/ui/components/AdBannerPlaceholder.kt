@@ -55,7 +55,7 @@ fun AdBannerPlaceholder(
         if (!isPersian) {
             // Google AdMob Banner (Google Play build)
             AndroidView(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.wrapContentSize(Alignment.Center),
                 factory = { ctx ->
                     AdView(ctx).apply {
                         setAdSize(AdSize.BANNER)
@@ -70,9 +70,15 @@ fun AdBannerPlaceholder(
         } else {
             // Tapsell Banner (Bazaar build)
             AndroidView(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.wrapContentSize(Alignment.Center),
                 factory = { ctx ->
                     BannerContainer(ctx).apply {
+                        layoutParams = FrameLayout.LayoutParams(
+                            FrameLayout.LayoutParams.WRAP_CONTENT,
+                            FrameLayout.LayoutParams.WRAP_CONTENT
+                        ).apply {
+                            gravity = android.view.Gravity.CENTER
+                        }
                         val activity = ctx as? Activity
                         if (activity != null) {
                             try {
@@ -85,7 +91,19 @@ fun AdBannerPlaceholder(
                                                 adId,
                                                 this@apply,
                                                 activity,
-                                                object : AdStateListener.Banner {}
+                                                object : AdStateListener.Banner {
+                                                    override fun onAdClicked() {
+                                                        Log.d("AdBanner", "Tapsell banner onAdClicked")
+                                                    }
+
+                                                    override fun onAdFailed(message: String) {
+                                                        Log.e("AdBanner", "Tapsell banner onAdFailed: $message")
+                                                    }
+
+                                                    override fun onAdImpression() {
+                                                        Log.d("AdBanner", "Tapsell banner onAdImpression")
+                                                    }
+                                                }
                                             )
                                         }
 

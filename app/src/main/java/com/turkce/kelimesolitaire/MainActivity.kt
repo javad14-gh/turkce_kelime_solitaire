@@ -21,6 +21,7 @@ import com.turkce.kelimesolitaire.presentation.ui.screens.GameScreen
 import com.turkce.kelimesolitaire.presentation.ui.screens.LevelCompleteScreen
 import com.turkce.kelimesolitaire.presentation.ui.screens.LevelLoadingScreen
 import com.turkce.kelimesolitaire.presentation.ui.screens.MainMenuScreen
+import com.turkce.kelimesolitaire.presentation.ui.screens.SplashScreen
 import com.turkce.kelimesolitaire.presentation.ui.screens.StoreScreen
 import android.widget.Toast
 import com.turkce.kelimesolitaire.presentation.ui.components.DailyRewardDialog
@@ -50,6 +51,11 @@ class MainActivity : ComponentActivity() {
                     val state by viewModel.uiState.collectAsState()
 
                     when (state.screenState) {
+                        is ScreenState.Splash -> {
+                            SplashScreen(
+                                onSplashFinished = { viewModel.onSplashFinished() }
+                            )
+                        }
                         is ScreenState.Loading -> {
                             LevelLoadingScreen(
                                 levelNumber = state.levelNumber

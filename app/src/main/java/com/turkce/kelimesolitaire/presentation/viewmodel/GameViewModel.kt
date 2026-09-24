@@ -30,6 +30,7 @@ import com.turkce.kelimesolitaire.data.dailyreward.DailyRewardManager
 import com.turkce.kelimesolitaire.data.dailyreward.DailyRewardState
 
 sealed interface ScreenState {
+    object Splash : ScreenState
     object MainMenu : ScreenState
     object Loading : ScreenState
     object Gameplay : ScreenState
@@ -46,7 +47,7 @@ enum class TutorialType {
 }
 
 data class GameUiState(
-    val screenState: ScreenState = ScreenState.Loading,
+    val screenState: ScreenState = ScreenState.Splash,
     val previousScreenState: ScreenState = ScreenState.MainMenu,
     val levelNumber: Int = 1,
     val score: Int = 0,
@@ -111,16 +112,25 @@ class GameViewModel : ViewModel() {
     fun initDatabase(context: Context) {
         viewModelScope.launch {
             if (wordDatabase == null) {
-                _uiState.update { it.copy(screenState = ScreenState.Loading) }
                 val db = wordRepository.loadDatabase(context)
                 wordDatabase = db
                 adManager.initialize(context) {
                     adManager.loadInterstitial(context)
                     adManager.loadRewarded(context)
                 }
-                _uiState.update { it.copy(screenState = ScreenState.MainMenu) }
+                _uiState.update { current ->
+                    if (current.screenState == ScreenState.Loading) {
+                        current.copy(screenState = ScreenState.MainMenu)
+                    } else {
+                        current
+                    }
+                }
             }
         }
+    }
+
+    fun onSplashFinished() {
+        _uiState.update { it.copy(screenState = ScreenState.MainMenu) }
     }
 
     fun startNewGame(activity: Activity) {

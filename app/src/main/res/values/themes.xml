@@ -2,8 +2,9 @@
 <resources>
     <!-- Base application theme. -->
     <style name="Theme.TurkceKelimeSolitaire" parent="android:Theme.Material.NoActionBar">
-        <!-- Customize your theme here. -->
-        <item name="android:statusBarColor">#120E2E</item>
-        <item name="android:navigationBarColor">#120E2E</item>
+        <!-- Seamless dark background matching studio splash -->
+        <item name="android:statusBarColor">#07080B</item>
+        <item name="android:navigationBarColor">#07080B</item>
+        <item name="android:windowBackground">#07080B</item>
     </style>
 </resources>
