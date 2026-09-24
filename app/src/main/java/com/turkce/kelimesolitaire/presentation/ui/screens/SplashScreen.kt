@@ -10,15 +10,10 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -26,9 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -118,59 +111,15 @@ fun SplashScreen(
                 )
         )
 
-        // Studio Logo Card (Pure AAA studio presentation)
-        Box(
+        // Studio Emblem (Pure AAA Floating Logo)
+        Image(
+            painter = painterResource(id = R.drawable.np_studio_logo),
+            contentDescription = "NP Studio Logo",
+            contentScale = ContentScale.Fit,
             modifier = Modifier
-                .width(310.dp)
+                .size(250.dp)
                 .scale(logoScale.value)
                 .alpha(logoAlpha.value)
-                .shadow(
-                    elevation = 28.dp,
-                    shape = RoundedCornerShape(22.dp),
-                    ambientColor = Color(0x44000000),
-                    spotColor = Color(0x66E5B94E)
-                )
-                .clip(RoundedCornerShape(22.dp))
-                .background(Color(0xFF12141B))
-                .border(
-                    width = 1.5.dp,
-                    brush = Brush.linearGradient(
-                        colors = listOf(
-                            Color(0x99FFDF7A),
-                            Color(0x44D4AF37),
-                            Color(0x228B7322),
-                            Color(0x55D4AF37)
-                        )
-                    ),
-                    shape = RoundedCornerShape(22.dp)
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.np_studio_logo),
-                contentDescription = "NP Studio Logo",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(170.dp)
-            )
-
-            // Soft inner vignette overlay
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(170.dp)
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(
-                                Color(0x22000000),
-                                Color.Transparent,
-                                Color.Transparent,
-                                Color(0x33000000)
-                            )
-                        )
-                    )
-            )
-        }
+        )
     }
 }

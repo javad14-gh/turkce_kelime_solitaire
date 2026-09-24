@@ -355,29 +355,37 @@ fun StoreScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+                        Row(
+                            modifier = Modifier.weight(1f),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                             Image(
                                 painter = painterResource(id = R.drawable.tv),
                                 contentDescription = "TV Ad",
-                                modifier = Modifier.size(46.dp)
+                                modifier = Modifier.size(44.dp)
                             )
-                            Spacer(modifier = Modifier.width(12.dp))
-                            Column {
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Column(modifier = Modifier.weight(1f)) {
                                 Text(
                                     text = LocaleHelper.freeCoinsTitle(isPersian),
                                     color = Color.White,
-                                    fontSize = 18.sp,
+                                    fontSize = 17.sp,
                                     fontWeight = FontWeight.Black,
-                                    fontFamily = nunitoFont
+                                    fontFamily = nunitoFont,
+                                    maxLines = 1
                                 )
                                 Text(
                                     text = LocaleHelper.freeCoinsDesc(isPersian),
                                     color = Color(0xFFDBEAFE),
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Bold
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    lineHeight = 15.sp,
+                                    maxLines = 2
                                 )
                             }
                         }
+
+                        Spacer(modifier = Modifier.width(10.dp))
 
                         Box(
                             modifier = Modifier
@@ -390,7 +398,7 @@ fun StoreScreen(
                                 )
                                 .border(1.dp, Color.White, RoundedCornerShape(12.dp))
                                 .clickable { onWatchAdForCoins() }
-                                .padding(horizontal = 16.dp, vertical = 10.dp),
+                                .padding(horizontal = 14.dp, vertical = 10.dp),
                             contentAlignment = Alignment.Center
                         ) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -403,9 +411,11 @@ fun StoreScreen(
                                 Text(
                                     text = if (isPersian) "+۵۰" else "+50",
                                     color = Color.White,
-                                    fontSize = 16.sp,
+                                    fontSize = 15.sp,
                                     fontWeight = FontWeight.Black,
-                                    fontFamily = nunitoFont
+                                    fontFamily = nunitoFont,
+                                    maxLines = 1,
+                                    softWrap = false
                                 )
                             }
                         }

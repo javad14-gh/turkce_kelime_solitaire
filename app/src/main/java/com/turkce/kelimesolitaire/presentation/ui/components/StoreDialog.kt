@@ -162,7 +162,8 @@ fun StoreDialog(
                                         color = Color.White,
                                         fontSize = 16.sp,
                                         fontWeight = FontWeight.Black,
-                                        fontFamily = nunitoFont
+                                        fontFamily = nunitoFont,
+                                        maxLines = 1
                                     )
                                 }
                                 Text(
@@ -170,7 +171,8 @@ fun StoreDialog(
                                     color = Color(0xFFC7D2FE),
                                     fontSize = 11.sp,
                                     lineHeight = 15.sp,
-                                    fontWeight = FontWeight.Bold
+                                    fontWeight = FontWeight.Bold,
+                                    maxLines = 2
                                 )
                             }
                             Spacer(modifier = Modifier.width(8.dp))
@@ -204,7 +206,9 @@ fun StoreDialog(
                                         color = Color.White,
                                         fontSize = 14.sp,
                                         fontWeight = FontWeight.Black,
-                                        fontFamily = nunitoFont
+                                        fontFamily = nunitoFont,
+                                        maxLines = 1,
+                                        softWrap = false
                                     )
                                     Spacer(modifier = Modifier.width(3.dp))
                                     CoinIcon(size = 14.dp)
