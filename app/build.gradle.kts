@@ -19,6 +19,9 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        manifestPlaceholders["TapsellMediationAppKey"] = "jqfpqlgflojgicbkqnidhnmppgppjeoqedirholtnaffhkclhoaffepsaphecmrtmhtjnl"
+        manifestPlaceholders["TapsellMediationAdmobAdapterSignature"] = "ca-app-pub-3940256099942544~3347511713"
     }
 
     flavorDimensions += "market"
@@ -86,8 +89,10 @@ dependencies {
     // Google Mobile Ads (AdMob) SDK
     implementation("com.google.android.gms:play-services-ads:22.6.0")
 
-    // Tapsell Plus SDK (for Persian / Bazaar market)
-    implementation("ir.tapsell.plus:tapsell-plus-sdk-android:2.3.3")
+    // Tapsell Mediation SDK (for Persian / Bazaar market)
+    implementation("ir.tapsell:tapsell:1.3.0")
+    implementation("ir.tapsell.mediation.adapter:legacy:1.3.0")
+    implementation("ir.tapsell.mediation.adapter:admob:1.3.0")
 
     // Test dependencies
     testImplementation("junit:junit:4.13.2")

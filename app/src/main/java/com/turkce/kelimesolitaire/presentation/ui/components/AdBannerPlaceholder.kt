@@ -24,11 +24,11 @@ import com.turkce.kelimesolitaire.ads.AdManager
 import com.turkce.kelimesolitaire.presentation.ui.theme.BorderGlass
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkCard
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
-import ir.tapsell.plus.AdRequestCallback
-import ir.tapsell.plus.AdShowListener
-import ir.tapsell.plus.TapsellPlus
-import ir.tapsell.plus.TapsellPlusBannerType
-import ir.tapsell.plus.model.TapsellPlusAdModel
+import ir.tapsell.mediation.Tapsell
+import ir.tapsell.mediation.ad.AdStateListener
+import ir.tapsell.mediation.ad.request.BannerSize
+import ir.tapsell.mediation.ad.request.RequestResultListener
+import ir.tapsell.mediation.ad.views.banner.BannerContainer
 
 @Composable
 fun AdBannerPlaceholder(
@@ -72,26 +72,24 @@ fun AdBannerPlaceholder(
             AndroidView(
                 modifier = Modifier.fillMaxWidth(),
                 factory = { ctx ->
-                    FrameLayout(ctx).apply {
+                    BannerContainer(ctx).apply {
                         val activity = ctx as? Activity
                         if (activity != null) {
                             try {
-                                TapsellPlus.requestStandardBannerAd(
-                                    activity,
+                                Tapsell.requestBannerAd(
                                     AdManager.TAPSELL_BANNER_ZONE_ID,
-                                    TapsellPlusBannerType.BANNER_320x50,
-                                    object : AdRequestCallback() {
-                                        override fun response(model: TapsellPlusAdModel) {
-                                            val respId = model.responseId ?: return
-                                            TapsellPlus.showStandardBannerAd(
-                                                activity,
-                                                respId,
+                                    BannerSize.BANNER_320_50,
+                                    object : RequestResultListener {
+                                        override fun onSuccess(adId: String) {
+                                            Tapsell.showBannerAd(
+                                                adId,
                                                 this@apply,
-                                                object : AdShowListener() {}
+                                                activity,
+                                                object : AdStateListener.Banner {}
                                             )
                                         }
 
-                                        override fun error(message: String?) {
+                                        override fun onFailure(message: String) {
                                             Log.e("AdBanner", "Tapsell banner load error: $message")
                                         }
                                     }

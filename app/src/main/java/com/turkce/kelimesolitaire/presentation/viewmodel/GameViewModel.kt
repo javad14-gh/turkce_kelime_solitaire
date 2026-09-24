@@ -97,6 +97,8 @@ data class GameUiState(
 class GameViewModel : ViewModel() {
     private val undoStack = mutableListOf<SavedGameSession>()
     private var isAdvancingLevel = false
+    private var levelsSinceLastAd = 0
+    private val AD_INTERVAL_LEVELS = 3
 
     private val _uiState = MutableStateFlow(GameUiState())
     val uiState: StateFlow<GameUiState> = _uiState.asStateFlow()
@@ -133,8 +135,17 @@ class GameViewModel : ViewModel() {
         undoStack.clear() // Clear undo history on fresh start
         clearActiveSessionFromPrefs(activity, currentLvl)
         
-        if (!_uiState.value.isAdFree && currentLvl > 1 && currentLvl % 2 == 0) {
+        val shouldShowAd = !_uiState.value.isAdFree && 
+                           isAdvancingLevel && 
+                           currentLvl > 5 && 
+                           levelsSinceLastAd >= AD_INTERVAL_LEVELS
+
+        if (shouldShowAd) {
             adManager.showInterstitial(activity) {
+                levelsSinceLastAd = 0
+                val prefs = activity.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)
+                prefs.edit().putInt("levels_since_last_ad", 0).apply()
+
                 viewModelScope.launch {
                     loadLevelData(currentLvl, db, activity, minDisplayTimeMs = 600L)
                     saveActiveSessionToPrefs(activity)
@@ -645,9 +656,13 @@ class GameViewModel : ViewModel() {
 
         val updatedSet = _uiState.value.completedLevels + currentLvl
 
+        val prefs = context.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)
         if (currentLvl == 1) {
-            val prefs = context.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)
             prefs.edit().putBoolean("tutorial_lvl1_completed", true).apply()
+        }
+        if (currentLvl >= 5) {
+            levelsSinceLastAd++
+            prefs.edit().putInt("levels_since_last_ad", levelsSinceLastAd).apply()
         }
 
         _uiState.update {
@@ -780,6 +795,10 @@ class GameViewModel : ViewModel() {
         val bonus = _uiState.value.levelCompletedBonus
         if (bonus <= 0 || _uiState.value.isLevelRewardDoubled) return
         adManager.showRewarded(activity) { _ ->
+            val prefs = activity.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)
+            levelsSinceLastAd = 0
+            prefs.edit().putInt("levels_since_last_ad", 0).apply()
+
             _uiState.update {
                 it.copy(
                     coins = it.coins + bonus,
@@ -792,6 +811,7 @@ class GameViewModel : ViewModel() {
 
     fun initPreferences(context: Context) {
         val prefs = context.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)
+        levelsSinceLastAd = prefs.getInt("levels_since_last_ad", 0)
         val completedSet = mutableSetOf<Int>()
         
         val allPrefs = prefs.all
