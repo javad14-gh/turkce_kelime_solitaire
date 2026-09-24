@@ -9,7 +9,8 @@ object MyketBillingConfig {
      * Myket RSA Public Key for verifying purchase signatures.
      * کلید عمومی پرداخت مایکت را از پیشخان توسعه‌دهندگان مایکت (بخش پرداخت درون‌برنامه‌ای) کپی و اینجا قرار دهید.
      */
-    const val MYKET_RSA_PUBLIC_KEY: String = "PASTE_YOUR_MYKET_RSA_PUBLIC_KEY_HERE"
+    const val MYKET_RSA_PUBLIC_KEY: String =
+        "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCOeG2wvb4ClXX1u/NRGuYZH2MQiPx2rfZ/4spQPdzkxLK27PskVTacz/ZmPOYwdttUQJHsyWaufIkbWZ84cEpfIVyoPo9657Xneb+WWeLptshHFN790UNmOOiewcc1x7GBP5Vm6Z9SQ7IsYipWfq29gNXyEd1+XNZFI0n1vFPs1wIDAQAB"
 
     // Myket Package Name for In-App Billing Service Intent
     const val MYKET_BILLING_PACKAGE = "ir.mservices.market"
