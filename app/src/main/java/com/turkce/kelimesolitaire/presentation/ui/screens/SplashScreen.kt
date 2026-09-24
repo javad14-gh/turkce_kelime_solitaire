@@ -83,27 +83,19 @@ fun SplashScreen(
         modifier = modifier
             .fillMaxSize()
             .alpha(screenAlpha.value)
-            .background(
-                Brush.radialGradient(
-                    colors = listOf(
-                        Color(0xFF16181F),
-                        Color(0xFF0C0E13),
-                        Color(0xFF07080B)
-                    )
-                )
-            ),
+            .background(Color.Black),
         contentAlignment = Alignment.Center
     ) {
-        // Ambient Golden Glow behind logo
+        // Subtle soft white ambient breathing light behind the white logo
         Box(
             modifier = Modifier
-                .size(340.dp)
+                .size(320.dp)
                 .scale(ambientGlowScale)
                 .background(
                     Brush.radialGradient(
                         colors = listOf(
-                            Color(0x35E5B94E),
-                            Color(0x15D4AF37),
+                            Color.White.copy(alpha = 0.06f),
+                            Color.White.copy(alpha = 0.02f),
                             Color.Transparent
                         )
                     ),
@@ -111,13 +103,13 @@ fun SplashScreen(
                 )
         )
 
-        // Studio Emblem (Pure AAA Floating Logo)
+        // Studio Emblem (Crisp Pure White Logo on Black Background)
         Image(
             painter = painterResource(id = R.drawable.np_studio_logo),
             contentDescription = "NP Studio Logo",
             contentScale = ContentScale.Fit,
             modifier = Modifier
-                .size(250.dp)
+                .size(240.dp)
                 .scale(logoScale.value)
                 .alpha(logoAlpha.value)
         )
