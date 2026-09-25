@@ -18,6 +18,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.decodeFromString
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,6 +29,8 @@ import kotlinx.coroutines.withContext
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 import com.turkce.kelimesolitaire.data.dailyreward.DailyRewardManager
 import com.turkce.kelimesolitaire.data.dailyreward.DailyRewardState
+import com.turkce.kelimesolitaire.presentation.ui.components.InGameMessage
+import com.turkce.kelimesolitaire.presentation.ui.components.MessageType
 
 sealed interface ScreenState {
     object Splash : ScreenState
@@ -94,7 +97,8 @@ data class GameUiState(
     val hasFreeJoker: Boolean = false,
     val activeTutorial: TutorialType? = null,
     val level1TutorialStep: Int = 0,
-    val shouldAnimateDeal: Boolean = true
+    val shouldAnimateDeal: Boolean = true,
+    val activeMessage: InGameMessage? = null
 )
 
 class GameViewModel : ViewModel() {
@@ -102,6 +106,7 @@ class GameViewModel : ViewModel() {
     private var isAdvancingLevel = false
     private var levelsSinceLastAd = 0
     private val AD_INTERVAL_LEVELS = 3
+    private var messageDismissJob: Job? = null
 
     private val _uiState = MutableStateFlow(GameUiState())
     val uiState: StateFlow<GameUiState> = _uiState.asStateFlow()
@@ -110,6 +115,23 @@ class GameViewModel : ViewModel() {
     private val levelGenerator = LevelGenerator()
     private var wordDatabase: WordDatabase? = null
     private val adManager = AdManager.getInstance()
+
+    fun showUserMessage(message: String, type: MessageType = MessageType.INFO) {
+        val msg = InGameMessage(id = System.currentTimeMillis(), message = message, type = type)
+        _uiState.update { it.copy(activeMessage = msg) }
+        messageDismissJob?.cancel()
+        messageDismissJob = viewModelScope.launch {
+            delay(3200L)
+            _uiState.update { current ->
+                if (current.activeMessage?.id == msg.id) current.copy(activeMessage = null) else current
+            }
+        }
+    }
+
+    fun dismissUserMessage() {
+        messageDismissJob?.cancel()
+        _uiState.update { it.copy(activeMessage = null) }
+    }
 
     fun initDatabase(context: Context) {
         viewModelScope.launch {
@@ -523,7 +545,7 @@ class GameViewModel : ViewModel() {
                     } else {
                         "Kategori kartının üzerine kart konulamaz! Kategori kartını yukarı taşıyın."
                     }
-                    android.widget.Toast.makeText(context, msg, android.widget.Toast.LENGTH_SHORT).show()
+                    showUserMessage(msg, MessageType.WARNING)
                     return false
                 }
 
@@ -742,7 +764,7 @@ class GameViewModel : ViewModel() {
             _uiState.update { it.copy(restartCountInLevel = 1) }
             val isPersian = LocaleHelper.isPersian(activity)
             val msg = if (isPersian) "شروع مجدد مرحله (اولین بار رایگان) 🔄" else "Seviye Yeniden Başlatıldı (İlk Sefer Ücretsiz) 🔄"
-            android.widget.Toast.makeText(activity, msg, android.widget.Toast.LENGTH_SHORT).show()
+            showUserMessage(msg, MessageType.INFO)
             restartLevel(activity)
         } else {
             _uiState.update { it.copy(showRestartDialog = true) }
@@ -753,7 +775,9 @@ class GameViewModel : ViewModel() {
         val cost = 15
         if (_uiState.value.coins < cost) {
             val isPersian = LocaleHelper.isPersian(activity)
-            onShowToast(if (isPersian) "سکه ناکافی! می‌توانید با تماشای ویدیو ریستارت کنید.\u200F" else "Yetersiz altın! Reklam izleyerek yeniden başlatabilirsiniz.")
+            val msg = if (isPersian) "سکه ناکافی! می‌توانید با تماشای ویدیو ریستارت کنید.\u200F" else "Yetersiz altın! Reklam izleyerek yeniden başlatabilirsiniz."
+            showUserMessage(msg, MessageType.WARNING)
+            onShowToast(msg)
             return
         }
         _uiState.update {
@@ -807,8 +831,8 @@ class GameViewModel : ViewModel() {
             }
             saveCoinsToPrefs(activity, _uiState.value.coins)
             val isPersian = LocaleHelper.isPersian(activity)
-            val msg = if (isPersian) "+${LocaleHelper.formatNumber(rewardAmount, true)} سکه رایگان دریافت شد!\u200F" else "+$rewardAmount Altın kazanıldı!"
-            android.widget.Toast.makeText(activity, msg, android.widget.Toast.LENGTH_SHORT).show()
+            val msg = if (isPersian) "+${LocaleHelper.formatNumber(rewardAmount, true)} سکه رایگان دریافت شد! ✨" else "+$rewardAmount Altın kazanıldı! ✨"
+            showUserMessage(msg, MessageType.SUCCESS)
         }
     }
 
@@ -831,6 +855,9 @@ class GameViewModel : ViewModel() {
     }
 
     fun initPreferences(context: Context) {
+        adManager.onToastMessage = { msg, isError ->
+            showUserMessage(msg, if (isError) MessageType.ERROR else MessageType.INFO)
+        }
         val prefs = context.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)
         levelsSinceLastAd = prefs.getInt("levels_since_last_ad", 0)
         val completedSet = mutableSetOf<Int>()

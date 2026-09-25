@@ -90,6 +90,7 @@ import com.turkce.kelimesolitaire.presentation.ui.components.CategoryDropZone
 import com.turkce.kelimesolitaire.presentation.ui.components.OutlinedText
 import com.turkce.kelimesolitaire.presentation.ui.components.rememberNunitoFont
 import com.turkce.kelimesolitaire.presentation.ui.components.WordCard
+import com.turkce.kelimesolitaire.presentation.ui.components.MessageType
 import com.turkce.kelimesolitaire.presentation.ui.theme.AccentGold
 import com.turkce.kelimesolitaire.presentation.ui.theme.BorderGlass
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkCard
@@ -181,6 +182,7 @@ fun GameScreen(
     onBuyExtraMoves: () -> Unit,
     onAcceptDefeat: () -> Unit,
     onWatchAdForCoins: () -> Unit = {},
+    onShowMessage: (String, MessageType) -> Unit = { _, _ -> },
     isUndoUnlocked: Boolean = false,
     isHintUnlocked: Boolean = false,
     isJokerUnlocked: Boolean = false,
@@ -1088,11 +1090,10 @@ fun GameScreen(
                             .size(68.dp)
                             .clickable(enabled = !isLevelWon && isDealingFinished) {
                                 if (!isHintUnlocked) {
-                                    android.widget.Toast.makeText(
-                                        context,
-                                        if (isPersian) "قابلیت راهنما در مرحله ۸ (سخت) باز می‌شود!\u200F" else "İpucu özelliği 8. seviyede açılır!",
-                                        android.widget.Toast.LENGTH_SHORT
-                                    ).show()
+                                    onShowMessage(
+                                        if (isPersian) "قابلیت راهنما در مرحله ۸ (سخت) باز می‌شود! 🔒" else "İpucu özelliği 8. seviyede açılır! 🔒",
+                                        MessageType.WARNING
+                                    )
                                 } else {
                                     onShowHint()
                                 }
@@ -1184,11 +1185,10 @@ fun GameScreen(
                             .size(68.dp)
                             .clickable(enabled = !isLevelWon && isDealingFinished) {
                                 if (!isUndoUnlocked) {
-                                    android.widget.Toast.makeText(
-                                        context,
-                                        if (isPersian) "قابلیت بازگشت در مرحله ۲ باز می‌شود!\u200F" else "Geri Al özelliği 2. seviyede açılır!",
-                                        android.widget.Toast.LENGTH_SHORT
-                                    ).show()
+                                    onShowMessage(
+                                        if (isPersian) "قابلیت بازگشت در مرحله ۲ باز می‌شود! 🔒" else "Geri Al özelliği 2. seviyede açılır! 🔒",
+                                        MessageType.WARNING
+                                    )
                                 } else {
                                     onUndoLastMove()
                                 }
@@ -1275,11 +1275,10 @@ fun GameScreen(
                             .size(68.dp)
                             .clickable(enabled = !isLevelWon && isDealingFinished) {
                                 if (!isJokerUnlocked) {
-                                    android.widget.Toast.makeText(
-                                        context,
-                                        if (isPersian) "کارت جوکر در مرحله ۱۰ (خیلی سخت) باز می‌شود!\u200F" else "Joker kartı 10. seviyede açılır!",
-                                        android.widget.Toast.LENGTH_SHORT
-                                    ).show()
+                                    onShowMessage(
+                                        if (isPersian) "کارت جوکر در مرحله ۱۰ (خیلی سخت) باز می‌شود! 🔒" else "Joker kartı 10. seviyede açılır! 🔒",
+                                        MessageType.WARNING
+                                    )
                                 } else {
                                     onUseJoker()
                                 }
@@ -1384,11 +1383,11 @@ fun GameScreen(
                         Text(
                             text = LocaleHelper.outOfMovesPrompt(isPersian),
                             color = TextPrimary,
-                            fontSize = 13.sp,
+                            fontSize = 15.sp,
                             fontWeight = FontWeight.Bold,
                             fontFamily = nunitoFont,
                             textAlign = TextAlign.Center,
-                            lineHeight = 18.sp
+                            lineHeight = 22.sp
                         )
                         Spacer(modifier = Modifier.height(20.dp))
                         
@@ -1404,7 +1403,7 @@ fun GameScreen(
                             Text(
                                 text = if (isPersian) "+۵ حرکت: ۷۵ 🪙" else "5 Ek Hamle: 75 🪙",
                                 color = Color.Black,
-                                fontSize = 14.sp,
+                                fontSize = 16.sp,
                                 fontWeight = FontWeight.Black,
                                 fontFamily = nunitoFont
                             )
@@ -1424,7 +1423,7 @@ fun GameScreen(
                             Text(
                                 text = LocaleHelper.giveUp(isPersian),
                                 color = TextPrimary,
-                                fontSize = 12.sp,
+                                fontSize = 14.sp,
                                 fontWeight = FontWeight.Bold,
                                 fontFamily = nunitoFont
                             )
@@ -1448,7 +1447,7 @@ fun GameScreen(
                     colors = CardDefaults.cardColors(containerColor = Color(0xFF0F3B24)),
                     shape = RoundedCornerShape(16.dp),
                     modifier = Modifier
-                        .width(300.dp)
+                        .width(310.dp)
                         .border(1.dp, BorderGlass, RoundedCornerShape(16.dp))
                         .clickable(enabled = false) {}
                 ) {
@@ -1461,7 +1460,7 @@ fun GameScreen(
                             textColor = AccentGold,
                             outlineColor = Color(0xFF0F172A),
                             outlineWidth = 4f,
-                            fontSize = 18.sp,
+                            fontSize = 20.sp,
                             fontWeight = FontWeight.Black,
                             textAlign = TextAlign.Center
                         )
@@ -1469,11 +1468,11 @@ fun GameScreen(
                         Text(
                             text = if (isPersian) "آیا می‌خواهید از بازی خارج شوید؟ پیشرفت شما ذخیره خواهد شد." else "Oyundan çıkmak istiyor musunuz? İlerlemeniz kaydedilecektir.",
                             color = TextPrimary,
-                            fontSize = 13.sp,
+                            fontSize = 15.sp,
                             fontWeight = FontWeight.Bold,
                             fontFamily = nunitoFont,
                             textAlign = TextAlign.Center,
-                            lineHeight = 18.sp
+                            lineHeight = 22.sp
                         )
                         Spacer(modifier = Modifier.height(20.dp))
                         Row(
@@ -1485,13 +1484,13 @@ fun GameScreen(
                                     .weight(1f)
                                     .clickable { showExitConfirmDialog = false }
                                     .border(1.dp, Color.White.copy(alpha = 0.15f), RoundedCornerShape(8.dp))
-                                    .padding(vertical = 10.dp),
+                                    .padding(vertical = 12.dp),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
                                     text = if (isPersian) "انصراف" else "İptal",
                                     color = TextPrimary,
-                                    fontSize = 12.sp,
+                                    fontSize = 14.sp,
                                     fontWeight = FontWeight.Bold,
                                     fontFamily = nunitoFont
                                 )
@@ -1505,13 +1504,13 @@ fun GameScreen(
                                         onBackToMenu() 
                                     }
                                     .background(Color(0xFFE5A93C), shape = RoundedCornerShape(8.dp))
-                                    .padding(vertical = 10.dp),
+                                    .padding(vertical = 12.dp),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
                                     text = if (isPersian) "خروج" else "Çıkış Yap",
                                     color = Color.Black,
-                                    fontSize = 12.sp,
+                                    fontSize = 14.sp,
                                     fontWeight = FontWeight.Black,
                                     fontFamily = nunitoFont
                                 )

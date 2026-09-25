@@ -12,7 +12,13 @@ import androidx.core.view.WindowCompat
 
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDirection
+import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
+import com.turkce.kelimesolitaire.presentation.util.rememberAppFont
 
 private val DarkColorScheme = darkColorScheme(
     primary = PrimaryNeon,
@@ -41,12 +47,23 @@ fun TurkceKelimeSolitaireTheme(
         }
     }
 
+    val context = LocalContext.current
+    val isPersian = remember(context) { LocaleHelper.isPersian(context) }
+    val appFont = rememberAppFont()
+    val typography = remember(appFont, isPersian) { createAppTypography(appFont, isPersian) }
+    val defaultDirection = if (isPersian) TextDirection.Rtl else TextDirection.Ltr
+
     CompositionLocalProvider(
-        LocalTextStyle provides LocalTextStyle.current.copy(textDirection = TextDirection.ContentOrRtl)
+        LocalTextStyle provides TextStyle(
+            fontFamily = appFont,
+            fontWeight = FontWeight.Bold,
+            textDirection = defaultDirection,
+            color = TextPrimary
+        )
     ) {
         MaterialTheme(
             colorScheme = colorScheme,
-            typography = Typography,
+            typography = typography,
             content = content
         )
     }

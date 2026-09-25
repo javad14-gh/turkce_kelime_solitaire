@@ -52,6 +52,18 @@ class AdManager private constructor() {
     private var tapsellRewardedResponseId: String? = null
     private var isTapsellInitialized = false
 
+    var onToastMessage: ((message: String, isError: Boolean) -> Unit)? = null
+
+    private fun showMessage(activity: Activity, message: String, isError: Boolean = false) {
+        onToastMessage?.invoke(message, isError) ?: run {
+            android.widget.Toast.makeText(
+                activity,
+                message,
+                if (isError) android.widget.Toast.LENGTH_LONG else android.widget.Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
     fun isTapsellConfigured(): Boolean {
         return TAPSELL_APP_KEY.isNotBlank() && TAPSELL_APP_KEY != "YOUR_TAPSELL_APP_KEY"
     }
@@ -274,7 +286,7 @@ class AdManager private constructor() {
             if (isTapsellConfigured() && !respId.isNullOrEmpty()) {
                 showTapsellRewardedAdInternal(respId, activity, onRewardEarned)
             } else if (isTapsellConfigured()) {
-                android.widget.Toast.makeText(activity, "در حال دریافت ویدیو تبلیغاتی...", android.widget.Toast.LENGTH_SHORT).show()
+                showMessage(activity, "در حال دریافت ویدیو تبلیغاتی...", false)
                 try {
                     Tapsell.requestRewardedAd(
                         TAPSELL_REWARDED_ZONE_ID,
@@ -288,20 +300,20 @@ class AdManager private constructor() {
 
                             override fun onFailure(message: String) {
                                 Log.e(TAG, "Tapsell Rewarded ad load on demand error: $message")
-                                android.widget.Toast.makeText(
+                                showMessage(
                                     activity,
                                     "ویدیویی برای نمایش موجود نیست. لطفاً مجدداً امتحان کنید.",
-                                    android.widget.Toast.LENGTH_LONG
-                                ).show()
+                                    true
+                                )
                             }
                         }
                     )
                 } catch (e: Throwable) {
                     Log.e(TAG, "Tapsell requestRewardedAd exception: ${e.message}")
-                    android.widget.Toast.makeText(activity, "خطا در اتصال به سرویس تبلیغات", android.widget.Toast.LENGTH_SHORT).show()
+                    showMessage(activity, "خطا در اتصال به سرویس تبلیغات", true)
                 }
             } else {
-                android.widget.Toast.makeText(activity, "سرویس تبلیغات پیکربندی نشده است.", android.widget.Toast.LENGTH_SHORT).show()
+                showMessage(activity, "سرویس تبلیغات پیکربندی نشده است.", true)
             }
             return
         }
@@ -369,7 +381,7 @@ class AdManager private constructor() {
                         Log.e(TAG, "Tapsell rewarded show error: $message")
                         tapsellRewardedResponseId = null
                         loadRewarded(activity)
-                        android.widget.Toast.makeText(activity, "خطا در پخش ویدیو: $message", android.widget.Toast.LENGTH_SHORT).show()
+                        showMessage(activity, "خطا در پخش ویدیو: $message", true)
                     }
                 }
             )

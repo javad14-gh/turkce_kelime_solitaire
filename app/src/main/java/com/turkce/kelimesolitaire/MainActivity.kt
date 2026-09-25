@@ -28,6 +28,8 @@ import com.turkce.kelimesolitaire.presentation.ui.screens.SplashScreen
 import com.turkce.kelimesolitaire.presentation.ui.screens.StoreScreen
 import android.widget.Toast
 import com.turkce.kelimesolitaire.presentation.ui.components.DailyRewardDialog
+import com.turkce.kelimesolitaire.presentation.ui.components.InGameToastBanner
+import com.turkce.kelimesolitaire.presentation.ui.components.MessageType
 import com.turkce.kelimesolitaire.presentation.ui.components.RestartLevelDialog
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.SecondaryNeon
@@ -129,24 +131,25 @@ class MainActivity : ComponentActivity() {
                                         onDrawFromStock = { viewModel.drawFromStock(this@MainActivity) },
                                         onRestartLevel = { viewModel.requestRestartLevel(this@MainActivity) },
                                         onBackToMenu = { viewModel.returnToMainMenu() },
+                                        onShowMessage = { msg, type -> viewModel.showUserMessage(msg, type) },
                                         onShowHint = {
                                             viewModel.showHint(this@MainActivity) { msg ->
-                                                android.widget.Toast.makeText(this@MainActivity, msg, android.widget.Toast.LENGTH_SHORT).show()
+                                                viewModel.showUserMessage(msg, MessageType.INFO)
                                             }
                                         },
                                         onUndoLastMove = {
                                             viewModel.undoLastMove(this@MainActivity) { msg ->
-                                                android.widget.Toast.makeText(this@MainActivity, msg, android.widget.Toast.LENGTH_SHORT).show()
+                                                viewModel.showUserMessage(msg, MessageType.WARNING)
                                             }
                                         },
                                         onUseJoker = {
                                             viewModel.useJoker(this@MainActivity) { msg ->
-                                                android.widget.Toast.makeText(this@MainActivity, msg, android.widget.Toast.LENGTH_SHORT).show()
+                                                viewModel.showUserMessage(msg, MessageType.WARNING)
                                             }
                                         },
                                         onBuyExtraMoves = {
                                             viewModel.buyExtraMoves(this@MainActivity) { msg ->
-                                                android.widget.Toast.makeText(this@MainActivity, msg, android.widget.Toast.LENGTH_SHORT).show()
+                                                viewModel.showUserMessage(msg, MessageType.WARNING)
                                             }
                                         },
                                         onAcceptDefeat = {
@@ -196,7 +199,7 @@ class MainActivity : ComponentActivity() {
                             onDismiss = { viewModel.dismissDailyRewardDialog() },
                             onClaim = { doubleReward ->
                                 viewModel.claimDailyReward(this@MainActivity, doubleReward) { msg ->
-                                    Toast.makeText(this@MainActivity, msg, Toast.LENGTH_SHORT).show()
+                                    viewModel.showUserMessage(msg, MessageType.SUCCESS)
                                 }
                             }
                         )
@@ -208,7 +211,7 @@ class MainActivity : ComponentActivity() {
                             cost = 15,
                             onRestartWithCoins = {
                                 viewModel.confirmRestartWithCoins(this@MainActivity) { msg ->
-                                    Toast.makeText(this@MainActivity, msg, Toast.LENGTH_SHORT).show()
+                                    viewModel.showUserMessage(msg, MessageType.WARNING)
                                 }
                             },
                             onRestartWithAd = {
@@ -219,6 +222,12 @@ class MainActivity : ComponentActivity() {
                             }
                         )
                     }
+
+                    // Global in-game toast banner with unified fonts & smooth animations
+                    InGameToastBanner(
+                        message = state.activeMessage,
+                        onDismiss = { viewModel.dismissUserMessage() }
+                    )
                 }
             }
         }

@@ -209,15 +209,7 @@ object LocaleHelper {
 fun rememberAppFont(): FontFamily {
     val context = LocalContext.current
     val isPersian = remember(context) { LocaleHelper.isPersian(context) }
-    return remember(isPersian, context) {
-        try {
-            if (isPersian) {
-                FontFamily(Font(path = "fonts/vazirmatn.ttf", assetManager = context.assets))
-            } else {
-                FontFamily(Font(path = "fonts/nunito_black.ttf", assetManager = context.assets))
-            }
-        } catch (e: Throwable) {
-            FontFamily.SansSerif
-        }
+    return remember(isPersian) {
+        com.turkce.kelimesolitaire.presentation.ui.theme.getAppFontFamily(isPersian)
     }
 }
