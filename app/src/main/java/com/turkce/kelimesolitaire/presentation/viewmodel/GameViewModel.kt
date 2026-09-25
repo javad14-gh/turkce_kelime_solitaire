@@ -83,6 +83,7 @@ data class GameUiState(
     val dailyRewardHasUnclaimed: Boolean = false,
     val restartCountInLevel: Int = 0,
     val showRestartDialog: Boolean = false,
+    val isLevelWon: Boolean = false,
 
     // Booster progressive unlocks & free gifts
     val isUndoUnlocked: Boolean = false,
@@ -473,7 +474,11 @@ class GameViewModel : ViewModel() {
             }
 
             if (newTotalMatched >= _uiState.value.totalWordsToMatch && _uiState.value.totalWordsToMatch > 0) {
-                triggerLevelComplete(context)
+                _uiState.update { it.copy(isLevelWon = true) }
+                viewModelScope.launch {
+                    delay(1600L)
+                    triggerLevelComplete(context)
+                }
             } else {
                 checkMovesRemaining()
             }
@@ -680,6 +685,7 @@ class GameViewModel : ViewModel() {
         _uiState.update {
             it.copy(
                 screenState = ScreenState.LevelComplete,
+                isLevelWon = false,
                 levelCompletedBonus = bonus,
                 isLevelRewardDoubled = false,
                 coins = it.coins + bonus,

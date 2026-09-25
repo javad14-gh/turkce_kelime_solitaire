@@ -165,6 +165,7 @@ fun GameScreen(
     hintedTargetId: String?,
     showOutofMovesDialog: Boolean,
     completedCategoryName: String?,
+    isLevelWon: Boolean = false,
     shatteringJokerId: String? = null,
     isAdFree: Boolean = false,
     onOpenStore: () -> Unit = {},
@@ -468,7 +469,7 @@ fun GameScreen(
                                 isHinted = isWasteHinted,
                                 isDragged = isDragged,
                                 dragOffsetProvider = { dragOffset },
-                                isInteractionEnabled = isDealingFinished && movesRemaining > 0 && !showOutofMovesDialog && !isAnimatingReturn && (draggedCards.isEmpty() || isDragged),
+                                isInteractionEnabled = !isLevelWon && isDealingFinished && movesRemaining > 0 && !showOutofMovesDialog && !isAnimatingReturn && (draggedCards.isEmpty() || isDragged),
                                 onTap = {},
                                 onDragStart = {
                                     draggedCards = listOf(topWaste)
@@ -607,7 +608,7 @@ fun GameScreen(
                         Box(
                             modifier = Modifier
                                 .size(width = 85.dp, height = 110.dp)
-                                .clickable(enabled = isDealingFinished && movesRemaining > 0 && !showOutofMovesDialog) { onDrawFromStock() }
+                                .clickable(enabled = !isLevelWon && isDealingFinished && movesRemaining > 0 && !showOutofMovesDialog) { onDrawFromStock() }
                                 .then(
                                     if (isStockHinted) Modifier.border(2.5.dp, Color(0xFFF1C40F), RoundedCornerShape(12.dp))
                                     else Modifier
@@ -643,7 +644,7 @@ fun GameScreen(
                                     color = if (isStockHinted) Color(0xFFF1C40F) else AccentGold.copy(alpha = 0.3f),
                                     shape = RoundedCornerShape(8.dp)
                                 )
-                                .clickable(enabled = isDealingFinished && movesRemaining > 0 && !showOutofMovesDialog) { onDrawFromStock() },
+                                .clickable(enabled = !isLevelWon && isDealingFinished && movesRemaining > 0 && !showOutofMovesDialog) { onDrawFromStock() },
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
@@ -875,7 +876,7 @@ fun GameScreen(
                                         isDragged = isDragged,
                                         dragZIndex = if (dragGroupIdx >= 0) dragGroupIdx.toFloat() else 0f,
                                         dragOffsetProvider = { dragOffset },
-                                        isInteractionEnabled = isDealingFinished && movesRemaining > 0 && !showOutofMovesDialog && !isAnimatingReturn && (draggedCards.isEmpty() || isDragged),
+                                        isInteractionEnabled = !isLevelWon && isDealingFinished && movesRemaining > 0 && !showOutofMovesDialog && !isAnimatingReturn && (draggedCards.isEmpty() || isDragged),
                                         onTap = {},
                                         onDragStart = {
                                             val targetCatId = card.categoryId
@@ -1085,7 +1086,7 @@ fun GameScreen(
                                 RoundedCornerShape(14.dp)
                             )
                             .size(68.dp)
-                            .clickable {
+                            .clickable(enabled = !isLevelWon && isDealingFinished) {
                                 if (!isHintUnlocked) {
                                     android.widget.Toast.makeText(
                                         context,
@@ -1181,7 +1182,7 @@ fun GameScreen(
                                 RoundedCornerShape(14.dp)
                             )
                             .size(68.dp)
-                            .clickable {
+                            .clickable(enabled = !isLevelWon && isDealingFinished) {
                                 if (!isUndoUnlocked) {
                                     android.widget.Toast.makeText(
                                         context,
@@ -1272,7 +1273,7 @@ fun GameScreen(
                                 else Brush.verticalGradient(listOf(Color(0xFFFFD700), Color(0xFFF59E0B), Color(0xFFD97706)))
                             )
                             .size(68.dp)
-                            .clickable {
+                            .clickable(enabled = !isLevelWon && isDealingFinished) {
                                 if (!isJokerUnlocked) {
                                     android.widget.Toast.makeText(
                                         context,

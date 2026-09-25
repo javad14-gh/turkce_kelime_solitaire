@@ -10,6 +10,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -50,133 +53,140 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val state by viewModel.uiState.collectAsState()
 
-                    when (state.screenState) {
-                        is ScreenState.Splash -> {
-                            SplashScreen(
-                                onSplashFinished = { viewModel.onSplashFinished() }
-                            )
-                        }
-                        is ScreenState.Loading -> {
-                            LevelLoadingScreen(
-                                levelNumber = state.levelNumber
-                            )
-                        }
-                        is ScreenState.MainMenu -> {
-                            MainMenuScreen(
-                                levelNumber = state.levelNumber,
-                                coins = state.coins,
-                                completedLevels = state.completedLevels,
-                                isAdFree = state.isAdFree,
-                                hasUnclaimedDailyReward = state.dailyRewardHasUnclaimed,
-                                onStartGameClicked = { level ->
-                                    viewModel.playLevel(level, this@MainActivity)
-                                },
-                                onWatchAdForCoins = { viewModel.watchRewardedAdForCoins(this@MainActivity) },
-                                onOpenStore = { viewModel.toggleStoreDialog(true) },
-                                onOpenDailyReward = { viewModel.openDailyRewardDialog(this@MainActivity) }
-                            )
-                        }
-                        is ScreenState.Gameplay -> {
-                            state.levelData?.let { level ->
-                                GameScreen(
-                                    levelData = level,
-                                    foundationSlots = state.foundationSlots,
-                                    tableauPiles = state.tableauPiles,
-                                    stockPile = state.stockPile,
-                                    wastePile = state.wastePile,
-                                    totalWordsToMatch = state.totalWordsToMatch,
-                                    selectedCardId = state.selectedCardId,
-                                    shakingCardId = state.shakingCardId,
-                                    score = state.score,
+                    Crossfade(
+                        targetState = state.screenState,
+                        animationSpec = tween(durationMillis = 420, easing = FastOutSlowInEasing),
+                        label = "screenCrossfade"
+                    ) { currentScreenState ->
+                        when (currentScreenState) {
+                            is ScreenState.Splash -> {
+                                SplashScreen(
+                                    onSplashFinished = { viewModel.onSplashFinished() }
+                                )
+                            }
+                            is ScreenState.Loading -> {
+                                LevelLoadingScreen(
+                                    levelNumber = state.levelNumber
+                                )
+                            }
+                            is ScreenState.MainMenu -> {
+                                MainMenuScreen(
+                                    levelNumber = state.levelNumber,
                                     coins = state.coins,
                                     completedLevels = state.completedLevels,
-                                    movesRemaining = state.movesRemaining,
-                                    errors = state.errorsInLevel,
-                                    hintedCardId = state.hintedCardId,
-                                    hintedTargetId = state.hintedTargetId,
-                                    showOutofMovesDialog = state.showOutofMovesDialog,
-                                    completedCategoryName = state.completedCategoryName,
-                                    shatteringJokerId = state.shatteringJokerId,
                                     isAdFree = state.isAdFree,
-                                    isUndoUnlocked = state.isUndoUnlocked,
-                                    isHintUnlocked = state.isHintUnlocked,
-                                    isJokerUnlocked = state.isJokerUnlocked,
-                                    hasFreeUndo = state.hasFreeUndo,
-                                    hasFreeHint = state.hasFreeHint,
-                                    hasFreeJoker = state.hasFreeJoker,
-                                    activeTutorial = state.activeTutorial,
-                                    level1TutorialStep = state.level1TutorialStep,
-                                    shouldAnimateDeal = state.shouldAnimateDeal,
-                                    onDismissTutorial = { viewModel.dismissTutorial(this@MainActivity) },
-                                    onDismissCategoryCelebration = { viewModel.dismissCategoryCelebration() },
+                                    hasUnclaimedDailyReward = state.dailyRewardHasUnclaimed,
+                                    onStartGameClicked = { level ->
+                                        viewModel.playLevel(level, this@MainActivity)
+                                    },
+                                    onWatchAdForCoins = { viewModel.watchRewardedAdForCoins(this@MainActivity) },
                                     onOpenStore = { viewModel.toggleStoreDialog(true) },
-                                    onCardSelected = { cardId -> viewModel.selectCard(cardId) },
-                                    onCardDropped = { cards, slot ->
-                                        viewModel.attemptPlaceCards(cards, slot, this@MainActivity)
-                                    },
-                                    onCardStacked = { cards, colIdx ->
-                                        viewModel.attemptStackCards(cards, colIdx, this@MainActivity)
-                                    },
-                                    onDrawFromStock = { viewModel.drawFromStock(this@MainActivity) },
-                                    onRestartLevel = { viewModel.requestRestartLevel(this@MainActivity) },
-                                    onBackToMenu = { viewModel.returnToMainMenu() },
-                                    onShowHint = {
-                                        viewModel.showHint(this@MainActivity) { msg ->
-                                            android.widget.Toast.makeText(this@MainActivity, msg, android.widget.Toast.LENGTH_SHORT).show()
-                                        }
-                                    },
-                                    onUndoLastMove = {
-                                        viewModel.undoLastMove(this@MainActivity) { msg ->
-                                            android.widget.Toast.makeText(this@MainActivity, msg, android.widget.Toast.LENGTH_SHORT).show()
-                                        }
-                                    },
-                                    onUseJoker = {
-                                        viewModel.useJoker(this@MainActivity) { msg ->
-                                            android.widget.Toast.makeText(this@MainActivity, msg, android.widget.Toast.LENGTH_SHORT).show()
-                                        }
-                                    },
-                                    onBuyExtraMoves = {
-                                        viewModel.buyExtraMoves(this@MainActivity) { msg ->
-                                            android.widget.Toast.makeText(this@MainActivity, msg, android.widget.Toast.LENGTH_SHORT).show()
-                                        }
-                                    },
-                                    onAcceptDefeat = {
-                                        viewModel.acceptDefeat()
-                                    }
+                                    onOpenDailyReward = { viewModel.openDailyRewardDialog(this@MainActivity) }
                                 )
-                            } ?: LevelLoadingScreen(
-                                levelNumber = state.levelNumber
-                            )
-                        }
-                        is ScreenState.LevelComplete -> {
-                            LevelCompleteScreen(
-                                levelNumber = state.levelNumber,
-                                bonusCoins = state.levelCompletedBonus,
-                                isRewardDoubled = state.isLevelRewardDoubled,
-                                onDoubleRewardClicked = { viewModel.doubleLevelRewardWithAd(this@MainActivity) },
-                                onNextLevelClicked = { viewModel.advanceToNextLevel(this@MainActivity) },
-                                onMainMenuClicked = { viewModel.returnToMainMenu() }
-                            )
-                        }
-                        is ScreenState.GameOver -> {
-                            GameOverScreen(
-                                levelNumber = state.levelNumber,
-                                coins = state.coins,
-                                onContinueForCoins = { viewModel.purchaseExtraMoves(this@MainActivity) },
-                                onContinueForAd = { viewModel.watchAdForExtraMoves(this@MainActivity) },
-                                onRestartClicked = { viewModel.restartLevel(this@MainActivity) },
-                                onMainMenuClicked = { viewModel.returnToMainMenu() }
-                            )
-                        }
-                        is ScreenState.Store -> {
-                            StoreScreen(
-                                coins = state.coins,
-                                isAdFree = state.isAdFree,
-                                onClose = { viewModel.closeStore() },
-                                onWatchAdForCoins = { viewModel.watchRewardedAdForCoins(this@MainActivity) },
-                                onBuyCoinPack = { amount -> viewModel.buyCoinPack(this@MainActivity, amount) },
-                                onBuyRemoveAds = { viewModel.buyRemoveAds(this@MainActivity) }
-                            )
+                            }
+                            is ScreenState.Gameplay -> {
+                                state.levelData?.let { level ->
+                                    GameScreen(
+                                        levelData = level,
+                                        foundationSlots = state.foundationSlots,
+                                        tableauPiles = state.tableauPiles,
+                                        stockPile = state.stockPile,
+                                        wastePile = state.wastePile,
+                                        totalWordsToMatch = state.totalWordsToMatch,
+                                        selectedCardId = state.selectedCardId,
+                                        shakingCardId = state.shakingCardId,
+                                        score = state.score,
+                                        coins = state.coins,
+                                        completedLevels = state.completedLevels,
+                                        movesRemaining = state.movesRemaining,
+                                        errors = state.errorsInLevel,
+                                        hintedCardId = state.hintedCardId,
+                                        hintedTargetId = state.hintedTargetId,
+                                        showOutofMovesDialog = state.showOutofMovesDialog,
+                                        completedCategoryName = state.completedCategoryName,
+                                        isLevelWon = state.isLevelWon,
+                                        shatteringJokerId = state.shatteringJokerId,
+                                        isAdFree = state.isAdFree,
+                                        isUndoUnlocked = state.isUndoUnlocked,
+                                        isHintUnlocked = state.isHintUnlocked,
+                                        isJokerUnlocked = state.isJokerUnlocked,
+                                        hasFreeUndo = state.hasFreeUndo,
+                                        hasFreeHint = state.hasFreeHint,
+                                        hasFreeJoker = state.hasFreeJoker,
+                                        activeTutorial = state.activeTutorial,
+                                        level1TutorialStep = state.level1TutorialStep,
+                                        shouldAnimateDeal = state.shouldAnimateDeal,
+                                        onDismissTutorial = { viewModel.dismissTutorial(this@MainActivity) },
+                                        onDismissCategoryCelebration = { viewModel.dismissCategoryCelebration() },
+                                        onOpenStore = { viewModel.toggleStoreDialog(true) },
+                                        onCardSelected = { cardId -> viewModel.selectCard(cardId) },
+                                        onCardDropped = { cards, slot ->
+                                            viewModel.attemptPlaceCards(cards, slot, this@MainActivity)
+                                        },
+                                        onCardStacked = { cards, colIdx ->
+                                            viewModel.attemptStackCards(cards, colIdx, this@MainActivity)
+                                        },
+                                        onDrawFromStock = { viewModel.drawFromStock(this@MainActivity) },
+                                        onRestartLevel = { viewModel.requestRestartLevel(this@MainActivity) },
+                                        onBackToMenu = { viewModel.returnToMainMenu() },
+                                        onShowHint = {
+                                            viewModel.showHint(this@MainActivity) { msg ->
+                                                android.widget.Toast.makeText(this@MainActivity, msg, android.widget.Toast.LENGTH_SHORT).show()
+                                            }
+                                        },
+                                        onUndoLastMove = {
+                                            viewModel.undoLastMove(this@MainActivity) { msg ->
+                                                android.widget.Toast.makeText(this@MainActivity, msg, android.widget.Toast.LENGTH_SHORT).show()
+                                            }
+                                        },
+                                        onUseJoker = {
+                                            viewModel.useJoker(this@MainActivity) { msg ->
+                                                android.widget.Toast.makeText(this@MainActivity, msg, android.widget.Toast.LENGTH_SHORT).show()
+                                            }
+                                        },
+                                        onBuyExtraMoves = {
+                                            viewModel.buyExtraMoves(this@MainActivity) { msg ->
+                                                android.widget.Toast.makeText(this@MainActivity, msg, android.widget.Toast.LENGTH_SHORT).show()
+                                            }
+                                        },
+                                        onAcceptDefeat = {
+                                            viewModel.acceptDefeat()
+                                        }
+                                    )
+                                } ?: LevelLoadingScreen(
+                                    levelNumber = state.levelNumber
+                                )
+                            }
+                            is ScreenState.LevelComplete -> {
+                                LevelCompleteScreen(
+                                    levelNumber = state.levelNumber,
+                                    bonusCoins = state.levelCompletedBonus,
+                                    isRewardDoubled = state.isLevelRewardDoubled,
+                                    onDoubleRewardClicked = { viewModel.doubleLevelRewardWithAd(this@MainActivity) },
+                                    onNextLevelClicked = { viewModel.advanceToNextLevel(this@MainActivity) },
+                                    onMainMenuClicked = { viewModel.returnToMainMenu() }
+                                )
+                            }
+                            is ScreenState.GameOver -> {
+                                GameOverScreen(
+                                    levelNumber = state.levelNumber,
+                                    coins = state.coins,
+                                    onContinueForCoins = { viewModel.purchaseExtraMoves(this@MainActivity) },
+                                    onContinueForAd = { viewModel.watchAdForExtraMoves(this@MainActivity) },
+                                    onRestartClicked = { viewModel.restartLevel(this@MainActivity) },
+                                    onMainMenuClicked = { viewModel.returnToMainMenu() }
+                                )
+                            }
+                            is ScreenState.Store -> {
+                                StoreScreen(
+                                    coins = state.coins,
+                                    isAdFree = state.isAdFree,
+                                    onClose = { viewModel.closeStore() },
+                                    onWatchAdForCoins = { viewModel.watchRewardedAdForCoins(this@MainActivity) },
+                                    onBuyCoinPack = { amount -> viewModel.buyCoinPack(this@MainActivity, amount) },
+                                    onBuyRemoveAds = { viewModel.buyRemoveAds(this@MainActivity) }
+                                )
+                            }
                         }
                     }
 
