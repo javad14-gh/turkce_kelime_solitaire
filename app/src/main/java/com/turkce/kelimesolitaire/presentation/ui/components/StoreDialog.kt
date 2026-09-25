@@ -256,70 +256,52 @@ fun StoreDialog(
                     )
 
                     // 3. REMOVE ADS PERMANENT UPGRADE CARD
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 6.dp)
-                            .shadow(8.dp, RoundedCornerShape(18.dp))
-                            .clip(RoundedCornerShape(18.dp))
-                            .background(
-                                if (isAdFree) {
-                                    Brush.verticalGradient(
-                                        listOf(Color(0xFF065F46), Color(0xFF047857))
-                                    )
-                                } else {
+                    if (!isAdFree) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 6.dp)
+                                .shadow(8.dp, RoundedCornerShape(18.dp))
+                                .clip(RoundedCornerShape(18.dp))
+                                .background(
                                     Brush.verticalGradient(
                                         listOf(Color(0xFF831843), Color(0xFF9D174D), Color(0xFF701A75))
                                     )
-                                }
-                            )
-                            .border(1.5.dp, if (isAdFree) Color(0xFF34D399) else Color(0xFFF472B6), RoundedCornerShape(18.dp))
-                            .padding(14.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
+                                )
+                                .border(1.5.dp, Color(0xFFF472B6), RoundedCornerShape(18.dp))
+                                .padding(14.dp)
                         ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Image(
-                                        painter = painterResource(id = R.drawable.no_ads),
-                                        contentDescription = "No Ads",
-                                        modifier = Modifier.size(24.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(6.dp))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.no_ads),
+                                            contentDescription = "No Ads",
+                                            modifier = Modifier.size(24.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(6.dp))
+                                        Text(
+                                            text = LocaleHelper.removeAdsTitle(isPersian),
+                                            color = Color.White,
+                                            fontSize = 16.sp,
+                                            fontWeight = FontWeight.Black,
+                                            fontFamily = nunitoFont
+                                        )
+                                    }
                                     Text(
-                                        text = LocaleHelper.removeAdsTitle(isPersian),
-                                        color = Color.White,
-                                        fontSize = 16.sp,
-                                        fontWeight = FontWeight.Black,
-                                        fontFamily = nunitoFont
+                                        text = LocaleHelper.removeAdsDesc(isPersian),
+                                        color = Color.White.copy(alpha = 0.9f),
+                                        fontSize = 11.sp,
+                                        lineHeight = 15.sp,
+                                        fontWeight = FontWeight.Bold
                                     )
                                 }
-                                Text(
-                                    text = if (isAdFree) {
-                                        if (isPersian) "تمام تبلیغات حذف شدند!\u200F" else "Tüm reklamlar kaldırıldı!"
-                                    } else {
-                                        LocaleHelper.removeAdsDesc(isPersian)
-                                    },
-                                    color = Color.White.copy(alpha = 0.9f),
-                                    fontSize = 11.sp,
-                                    lineHeight = 15.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
-                            Spacer(modifier = Modifier.width(8.dp))
+                                Spacer(modifier = Modifier.width(8.dp))
 
-                            if (isAdFree) {
-                                Text(
-                                    text = "✅ " + LocaleHelper.activeStatus(isPersian),
-                                    color = Color(0xFF34D399),
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.Black,
-                                    fontFamily = nunitoFont
-                                )
-                            } else {
                                 Box(
                                     modifier = Modifier
                                         .shadow(6.dp, RoundedCornerShape(12.dp))

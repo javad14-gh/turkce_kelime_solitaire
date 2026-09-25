@@ -31,6 +31,9 @@ import com.turkce.kelimesolitaire.data.dailyreward.DailyRewardManager
 import com.turkce.kelimesolitaire.data.dailyreward.DailyRewardState
 import com.turkce.kelimesolitaire.presentation.ui.components.InGameMessage
 import com.turkce.kelimesolitaire.presentation.ui.components.MessageType
+import com.turkce.kelimesolitaire.data.billing.InAppBillingManager
+import com.turkce.kelimesolitaire.data.billing.MyketBillingConfig
+import android.util.Log
 
 sealed interface ScreenState {
     object Splash : ScreenState
@@ -92,6 +95,10 @@ data class GameUiState(
     val isUndoUnlocked: Boolean = false,
     val isHintUnlocked: Boolean = false,
     val isJokerUnlocked: Boolean = false,
+    val freeUndoCount: Int = 0,
+    val freeHintCount: Int = 0,
+    val freeJokerCount: Int = 0,
+    val isStarterPackPurchased: Boolean = false,
     val hasFreeUndo: Boolean = false,
     val hasFreeHint: Boolean = false,
     val hasFreeJoker: Boolean = false,
@@ -239,9 +246,10 @@ class GameViewModel : ViewModel() {
         val isHintUnlocked = levelNum >= 8
         val isJokerUnlocked = levelNum >= 10
 
-        var hasFreeUndo = prefs.getBoolean("has_free_undo", false)
-        var hasFreeHint = prefs.getBoolean("has_free_hint", false)
-        var hasFreeJoker = prefs.getBoolean("has_free_joker", false)
+        var freeUndoCount = prefs.getInt("free_undo_count", if (prefs.getBoolean("has_free_undo", false)) 1 else 0)
+        var freeHintCount = prefs.getInt("free_hint_count", if (prefs.getBoolean("has_free_hint", false)) 1 else 0)
+        var freeJokerCount = prefs.getInt("free_joker_count", if (prefs.getBoolean("has_free_joker", false)) 1 else 0)
+        val isStarterPackPurchased = prefs.getBoolean("is_starter_pack_purchased", false)
 
         var activeTutorial: TutorialType? = null
 
@@ -253,9 +261,10 @@ class GameViewModel : ViewModel() {
         // Check Undo tutorial (Level 2)
         if (levelNum >= 2 && !prefs.getBoolean("tutorial_undo_seen", false)) {
             activeTutorial = TutorialType.UNDO_UNLOCK
-            hasFreeUndo = true
+            freeUndoCount = maxOf(freeUndoCount, 1)
             prefs.edit()
                 .putBoolean("tutorial_undo_seen", true)
+                .putInt("free_undo_count", freeUndoCount)
                 .putBoolean("has_free_undo", true)
                 .apply()
         }
@@ -263,9 +272,10 @@ class GameViewModel : ViewModel() {
         // Check Hint tutorial (Level 8 - first Hard level)
         if (levelNum >= 8 && !prefs.getBoolean("tutorial_hint_seen", false)) {
             activeTutorial = TutorialType.HINT_UNLOCK
-            hasFreeHint = true
+            freeHintCount = maxOf(freeHintCount, 1)
             prefs.edit()
                 .putBoolean("tutorial_hint_seen", true)
+                .putInt("free_hint_count", freeHintCount)
                 .putBoolean("has_free_hint", true)
                 .apply()
         }
@@ -273,9 +283,10 @@ class GameViewModel : ViewModel() {
         // Check Joker tutorial (Level 10 - first Very Hard level)
         if (levelNum >= 10 && !prefs.getBoolean("tutorial_joker_seen", false)) {
             activeTutorial = TutorialType.JOKER_UNLOCK
-            hasFreeJoker = true
+            freeJokerCount = maxOf(freeJokerCount, 1)
             prefs.edit()
                 .putBoolean("tutorial_joker_seen", true)
+                .putInt("free_joker_count", freeJokerCount)
                 .putBoolean("has_free_joker", true)
                 .apply()
         }
@@ -306,9 +317,13 @@ class GameViewModel : ViewModel() {
                 isUndoUnlocked = isUndoUnlocked,
                 isHintUnlocked = isHintUnlocked,
                 isJokerUnlocked = isJokerUnlocked,
-                hasFreeUndo = hasFreeUndo,
-                hasFreeHint = hasFreeHint,
-                hasFreeJoker = hasFreeJoker,
+                freeUndoCount = freeUndoCount,
+                freeHintCount = freeHintCount,
+                freeJokerCount = freeJokerCount,
+                hasFreeUndo = freeUndoCount > 0,
+                hasFreeHint = freeHintCount > 0,
+                hasFreeJoker = freeJokerCount > 0,
+                isStarterPackPurchased = isStarterPackPurchased,
                 activeTutorial = activeTutorial,
                 level1TutorialStep = 0
             )
@@ -875,12 +890,23 @@ class GameViewModel : ViewModel() {
         
         val savedCoins = prefs.getInt("user_coins", 50)
         val isAdFree = prefs.getBoolean("is_ad_free", false)
+        val freeUndoCount = prefs.getInt("free_undo_count", if (prefs.getBoolean("has_free_undo", false)) 1 else 0)
+        val freeHintCount = prefs.getInt("free_hint_count", if (prefs.getBoolean("has_free_hint", false)) 1 else 0)
+        val freeJokerCount = prefs.getInt("free_joker_count", if (prefs.getBoolean("has_free_joker", false)) 1 else 0)
+        val isStarterPackPurchased = prefs.getBoolean("is_starter_pack_purchased", false)
         val dailyReward = DailyRewardManager.getDailyRewardState(context)
         _uiState.update { 
             it.copy(
                 completedLevels = completedSet, 
                 coins = savedCoins, 
                 isAdFree = isAdFree,
+                freeUndoCount = freeUndoCount,
+                freeHintCount = freeHintCount,
+                freeJokerCount = freeJokerCount,
+                hasFreeUndo = freeUndoCount > 0,
+                hasFreeHint = freeHintCount > 0,
+                hasFreeJoker = freeJokerCount > 0,
+                isStarterPackPurchased = isStarterPackPurchased,
                 dailyRewardState = dailyReward,
                 dailyRewardHasUnclaimed = dailyReward.isReadyToClaimToday,
                 showDailyRewardDialog = false
@@ -956,6 +982,221 @@ class GameViewModel : ViewModel() {
         saveCoinsToPrefs(context, newCoins)
     }
 
+    fun purchaseProduct(activity: Activity, sku: String) {
+        InAppBillingManager.getInstance().startPurchase(
+            activity = activity,
+            sku = sku,
+            onSuccess = { fulfilledSku ->
+                fulfillPurchase(fulfilledSku, activity) { msg, type ->
+                    showUserMessage(msg, type)
+                }
+            },
+            onError = { errorMsg ->
+                showUserMessage(errorMsg, MessageType.ERROR)
+            }
+        )
+    }
+
+    fun fulfillPurchase(
+        sku: String,
+        context: Context,
+        onShowMessage: (String, MessageType) -> Unit = { msg, type -> showUserMessage(msg, type) }
+    ) {
+        val prefs = context.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)
+        val isPersian = LocaleHelper.isPersian(context)
+
+        when (sku) {
+            MyketBillingConfig.SKU_REMOVE_ADS -> {
+                prefs.edit().putBoolean("is_ad_free", true).apply()
+                _uiState.update { it.copy(isAdFree = true) }
+                onShowMessage(
+                    if (isPersian) "تبلیغات با موفقیت حذف شدند! 🎉" else "Reklamlar başarıyla kaldırıldı! 🎉",
+                    MessageType.SUCCESS
+                )
+            }
+            MyketBillingConfig.SKU_STARTER_PACK -> {
+                val newCoins = _uiState.value.coins + 2000
+                val newUndo = _uiState.value.freeUndoCount + 3
+                val newHint = _uiState.value.freeHintCount + 3
+                val newJoker = _uiState.value.freeJokerCount + 3
+
+                prefs.edit()
+                    .putBoolean("is_ad_free", true)
+                    .putBoolean("is_starter_pack_purchased", true)
+                    .putInt("user_coins", newCoins)
+                    .putInt("free_undo_count", newUndo)
+                    .putInt("free_hint_count", newHint)
+                    .putInt("free_joker_count", newJoker)
+                    .putBoolean("has_free_undo", newUndo > 0)
+                    .putBoolean("has_free_hint", newHint > 0)
+                    .putBoolean("has_free_joker", newJoker > 0)
+                    .apply()
+
+                _uiState.update {
+                    it.copy(
+                        coins = newCoins,
+                        isAdFree = true,
+                        isStarterPackPurchased = true,
+                        freeUndoCount = newUndo,
+                        freeHintCount = newHint,
+                        freeJokerCount = newJoker,
+                        hasFreeUndo = newUndo > 0,
+                        hasFreeHint = newHint > 0,
+                        hasFreeJoker = newJoker > 0
+                    )
+                }
+                onShowMessage(
+                    if (isPersian) "بسته شروع با موفقیت فعال شد! ۲۰۰۰ سکه + ۳ کارت کمکی از هر کدام + حذف تبلیغات 🎁" else "Başlangıç paketi başarıyla yüklendi! 🎁",
+                    MessageType.SUCCESS
+                )
+            }
+            MyketBillingConfig.SKU_BUNDLE_MEGA -> {
+                val newCoins = _uiState.value.coins + 4000
+                val newUndo = _uiState.value.freeUndoCount + 4
+                val newHint = _uiState.value.freeHintCount + 4
+                val newJoker = _uiState.value.freeJokerCount + 4
+
+                prefs.edit()
+                    .putInt("user_coins", newCoins)
+                    .putInt("free_undo_count", newUndo)
+                    .putInt("free_hint_count", newHint)
+                    .putInt("free_joker_count", newJoker)
+                    .putBoolean("has_free_undo", true)
+                    .putBoolean("has_free_hint", true)
+                    .putBoolean("has_free_joker", true)
+                    .apply()
+
+                _uiState.update {
+                    it.copy(
+                        coins = newCoins,
+                        freeUndoCount = newUndo,
+                        freeHintCount = newHint,
+                        freeJokerCount = newJoker,
+                        hasFreeUndo = true,
+                        hasFreeHint = true,
+                        hasFreeJoker = true
+                    )
+                }
+                onShowMessage(
+                    if (isPersian) "بسته مگا فعال شد! ۴۰۰۰ سکه + ۴ کارت کمکی از هر کدام 🌟" else "Mega paket yüklendi! 🌟",
+                    MessageType.SUCCESS
+                )
+            }
+            MyketBillingConfig.SKU_BUNDLE_SPECIAL -> {
+                val newCoins = _uiState.value.coins + 1000
+                val newUndo = _uiState.value.freeUndoCount + 2
+                val newHint = _uiState.value.freeHintCount + 2
+                val newJoker = _uiState.value.freeJokerCount + 2
+
+                prefs.edit()
+                    .putInt("user_coins", newCoins)
+                    .putInt("free_undo_count", newUndo)
+                    .putInt("free_hint_count", newHint)
+                    .putInt("free_joker_count", newJoker)
+                    .putBoolean("has_free_undo", true)
+                    .putBoolean("has_free_hint", true)
+                    .putBoolean("has_free_joker", true)
+                    .apply()
+
+                _uiState.update {
+                    it.copy(
+                        coins = newCoins,
+                        freeUndoCount = newUndo,
+                        freeHintCount = newHint,
+                        freeJokerCount = newJoker,
+                        hasFreeUndo = true,
+                        hasFreeHint = true,
+                        hasFreeJoker = true
+                    )
+                }
+                onShowMessage(
+                    if (isPersian) "بسته ویژه فعال شد! ۱۰۰۰ سکه + ۲ کارت کمکی از هر کدام ⚡" else "Süper paket yüklendi! ⚡",
+                    MessageType.SUCCESS
+                )
+            }
+            MyketBillingConfig.SKU_BUNDLE_ECONOMY -> {
+                val newCoins = _uiState.value.coins + 500
+                val newUndo = _uiState.value.freeUndoCount + 1
+                val newHint = _uiState.value.freeHintCount + 1
+                val newJoker = _uiState.value.freeJokerCount + 1
+
+                prefs.edit()
+                    .putInt("user_coins", newCoins)
+                    .putInt("free_undo_count", newUndo)
+                    .putInt("free_hint_count", newHint)
+                    .putInt("free_joker_count", newJoker)
+                    .putBoolean("has_free_undo", true)
+                    .putBoolean("has_free_hint", true)
+                    .putBoolean("has_free_joker", true)
+                    .apply()
+
+                _uiState.update {
+                    it.copy(
+                        coins = newCoins,
+                        freeUndoCount = newUndo,
+                        freeHintCount = newHint,
+                        freeJokerCount = newJoker,
+                        hasFreeUndo = true,
+                        hasFreeHint = true,
+                        hasFreeJoker = true
+                    )
+                }
+                onShowMessage(
+                    if (isPersian) "بسته اقتصادی فعال شد! ۵۰۰ سکه + ۱ کارت کمکی از هر کدام ✨" else "Avantaj paketi yüklendi! ✨",
+                    MessageType.SUCCESS
+                )
+            }
+            MyketBillingConfig.SKU_COINS_500 -> {
+                addCoins(context, 500)
+                onShowMessage(
+                    if (isPersian) "۵۰۰ سکه به حساب شما افزوده شد! 🪙" else "500 Altın eklendi! 🪙",
+                    MessageType.SUCCESS
+                )
+            }
+            MyketBillingConfig.SKU_COINS_1200 -> {
+                addCoins(context, 1200)
+                onShowMessage(
+                    if (isPersian) "۱۲۰۰ سکه به حساب شما افزوده شد! 🪙" else "1200 Altın eklendi! 🪙",
+                    MessageType.SUCCESS
+                )
+            }
+            MyketBillingConfig.SKU_COINS_3000 -> {
+                addCoins(context, 3000)
+                onShowMessage(
+                    if (isPersian) "۳۰۰۰ سکه به حساب شما افزوده شد! 🪙" else "3000 Altın eklendi! 🪙",
+                    MessageType.SUCCESS
+                )
+            }
+            else -> {
+                Log.w("GameViewModel", "Unknown SKU fulfilled: $sku")
+            }
+        }
+    }
+
+    fun restorePurchases(context: Context) {
+        val prefs = context.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)
+        InAppBillingManager.getInstance().initialize(context) { ownedSkus ->
+            var changes = false
+            if (ownedSkus.contains(MyketBillingConfig.SKU_REMOVE_ADS)) {
+                prefs.edit().putBoolean("is_ad_free", true).apply()
+                _uiState.update { it.copy(isAdFree = true) }
+                changes = true
+            }
+            if (ownedSkus.contains(MyketBillingConfig.SKU_STARTER_PACK)) {
+                prefs.edit().putBoolean("is_ad_free", true).putBoolean("is_starter_pack_purchased", true).apply()
+                _uiState.update { it.copy(isAdFree = true, isStarterPackPurchased = true) }
+                changes = true
+            }
+            if (changes) {
+                val isPersian = LocaleHelper.isPersian(context)
+                showUserMessage(
+                    if (isPersian) "خریدهای قبلی شما با موفقیت بازیابی شدند! ✅" else "Satın alımlarınız geri yüklendi! ✅",
+                    MessageType.SUCCESS
+                )
+            }
+        }
+    }
+
     fun buyCoinPack(context: Context, amount: Int) {
         addCoins(context, amount)
     }
@@ -989,9 +1230,10 @@ class GameViewModel : ViewModel() {
             val isUndoUnlocked = session.levelNumber >= 2
             val isHintUnlocked = session.levelNumber >= 8
             val isJokerUnlocked = session.levelNumber >= 10
-            val hasFreeUndo = prefs.getBoolean("has_free_undo", false)
-            val hasFreeHint = prefs.getBoolean("has_free_hint", false)
-            val hasFreeJoker = prefs.getBoolean("has_free_joker", false)
+            val freeUndoCount = prefs.getInt("free_undo_count", if (prefs.getBoolean("has_free_undo", false)) 1 else 0)
+            val freeHintCount = prefs.getInt("free_hint_count", if (prefs.getBoolean("has_free_hint", false)) 1 else 0)
+            val freeJokerCount = prefs.getInt("free_joker_count", if (prefs.getBoolean("has_free_joker", false)) 1 else 0)
+            val isStarterPackPurchased = prefs.getBoolean("is_starter_pack_purchased", false)
 
             viewModelScope.launch {
                 delay(700L)
@@ -1014,9 +1256,13 @@ class GameViewModel : ViewModel() {
                         isUndoUnlocked = isUndoUnlocked,
                         isHintUnlocked = isHintUnlocked,
                         isJokerUnlocked = isJokerUnlocked,
-                        hasFreeUndo = hasFreeUndo,
-                        hasFreeHint = hasFreeHint,
-                        hasFreeJoker = hasFreeJoker,
+                        freeUndoCount = freeUndoCount,
+                        freeHintCount = freeHintCount,
+                        freeJokerCount = freeJokerCount,
+                        hasFreeUndo = freeUndoCount > 0,
+                        hasFreeHint = freeHintCount > 0,
+                        hasFreeJoker = freeJokerCount > 0,
+                        isStarterPackPurchased = isStarterPackPurchased,
                         activeTutorial = null
                     )
                 }
@@ -1104,13 +1350,14 @@ class GameViewModel : ViewModel() {
             return
         }
         val state = _uiState.value
-        val isFree = state.hasFreeUndo
+        val isFree = state.hasFreeUndo && state.freeUndoCount > 0
         if (!isFree && state.coins < 50) {
             onShowToast(if (isPersian) "سکه ناکافی! (۵۰ 🪙 نیاز است)\u200F" else "Yetersiz altın! (50 🪙 gerekli)")
             return
         }
         val prevSession = undoStack.removeAt(undoStack.size - 1)
         val newCoins = if (isFree) state.coins else maxOf(0, state.coins - 50)
+        val newUndoCount = if (isFree) maxOf(0, state.freeUndoCount - 1) else state.freeUndoCount
         _uiState.update {
             it.copy(
                 levelNumber = prevSession.levelNumber,
@@ -1123,14 +1370,18 @@ class GameViewModel : ViewModel() {
                 movesRemaining = prevSession.movesRemaining,
                 totalMatchedWordsCount = prevSession.totalMatchedWordsCount,
                 coins = newCoins,
-                hasFreeUndo = false,
+                freeUndoCount = newUndoCount,
+                hasFreeUndo = newUndoCount > 0,
                 selectedCardId = null,
                 shakingCardId = null
             )
         }
         if (isFree) {
             val prefs = context.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)
-            prefs.edit().putBoolean("has_free_undo", false).apply()
+            prefs.edit()
+                .putInt("free_undo_count", newUndoCount)
+                .putBoolean("has_free_undo", newUndoCount > 0)
+                .apply()
         }
         saveCoinsToPrefs(context, _uiState.value.coins)
         saveActiveSessionToPrefs(context)
@@ -1153,7 +1404,7 @@ class GameViewModel : ViewModel() {
             return
         }
         val state = _uiState.value
-        val isFree = state.hasFreeHint
+        val isFree = state.hasFreeHint && state.freeHintCount > 0
         if (!isFree && state.coins < 50) {
             onShowToast(if (isPersian) "سکه ناکافی! (۵۰ 🪙 نیاز است)\u200F" else "Yetersiz altın! (50 🪙 gerekli)")
             return
@@ -1162,17 +1413,22 @@ class GameViewModel : ViewModel() {
         val hint = findPossibleMove()
         if (hint != null) {
             val newCoins = if (isFree) state.coins else maxOf(0, state.coins - 50)
+            val newHintCount = if (isFree) maxOf(0, state.freeHintCount - 1) else state.freeHintCount
             _uiState.update {
                 it.copy(
                     hintedCardId = hint.first,
                     hintedTargetId = hint.second,
                     coins = newCoins,
-                    hasFreeHint = false
+                    freeHintCount = newHintCount,
+                    hasFreeHint = newHintCount > 0
                 )
             }
             if (isFree) {
                 val prefs = context.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)
-                prefs.edit().putBoolean("has_free_hint", false).apply()
+                prefs.edit()
+                    .putInt("free_hint_count", newHintCount)
+                    .putBoolean("has_free_hint", newHintCount > 0)
+                    .apply()
             }
             saveCoinsToPrefs(context, _uiState.value.coins)
             viewModelScope.launch {
@@ -1207,7 +1463,7 @@ class GameViewModel : ViewModel() {
             return
         }
         val state = _uiState.value
-        val isFree = state.hasFreeJoker
+        val isFree = state.hasFreeJoker && state.freeJokerCount > 0
         if (!isFree && state.coins < 200) {
             onShowToast(if (isPersian) "سکه ناکافی! (۲۰۰ 🪙 نیاز است)\u200F" else "Yetersiz altın! (200 🪙 gerekli)")
             return
@@ -1226,18 +1482,23 @@ class GameViewModel : ViewModel() {
 
         val newWaste = state.wastePile + jokerCard
         val newCoins = if (isFree) state.coins else maxOf(0, state.coins - 200)
+        val newJokerCount = if (isFree) maxOf(0, state.freeJokerCount - 1) else state.freeJokerCount
 
         _uiState.update {
             it.copy(
                 wastePile = newWaste,
                 coins = newCoins,
-                hasFreeJoker = false
+                freeJokerCount = newJokerCount,
+                hasFreeJoker = newJokerCount > 0
             )
         }
 
         if (isFree) {
             val prefs = context.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)
-            prefs.edit().putBoolean("has_free_joker", false).apply()
+            prefs.edit()
+                .putInt("free_joker_count", newJokerCount)
+                .putBoolean("has_free_joker", newJokerCount > 0)
+                .apply()
         }
 
         saveCoinsToPrefs(context, _uiState.value.coins)

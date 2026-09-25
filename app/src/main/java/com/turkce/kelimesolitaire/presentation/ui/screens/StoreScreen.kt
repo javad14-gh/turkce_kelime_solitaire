@@ -42,19 +42,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.remember
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 import com.turkce.kelimesolitaire.presentation.ui.theme.AccentGold
+import com.turkce.kelimesolitaire.data.billing.MyketBillingConfig
 
 @Composable
 fun StoreScreen(
     coins: Int,
     isAdFree: Boolean,
+    isStarterPackPurchased: Boolean = false,
     onClose: () -> Unit,
     onWatchAdForCoins: () -> Unit,
-    onBuyCoinPack: (Int) -> Unit,
-    onBuyRemoveAds: () -> Unit,
-    onBuyBundle: (coinsAmount: Int, removeAds: Boolean) -> Unit = { amount, removeAds ->
-        onBuyCoinPack(amount)
-        if (removeAds) onBuyRemoveAds()
-    }
+    onPurchaseSku: (String) -> Unit = {},
+    onRestorePurchases: () -> Unit = {}
 ) {
     BackHandler { onClose() }
 
@@ -142,91 +140,79 @@ fun StoreScreen(
                 // ------------------------------------------
                 // BANNER 1: REMOVE ADS (HUGE ICON TO EDGES)
                 // ------------------------------------------
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(115.dp)
-                        .shadow(12.dp, RoundedCornerShape(22.dp))
-                        .clip(RoundedCornerShape(22.dp))
-                        .background(
-                            if (isAdFree) {
-                                Brush.horizontalGradient(
-                                    listOf(Color(0xFF064E3B), Color(0xFF047857), Color(0xFF10B981))
-                                )
-                            } else {
+                if (!isAdFree) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(115.dp)
+                            .shadow(12.dp, RoundedCornerShape(22.dp))
+                            .clip(RoundedCornerShape(22.dp))
+                            .background(
                                 Brush.horizontalGradient(
                                     listOf(Color(0xFF831843), Color(0xFFBE185D), Color(0xFF9D174D))
                                 )
-                            }
-                        )
-                        .border(
-                            2.dp,
-                            if (isAdFree) Color(0xFF34D399) else Color(0xFFF472B6),
-                            RoundedCornerShape(22.dp)
-                        )
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalAlignment = Alignment.CenterVertically
+                            )
+                            .border(
+                                2.dp,
+                                Color(0xFFF472B6),
+                                RoundedCornerShape(22.dp)
+                            )
                     ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.no_ads),
-                            contentDescription = "No Ads",
-                            modifier = Modifier
-                                .size(110.dp)
-                                .offset(x = (-6).dp)
-                        )
-
-                        Column(
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(vertical = 12.dp, horizontal = 4.dp)
+                        Row(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Text(
-                                text = LocaleHelper.removeAdsTitle(isPersian),
-                                color = Color.White,
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Black,
-                                fontFamily = nunitoFont
+                            Image(
+                                painter = painterResource(id = R.drawable.no_ads),
+                                contentDescription = "No Ads",
+                                modifier = Modifier
+                                    .size(110.dp)
+                                    .offset(x = (-6).dp)
                             )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = if (isAdFree) {
-                                    if (isPersian) "تمام تبلیغات حذف شدند!\u200F" else "Tüm reklamlar kaldırıldı!"
-                                } else {
-                                    LocaleHelper.removeAdsDesc(isPersian)
-                                },
-                                color = Color.White.copy(alpha = 0.9f),
-                                fontSize = 12.sp,
-                                lineHeight = 16.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
 
-                        Box(
-                            modifier = Modifier
-                                .padding(end = 14.dp)
-                                .shadow(6.dp, RoundedCornerShape(14.dp))
-                                .clip(RoundedCornerShape(14.dp))
-                                .background(
-                                    if (isAdFree) {
-                                        Brush.verticalGradient(listOf(Color(0xFF059669), Color(0xFF047857)))
-                                    } else {
-                                        Brush.verticalGradient(listOf(Color(0xFFF43F5E), Color(0xFFBE123C)))
-                                    }
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(vertical = 12.dp, horizontal = 4.dp)
+                            ) {
+                                Text(
+                                    text = LocaleHelper.removeAdsTitle(isPersian),
+                                    color = Color.White,
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Black,
+                                    fontFamily = nunitoFont
                                 )
-                                .border(1.dp, Color.White, RoundedCornerShape(14.dp))
-                                .clickable(enabled = !isAdFree) { onBuyRemoveAds() }
-                                .padding(horizontal = 14.dp, vertical = 10.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = if (isAdFree) LocaleHelper.activeStatus(isPersian) else if (isPersian) "۳۹,۰۰۰ تومان" else "₺49.99",
-                                color = Color.White,
-                                fontSize = 15.sp,
-                                fontWeight = FontWeight.Black,
-                                fontFamily = nunitoFont
-                            )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = LocaleHelper.removeAdsDesc(isPersian),
+                                    color = Color.White.copy(alpha = 0.9f),
+                                    fontSize = 12.sp,
+                                    lineHeight = 16.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+
+                            Box(
+                                modifier = Modifier
+                                    .padding(end = 14.dp)
+                                    .shadow(6.dp, RoundedCornerShape(14.dp))
+                                    .clip(RoundedCornerShape(14.dp))
+                                    .background(
+                                        Brush.verticalGradient(listOf(Color(0xFFF43F5E), Color(0xFFBE123C)))
+                                    )
+                                    .border(1.dp, Color.White, RoundedCornerShape(14.dp))
+                                    .clickable { onPurchaseSku(MyketBillingConfig.SKU_REMOVE_ADS) }
+                                    .padding(horizontal = 14.dp, vertical = 10.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = if (isPersian) "۳۹,۰۰۰ تومان" else "₺49.99",
+                                    color = Color.White,
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.Black,
+                                    fontFamily = nunitoFont
+                                )
+                            }
                         }
                     }
                 }
@@ -234,34 +220,34 @@ fun StoreScreen(
                 // ------------------------------------------
                 // BANNER 2: STARTER PACK (بسته شروع / BAŞLANGIÇ PAKETİ - ONE TIME OFFER)
                 // ------------------------------------------
-                ComboPackCard(
-                    title = if (isPersian) "بسته شروع" else "BAŞLANGIÇ PAKETİ",
-                    badge = if (isPersian) (if (isAdFree) "خریداری شد" else "پیشنهاد ویژه") else (if (isAdFree) "ALINDI" else "ÖZEL FIRSAT"),
-                    badgeColor = if (isAdFree) Color(0xFF059669) else Color(0xFFDC2626),
-                    price = if (isPersian) "۹۹,۰۰۰ تومان" else "₺99.99",
-                    buttonText = if (isAdFree) (if (isPersian) "فعال شد" else "Aktif") else null,
-                    enabled = !isAdFree,
-                    gradientColors = listOf(Color(0xFF581C87), Color(0xFF3B0764), Color(0xFF2E1065)),
-                    borderColor = Color(0xFFFFD700),
-                    isGoldPriceButton = true,
-                    row1Items = if (isPersian) listOf(
-                        R.drawable.coins to "۲۰۰۰",
-                        R.drawable.no_ads to "بدون تبلیغ"
-                    ) else listOf(
-                        R.drawable.coins to "2000",
-                        R.drawable.no_ads to "Reklam Yok"
-                    ),
-                    row2Items = if (isPersian) listOf(
-                        R.drawable.hint to "۳×",
-                        R.drawable.undo to "۳×",
-                        R.drawable.joker to "۳×"
-                    ) else listOf(
-                        R.drawable.hint to "3x",
-                        R.drawable.undo to "3x",
-                        R.drawable.joker to "3x"
-                    ),
-                    onBuy = { onBuyBundle(2900, true) }
-                )
+                if (!isStarterPackPurchased) {
+                    ComboPackCard(
+                        title = if (isPersian) "بسته شروع" else "BAŞLANGIÇ PAKETİ",
+                        badge = if (isPersian) "پیشنهاد ویژه" else "ÖZEL FIRSAT",
+                        badgeColor = Color(0xFFDC2626),
+                        price = if (isPersian) "۹۹,۰۰۰ تومان" else "₺99.99",
+                        gradientColors = listOf(Color(0xFF581C87), Color(0xFF3B0764), Color(0xFF2E1065)),
+                        borderColor = Color(0xFFFFD700),
+                        isGoldPriceButton = true,
+                        row1Items = if (isPersian) listOf(
+                            R.drawable.coins to "۲۰۰۰",
+                            R.drawable.no_ads to "بدون تبلیغ"
+                        ) else listOf(
+                            R.drawable.coins to "2000",
+                            R.drawable.no_ads to "Reklam Yok"
+                        ),
+                        row2Items = if (isPersian) listOf(
+                            R.drawable.hint to "۳×",
+                            R.drawable.undo to "۳×",
+                            R.drawable.joker to "۳×"
+                        ) else listOf(
+                            R.drawable.hint to "3x",
+                            R.drawable.undo to "3x",
+                            R.drawable.joker to "3x"
+                        ),
+                        onBuy = { onPurchaseSku(MyketBillingConfig.SKU_STARTER_PACK) }
+                    )
+                }
 
                 // ------------------------------------------
                 // BANNER 3: NEW MEGA PAKET (CONSUMABLE, 4000 COINS + 4x BOOSTERS)
@@ -288,7 +274,7 @@ fun StoreScreen(
                         R.drawable.undo to "4x",
                         R.drawable.joker to "4x"
                     ),
-                    onBuy = { onBuyBundle(5200, false) }
+                    onBuy = { onPurchaseSku(MyketBillingConfig.SKU_BUNDLE_MEGA) }
                 )
 
                 // ------------------------------------------
@@ -315,7 +301,7 @@ fun StoreScreen(
                         R.drawable.undo to "2x",
                         R.drawable.joker to "2x"
                     ),
-                    onBuy = { onBuyBundle(1600, false) }
+                    onBuy = { onPurchaseSku(MyketBillingConfig.SKU_BUNDLE_SPECIAL) }
                 )
 
                 // ------------------------------------------
@@ -342,7 +328,7 @@ fun StoreScreen(
                         R.drawable.undo to "1x",
                         R.drawable.joker to "1x"
                     ),
-                    onBuy = { onBuyBundle(800, false) }
+                    onBuy = { onPurchaseSku(MyketBillingConfig.SKU_BUNDLE_ECONOMY) }
                 )
 
                 // ------------------------------------------
@@ -459,7 +445,7 @@ fun StoreScreen(
                     amountText = if (isPersian) "۵۰۰" else "500",
                     priceText = if (isPersian) "۱۹,۰۰۰ تومان" else "₺39.99",
                     gradientColors = listOf(Color(0xFF38BDF8), Color(0xFF0284C7)),
-                    onBuy = { onBuyCoinPack(500) }
+                    onBuy = { onPurchaseSku(MyketBillingConfig.SKU_COINS_500) }
                 )
 
                 CoinPackRow(
@@ -468,7 +454,7 @@ fun StoreScreen(
                     gradientColors = listOf(Color(0xFFF59E0B), Color(0xFFD97706)),
                     badgeText = if (isPersian) "محبوب" else "POPÜLER",
                     badgeColor = Color(0xFFDC2626),
-                    onBuy = { onBuyCoinPack(1200) }
+                    onBuy = { onPurchaseSku(MyketBillingConfig.SKU_COINS_1200) }
                 )
 
                 CoinPackRow(
@@ -477,8 +463,26 @@ fun StoreScreen(
                     gradientColors = listOf(Color(0xFFFFD700), Color(0xFFD97706)),
                     badgeText = if (isPersian) "بهترین ارزش" else "EN İYİ FİYAT",
                     badgeColor = Color(0xFFDC2626),
-                    onBuy = { onBuyCoinPack(3000) }
+                    onBuy = { onPurchaseSku(MyketBillingConfig.SKU_COINS_3000) }
                 )
+
+                Spacer(modifier = Modifier.height(14.dp))
+
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(12.dp))
+                        .clickable { onRestorePurchases() }
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = if (isPersian) "🔄 بازیابی خریدهای قبلی" else "🔄 Satın Alımları Geri Yükle",
+                        color = Color.White.copy(alpha = 0.75f),
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        fontFamily = nunitoFont
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(16.dp))
             }

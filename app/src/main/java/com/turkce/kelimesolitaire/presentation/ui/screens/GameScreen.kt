@@ -189,6 +189,9 @@ fun GameScreen(
     hasFreeUndo: Boolean = false,
     hasFreeHint: Boolean = false,
     hasFreeJoker: Boolean = false,
+    freeUndoCount: Int = if (hasFreeUndo) 1 else 0,
+    freeHintCount: Int = if (hasFreeHint) 1 else 0,
+    freeJokerCount: Int = if (hasFreeJoker) 1 else 0,
     activeTutorial: com.turkce.kelimesolitaire.presentation.viewmodel.TutorialType? = null,
     level1TutorialStep: Int = 0,
     onDismissTutorial: () -> Unit = {},
@@ -1132,9 +1135,13 @@ fun GameScreen(
                                     fontFamily = nunitoFont
                                 )
                             }
-                            hasFreeHint -> {
+                            hasFreeHint && freeHintCount > 0 -> {
                                 Text(
-                                    text = if (isPersian) "🎁 رایگان" else "🎁 Ücretsiz",
+                                    text = if (freeHintCount > 1) {
+                                        if (isPersian) "🎁 ${LocaleHelper.formatNumber(freeHintCount, true)} عدد" else "🎁 ${freeHintCount}×"
+                                    } else {
+                                        if (isPersian) "🎁 رایگان" else "🎁 Ücretsiz"
+                                    },
                                     color = Color.White,
                                     fontSize = 10.sp,
                                     fontWeight = FontWeight.Black,
@@ -1227,9 +1234,13 @@ fun GameScreen(
                                     fontFamily = nunitoFont
                                 )
                             }
-                            hasFreeUndo -> {
+                            hasFreeUndo && freeUndoCount > 0 -> {
                                 Text(
-                                    text = if (isPersian) "🎁 رایگان" else "🎁 Ücretsiz",
+                                    text = if (freeUndoCount > 1) {
+                                        if (isPersian) "🎁 ${LocaleHelper.formatNumber(freeUndoCount, true)} عدد" else "🎁 ${freeUndoCount}×"
+                                    } else {
+                                        if (isPersian) "🎁 رایگان" else "🎁 Ücretsiz"
+                                    },
                                     color = Color.White,
                                     fontSize = 10.sp,
                                     fontWeight = FontWeight.Black,
@@ -1317,9 +1328,13 @@ fun GameScreen(
                                     fontFamily = nunitoFont
                                 )
                             }
-                            hasFreeJoker -> {
+                            hasFreeJoker && freeJokerCount > 0 -> {
                                 Text(
-                                    text = if (isPersian) "🎁 رایگان" else "🎁 Ücretsiz",
+                                    text = if (freeJokerCount > 1) {
+                                        if (isPersian) "🎁 ${LocaleHelper.formatNumber(freeJokerCount, true)} عدد" else "🎁 ${freeJokerCount}×"
+                                    } else {
+                                        if (isPersian) "🎁 رایگان" else "🎁 Ücretsiz"
+                                    },
                                     color = Color.White,
                                     fontSize = 10.sp,
                                     fontWeight = FontWeight.Black,

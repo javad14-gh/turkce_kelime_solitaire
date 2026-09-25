@@ -36,6 +36,9 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.SecondaryNeon
 import com.turkce.kelimesolitaire.presentation.ui.theme.TurkceKelimeSolitaireTheme
 import com.turkce.kelimesolitaire.presentation.viewmodel.GameViewModel
 import com.turkce.kelimesolitaire.presentation.viewmodel.ScreenState
+import android.content.Intent
+import com.turkce.kelimesolitaire.data.billing.InAppBillingManager
+import com.turkce.kelimesolitaire.data.billing.MyketBillingConfig
 
 class MainActivity : ComponentActivity() {
 
@@ -46,6 +49,11 @@ class MainActivity : ComponentActivity() {
         
         viewModel.initPreferences(this)
         viewModel.initDatabase(this)
+        InAppBillingManager.getInstance().initialize(this) { ownedSkus ->
+            if (ownedSkus.contains(MyketBillingConfig.SKU_REMOVE_ADS) || ownedSkus.contains(MyketBillingConfig.SKU_STARTER_PACK)) {
+                viewModel.restorePurchases(this)
+            }
+        }
 
         setContent {
             TurkceKelimeSolitaireTheme {
@@ -115,6 +123,9 @@ class MainActivity : ComponentActivity() {
                                         hasFreeUndo = state.hasFreeUndo,
                                         hasFreeHint = state.hasFreeHint,
                                         hasFreeJoker = state.hasFreeJoker,
+                                        freeUndoCount = state.freeUndoCount,
+                                        freeHintCount = state.freeHintCount,
+                                        freeJokerCount = state.freeJokerCount,
                                         activeTutorial = state.activeTutorial,
                                         level1TutorialStep = state.level1TutorialStep,
                                         shouldAnimateDeal = state.shouldAnimateDeal,
@@ -184,10 +195,11 @@ class MainActivity : ComponentActivity() {
                                 StoreScreen(
                                     coins = state.coins,
                                     isAdFree = state.isAdFree,
+                                    isStarterPackPurchased = state.isStarterPackPurchased,
                                     onClose = { viewModel.closeStore() },
                                     onWatchAdForCoins = { viewModel.watchRewardedAdForCoins(this@MainActivity) },
-                                    onBuyCoinPack = { amount -> viewModel.buyCoinPack(this@MainActivity, amount) },
-                                    onBuyRemoveAds = { viewModel.buyRemoveAds(this@MainActivity) }
+                                    onPurchaseSku = { sku -> viewModel.purchaseProduct(this@MainActivity, sku) },
+                                    onRestorePurchases = { viewModel.restorePurchases(this@MainActivity) }
                                 )
                             }
                         }
@@ -231,6 +243,26 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        InAppBillingManager.getInstance().handleActivityResult(
+            requestCode = requestCode,
+            resultCode = resultCode,
+            data = data,
+            onSuccess = { sku ->
+                viewModel.fulfillPurchase(sku, this)
+            },
+            onError = { errorMsg ->
+                viewModel.showUserMessage(errorMsg, MessageType.ERROR)
+            }
+        )
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        InAppBillingManager.getInstance().unbind(this)
     }
 }
 
