@@ -46,7 +46,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.zIndex
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.ui.draw.scale
+import com.turkce.kelimesolitaire.data.billing.MyketBillingConfig
+import com.turkce.kelimesolitaire.presentation.ui.components.StarterPackDialog
 import com.turkce.kelimesolitaire.presentation.ui.components.AdBannerPlaceholder
 import com.turkce.kelimesolitaire.presentation.ui.components.OutlinedText
 import com.turkce.kelimesolitaire.presentation.ui.components.rememberNunitoFont
@@ -67,17 +75,20 @@ fun MainMenuScreen(
     coins: Int,
     completedLevels: Set<Int>,
     isAdFree: Boolean = false,
+    isStarterPackPurchased: Boolean = false,
     hasUnclaimedDailyReward: Boolean = false,
     onStartGameClicked: (Int) -> Unit,
     onWatchAdForCoins: () -> Unit,
     onOpenStore: () -> Unit = {},
     onOpenDailyReward: () -> Unit = {},
+    onPurchaseSku: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     val isPersian = remember(context) { LocaleHelper.isPersian(context) }
     val nunitoFont = rememberNunitoFont()
     var isPlayClicked by remember { mutableStateOf(false) }
+    var showStarterPackDialog by remember { mutableStateOf(false) }
 
     // Calculate last unsolved level dynamically
     val lastUnsolvedLevel = remember(completedLevels) {
@@ -234,14 +245,23 @@ fun MainMenuScreen(
                 )
             }
 
-            // 3D Juicy Play Button with Difficulty Ribbon Banner
+            // 3D Juicy Play Button with Difficulty Ribbon Banner & Starter Pack Banner
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxWidth()
             ) {
+                // Special Offer: Starter Pack Banner (only shown if not yet purchased)
+                if (!isStarterPackPurchased) {
+                    StarterPackBanner(
+                        isPersian = isPersian,
+                        onClick = { showStarterPackDialog = true }
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                }
+
                 Box(
                     contentAlignment = Alignment.TopCenter,
-                    modifier = Modifier.padding(top = 14.dp, bottom = 8.dp)
+                    modifier = Modifier.padding(top = if (isStarterPackPurchased) 14.dp else 4.dp, bottom = 8.dp)
                 ) {
                     // Compact 3D Green Button Shell (10% wider than text with 3D bottom bevel)
                     Box(
@@ -620,5 +640,149 @@ fun MainMenuScreen(
                 }
             }
         }
+
+        // STARTER PACK SPECIAL OFFER MODAL DIALOG
+        if (showStarterPackDialog && !isStarterPackPurchased) {
+            StarterPackDialog(
+                onDismiss = { showStarterPackDialog = false },
+                onBuy = {
+                    onPurchaseSku(MyketBillingConfig.SKU_STARTER_PACK)
+                    showStarterPackDialog = false
+                }
+            )
+        }
     }
 }
+
+@Composable
+fun StarterPackBanner(
+    isPersian: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val nunitoFont = rememberNunitoFont()
+    val infiniteTransition = rememberInfiniteTransition(label = "bannerPulse")
+    val badgeScale by infiniteTransition.animateFloat(
+        initialValue = 0.95f,
+        targetValue = 1.05f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(900, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "badgeScale"
+    )
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 14.dp)
+            .shadow(16.dp, RoundedCornerShape(22.dp))
+            .clip(RoundedCornerShape(22.dp))
+            .background(
+                Brush.horizontalGradient(
+                    listOf(Color(0xFF581C87), Color(0xFF7E22CE), Color(0xFF3B0764))
+                )
+            )
+            .border(2.dp, AccentGold, RoundedCornerShape(22.dp))
+            .clickable { onClick() }
+            .padding(horizontal = 12.dp, vertical = 9.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.weight(1f)
+            ) {
+                Box(contentAlignment = Alignment.TopStart) {
+                    Image(
+                        painter = painterResource(id = R.drawable.gift),
+                        contentDescription = "Starter Pack",
+                        modifier = Modifier.size(46.dp)
+                    )
+                    Box(
+                        modifier = Modifier
+                            .scale(badgeScale)
+                            .offset(x = (-4).dp, y = (-4).dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(Color(0xFFDC2626))
+                            .border(1.dp, Color.White, RoundedCornerShape(8.dp))
+                            .padding(horizontal = 5.dp, vertical = 1.dp)
+                    ) {
+                        Text(
+                            text = if (isPersian) "٪۷۰" else "-70%",
+                            color = Color.White,
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Black,
+                            fontFamily = nunitoFont
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.width(10.dp))
+
+                Column {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = if (isPersian) "بسته شروع شگفت‌انگیز" else "BAŞLANGIÇ PAKETİ",
+                            color = Color.White,
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Black,
+                            fontFamily = nunitoFont
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "✨",
+                            fontSize = 13.sp
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = if (isPersian) "۲۰۰۰ سکه + ۹ کارت کمکی + بدون تبلیغ" else "2000 Altın + 9 Joker + Reklamsız",
+                        color = Color.White.copy(alpha = 0.9f),
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = nunitoFont
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            // Shiny 3D Gold Price Button
+            Box(
+                modifier = Modifier
+                    .shadow(8.dp, RoundedCornerShape(14.dp))
+                    .clip(RoundedCornerShape(14.dp))
+                    .background(
+                        Brush.verticalGradient(
+                            listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1))
+                        )
+                    )
+                    .padding(1.5.dp)
+                    .clip(RoundedCornerShape(13.dp))
+                    .background(Color(0xFF78350F))
+                    .padding(bottom = 2.5.dp)
+                    .clip(RoundedCornerShape(11.dp))
+                    .background(
+                        Brush.verticalGradient(
+                            listOf(Color(0xFFFBBF24), Color(0xFFF59E0B), Color(0xFFD97706))
+                        )
+                    )
+                    .padding(horizontal = 12.dp, vertical = 7.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = if (isPersian) "۹۹,۰۰۰ تومان" else "₺99.99",
+                    color = Color(0xFF451A03),
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Black,
+                    fontFamily = nunitoFont
+                )
+            }
+        }
+    }
+}
+

@@ -85,13 +85,15 @@ class MainActivity : ComponentActivity() {
                                     coins = state.coins,
                                     completedLevels = state.completedLevels,
                                     isAdFree = state.isAdFree,
+                                    isStarterPackPurchased = state.isStarterPackPurchased,
                                     hasUnclaimedDailyReward = state.dailyRewardHasUnclaimed,
                                     onStartGameClicked = { level ->
                                         viewModel.playLevel(level, this@MainActivity)
                                     },
                                     onWatchAdForCoins = { viewModel.watchRewardedAdForCoins(this@MainActivity) },
                                     onOpenStore = { viewModel.toggleStoreDialog(true) },
-                                    onOpenDailyReward = { viewModel.openDailyRewardDialog(this@MainActivity) }
+                                    onOpenDailyReward = { viewModel.openDailyRewardDialog(this@MainActivity) },
+                                    onPurchaseSku = { sku -> viewModel.purchaseProduct(this@MainActivity, sku) }
                                 )
                             }
                             is ScreenState.Gameplay -> {
