@@ -35,6 +35,7 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkCard
 import com.turkce.kelimesolitaire.presentation.ui.theme.SuccessGreen
 import com.turkce.kelimesolitaire.presentation.ui.theme.TextPrimary
+import com.turkce.kelimesolitaire.presentation.ui.theme.getDifficultyRimColors
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.Spring
@@ -74,6 +75,9 @@ fun LevelCompleteScreen(
     val nextLevel = levelNumber + 1
     val nextDifficulty = remember(nextLevel) {
         LevelGenerator.getDifficultyForLevel(nextLevel)
+    }
+    val nextDifficultyRim = remember(nextDifficulty) {
+        getDifficultyRimColors(nextDifficulty)
     }
 
     // Celebratory victory pop entrance animation
@@ -283,28 +287,29 @@ fun LevelCompleteScreen(
                 ) {
                     Box(
                         modifier = Modifier
-                            .shadow(14.dp, RoundedCornerShape(22.dp))
+                            .shadow(16.dp, RoundedCornerShape(22.dp))
                             .clip(RoundedCornerShape(22.dp))
                             .background(
                                 Brush.verticalGradient(
-                                    colors = listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1))
+                                    colors = nextDifficultyRim.gradient
                                 )
-                            )
-                            .padding(2.dp)
-                            .clip(RoundedCornerShape(20.dp))
-                            .background(Color(0xFF1E3A07))
-                            .padding(bottom = 4.dp)
+                            ) // 3D outer rim shell coordinated with level difficulty
+                            .border(1.5.dp, nextDifficultyRim.border, RoundedCornerShape(22.dp))
+                            .padding(4.dp)
                             .clip(RoundedCornerShape(18.dp))
+                            .background(Color(0xFF1E3A07)) // Dark 3D bottom base shadow
+                            .padding(bottom = 5.dp) // Creates thick 3D bottom bevel
+                            .clip(RoundedCornerShape(14.dp))
                             .background(
                                 Brush.verticalGradient(
                                     colors = listOf(
-                                        Color(0xFF84CC16),
-                                        Color(0xFF65A30D),
-                                        Color(0xFF4D7C0F)
+                                        Color(0xFFA3E635), // Glossy top highlight green
+                                        Color(0xFF65A30D), // Mid vibrant green
+                                        Color(0xFF4D7C0F)  // Inner shade
                                     )
                                 )
                             )
-                            .border(1.5.dp, Color(0xFFBEF264), RoundedCornerShape(18.dp))
+                            .border(1.2.dp, Color(0xFFBEF264).copy(alpha = 0.6f), RoundedCornerShape(14.dp))
                             .clickable(enabled = !isActionTriggered) {
                                 if (!isActionTriggered) {
                                     isActionTriggered = true

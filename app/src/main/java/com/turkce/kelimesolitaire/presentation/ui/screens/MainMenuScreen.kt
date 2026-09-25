@@ -66,6 +66,7 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.PrimaryNeon
 import com.turkce.kelimesolitaire.presentation.ui.theme.SecondaryNeon
 import com.turkce.kelimesolitaire.presentation.ui.theme.TextPrimary
 import com.turkce.kelimesolitaire.presentation.ui.theme.TextSecondary
+import com.turkce.kelimesolitaire.presentation.ui.theme.getDifficultyRimColors
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 
 @Suppress("UNUSED_PARAMETER")
@@ -102,6 +103,9 @@ fun MainMenuScreen(
     // Determine difficulty of the last unsolved level
     val difficulty = remember(lastUnsolvedLevel) {
         com.turkce.kelimesolitaire.domain.LevelGenerator.getDifficultyForLevel(lastUnsolvedLevel)
+    }
+    val difficultyRim = remember(difficulty) {
+        getDifficultyRimColors(difficulty)
     }
 
     var showSettingsMenu by remember { androidx.compose.runtime.mutableStateOf(false) }
@@ -263,16 +267,17 @@ fun MainMenuScreen(
                     contentAlignment = Alignment.TopCenter,
                     modifier = Modifier.padding(top = if (isStarterPackPurchased) 14.dp else 4.dp, bottom = 8.dp)
                 ) {
-                    // Compact 3D Green Button Shell (10% wider than text with 3D bottom bevel)
+                    // Compact 3D Play Button Shell (rim themed dynamically with difficulty)
                     Box(
                         modifier = Modifier
                             .shadow(16.dp, RoundedCornerShape(22.dp))
                             .clip(RoundedCornerShape(22.dp))
                             .background(
                                 Brush.verticalGradient(
-                                    colors = listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1))
+                                    colors = difficultyRim.gradient
                                 )
-                            ) // Cream/white 3D outer rim shell
+                            ) // 3D outer rim shell coordinated with level difficulty
+                            .border(1.5.dp, difficultyRim.border, RoundedCornerShape(22.dp))
                             .padding(4.dp)
                             .clip(RoundedCornerShape(18.dp))
                             .background(Color(0xFF1E3A07)) // Dark 3D bottom base shadow
@@ -287,6 +292,7 @@ fun MainMenuScreen(
                                     )
                                 )
                             )
+                            .border(1.2.dp, Color(0xFFBEF264).copy(alpha = 0.6f), RoundedCornerShape(14.dp))
                             .clickable(enabled = !isPlayClicked) {
                                 if (!isPlayClicked) {
                                     isPlayClicked = true
