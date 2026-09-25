@@ -459,23 +459,13 @@ class GameViewModel : ViewModel() {
                 if (tempMatchedWords.isNotEmpty() && tempMatchedWords.size >= requiredCount) {
                     _uiState.update { it.copy(completedCategoryName = targetCategory.name) }
                     viewModelScope.launch {
-                        delay(1800)
-                        _uiState.update {
-                            if (it.completedCategoryName == targetCategory.name) {
-                                it.copy(completedCategoryName = null)
-                            } else {
-                                it
-                            }
-                        }
-                    }
-                    viewModelScope.launch {
-                        delay(1000)
+                        delay(2200)
                         val currentSlots = _uiState.value.foundationSlots.toMutableList()
                         val sIdx = currentSlots.indexOfFirst { it.id == targetSlot.id }
                         if (sIdx != -1 && currentSlots[sIdx].activeCategory?.id == targetCategory.id) {
                             currentSlots[sIdx] = currentSlots[sIdx].copy(activeCategory = null, matchedWords = emptyList())
                             _uiState.update {
-                                it.copy(foundationSlots = currentSlots)
+                                it.copy(foundationSlots = currentSlots, completedCategoryName = null)
                             }
                         }
                     }
