@@ -69,6 +69,7 @@ fun WordCard(
     isShattering: Boolean = false,
     isHinted: Boolean = false,
     isDragged: Boolean,
+    dragZIndex: Float = 0f,
     dragOffsetProvider: () -> Offset = { Offset.Zero },
     isInteractionEnabled: Boolean,
     onTap: () -> Unit,
@@ -200,7 +201,7 @@ fun WordCard(
         colors = CardDefaults.cardColors(containerColor = Color.Transparent),
         shape = RoundedCornerShape(8.dp),
         modifier = modifier
-            .zIndex(if (isDragged) 100f else 0f)
+            .zIndex(if (isDragged) 100f + dragZIndex else 0f)
             .graphicsLayer {
                 if (isShattering) {
                     alpha = shatterAlpha.value

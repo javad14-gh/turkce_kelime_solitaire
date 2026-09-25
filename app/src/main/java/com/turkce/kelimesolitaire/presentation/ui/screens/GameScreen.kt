@@ -66,6 +66,7 @@ import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.res.painterResource
@@ -107,7 +108,7 @@ private fun findBestFoundationSlot(
     return foundationSlots
         .mapNotNull { slot ->
             val bounds = dropZoneBounds[slot.id.toString()] ?: return@mapNotNull null
-            val inflated = bounds.inflate(45f)
+            val inflated = bounds.inflate(65f)
             val matchedPoint = testPoints.find { inflated.contains(it) }
             if (matchedPoint != null) {
                 val dx = bounds.center.x - matchedPoint.x
@@ -127,16 +128,17 @@ private fun findBestTableauColumn(
         .mapNotNull { cIdx ->
             val bounds = tableauBounds[cIdx] ?: return@mapNotNull null
             val inflated = Rect(
-                left = bounds.left - 25f,
-                top = bounds.top - 20f,
-                right = bounds.right + 25f,
-                bottom = bounds.bottom + 50f
+                left = bounds.left - 35f,
+                top = bounds.top - 40f,
+                right = bounds.right + 35f,
+                bottom = maxOf(bounds.bottom + 220f, bounds.top + 600f)
             )
             val matchedPoint = testPoints.find { inflated.contains(it) }
             if (matchedPoint != null) {
                 val dx = bounds.center.x - matchedPoint.x
                 val dy = bounds.center.y - matchedPoint.y
-                Pair(cIdx, dx * dx + dy * dy)
+                val dist = dx * dx + (dy * dy * 0.35f)
+                Pair(cIdx, dist)
             } else null
         }
         .minByOrNull { it.second }
@@ -194,6 +196,7 @@ fun GameScreen(
     val context = androidx.compose.ui.platform.LocalContext.current
     val isPersian = remember(context) { LocaleHelper.isPersian(context) }
     val nunitoFont = rememberNunitoFont()
+    val density = LocalDensity.current
     var isAnimatingReturn by remember { mutableStateOf(false) }
 
     // Moves counter animated decrement flash and scale
@@ -251,6 +254,18 @@ fun GameScreen(
     // Group dragging states
     var draggedCards by remember { mutableStateOf<List<SolitaireCard>>(emptyList()) }
     var dragOffset by remember { mutableStateOf(Offset.Zero) }
+
+    // Dynamic stack compression animation during drag
+    // Compresses stack vertical spacing from 25.dp (~15mm) down to 7.dp (~2mm visible edge)
+    val isCompressingStack = draggedCards.size > 1 && !isAnimatingReturn
+    val compressionFraction by animateFloatAsState(
+        targetValue = if (isCompressingStack) 1f else 0f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioNoBouncy,
+            stiffness = Spring.StiffnessMediumLow
+        ),
+        label = "stackCompression"
+    )
 
     // Bounding boxes of Category Foundation slots
     val dropZoneBounds = remember { mutableStateMapOf<String, Rect>() }
@@ -845,6 +860,8 @@ fun GameScreen(
                                     val currentScale = if (isDealingFinished) 1f else (0.80f + (0.20f * eased))
 
                                     val isDragged = draggedCards.any { it.id == card.id }
+                                    val dragGroupIdx = if (isDragged) draggedCards.indexOfFirst { it.id == card.id } else -1
+                                    val compressionYOffset = if (dragGroupIdx > 0) (- (dragGroupIdx * 18f * compressionFraction)).dp else 0.dp
                                     val isCardTutorialHinted = (levelData.levelNumber == 1 && level1TutorialStep == 0 && card.isFaceUp && card.isCategory) ||
                                             (levelData.levelNumber == 1 && level1TutorialStep == 1 && card.isFaceUp && !card.isCategory && foundationSlots.any { it.activeCategory != null && it.activeCategory.id == card.categoryId })
                                     val isCardHinted = hintedCardId == card.id || isCardTutorialHinted
@@ -856,6 +873,7 @@ fun GameScreen(
                                         isShattering = shatteringJokerId == card.id,
                                         isHinted = isCardHinted,
                                         isDragged = isDragged,
+                                        dragZIndex = if (dragGroupIdx >= 0) dragGroupIdx.toFloat() else 0f,
                                         dragOffsetProvider = { dragOffset },
                                         isInteractionEnabled = isDealingFinished && movesRemaining > 0 && !showOutofMovesDialog && !isAnimatingReturn && (draggedCards.isEmpty() || isDragged),
                                         onTap = {},
@@ -888,11 +906,23 @@ fun GameScreen(
                                         onDragEnd = { dropCenter ->
                                             val finalGroup = draggedCards
                                             if (finalGroup.isNotEmpty()) {
+                                                val touchIndexInGroup = finalGroup.indexOfFirst { it.id == card.id }.coerceAtLeast(0)
+                                                val normalStepPx = with(density) { 25.dp.toPx() }
+                                                val compressedStepPx = with(density) { (25.dp - (18.dp * compressionFraction)).toPx() }
+                                                val topCardCenter = Offset(
+                                                    dropCenter.x,
+                                                    dropCenter.y - (touchIndexInGroup * normalStepPx)
+                                                )
+                                                val bottomCardCenter = Offset(
+                                                    dropCenter.x,
+                                                    topCardCenter.y + ((finalGroup.size - 1) * compressedStepPx)
+                                                )
+                                                val midCardCenter = Offset(
+                                                    dropCenter.x,
+                                                    (topCardCenter.y + bottomCardCenter.y) / 2f
+                                                )
                                                 val testPoints = if (finalGroup.size > 1) {
-                                                    listOf(
-                                                        dropCenter,
-                                                        Offset(dropCenter.x, dropCenter.y - ((finalGroup.size - 1) * 35f))
-                                                    )
+                                                    listOf(dropCenter, topCardCenter, bottomCardCenter, midCardCenter)
                                                 } else {
                                                     listOf(dropCenter)
                                                 }
@@ -987,7 +1017,7 @@ fun GameScreen(
                                             }
                                         },
                                         modifier = Modifier
-                                            .offset(x = currentDealX, y = currentDealY)
+                                            .offset(x = currentDealX, y = currentDealY + compressionYOffset)
                                             .graphicsLayer {
                                                 rotationZ = currentRotation
                                                 scaleX = currentScale
@@ -995,7 +1025,7 @@ fun GameScreen(
                                                 alpha = currentAlpha
                                             }
                                             .onGloballyPositioned { coordinates ->
-                                                if (isDealingFinished && rowIdx == colList.size - 1) {
+                                                if (isDealingFinished && rowIdx == colList.size - 1 && draggedCards.isEmpty()) {
                                                     val cardBounds = coordinates.boundsInRoot()
                                                     val boxBounds = tableauBounds[colIdx]
                                                     tableauBounds[colIdx] = if (boxBounds != null) {
