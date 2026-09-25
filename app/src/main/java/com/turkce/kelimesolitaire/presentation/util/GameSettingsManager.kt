@@ -16,11 +16,71 @@ object GameSettingsManager {
     private const val PREFS_NAME = "kelime_solitaire_prefs"
     private const val KEY_SOUND_ENABLED = "key_sound_enabled"
     private const val KEY_HAPTIC_ENABLED = "key_haptic_enabled"
+    private const val KEY_STARTER_PACK_FIRST_SHOWN = "key_starter_pack_first_shown"
+    private const val KEY_STARTER_PACK_LAST_POPUP_TIME = "key_starter_pack_last_popup_time"
+    private const val KEY_STARTER_PACK_LAST_POPUP_LEVEL = "key_starter_pack_last_popup_level"
 
     private val audioExecutor = Executors.newSingleThreadExecutor()
 
     private fun getPrefs(context: Context): SharedPreferences {
         return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+    }
+
+    // --- Starter Pack Offer Triggers ---
+
+    fun isStarterPackEligible(
+        isStarterPackPurchased: Boolean,
+        lastUnsolvedLevel: Int,
+        completedLevels: Set<Int>
+    ): Boolean {
+        if (isStarterPackPurchased) return false
+        // Must have completed at least level 3
+        return completedLevels.contains(3) || lastUnsolvedLevel > 3
+    }
+
+    /**
+     * Checks if the automatic Starter Pack popup should be shown on Main Menu:
+     * 1. Must be eligible (passed level 3 and not purchased).
+     * 2. First time reaching eligibility: show immediately!
+     * 3. Periodic plan:
+     *    - At least 24 hours have passed since the last popup
+     *    OR
+     *    - Player progressed by at least 5 levels since last popup (with min 4 hours cooldown).
+     */
+    fun shouldTriggerStarterPackPopup(
+        context: Context,
+        isStarterPackPurchased: Boolean,
+        lastUnsolvedLevel: Int,
+        completedLevels: Set<Int>
+    ): Boolean {
+        if (!isStarterPackEligible(isStarterPackPurchased, lastUnsolvedLevel, completedLevels)) {
+            return false
+        }
+
+        val prefs = getPrefs(context)
+        val firstShown = prefs.getBoolean(KEY_STARTER_PACK_FIRST_SHOWN, false)
+        if (!firstShown) {
+            return true
+        }
+
+        val lastTime = prefs.getLong(KEY_STARTER_PACK_LAST_POPUP_TIME, 0L)
+        val lastLevel = prefs.getInt(KEY_STARTER_PACK_LAST_POPUP_LEVEL, 0)
+        val now = System.currentTimeMillis()
+        val hoursPassed = (now - lastTime) / (1000 * 60 * 60)
+
+        // Show once every 24 hours OR every 5 levels progressed (with min 4 hours gap)
+        if (hoursPassed >= 24) return true
+        if (hoursPassed >= 4 && (lastUnsolvedLevel - lastLevel) >= 5) return true
+
+        return false
+    }
+
+    fun recordStarterPackPopupShown(context: Context, currentLevel: Int) {
+        getPrefs(context).edit()
+            .putBoolean(KEY_STARTER_PACK_FIRST_SHOWN, true)
+            .putLong(KEY_STARTER_PACK_LAST_POPUP_TIME, System.currentTimeMillis())
+            .putInt(KEY_STARTER_PACK_LAST_POPUP_LEVEL, currentLevel)
+            .apply()
     }
 
     // --- Sound Settings ---

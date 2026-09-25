@@ -34,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.zIndex
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -106,6 +107,32 @@ fun MainMenuScreen(
     }
     val difficultyRim = remember(difficulty) {
         getDifficultyRimColors(difficulty)
+    }
+
+    // Starter pack eligibility: only after level 3 is completed and not yet purchased
+    val isEligibleForStarterPack = remember(isStarterPackPurchased, lastUnsolvedLevel, completedLevels) {
+        com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.isStarterPackEligible(
+            isStarterPackPurchased,
+            lastUnsolvedLevel,
+            completedLevels
+        )
+    }
+
+    // Automatic Starter Pack popup: first time after completing level 3, or on periodic schedule
+    androidx.compose.runtime.LaunchedEffect(isEligibleForStarterPack) {
+        if (com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.shouldTriggerStarterPackPopup(
+                context,
+                isStarterPackPurchased,
+                lastUnsolvedLevel,
+                completedLevels
+            )
+        ) {
+            showStarterPackDialog = true
+            com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.recordStarterPackPopupShown(
+                context,
+                lastUnsolvedLevel
+            )
+        }
     }
 
     var showSettingsMenu by remember { androidx.compose.runtime.mutableStateOf(false) }
@@ -249,23 +276,14 @@ fun MainMenuScreen(
                 )
             }
 
-            // 3D Juicy Play Button with Difficulty Ribbon Banner & Starter Pack Banner
+            // 3D Juicy Play Button with Difficulty Ribbon Banner
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                // Special Offer: Starter Pack Banner (only shown if not yet purchased)
-                if (!isStarterPackPurchased) {
-                    StarterPackBanner(
-                        isPersian = isPersian,
-                        onClick = { showStarterPackDialog = true }
-                    )
-                    Spacer(modifier = Modifier.height(10.dp))
-                }
-
                 Box(
                     contentAlignment = Alignment.TopCenter,
-                    modifier = Modifier.padding(top = if (isStarterPackPurchased) 14.dp else 4.dp, bottom = 8.dp)
+                    modifier = Modifier.padding(top = 14.dp, bottom = 8.dp)
                 ) {
                     // Compact 3D Play Button Shell (rim themed dynamically with difficulty)
                     Box(
@@ -647,8 +665,22 @@ fun MainMenuScreen(
             }
         }
 
+        // Floating Side Offer Badge for Starter Pack (like top mobile casual games)
+        if (isEligibleForStarterPack) {
+            StarterPackSideButton(
+                isPersian = isPersian,
+                onClick = {
+                    com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playButtonClickSound(context)
+                    showStarterPackDialog = true
+                },
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .offset(y = 20.dp)
+            )
+        }
+
         // STARTER PACK SPECIAL OFFER MODAL DIALOG
-        if (showStarterPackDialog && !isStarterPackPurchased) {
+        if (showStarterPackDialog && isEligibleForStarterPack) {
             StarterPackDialog(
                 onDismiss = { showStarterPackDialog = false },
                 onBuy = {
@@ -660,135 +692,124 @@ fun MainMenuScreen(
     }
 }
 
+/**
+ * Floating 3D Side Offer Badge for Starter Pack, matching casual game standards (Royal Match, Candy Crush).
+ */
 @Composable
-fun StarterPackBanner(
+fun StarterPackSideButton(
     isPersian: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val nunitoFont = rememberNunitoFont()
-    val infiniteTransition = rememberInfiniteTransition(label = "bannerPulse")
-    val badgeScale by infiniteTransition.animateFloat(
-        initialValue = 0.95f,
-        targetValue = 1.05f,
+    val infiniteTransition = rememberInfiniteTransition(label = "sideOfferPulse")
+
+    // Gentle floating pulse scale
+    val pulseScale by infiniteTransition.animateFloat(
+        initialValue = 0.98f,
+        targetValue = 1.06f,
         animationSpec = infiniteRepeatable(
-            animation = tween(900, easing = FastOutSlowInEasing),
+            animation = tween(1200, easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
         ),
-        label = "badgeScale"
+        label = "pulseScale"
     )
 
     Box(
         modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 14.dp)
-            .shadow(16.dp, RoundedCornerShape(22.dp))
-            .clip(RoundedCornerShape(22.dp))
+            .scale(pulseScale)
+            .shadow(12.dp, RoundedCornerShape(18.dp))
+            .clip(RoundedCornerShape(18.dp))
+            // 3D Outer Gold Rim
             .background(
-                Brush.horizontalGradient(
-                    listOf(Color(0xFF581C87), Color(0xFF7E22CE), Color(0xFF3B0764))
+                Brush.verticalGradient(
+                    listOf(Color(0xFFFEF08A), Color(0xFFF59E0B), Color(0xFFB45309))
                 )
             )
-            .border(2.dp, AccentGold, RoundedCornerShape(22.dp))
-            .clickable { onClick() }
-            .padding(horizontal = 12.dp, vertical = 9.dp)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.weight(1f)
-            ) {
-                Box(contentAlignment = Alignment.TopStart) {
-                    Image(
-                        painter = painterResource(id = R.drawable.gift),
-                        contentDescription = "Starter Pack",
-                        modifier = Modifier.size(46.dp)
+            .border(1.5.dp, Color(0xFFFEF08A), RoundedCornerShape(18.dp))
+            .padding(2.5.dp)
+            // 3D Bottom Bevel
+            .clip(RoundedCornerShape(16.dp))
+            .background(Color(0xFF4C0519)) // Deep ruby-crimson bevel base
+            .padding(bottom = 3.5.dp)
+            // Button Face: Rich Royal Ruby/Crimson Gradient
+            .clip(RoundedCornerShape(13.dp))
+            .background(
+                Brush.verticalGradient(
+                    listOf(
+                        Color(0xFFFB7185), // Soft rose top highlight
+                        Color(0xFFE11D48), // Vibrant crimson
+                        Color(0xFF881337)  // Deep rich wine base
                     )
-                    Box(
-                        modifier = Modifier
-                            .scale(badgeScale)
-                            .offset(x = (-4).dp, y = (-4).dp)
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(Color(0xFFDC2626))
-                            .border(1.dp, Color.White, RoundedCornerShape(8.dp))
-                            .padding(horizontal = 5.dp, vertical = 1.dp)
-                    ) {
-                        Text(
-                            text = if (isPersian) "٪۷۰" else "-70%",
-                            color = Color.White,
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.Black,
-                            fontFamily = nunitoFont
-                        )
-                    }
-                }
+                )
+            )
+            .clickable { onClick() }
+            .padding(horizontal = 6.dp, vertical = 7.dp)
+            .width(60.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            // Gift icon with discount tag overlay
+            Box(
+                contentAlignment = Alignment.TopEnd,
+                modifier = Modifier.size(42.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.gift),
+                    contentDescription = "Starter Pack Offer",
+                    modifier = Modifier
+                        .size(38.dp)
+                        .align(Alignment.Center)
+                )
 
-                Spacer(modifier = Modifier.width(10.dp))
-
-                Column {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(
-                            text = if (isPersian) "بسته شروع شگفت‌انگیز" else "BAŞLANGIÇ PAKETİ",
-                            color = Color.White,
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Black,
-                            fontFamily = nunitoFont
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = "✨",
-                            fontSize = 13.sp
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(2.dp))
+                // Discount -70% badge
+                Box(
+                    modifier = Modifier
+                        .offset(x = 6.dp, y = (-4).dp)
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(Color(0xFFDC2626))
+                        .border(1.dp, Color.White, RoundedCornerShape(6.dp))
+                        .padding(horizontal = 3.5.dp, vertical = 0.5.dp)
+                ) {
                     Text(
-                        text = if (isPersian) "۲۰۰۰ سکه + ۹ کارت کمکی + بدون تبلیغ" else "2000 Altın + 9 Joker + Reklamsız",
-                        color = Color.White.copy(alpha = 0.9f),
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
+                        text = if (isPersian) "٪۷۰" else "-70%",
+                        color = Color.White,
+                        fontSize = 8.5.sp,
+                        fontWeight = FontWeight.Black,
                         fontFamily = nunitoFont
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.height(3.dp))
 
-            // Shiny 3D Gold Price Button
+            // Mini Gold Banner label at bottom
             Box(
                 modifier = Modifier
-                    .shadow(8.dp, RoundedCornerShape(14.dp))
-                    .clip(RoundedCornerShape(14.dp))
+                    .clip(RoundedCornerShape(6.dp))
                     .background(
-                        Brush.verticalGradient(
-                            listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1))
+                        Brush.horizontalGradient(
+                            listOf(Color(0xFFFBBF24), Color(0xFFF59E0B))
                         )
                     )
-                    .padding(1.5.dp)
-                    .clip(RoundedCornerShape(13.dp))
-                    .background(Color(0xFF78350F))
-                    .padding(bottom = 2.5.dp)
-                    .clip(RoundedCornerShape(11.dp))
-                    .background(
-                        Brush.verticalGradient(
-                            listOf(Color(0xFFFBBF24), Color(0xFFF59E0B), Color(0xFFD97706))
-                        )
-                    )
-                    .padding(horizontal = 12.dp, vertical = 7.dp),
-                contentAlignment = Alignment.Center
+                    .border(0.8.dp, Color.White.copy(alpha = 0.8f), RoundedCornerShape(6.dp))
+                    .padding(horizontal = 4.dp, vertical = 1.dp)
             ) {
                 Text(
-                    text = if (isPersian) "۹۹,۰۰۰ تومان" else "₺99.99",
+                    text = if (isPersian) "بسته ویژه" else "ÖZEL",
                     color = Color(0xFF451A03),
-                    fontSize = 13.sp,
+                    fontSize = 9.sp,
                     fontWeight = FontWeight.Black,
-                    fontFamily = nunitoFont
+                    fontFamily = nunitoFont,
+                    textAlign = TextAlign.Center,
+                    maxLines = 1
                 )
             }
         }
     }
 }
+
 
