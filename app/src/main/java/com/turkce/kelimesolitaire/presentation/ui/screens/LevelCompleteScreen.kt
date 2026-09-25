@@ -35,11 +35,23 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkCard
 import com.turkce.kelimesolitaire.presentation.ui.theme.SuccessGreen
 import com.turkce.kelimesolitaire.presentation.ui.theme.TextPrimary
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.graphics.graphicsLayer
+import com.turkce.kelimesolitaire.domain.LevelGenerator
+import com.turkce.kelimesolitaire.presentation.ui.components.ConfettiPartyPopper
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.launch
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 
 @Composable
@@ -57,6 +69,35 @@ fun LevelCompleteScreen(
     val isPersian = remember(context) { LocaleHelper.isPersian(context) }
     val nunitoFont = rememberNunitoFont()
     var isActionTriggered by remember { mutableStateOf(false) }
+
+    // Upcoming level difficulty determination
+    val nextLevel = levelNumber + 1
+    val nextDifficulty = remember(nextLevel) {
+        LevelGenerator.getDifficultyForLevel(nextLevel)
+    }
+
+    // Celebratory victory pop entrance animation
+    val entranceScale = remember { Animatable(0.2f) }
+    val entranceAlpha = remember { Animatable(0f) }
+
+    LaunchedEffect(Unit) {
+        launch {
+            entranceAlpha.animateTo(
+                targetValue = 1f,
+                animationSpec = tween(350, easing = LinearOutSlowInEasing)
+            )
+        }
+        launch {
+            entranceScale.animateTo(
+                targetValue = 1f,
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                    stiffness = Spring.StiffnessMediumLow
+                )
+            )
+        }
+    }
+
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -71,13 +112,36 @@ fun LevelCompleteScreen(
         ) {
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Victory Title
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                androidx.compose.foundation.Image(
-                    painter = androidx.compose.ui.res.painterResource(id = com.turkce.kelimesolitaire.R.drawable.trophy),
-                    contentDescription = "Trophy",
-                    modifier = Modifier.size(90.dp)
-                )
+            // Victory Title with celebratory pop entrance & golden halo
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.graphicsLayer {
+                    scaleX = entranceScale.value
+                    scaleY = entranceScale.value
+                    alpha = entranceAlpha.value
+                }
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    // Pulsing golden aura behind trophy
+                    Box(
+                        modifier = Modifier
+                            .size(110.dp)
+                            .background(
+                                Brush.radialGradient(
+                                    colors = listOf(
+                                        Color(0x66F59E0B),
+                                        Color(0x00F59E0B)
+                                    )
+                                ),
+                                shape = CircleShape
+                            )
+                    )
+                    androidx.compose.foundation.Image(
+                        painter = androidx.compose.ui.res.painterResource(id = com.turkce.kelimesolitaire.R.drawable.trophy),
+                        contentDescription = "Trophy",
+                        modifier = Modifier.size(92.dp)
+                    )
+                }
                 Spacer(modifier = Modifier.height(10.dp))
                 OutlinedText(
                     text = LocaleHelper.victoryTitle(isPersian),
@@ -212,49 +276,79 @@ fun LevelCompleteScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                // 3D Next Level Button (Lime Green Gradient)
+                // 3D Next Level Button with Overlapping Difficulty Ribbon Banner
                 Box(
-                    modifier = Modifier
-                        .shadow(14.dp, RoundedCornerShape(22.dp))
-                        .clip(RoundedCornerShape(22.dp))
-                        .background(
-                            Brush.verticalGradient(
-                                colors = listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1))
-                            )
-                        )
-                        .padding(2.dp)
-                        .clip(RoundedCornerShape(20.dp))
-                        .background(Color(0xFF1E3A07))
-                        .padding(bottom = 4.dp)
-                        .clip(RoundedCornerShape(18.dp))
-                        .background(
-                            Brush.verticalGradient(
-                                colors = listOf(
-                                    Color(0xFF84CC16),
-                                    Color(0xFF65A30D),
-                                    Color(0xFF4D7C0F)
+                    contentAlignment = Alignment.TopCenter,
+                    modifier = Modifier.padding(top = 10.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .shadow(14.dp, RoundedCornerShape(22.dp))
+                            .clip(RoundedCornerShape(22.dp))
+                            .background(
+                                Brush.verticalGradient(
+                                    colors = listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1))
                                 )
                             )
-                        )
-                        .border(1.5.dp, Color(0xFFBEF264), RoundedCornerShape(18.dp))
-                        .clickable(enabled = !isActionTriggered) {
-                            if (!isActionTriggered) {
-                                isActionTriggered = true
-                                onNextLevelClicked()
+                            .padding(2.dp)
+                            .clip(RoundedCornerShape(20.dp))
+                            .background(Color(0xFF1E3A07))
+                            .padding(bottom = 4.dp)
+                            .clip(RoundedCornerShape(18.dp))
+                            .background(
+                                Brush.verticalGradient(
+                                    colors = listOf(
+                                        Color(0xFF84CC16),
+                                        Color(0xFF65A30D),
+                                        Color(0xFF4D7C0F)
+                                    )
+                                )
+                            )
+                            .border(1.5.dp, Color(0xFFBEF264), RoundedCornerShape(18.dp))
+                            .clickable(enabled = !isActionTriggered) {
+                                if (!isActionTriggered) {
+                                    isActionTriggered = true
+                                    onNextLevelClicked()
+                                }
                             }
+                            .padding(horizontal = 30.dp, vertical = 14.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        OutlinedText(
+                            text = LocaleHelper.nextLevel(isPersian),
+                            textColor = Color.White,
+                            outlineColor = Color(0xFF1E3A07),
+                            outlineWidth = 5f,
+                            fontSize = 28.sp,
+                            fontWeight = FontWeight.Black,
+                            letterSpacing = 1.2.sp
+                        )
+                    }
+
+                    // Overlapping Difficulty Ribbon Banner (Shown for Zor and CokZor levels, exactly like MainMenuScreen)
+                    if (nextDifficulty == "Zor" || nextDifficulty == "CokZor") {
+                        val difficultyText = LocaleHelper.difficulty(nextDifficulty, isPersian)
+                        val ribbonColor = if (nextDifficulty == "CokZor") Color(0xFFDC2626) else Color(0xFFEA580C)
+
+                        Box(
+                            modifier = Modifier
+                                .offset(y = (-14).dp)
+                                .shadow(6.dp, RoundedCornerShape(12.dp))
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(ribbonColor)
+                                .border(1.5.dp, Color.White, RoundedCornerShape(12.dp))
+                                .padding(horizontal = 24.dp, vertical = 5.dp)
+                        ) {
+                            Text(
+                                text = difficultyText,
+                                color = Color.White,
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.Black,
+                                fontFamily = nunitoFont,
+                                letterSpacing = 0.5.sp
+                            )
                         }
-                        .padding(horizontal = 30.dp, vertical = 14.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    OutlinedText(
-                        text = LocaleHelper.nextLevel(isPersian),
-                        textColor = Color.White,
-                        outlineColor = Color(0xFF1E3A07),
-                        outlineWidth = 5f,
-                        fontSize = 28.sp,
-                        fontWeight = FontWeight.Black,
-                        letterSpacing = 1.2.sp
-                    )
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(14.dp))
@@ -305,5 +399,8 @@ fun LevelCompleteScreen(
             // Ad Banner Footer
             AdBannerPlaceholder(isAdFree = isAdFree)
         }
+
+        // Celebratory Party Popper Confetti Shower
+        ConfettiPartyPopper()
     }
 }

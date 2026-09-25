@@ -18,35 +18,7 @@ class LevelGenerator {
         val allWords = database.words
 
         // Gradual progression curve
-        val difficultyLevel = when {
-            levelNumber <= 3 -> "Kolay" // Tutorial / Warmup
-            levelNumber in 4..7 -> when (levelNumber) {
-                4 -> "Kolay"
-                else -> "Orta"
-            }
-            levelNumber in 8..10 -> when (levelNumber) {
-                8, 9 -> "Zor"
-                else -> "CokZor" // Level 10 milestone
-            }
-            levelNumber in 11..20 -> {
-                val cycle = (levelNumber - 11) % 10
-                // 11:Orta, 12:Orta, 13:Zor, 14:Orta, 15:Zor, 16:Zor, 17:Zor, 18:Orta, 19:Zor, 20:CokZor
-                when (cycle) {
-                    0, 1, 3, 7 -> "Orta"
-                    9 -> "CokZor"
-                    else -> "Zor"
-                }
-            }
-            else -> {
-                // Levels 21+: Endgame challenge (mostly Zor and CokZor with occasional Orta breather)
-                val cycle = (levelNumber - 21) % 10
-                when (cycle) {
-                    0, 4 -> "Orta"
-                    2, 5, 7 -> "Zor"
-                    else -> "CokZor"
-                }
-            }
-        }
+        val difficultyLevel = getDifficultyForLevel(levelNumber)
 
         val scaleFactor = when {
             levelNumber <= 8 -> 0
@@ -485,5 +457,39 @@ class LevelGenerator {
         }
 
         return false
+    }
+
+    companion object {
+        fun getDifficultyForLevel(levelNumber: Int): String {
+            return when {
+                levelNumber <= 3 -> "Kolay" // Tutorial / Warmup
+                levelNumber in 4..7 -> when (levelNumber) {
+                    4 -> "Kolay"
+                    else -> "Orta"
+                }
+                levelNumber in 8..10 -> when (levelNumber) {
+                    8, 9 -> "Zor"
+                    else -> "CokZor" // Level 10 milestone
+                }
+                levelNumber in 11..20 -> {
+                    val cycle = (levelNumber - 11) % 10
+                    // 11:Orta, 12:Orta, 13:Zor, 14:Orta, 15:Zor, 16:Zor, 17:Zor, 18:Orta, 19:Zor, 20:CokZor
+                    when (cycle) {
+                        0, 1, 3, 7 -> "Orta"
+                        9 -> "CokZor"
+                        else -> "Zor"
+                    }
+                }
+                else -> {
+                    // Levels 21+: Endgame challenge (mostly Zor and CokZor with occasional Orta breather)
+                    val cycle = (levelNumber - 21) % 10
+                    when (cycle) {
+                        0, 4 -> "Orta"
+                        2, 5, 7 -> "Zor"
+                        else -> "CokZor"
+                    }
+                }
+            }
+        }
     }
 }

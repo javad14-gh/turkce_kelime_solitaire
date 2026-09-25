@@ -90,13 +90,7 @@ fun MainMenuScreen(
 
     // Determine difficulty of the last unsolved level
     val difficulty = remember(lastUnsolvedLevel) {
-        val cycleIndex = (lastUnsolvedLevel - 1) % 10
-        when (cycleIndex) {
-            0, 1, 3, 7 -> "Kolay"
-            2, 4, 5, 8 -> "Orta"
-            6 -> "Zor"
-            else -> "CokZor"
-        }
+        com.turkce.kelimesolitaire.domain.LevelGenerator.getDifficultyForLevel(lastUnsolvedLevel)
     }
 
     var showSettingsMenu by remember { androidx.compose.runtime.mutableStateOf(false) }
