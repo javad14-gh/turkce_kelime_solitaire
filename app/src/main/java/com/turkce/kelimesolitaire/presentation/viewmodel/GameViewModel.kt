@@ -161,11 +161,10 @@ class GameViewModel : ViewModel() {
     }
 
     fun onSplashFinished() {
-        val hasUnclaimed = _uiState.value.dailyRewardState?.isReadyToClaimToday == true
         _uiState.update { 
             it.copy(
                 screenState = ScreenState.MainMenu,
-                showDailyRewardDialog = hasUnclaimed
+                showDailyRewardDialog = false
             ) 
         }
     }

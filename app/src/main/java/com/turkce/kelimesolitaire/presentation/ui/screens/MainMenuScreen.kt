@@ -26,12 +26,15 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.zIndex
@@ -54,11 +57,15 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.ui.draw.scale
+import androidx.compose.foundation.layout.widthIn
 import com.turkce.kelimesolitaire.data.billing.MyketBillingConfig
+import com.turkce.kelimesolitaire.data.dailyreward.DailyRewardManager
+import com.turkce.kelimesolitaire.data.dailyreward.DailyRewardState
 import com.turkce.kelimesolitaire.presentation.ui.components.StarterPackDialog
 import com.turkce.kelimesolitaire.presentation.ui.components.AdBannerPlaceholder
 import com.turkce.kelimesolitaire.presentation.ui.components.OutlinedText
 import com.turkce.kelimesolitaire.presentation.ui.components.rememberNunitoFont
+import com.turkce.kelimesolitaire.presentation.util.rememberAppFont
 import com.turkce.kelimesolitaire.presentation.ui.theme.AccentGold
 import com.turkce.kelimesolitaire.presentation.ui.theme.BorderGlass
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg
@@ -139,6 +146,10 @@ fun MainMenuScreen(
     var isSoundEnabled by remember { androidx.compose.runtime.mutableStateOf(com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.isSoundEnabled(context)) }
     var isHapticEnabled by remember { androidx.compose.runtime.mutableStateOf(com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.isHapticEnabled(context)) }
 
+    val dailyRewardState = remember(hasUnclaimedDailyReward) {
+        DailyRewardManager.getDailyRewardState(context)
+    }
+
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -152,91 +163,114 @@ fun MainMenuScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             
-            // Top Dashboard HUD (Coins Status Pill left-aligned + Actions right-aligned)
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp, start = 8.dp, end = 8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+            // Top Section: Top Bar HUD (Coins Left, Settings Right) + 7-Day Daily Reward Progress Bar Centered
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(24.dp))
-                        .background(Color(0xFF2A364F).copy(alpha = 0.9f))
-                        .border(1.5.dp, Color.White.copy(alpha = 0.25f), RoundedCornerShape(24.dp))
-                        .clickable { onOpenStore() }
-                        .padding(start = 4.dp, end = 16.dp, top = 3.dp, bottom = 3.dp)
-                ) {
-                    // Gold Coin Icon + Green '+' Circle Badge
-                    Box(contentAlignment = Alignment.BottomEnd) {
-                        com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 38.dp)
+                CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp, start = 8.dp, end = 8.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        // 1. Coins Display: 3D Coin on the outside, box extending to the right
                         Box(
                             modifier = Modifier
-                                .offset(x = 3.dp, y = 3.dp)
-                                .size(16.dp)
-                                .clip(CircleShape)
-                                .background(Color(0xFF4CAF50))
-                                .border(1.dp, Color.White, CircleShape),
-                            contentAlignment = Alignment.Center
+                                .clickable { onOpenStore() },
+                            contentAlignment = Alignment.CenterStart
                         ) {
-                            Text(
-                                text = "+",
-                                color = Color.White,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Black
-                            )
-                        }
-                    }
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Text(
-                        text = LocaleHelper.formatNumber(coins, isPersian),
-                        color = Color.White,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Black,
-                        fontFamily = nunitoFont
-                    )
-                }
+                            // Pill / Box extending rightward from behind the coin
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier
+                                    .padding(start = 20.dp)
+                                    .height(30.dp)
+                                    .clip(RoundedCornerShape(topEnd = 15.dp, bottomEnd = 15.dp, topStart = 4.dp, bottomStart = 4.dp))
+                                    .background(
+                                        Brush.horizontalGradient(
+                                            listOf(
+                                                Color(0xFF1E293B).copy(alpha = 0.95f),
+                                                Color(0xFF0F172A).copy(alpha = 0.98f)
+                                            )
+                                        )
+                                    )
+                                    .border(
+                                        1.2.dp,
+                                        Brush.horizontalGradient(
+                                            listOf(
+                                                Color(0xFFFFD700).copy(alpha = 0.7f),
+                                                Color.White.copy(alpha = 0.2f)
+                                            )
+                                        ),
+                                        RoundedCornerShape(topEnd = 15.dp, bottomEnd = 15.dp, topStart = 4.dp, bottomStart = 4.dp)
+                                    )
+                                    .padding(start = 24.dp, end = 6.dp)
+                            ) {
+                                Text(
+                                    text = LocaleHelper.formatNumber(coins, isPersian),
+                                    color = Color.White,
+                                    fontSize = 17.sp,
+                                    fontWeight = FontWeight.Black,
+                                    fontFamily = nunitoFont
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
+                                // Green '+' Circle Badge on the right end
+                                Box(
+                                    modifier = Modifier
+                                        .size(19.dp)
+                                        .clip(CircleShape)
+                                        .background(
+                                            Brush.verticalGradient(
+                                                listOf(Color(0xFF4ADE80), Color(0xFF16A34A))
+                                            )
+                                        )
+                                        .border(1.dp, Color.White, CircleShape),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = "+",
+                                        color = Color.White,
+                                        fontSize = 13.sp,
+                                        fontWeight = FontWeight.Black,
+                                        lineHeight = 13.sp
+                                    )
+                                }
+                            }
 
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    // Daily Reward Gift Box
-                    Box(
-                        modifier = Modifier
-                            .size(42.dp)
-                            .clickable { onOpenDailyReward() },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.gift),
-                            contentDescription = "Daily Reward",
-                            modifier = Modifier.fillMaxSize()
-                        )
-                        if (hasUnclaimedDailyReward) {
+                            // 3D Coin Icon on the outside, overlapping on the left
                             Box(
                                 modifier = Modifier
-                                    .align(Alignment.TopEnd)
-                                    .offset(x = 1.dp, y = (-1).dp)
-                                    .size(11.dp)
-                                    .clip(CircleShape)
-                                    .background(Color(0xFFFF3366))
-                                    .border(1.5.dp, Color.White, CircleShape)
-                            )
+                                    .size(42.dp)
+                                    .zIndex(2f),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 42.dp)
+                            }
                         }
-                    }
 
-                    // Settings Icon
-                    androidx.compose.foundation.Image(
-                        painter = androidx.compose.ui.res.painterResource(id = com.turkce.kelimesolitaire.R.drawable.setting),
-                        contentDescription = "Settings",
-                        modifier = Modifier
-                            .size(42.dp)
-                            .clickable { showSettingsMenu = true }
-                    )
+                        // 2. Settings Menu Icon (Right)
+                        Image(
+                            painter = painterResource(id = R.drawable.setting),
+                            contentDescription = "Settings",
+                            modifier = Modifier
+                                .size(42.dp)
+                                .clickable { showSettingsMenu = true }
+                        )
+                    }
                 }
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                // Line 2: Centered 7-Day Daily Reward Progress Bar
+                DailyReward7DayProgressBar(
+                    state = dailyRewardState,
+                    isPersian = isPersian,
+                    hasUnclaimedReward = hasUnclaimedDailyReward,
+                    onClick = { onOpenDailyReward() }
+                )
             }
 
             // Central Game Branding
@@ -807,6 +841,238 @@ fun StarterPackSideButton(
                     textAlign = TextAlign.Center,
                     maxLines = 1
                 )
+            }
+        }
+    }
+}
+
+@Composable
+private fun DailyReward7DayProgressBar(
+    state: DailyRewardState,
+    isPersian: Boolean,
+    hasUnclaimedReward: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val appFont = rememberAppFont()
+
+    // Calculate week streak status (1..7)
+    val claimedThisWeek = remember(state.claimedDaysCount, state.isReadyToClaimToday) {
+        if (!state.isReadyToClaimToday && state.claimedDaysCount > 0 && state.claimedDaysCount % 7 == 0) {
+            7
+        } else {
+            state.claimedDaysCount % 7
+        }
+    }
+    val todayReadyDay = remember(claimedThisWeek, state.isReadyToClaimToday) {
+        if (state.isReadyToClaimToday) (claimedThisWeek + 1).coerceIn(1, 7) else 0
+    }
+
+    val infiniteTransition = rememberInfiniteTransition(label = "daily_pulse")
+    val pulseScale by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = 1.14f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(800, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "pulse_scale"
+    )
+    val glowAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.4f,
+        targetValue = 0.9f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(800, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "glow_alpha"
+    )
+
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 28.dp)
+            .widthIn(max = 280.dp)
+            .clip(RoundedCornerShape(14.dp))
+            .clickable { onClick() },
+        shape = RoundedCornerShape(14.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFF131D31).copy(alpha = 0.92f)
+        ),
+        border = androidx.compose.foundation.BorderStroke(
+            1.dp,
+            if (hasUnclaimedReward)
+                Brush.horizontalGradient(
+                    listOf(
+                        Color(0xFFFFD700).copy(alpha = glowAlpha),
+                        Color(0xFF4ADE80).copy(alpha = glowAlpha)
+                    )
+                )
+            else
+                Brush.horizontalGradient(
+                    listOf(
+                        Color.White.copy(alpha = 0.15f),
+                        Color.White.copy(alpha = 0.08f)
+                    )
+                )
+        )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 10.dp, vertical = 5.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            // Header Row: Title & Status
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.gift),
+                        contentDescription = "Daily Reward",
+                        modifier = Modifier
+                            .size(14.dp)
+                            .then(if (hasUnclaimedReward) Modifier.scale(pulseScale) else Modifier)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = if (isPersian) "جایزه ورود روزانه" else "Günlük Giriş Ödülü",
+                        color = AccentGold,
+                        fontSize = 10.5.sp,
+                        fontWeight = FontWeight.Black,
+                        fontFamily = appFont
+                    )
+                }
+
+                if (hasUnclaimedReward) {
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(6.dp))
+                            .background(
+                                Brush.horizontalGradient(
+                                    listOf(Color(0xFF16A34A), Color(0xFF22C55E))
+                                )
+                            )
+                            .padding(horizontal = 5.dp, vertical = 1.5.dp)
+                    ) {
+                        Text(
+                            text = if (isPersian) "دریافت سریع 🪙" else "Hızlı Al 🪙",
+                            color = Color.White,
+                            fontSize = 9.sp,
+                            fontWeight = FontWeight.Black,
+                            fontFamily = appFont
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            // 7 Days Progress Track
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                for (day in 1..7) {
+                    val isClaimed = day <= claimedThisWeek
+                    val isReady = day == todayReadyDay
+                    val isDay7 = day == 7
+
+                    if (isDay7) {
+                        // Day 7: Big Prominent Freestanding Chest
+                        Box(
+                            modifier = Modifier
+                                .size(38.dp)
+                                .then(if (isReady) Modifier.scale(pulseScale) else Modifier),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.chest),
+                                contentDescription = "Day 7 Chest",
+                                modifier = Modifier.size(36.dp),
+                                alpha = if (isClaimed) 0.55f else 1f
+                            )
+                            if (isClaimed) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.tick),
+                                    contentDescription = "Claimed",
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                        }
+                    } else {
+                        // Days 1 to 6: Step Nodes
+                        if (isClaimed) {
+                            Image(
+                                painter = painterResource(id = R.drawable.tick),
+                                contentDescription = "Claimed",
+                                modifier = Modifier.size(20.dp)
+                            )
+                        } else {
+                            Box(
+                                modifier = Modifier
+                                    .size(18.dp)
+                                    .then(if (isReady) Modifier.scale(pulseScale) else Modifier)
+                                    .clip(CircleShape)
+                                    .background(
+                                        if (isReady)
+                                            Brush.verticalGradient(listOf(Color(0xFFFFE066), Color(0xFFF59E0B)))
+                                        else
+                                            Brush.verticalGradient(listOf(Color(0xFF1E293B), Color(0xFF0F172A)))
+                                    )
+                                    .border(
+                                        width = if (isReady) 1.5.dp else 1.dp,
+                                        color = if (isReady) Color.White else Color.White.copy(alpha = 0.15f),
+                                        shape = CircleShape
+                                    ),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                if (isReady) {
+                                    Text(
+                                        text = LocaleHelper.formatNumber(day, isPersian),
+                                        color = Color(0xFF1E293B),
+                                        fontSize = 10.sp,
+                                        fontWeight = FontWeight.Black,
+                                        fontFamily = appFont
+                                    )
+                                } else {
+                                    Text(
+                                        text = LocaleHelper.formatNumber(day, isPersian),
+                                        color = Color.White.copy(alpha = 0.5f),
+                                        fontSize = 9.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        fontFamily = appFont
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    // Connecting Line to next node
+                    if (day < 7) {
+                        val isLineActive = day < claimedThisWeek || (day == claimedThisWeek && todayReadyDay == day + 1)
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(2.dp)
+                                .background(
+                                    if (isLineActive)
+                                        Brush.horizontalGradient(
+                                            listOf(Color(0xFF22C55E), Color(0xFFFFD700))
+                                        )
+                                    else
+                                        Brush.horizontalGradient(
+                                            listOf(Color(0xFF334155), Color(0xFF1E293B))
+                                        )
+                                )
+                        )
+                    }
+                }
             }
         }
     }

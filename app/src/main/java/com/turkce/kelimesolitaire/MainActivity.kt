@@ -27,10 +27,10 @@ import com.turkce.kelimesolitaire.presentation.ui.screens.MainMenuScreen
 import com.turkce.kelimesolitaire.presentation.ui.screens.SplashScreen
 import com.turkce.kelimesolitaire.presentation.ui.screens.StoreScreen
 import android.widget.Toast
-import com.turkce.kelimesolitaire.presentation.ui.components.DailyRewardDialog
 import com.turkce.kelimesolitaire.presentation.ui.components.InGameToastBanner
 import com.turkce.kelimesolitaire.presentation.ui.components.MessageType
 import com.turkce.kelimesolitaire.presentation.ui.components.RestartLevelDialog
+import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.SecondaryNeon
 import com.turkce.kelimesolitaire.presentation.ui.theme.TurkceKelimeSolitaireTheme
@@ -92,7 +92,20 @@ class MainActivity : ComponentActivity() {
                                     },
                                     onWatchAdForCoins = { viewModel.watchRewardedAdForCoins(this@MainActivity) },
                                     onOpenStore = { viewModel.toggleStoreDialog(true) },
-                                    onOpenDailyReward = { viewModel.openDailyRewardDialog(this@MainActivity) },
+                                    onOpenDailyReward = {
+                                        if (state.dailyRewardHasUnclaimed) {
+                                            viewModel.claimDailyReward(this@MainActivity, doubleReward = false) { msg ->
+                                                viewModel.showUserMessage(msg, MessageType.SUCCESS)
+                                            }
+                                        } else {
+                                            val msg = if (LocaleHelper.isPersian(this@MainActivity)) {
+                                                "جایزه امروز قبلاً دریافت شده است. فردا منتظرتان هستیم!"
+                                            } else {
+                                                "Bugünkü ödül zaten alındı. Yarın tekrar gelin!"
+                                            }
+                                            viewModel.showUserMessage(msg, MessageType.INFO)
+                                        }
+                                    },
                                     onPurchaseSku = { sku -> viewModel.purchaseProduct(this@MainActivity, sku) }
                                 )
                             }
@@ -207,17 +220,6 @@ class MainActivity : ComponentActivity() {
                         }
                     }
 
-                    if (state.screenState is ScreenState.MainMenu && state.showDailyRewardDialog && state.dailyRewardState != null) {
-                        DailyRewardDialog(
-                            state = state.dailyRewardState!!,
-                            onDismiss = { viewModel.dismissDailyRewardDialog() },
-                            onClaim = { doubleReward ->
-                                viewModel.claimDailyReward(this@MainActivity, doubleReward) { msg ->
-                                    viewModel.showUserMessage(msg, MessageType.SUCCESS)
-                                }
-                            }
-                        )
-                    }
 
                     if (state.showRestartDialog) {
                         RestartLevelDialog(

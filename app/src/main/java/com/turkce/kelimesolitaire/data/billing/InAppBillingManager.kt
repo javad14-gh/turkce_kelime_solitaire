@@ -40,7 +40,7 @@ class InAppBillingManager private constructor() {
     private var activeMarketPackage = MyketBillingConfig.MYKET_BILLING_PACKAGE
     private var activeBindAction = MyketBillingConfig.MYKET_BIND_ACTION
     private var activePublicKey = MyketBillingConfig.MYKET_RSA_PUBLIC_KEY
-    private var activeDescriptor = "ir.mservices.market.IInAppBillingService"
+    private var activeDescriptor = "com.android.vending.billing.IInAppBillingService"
 
     private var onPurchaseSuccessCallback: ((String) -> Unit)? = null
     private var onPurchaseErrorCallback: ((String) -> Unit)? = null
@@ -55,7 +55,13 @@ class InAppBillingManager private constructor() {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             Log.d(TAG, "Billing service connected from ${name?.packageName}")
             if (service != null) {
-                billingService = InAppBillingProxy(service, activeDescriptor)
+                val remoteDesc = try {
+                    service.interfaceDescriptor?.takeIf { it.isNotBlank() } ?: activeDescriptor
+                } catch (e: Exception) {
+                    activeDescriptor
+                }
+                Log.d(TAG, "Using billing interface descriptor: $remoteDesc")
+                billingService = InAppBillingProxy(service, remoteDesc)
                 queryAndRestorePurchases()
             }
         }
@@ -108,14 +114,14 @@ class InAppBillingManager private constructor() {
                 activeMarketPackage = "com.farsitel.bazaar"
                 activeBindAction = "ir.cafebazaar.pardakht.InAppBillingService.BIND"
                 activePublicKey = BazaarBillingConfig.BAZAAR_RSA_PUBLIC_KEY
-                activeDescriptor = "ir.cafebazaar.pardakht.IInAppBillingService"
+                activeDescriptor = "com.android.vending.billing.IInAppBillingService"
                 Log.d(TAG, "Configured target market: Cafe Bazaar")
             }
             else -> {
                 activeMarketPackage = MyketBillingConfig.MYKET_BILLING_PACKAGE
                 activeBindAction = MyketBillingConfig.MYKET_BIND_ACTION
                 activePublicKey = MyketBillingConfig.MYKET_RSA_PUBLIC_KEY
-                activeDescriptor = "ir.mservices.market.IInAppBillingService"
+                activeDescriptor = "com.android.vending.billing.IInAppBillingService"
                 Log.d(TAG, "Configured target market: Myket")
             }
         }
@@ -312,8 +318,16 @@ class InAppBillingManager private constructor() {
  */
 class InAppBillingProxy(
     private val remote: IBinder,
-    private val descriptor: String
+    private val descriptor: String = "com.android.vending.billing.IInAppBillingService"
 ) : IInterface {
+
+    private val effectiveDescriptor: String
+        get() = try {
+            val queried = remote.interfaceDescriptor
+            if (!queried.isNullOrBlank()) queried else descriptor
+        } catch (_: Throwable) {
+            descriptor
+        }
 
     override fun asBinder(): IBinder = remote
 
@@ -321,7 +335,7 @@ class InAppBillingProxy(
         val data = Parcel.obtain()
         val reply = Parcel.obtain()
         return try {
-            data.writeInterfaceToken(descriptor)
+            data.writeInterfaceToken(effectiveDescriptor)
             data.writeInt(apiVersion)
             data.writeString(packageName)
             data.writeString(type)
@@ -344,7 +358,7 @@ class InAppBillingProxy(
         val data = Parcel.obtain()
         val reply = Parcel.obtain()
         return try {
-            data.writeInterfaceToken(descriptor)
+            data.writeInterfaceToken(effectiveDescriptor)
             data.writeInt(apiVersion)
             data.writeString(packageName)
             data.writeString(sku)
@@ -372,7 +386,7 @@ class InAppBillingProxy(
         val data = Parcel.obtain()
         val reply = Parcel.obtain()
         return try {
-            data.writeInterfaceToken(descriptor)
+            data.writeInterfaceToken(effectiveDescriptor)
             data.writeInt(apiVersion)
             data.writeString(packageName)
             data.writeString(type)
@@ -394,7 +408,7 @@ class InAppBillingProxy(
         val data = Parcel.obtain()
         val reply = Parcel.obtain()
         return try {
-            data.writeInterfaceToken(descriptor)
+            data.writeInterfaceToken(effectiveDescriptor)
             data.writeInt(apiVersion)
             data.writeString(packageName)
             data.writeString(purchaseToken)
