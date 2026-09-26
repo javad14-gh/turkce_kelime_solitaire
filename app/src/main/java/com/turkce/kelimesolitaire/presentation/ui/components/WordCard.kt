@@ -56,14 +56,15 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.graphics.SolidColor
 import com.turkce.kelimesolitaire.data.model.SolitaireCard
 import com.turkce.kelimesolitaire.presentation.ui.theme.AccentGold
 import com.turkce.kelimesolitaire.presentation.ui.theme.CardBackBg
-import com.turkce.kelimesolitaire.presentation.ui.theme.CardBackGradientBottom
-import com.turkce.kelimesolitaire.presentation.ui.theme.CardBackGradientTop
-import com.turkce.kelimesolitaire.presentation.ui.theme.CardBackPattern
-import com.turkce.kelimesolitaire.presentation.ui.theme.CardFaceBorder
+import com.turkce.kelimesolitaire.presentation.ui.theme.CardCategoryBg
+import com.turkce.kelimesolitaire.presentation.ui.theme.CardDraggingBorder
+import com.turkce.kelimesolitaire.presentation.ui.theme.CardFaceBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.CardFaceInnerBorder
+import com.turkce.kelimesolitaire.presentation.ui.theme.CardSelectedBorder
 import com.turkce.kelimesolitaire.presentation.ui.theme.ErrorRed
 import kotlin.math.roundToInt
 
@@ -172,21 +173,19 @@ fun WordCard(
     
     val isJoker = card.categoryId == "joker_wildcard"
 
-    // Board outline styling: category cards get a gold border when face up!
+    // Board outline styling:
     val borderColor = when {
         isShaking -> ErrorRed
         isHinted -> Color(0xFFFFD700).copy(alpha = hintGlowAlpha)
+        isDragged -> CardDraggingBorder
+        isSelected -> CardSelectedBorder
         isJoker -> Color(0xFF7E22CE) // Vibrant Purple Border for Joker!
-        isSelected -> AccentGold
         !isFaceUp -> Color.White // Crisp border for card backs
-        card.isCategory -> AccentGold.copy(alpha = 0.8f) // Gold outline for category cards
-        else -> CardFaceBorder
+        else -> Color.Transparent // کادر بیرونی روی کارت‌ها حذف می‌شود
     }
 
     val cardBrush = when {
-        !isFaceUp -> Brush.verticalGradient(
-            colors = listOf(CardBackGradientTop, CardBackGradientBottom)
-        )
+        !isFaceUp -> SolidColor(CardBackBg)
         isJoker -> Brush.verticalGradient(
             colors = listOf(
                 Color(0xFFFEF08A), // Vibrant golden yellow top
@@ -194,12 +193,8 @@ fun WordCard(
                 Color(0xFFEAB308)  // Rich golden bottom
             )
         )
-        card.isCategory -> Brush.verticalGradient(
-            colors = listOf(Color(0xFFFFFDE7), Color(0xFFFFF59D))
-        )
-        else -> Brush.verticalGradient(
-            colors = listOf(Color(0xFFFFFFFF), Color(0xFFECEFF1))
-        )
+        card.isCategory -> SolidColor(CardCategoryBg)
+        else -> SolidColor(CardFaceBg)
     }
 
     Card(
@@ -250,10 +245,14 @@ fun WordCard(
                 else Modifier
             )
             .background(cardBrush, shape = RoundedCornerShape(8.dp))
-            .border(
-                width = if (isHinted) 3.dp else if (isJoker || isSelected || isShaking || !isFaceUp || card.isCategory) 2.dp else 1.dp,
-                color = borderColor,
-                shape = RoundedCornerShape(8.dp)
+            .then(
+                if (borderColor != Color.Transparent) {
+                    Modifier.border(
+                        width = if (isHinted) 3.dp else if (isDragged) 2.5.dp else if (isJoker || isSelected || isShaking || !isFaceUp) 2.dp else 1.dp,
+                        color = borderColor,
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                } else Modifier
             )
             .then(
                 if (isFaceUp) {
@@ -327,16 +326,16 @@ fun WordCard(
             contentAlignment = Alignment.Center
         ) {
             if (isFaceUp) {
-                // کادر نازک داخلی روی کارت
+                // کادر داخلی روی کارت (Inner Border)
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(2.5.dp)
-                        .border(1.dp, CardFaceInnerBorder, RoundedCornerShape(6.dp))
+                        .padding(5.dp)
+                        .border(1.8.dp, CardFaceInnerBorder, RoundedCornerShape(5.dp))
                 )
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(horizontal = 2.dp, vertical = 4.dp)
+                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 5.dp)
                 ) {
                     val hasSpace = card.text.contains(" ")
                     val longestSubword = if (hasSpace) {
@@ -411,29 +410,11 @@ fun WordCard(
                     }
                 }
             } else {
-                Canvas(modifier = Modifier.fillMaxSize()) {
-                    drawRect(color = CardBackBg)
-                    
-                    val cardWidth = size.width
-                    val cardHeight = size.height
-                    val step = 32f
-                    
-                    val path = Path()
-                    for (x in -cardHeight.toInt()..cardWidth.toInt() step step.toInt()) {
-                        path.moveTo(x.toFloat(), 0f)
-                        path.lineTo(x.toFloat() + cardHeight, cardHeight)
-                    }
-                    for (x in 0..(cardWidth.toInt() + cardHeight.toInt()) step step.toInt()) {
-                        path.moveTo(x.toFloat(), 0f)
-                        path.lineTo(x.toFloat() - cardHeight, cardHeight)
-                    }
-                    
-                    drawPath(
-                        path = path,
-                        color = CardBackPattern,
-                        style = Stroke(width = 2f)
-                    )
-                }
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(CardBackBg)
+                )
             }
         }
     }

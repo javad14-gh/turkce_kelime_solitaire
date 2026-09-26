@@ -97,8 +97,7 @@ import com.turkce.kelimesolitaire.presentation.ui.components.HintIcon
 import com.turkce.kelimesolitaire.presentation.ui.components.UndoIcon
 import com.turkce.kelimesolitaire.presentation.ui.components.JokerIcon
 import com.turkce.kelimesolitaire.presentation.ui.theme.AccentGold
-import com.turkce.kelimesolitaire.presentation.ui.theme.GameTableBgTop
-import com.turkce.kelimesolitaire.presentation.ui.theme.GameTableBgBottom
+import com.turkce.kelimesolitaire.presentation.ui.theme.GameTableBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.BorderGlass
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkCard
 import com.turkce.kelimesolitaire.presentation.ui.theme.PrimaryNeon
@@ -327,11 +326,7 @@ fun GameScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(
-                Brush.radialGradient(
-                    colors = listOf(GameTableBgTop, GameTableBgBottom)
-                )
-            )
+            .background(GameTableBg)
     ) {
         Column(
             modifier = Modifier

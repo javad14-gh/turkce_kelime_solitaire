@@ -32,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Rect
@@ -52,10 +53,11 @@ import com.turkce.kelimesolitaire.data.model.FoundationSlot
 import androidx.compose.ui.graphics.ColorFilter
 import com.turkce.kelimesolitaire.presentation.ui.theme.AccentGold
 import com.turkce.kelimesolitaire.presentation.ui.theme.CategoryActiveBannerBg
-import com.turkce.kelimesolitaire.presentation.ui.theme.CategorySlotBgBottom
-import com.turkce.kelimesolitaire.presentation.ui.theme.CategorySlotBgTop
+import com.turkce.kelimesolitaire.presentation.ui.theme.CategorySlotActiveBg
+import com.turkce.kelimesolitaire.presentation.ui.theme.CategorySlotBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.CategorySlotBorder
 import com.turkce.kelimesolitaire.presentation.ui.theme.CategorySlotContent
+import com.turkce.kelimesolitaire.presentation.ui.theme.CategorySlotInnerShadow
 import com.turkce.kelimesolitaire.presentation.ui.theme.SecondaryNeon
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 import kotlinx.coroutines.delay
@@ -140,13 +142,53 @@ fun CategoryDropZone(
         contentAlignment = Alignment.TopCenter
     ) {
         // --- 1. BASE EMPTY CONTAINER (Theme colors from Color.kt) ---
-        val emptySlotBrush = Brush.verticalGradient(
-            colors = listOf(CategorySlotBgTop, CategorySlotBgBottom)
-        )
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(emptySlotBrush, shape = RoundedCornerShape(8.dp))
+                .clip(RoundedCornerShape(8.dp))
+                .background(CategorySlotBg)
+                .drawWithContent {
+                    drawContent()
+                    // ۱. سایه شیب‌دار عمیق از بالا به پایین (ایجاد حس گودی و سوراخ فیزیکی)
+                    drawRect(
+                        brush = Brush.verticalGradient(
+                            0f to CategorySlotInnerShadow.copy(alpha = 0.50f),
+                            0.20f to CategorySlotInnerShadow.copy(alpha = 0.22f),
+                            0.50f to Color.Transparent,
+                            startY = 0f,
+                            endY = size.height * 0.50f
+                        )
+                    )
+                    // ۲. سایه شیب‌دار از لبه چپ
+                    drawRect(
+                        brush = Brush.horizontalGradient(
+                            0f to CategorySlotInnerShadow.copy(alpha = 0.35f),
+                            0.20f to CategorySlotInnerShadow.copy(alpha = 0.12f),
+                            0.45f to Color.Transparent,
+                            startX = 0f,
+                            endX = size.width * 0.40f
+                        )
+                    )
+                    // ۳. سایه نرم از لبه راست
+                    drawRect(
+                        brush = Brush.horizontalGradient(
+                            0.60f to Color.Transparent,
+                            0.85f to CategorySlotInnerShadow.copy(alpha = 0.10f),
+                            1f to CategorySlotInnerShadow.copy(alpha = 0.25f),
+                            startX = size.width * 0.60f,
+                            endX = size.width
+                        )
+                    )
+                    // ۴. لبه براق پایینی (Bevel) برای القای عمق لبه سوراخ
+                    drawRect(
+                        brush = Brush.verticalGradient(
+                            0.82f to Color.Transparent,
+                            1f to Color.White.copy(alpha = 0.40f),
+                            startY = 0f,
+                            endY = size.height
+                        )
+                    )
+                }
                 .border(
                     width = if (isHighlighted && activeCategory == null) 2.dp else 1.2.dp,
                     color = if (isHighlighted && activeCategory == null) SecondaryNeon else CategorySlotBorder,
@@ -176,9 +218,6 @@ fun CategoryDropZone(
 
         // --- 2. ACTIVE CATEGORY CARD (Dissolves smoothly with cardAlpha & cardScale when completed) ---
         if (activeCategory != null) {
-            val activeSlotBrush = Brush.verticalGradient(
-                colors = listOf(Color(0xFFFFFFFF), Color(0xFFECEFF1))
-            )
             Card(
                 colors = CardDefaults.cardColors(containerColor = Color.Transparent),
                 shape = RoundedCornerShape(8.dp),
@@ -189,8 +228,9 @@ fun CategoryDropZone(
                         scaleX = cardScale.value
                         scaleY = cardScale.value
                     }
-                    .shadow(6.dp, RoundedCornerShape(8.dp), clip = false)
-                    .background(activeSlotBrush, shape = RoundedCornerShape(8.dp))
+                    .shadow(4.dp, RoundedCornerShape(8.dp), clip = false)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(CategorySlotActiveBg, shape = RoundedCornerShape(8.dp))
                     .border(
                         width = when {
                             isCompleted -> 3.dp
