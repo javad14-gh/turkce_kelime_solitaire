@@ -49,7 +49,13 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.turkce.kelimesolitaire.R
 import com.turkce.kelimesolitaire.data.model.FoundationSlot
+import androidx.compose.ui.graphics.ColorFilter
 import com.turkce.kelimesolitaire.presentation.ui.theme.AccentGold
+import com.turkce.kelimesolitaire.presentation.ui.theme.CategoryActiveBannerBg
+import com.turkce.kelimesolitaire.presentation.ui.theme.CategorySlotBgBottom
+import com.turkce.kelimesolitaire.presentation.ui.theme.CategorySlotBgTop
+import com.turkce.kelimesolitaire.presentation.ui.theme.CategorySlotBorder
+import com.turkce.kelimesolitaire.presentation.ui.theme.CategorySlotContent
 import com.turkce.kelimesolitaire.presentation.ui.theme.SecondaryNeon
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 import kotlinx.coroutines.delay
@@ -133,17 +139,17 @@ fun CategoryDropZone(
             },
         contentAlignment = Alignment.TopCenter
     ) {
-        // --- 1. BASE EMPTY FELT CONTAINER (Always rendered underneath so green felt reveals as card dissolves) ---
+        // --- 1. BASE EMPTY CONTAINER (Theme colors from Color.kt) ---
         val emptySlotBrush = Brush.verticalGradient(
-            colors = listOf(Color(0xFF0F3B24), Color(0xFF154C30))
+            colors = listOf(CategorySlotBgTop, CategorySlotBgBottom)
         )
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(emptySlotBrush, shape = RoundedCornerShape(8.dp))
                 .border(
-                    width = if (isHighlighted && activeCategory == null) 2.dp else 1.dp,
-                    color = if (isHighlighted && activeCategory == null) SecondaryNeon else Color.White.copy(alpha = 0.2f),
+                    width = if (isHighlighted && activeCategory == null) 2.dp else 1.2.dp,
+                    color = if (isHighlighted && activeCategory == null) SecondaryNeon else CategorySlotBorder,
                     shape = RoundedCornerShape(8.dp)
                 )
                 .clickable(enabled = activeCategory == null) { onTap() },
@@ -154,12 +160,12 @@ fun CategoryDropZone(
                     painter = painterResource(id = R.drawable.crown),
                     contentDescription = "Crown",
                     modifier = Modifier.size(24.dp),
-                    alpha = 0.4f
+                    colorFilter = ColorFilter.tint(CategorySlotContent.copy(alpha = 0.65f))
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = if (isPersian) "کارت دسته" else "Kat. Eşle",
-                    color = Color.White.copy(alpha = 0.4f),
+                    color = CategorySlotContent,
                     fontSize = if (isPersian) 10.sp else 9.sp,
                     fontWeight = FontWeight.W800,
                     fontFamily = nunitoFont,
@@ -203,7 +209,7 @@ fun CategoryDropZone(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(28.dp)
-                            .background(AccentGold),
+                            .background(CategoryActiveBannerBg),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(

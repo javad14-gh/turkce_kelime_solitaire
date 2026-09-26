@@ -97,6 +97,8 @@ import com.turkce.kelimesolitaire.presentation.ui.components.HintIcon
 import com.turkce.kelimesolitaire.presentation.ui.components.UndoIcon
 import com.turkce.kelimesolitaire.presentation.ui.components.JokerIcon
 import com.turkce.kelimesolitaire.presentation.ui.theme.AccentGold
+import com.turkce.kelimesolitaire.presentation.ui.theme.GameTableBgTop
+import com.turkce.kelimesolitaire.presentation.ui.theme.GameTableBgBottom
 import com.turkce.kelimesolitaire.presentation.ui.theme.BorderGlass
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkCard
 import com.turkce.kelimesolitaire.presentation.ui.theme.PrimaryNeon
@@ -323,7 +325,7 @@ fun GameScreen(
             .fillMaxSize()
             .background(
                 Brush.radialGradient(
-                    colors = listOf(Color(0xFF1E5E3A), Color(0xFF0F3620))
+                    colors = listOf(GameTableBgTop, GameTableBgBottom)
                 )
             )
     ) {
@@ -1094,7 +1096,7 @@ fun GameScreen(
                             }
                         },
                         icon = {
-                            HintIcon(size = 38.dp)
+                            HintIcon(size = 45.dp)
                         }
                     )
 
@@ -1120,7 +1122,7 @@ fun GameScreen(
                             }
                         },
                         icon = {
-                            UndoIcon(size = 38.dp)
+                            UndoIcon(size = 45.dp)
                         }
                     )
 
@@ -1146,7 +1148,7 @@ fun GameScreen(
                             }
                         },
                         icon = {
-                            JokerIcon(size = 38.dp)
+                            JokerIcon(size = 45.dp)
                         }
                     )
                 }

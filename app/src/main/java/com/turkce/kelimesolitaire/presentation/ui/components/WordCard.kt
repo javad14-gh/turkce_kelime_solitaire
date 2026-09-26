@@ -58,6 +58,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.turkce.kelimesolitaire.data.model.SolitaireCard
 import com.turkce.kelimesolitaire.presentation.ui.theme.AccentGold
+import com.turkce.kelimesolitaire.presentation.ui.theme.CardBackBg
+import com.turkce.kelimesolitaire.presentation.ui.theme.CardBackGradientBottom
+import com.turkce.kelimesolitaire.presentation.ui.theme.CardBackGradientTop
+import com.turkce.kelimesolitaire.presentation.ui.theme.CardBackPattern
 import com.turkce.kelimesolitaire.presentation.ui.theme.ErrorRed
 import kotlin.math.roundToInt
 
@@ -179,7 +183,7 @@ fun WordCard(
 
     val cardBrush = when {
         !isFaceUp -> Brush.verticalGradient(
-            colors = listOf(Color(0xFF1E88E5), Color(0xFF0D47A1))
+            colors = listOf(CardBackGradientTop, CardBackGradientBottom)
         )
         isJoker -> Brush.verticalGradient(
             colors = listOf(
@@ -399,7 +403,7 @@ fun WordCard(
                 }
             } else {
                 Canvas(modifier = Modifier.fillMaxSize()) {
-                    drawRect(color = Color(0xFF1976D2))
+                    drawRect(color = CardBackBg)
                     
                     val cardWidth = size.width
                     val cardHeight = size.height
@@ -417,7 +421,7 @@ fun WordCard(
                     
                     drawPath(
                         path = path,
-                        color = Color(0xFF42A5F5),
+                        color = CardBackPattern,
                         style = Stroke(width = 1.5f)
                     )
                 }

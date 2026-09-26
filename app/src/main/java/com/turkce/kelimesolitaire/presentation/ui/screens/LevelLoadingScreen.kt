@@ -48,6 +48,8 @@ import com.turkce.kelimesolitaire.presentation.ui.components.LogoProgressBar
 import com.turkce.kelimesolitaire.presentation.ui.components.OutlinedText
 import com.turkce.kelimesolitaire.presentation.ui.components.rememberNunitoFont
 import com.turkce.kelimesolitaire.presentation.ui.theme.AccentGold
+import com.turkce.kelimesolitaire.presentation.ui.theme.CardBackGradientBottom
+import com.turkce.kelimesolitaire.presentation.ui.theme.CardBackGradientTop
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 
 @Composable
@@ -173,7 +175,7 @@ fun LevelLoadingScreen(
                         .clip(RoundedCornerShape(8.dp))
                         .background(
                             Brush.verticalGradient(
-                                colors = listOf(Color(0xFF166534), Color(0xFF14532D))
+                                colors = listOf(CardBackGradientTop, CardBackGradientBottom)
                             )
                         )
                         .border(1.dp, Color(0x66FBBF24), RoundedCornerShape(8.dp)),

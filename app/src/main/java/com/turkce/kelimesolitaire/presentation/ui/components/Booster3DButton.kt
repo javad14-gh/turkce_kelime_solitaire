@@ -35,6 +35,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import com.turkce.kelimesolitaire.presentation.ui.theme.BoosterButtonBg
+import com.turkce.kelimesolitaire.presentation.ui.theme.BoosterButtonDark
+import com.turkce.kelimesolitaire.presentation.ui.theme.BoosterButtonHighlight
+import com.turkce.kelimesolitaire.presentation.ui.theme.BoosterButtonShadow
+import com.turkce.kelimesolitaire.presentation.ui.theme.BoosterRimBorder
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 
 enum class BoosterType {
@@ -87,6 +92,7 @@ fun Booster3DButton(
     )
 
     // Palette per booster type (or muted slate if locked)
+    // Primary background color requested: #5B45F5 (Electric Indigo / Violet)
     val (rimBrush, rimBorderColor, baseShadowColor, faceBrush, faceHighlightBorder) = when {
         !isUnlocked -> Quintuple(
             Brush.verticalGradient(listOf(Color(0xFF64748B), Color(0xFF475569))),
@@ -95,29 +101,13 @@ fun Booster3DButton(
             Brush.verticalGradient(listOf(Color(0xFF1E293B), Color(0xFF0F172A))),
             Color(0xFF475569).copy(alpha = 0.3f)
         )
-        type == BoosterType.HINT -> Quintuple(
-            // Electric Sky Blue / Cyan
-            Brush.verticalGradient(listOf(Color(0xFFE0F2FE), Color(0xFF38BDF8), Color(0xFF0284C7))),
-            Color(0xFFBAE6FD).copy(alpha = 0.85f),
-            Color(0xFF0C4A6E), // Deep midnight blue 3D base
-            Brush.verticalGradient(listOf(Color(0xFF38BDF8), Color(0xFF0284C7), Color(0xFF0369A1))),
-            Color(0xFFBAE6FD).copy(alpha = 0.65f)
-        )
-        type == BoosterType.UNDO -> Quintuple(
-            // Cosmic Royal Violet
-            Brush.verticalGradient(listOf(Color(0xFFF3E8FF), Color(0xFFA855F7), Color(0xFF7C3AED))),
-            Color(0xFFDDD6FE).copy(alpha = 0.85f),
-            Color(0xFF3B0764), // Deep midnight violet 3D base
-            Brush.verticalGradient(listOf(Color(0xFFA855F7), Color(0xFF7C3AED), Color(0xFF581C87))),
-            Color(0xFFF3E8FF).copy(alpha = 0.65f)
-        )
         else -> Quintuple(
-            // 24K Gold & Flame Amber
-            Brush.verticalGradient(listOf(Color(0xFFFFFBEB), Color(0xFFFDE68A), Color(0xFFF59E0B))),
-            Color(0xFFFEF08A).copy(alpha = 0.95f),
-            Color(0xFF78350F), // Deep bronze 3D base
-            Brush.verticalGradient(listOf(Color(0xFFFDE047), Color(0xFFF59E0B), Color(0xFFB45309))),
-            Color(0xFFFEF08A).copy(alpha = 0.8f)
+            // 3D Juicy #5B45F5 Palette (defined in Color.kt)
+            Brush.verticalGradient(listOf(Color(0xFFEDE9FE), Color(0xFFA78BFA), BoosterButtonBg)),
+            BoosterRimBorder.copy(alpha = 0.90f),
+            BoosterButtonShadow, // Deep 3D extrusion shadow from Color.kt
+            Brush.verticalGradient(listOf(BoosterButtonHighlight, BoosterButtonBg, BoosterButtonDark)),
+            Color(0xFFDDD6FE).copy(alpha = 0.70f)
         )
     }
 
