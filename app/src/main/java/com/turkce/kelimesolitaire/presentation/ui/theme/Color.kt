@@ -22,9 +22,10 @@ val CategorySlotBgTop = CategorySlotBg         // جهت سازگاری
 val CategorySlotBgBottom = CategorySlotBg      // جهت سازگاری
 val CategorySlotBorder = Color(0xFFE0AAFF)     // کادر دور باکس خالی دسته‌بندی
 val CategorySlotContent = Color(0x507B2CBF)    // رنگ نوشته «کارت دسته» و آیکون تاج داخل باکس
-val CategoryActiveBannerBg = Color(0xFFFFB86B) // نوار بالای کارت فعال دسته‌بندی (طلایی)
+val CategoryActiveBannerBg = Color(0xFFFF00FF) // نوار بالای کارت فعال دسته‌بندی (طلایی)
 val CategorySlotActiveBg = Color(0xFFFFFFFF)   // رنگ بدنه کارت فعال در جایگاه بالا (محل نشستن کلمات مچ‌شده)
 val CategorySlotInnerShadow = Color(0xFF9D4EDD) // رنگ سایه داخلی باکس خالی دسته‌بندی (ایجاد حس گود بودن و عمق سوراخ)
+val CategorySlotMatchedBorder = CategoryActiveBannerBg // رنگ کادر جایگاه بالا وقتی کارت‌ها در آن قرار می‌گیرند (هماهنگ با نوار بالا)
 
 // --- ۳. پشت کارت‌ها (Card Back) ---
 val CardBackBg = Color(0xFF9D4EDD)            // رنگ ساده و یکدست پشت کارت‌ها
@@ -35,12 +36,13 @@ val CardBackPattern = CardBackBg              // جهت سازگاری
 // --- ۴. روی کارت‌ها (Card Front) ---
 val CardFaceBg = Color(0xFFFFFFFF)            // رنگ زمینه کارت‌های کلمه و کارت‌های دسته‌بندی
 val CardFaceText = Color(0xFF1E293B)          // رنگ متن کلمات روی کارت
-val CardFaceInnerBorder = Color(0xFFE0AAFF)   // رنگ کادر داخلی روی کارت‌های معمولی
-val CardCategoryBorder = Color(0xFFFFB86B)    // رنگ کادر ضخیم دور کارت دسته‌بندی (شروع از لبه، بولد و مشخص)
-val CardCategoryCrown = Color(0xFFFFB86B)     // رنگ عنوان و تاج «👑 دسته‌بندی»
+val CardFaceInnerBorder = Color(0xFFC77DFF)   // رنگ کادر داخلی روی کارت‌های معمولی
+val CardCategoryBorder = Color(0xFFFF00FF)    // رنگ کادر ضخیم دور کارت دسته‌بندی (شروع از لبه، بولد و مشخص)
+val CardCategoryCrown = Color(0xFFffbe0b)     // رنگ تاج کارت دسته‌بندی
+val CardCategoryText = Color(0xFFFF00FF)      // رنگ نوشته کارت دسته‌بندی (مثلاً پوشاک)
 val CardCategoryBg = CardFaceBg               // جهت سازگاری (زمینه مانند سایر کارت‌ها)
-val CardDraggingBorder = Color(0xFFFBBF24)    // رنگ کادر دور کارت در حال جابجایی (Drag)
-val CardSelectedBorder = Color(0xFFFBBF24)    // رنگ کادر دور کارت در حالت انتخاب
+val CardDraggingBorder = Color(0x80FF00FF)    // رنگ کادر دور کارت در حال جابجایی (Drag)
+val CardSelectedBorder = Color(0x80FF00FF)    // رنگ کادر دور کارت در حالت انتخاب
 val CardJokerBgTop = Color(0xFFFEF08A)        // رنگ زمینه کارت جوکر
 
 // --- ۵. مخزن کارت‌ها در حالت بر زدن (Stock Recycle State) ---

@@ -9,6 +9,13 @@ import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.sp
 import com.turkce.kelimesolitaire.R
 
+val LalezarFont = FontFamily(
+    Font(R.font.lalezar, FontWeight.Normal),
+    Font(R.font.lalezar, FontWeight.Medium),
+    Font(R.font.lalezar, FontWeight.Bold),
+    Font(R.font.lalezar, FontWeight.Black)
+)
+
 val VazirmatnFont = FontFamily(
     Font(R.font.vazirmatn, FontWeight.Normal),
     Font(R.font.vazirmatn, FontWeight.Medium),
@@ -24,7 +31,7 @@ val NunitoFont = FontFamily(
 )
 
 fun getAppFontFamily(isPersian: Boolean): FontFamily {
-    return if (isPersian) VazirmatnFont else NunitoFont
+    return if (isPersian) LalezarFont else NunitoFont
 }
 
 fun createAppTypography(fontFamily: FontFamily, isPersian: Boolean): Typography {
@@ -100,5 +107,5 @@ fun createAppTypography(fontFamily: FontFamily, isPersian: Boolean): Typography 
     )
 }
 
-val Typography = createAppTypography(VazirmatnFont, true)
+val Typography = createAppTypography(LalezarFont, true)
 

@@ -58,6 +58,7 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.CategorySlotBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.CategorySlotBorder
 import com.turkce.kelimesolitaire.presentation.ui.theme.CategorySlotContent
 import com.turkce.kelimesolitaire.presentation.ui.theme.CategorySlotInnerShadow
+import com.turkce.kelimesolitaire.presentation.ui.theme.CategorySlotMatchedBorder
 import com.turkce.kelimesolitaire.presentation.ui.theme.SecondaryNeon
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 import kotlinx.coroutines.delay
@@ -83,8 +84,8 @@ fun CategoryDropZone(
 
     val glowColor by animateColorAsState(
         targetValue = when {
-            isCompleted -> Color(0xFFFF9F0A) // Glowing Amber/Orange for completed slots
-            matchedWords.isNotEmpty() -> AccentGold.copy(alpha = 0.7f) // Gold outline when matching words
+            isCompleted -> CategorySlotMatchedBorder
+            matchedWords.isNotEmpty() -> CategorySlotMatchedBorder // هماهنگ با نوار بالای کارت فعال دسته‌بندی
             isHighlighted -> SecondaryNeon // Teal highlight when card selected
             else -> Color.White.copy(alpha = 0.15f)
         }

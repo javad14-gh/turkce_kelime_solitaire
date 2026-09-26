@@ -12,6 +12,7 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.zIndex
 import kotlinx.coroutines.launch
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -56,6 +57,9 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.painterResource
+import com.turkce.kelimesolitaire.R
 import androidx.compose.ui.graphics.SolidColor
 import com.turkce.kelimesolitaire.data.model.SolitaireCard
 import com.turkce.kelimesolitaire.presentation.ui.theme.AccentGold
@@ -63,6 +67,7 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.CardBackBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.CardCategoryBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.CardCategoryBorder
 import com.turkce.kelimesolitaire.presentation.ui.theme.CardCategoryCrown
+import com.turkce.kelimesolitaire.presentation.ui.theme.CardCategoryText
 import com.turkce.kelimesolitaire.presentation.ui.theme.CardDraggingBorder
 import com.turkce.kelimesolitaire.presentation.ui.theme.CardFaceBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.CardFaceInnerBorder
@@ -177,14 +182,23 @@ fun WordCard(
 
     // Board outline styling:
     val borderColor = when {
+        !isFaceUp -> Color.White // تمام کارت‌های پشت‌رو دقیقاً یکسان با کادر سفید هستند
         isShaking -> ErrorRed
         isHinted -> Color(0xFFFFD700).copy(alpha = hintGlowAlpha)
         isDragged -> CardDraggingBorder
         isSelected -> CardSelectedBorder
         isJoker -> Color(0xFF7E22CE) // Vibrant Purple Border for Joker!
-        card.isCategory -> CardCategoryBorder // کادر بولد و مشخص دور کارت دسته‌بندی
-        !isFaceUp -> Color.White // Crisp border for card backs
+        card.isCategory -> CardCategoryBorder // کادر بولد و مشخص فقط هنگام رو بودن کارت دسته‌بندی
         else -> Color.Transparent // کادر بیرونی روی کارت‌های معمولی حذف می‌شود
+    }
+
+    val borderWidth = when {
+        !isFaceUp -> 1.dp
+        isHinted -> 3.dp
+        card.isCategory -> 3.5.dp // کادر کلفت‌تر و برجسته برای کارت دسته‌بندی
+        isDragged -> 2.5.dp
+        isJoker || isSelected || isShaking -> 2.dp
+        else -> 1.dp
     }
 
     val cardBrush = when {
@@ -251,7 +265,7 @@ fun WordCard(
             .then(
                 if (borderColor != Color.Transparent) {
                     Modifier.border(
-                        width = if (isHinted) 3.dp else if (card.isCategory) 2.5.dp else if (isDragged) 2.5.dp else if (isJoker || isSelected || isShaking || !isFaceUp) 2.dp else 1.dp,
+                        width = borderWidth,
                         color = borderColor,
                         shape = RoundedCornerShape(8.dp)
                     )
@@ -338,80 +352,95 @@ fun WordCard(
                             .border(1.8.dp, CardFaceInnerBorder, RoundedCornerShape(5.dp))
                     )
                 }
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 5.dp)
-                ) {
-                    val hasSpace = card.text.contains(" ")
-                    val longestSubword = if (hasSpace) {
-                        card.text.split(" ").maxOfOrNull { it.length } ?: card.text.length
-                    } else {
-                        card.text.length
-                    }
 
-                    val dynamicFontSize = when {
-                        longestSubword >= 12 -> 11.sp
-                        longestSubword >= 10 -> 12.5.sp
-                        longestSubword >= 8 -> 14.sp
-                        longestSubword >= 6 -> 15.5.sp
-                        else -> 17.sp
-                    }
-                    val dynamicLetterSpacing = when {
-                        longestSubword >= 11 -> (-0.5).sp
-                        longestSubword >= 9 -> (-0.2).sp
-                        else -> 0.sp
-                    }
-                    val maxLinesCount = if (hasSpace) 2 else 1
+                val hasSpace = card.text.contains(" ")
+                val longestSubword = if (hasSpace) {
+                    card.text.split(" ").maxOfOrNull { it.length } ?: card.text.length
+                } else {
+                    card.text.length
+                }
 
-                    if (isJoker) {
-                        Text(
-                            text = if (isPersian) "🃏 جوکر" else "🃏 JOKER",
-                            color = Color(0xFF6B21A8),
-                            fontFamily = nunitoFont,
-                            fontSize = 11.5.sp,
-                            fontWeight = FontWeight.W800,
-                            modifier = Modifier.padding(bottom = 2.dp)
+                val dynamicFontSize = when {
+                    longestSubword >= 12 -> 11.sp
+                    longestSubword >= 10 -> 12.5.sp
+                    longestSubword >= 8 -> 14.sp
+                    longestSubword >= 6 -> 15.5.sp
+                    else -> 17.sp
+                }
+                val dynamicLetterSpacing = when {
+                    longestSubword >= 11 -> (-0.5).sp
+                    longestSubword >= 9 -> (-0.2).sp
+                    else -> 0.sp
+                }
+                val maxLinesCount = if (hasSpace) 2 else 1
+
+                if (card.isCategory) {
+                    // ساختار اختصاصی کارت دسته‌بندی: تاج بزرگتر و بالاتر در مرکز، کلمه دسته در وسط کارت
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        Image(
+                            painter = painterResource(id = R.drawable.crown),
+                            contentDescription = "Category Crown",
+                            modifier = Modifier
+                                .align(Alignment.TopCenter)
+                                .padding(top = 10.dp)
+                                .size(24.dp),
+                            colorFilter = ColorFilter.tint(CardCategoryCrown)
                         )
-                        Text(
-                            text = if (isPersian) "هر کلمه" else "HER KELİME",
-                            color = Color(0xFF991B1B),
-                            fontFamily = nunitoFont,
-                            fontSize = 12.5.sp,
-                            fontWeight = FontWeight.W800,
-                            textAlign = TextAlign.Center
-                        )
-                    } else if (card.isCategory) {
-                        Text(
-                            text = if (isPersian) "👑 دسته‌بندی" else "👑 KATEGORİ",
-                            color = CardCategoryCrown,
-                            fontFamily = nunitoFont,
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.W800,
-                            modifier = Modifier.padding(bottom = 2.dp)
-                        )
-                        Text(
-                            text = card.text,
-                            color = Color.Black,
-                            fontFamily = nunitoFont,
-                            fontSize = dynamicFontSize,
-                            fontWeight = FontWeight.W800,
-                            maxLines = maxLinesCount,
-                            letterSpacing = dynamicLetterSpacing,
-                            textAlign = TextAlign.Center,
-                            lineHeight = (dynamicFontSize.value * 1.15f).sp
-                        )
-                    } else {
-                        Text(
-                            text = card.text,
-                            color = Color.Black,
-                            fontFamily = nunitoFont,
-                            fontSize = dynamicFontSize,
-                            fontWeight = FontWeight.W800,
-                            maxLines = maxLinesCount,
-                            letterSpacing = dynamicLetterSpacing,
-                            textAlign = TextAlign.Center,
-                            lineHeight = (dynamicFontSize.value * 1.15f).sp
-                        )
+
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(start = 6.dp, top = 22.dp, end = 6.dp, bottom = 6.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = card.text,
+                                color = CardCategoryText,
+                                fontFamily = nunitoFont,
+                                fontSize = dynamicFontSize,
+                                fontWeight = FontWeight.W800,
+                                maxLines = maxLinesCount,
+                                letterSpacing = dynamicLetterSpacing,
+                                textAlign = TextAlign.Center,
+                                lineHeight = (dynamicFontSize.value * 1.15f).sp
+                            )
+                        }
+                    }
+                } else {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 5.dp)
+                    ) {
+                        if (isJoker) {
+                            Text(
+                                text = if (isPersian) "🃏 جوکر" else "🃏 JOKER",
+                                color = Color(0xFF6B21A8),
+                                fontFamily = nunitoFont,
+                                fontSize = 11.5.sp,
+                                fontWeight = FontWeight.W800,
+                                modifier = Modifier.padding(bottom = 2.dp)
+                            )
+                            Text(
+                                text = if (isPersian) "هر کلمه" else "HER KELİME",
+                                color = Color(0xFF991B1B),
+                                fontFamily = nunitoFont,
+                                fontSize = 12.5.sp,
+                                fontWeight = FontWeight.W800,
+                                textAlign = TextAlign.Center
+                            )
+                        } else {
+                            Text(
+                                text = card.text,
+                                color = Color.Black,
+                                fontFamily = nunitoFont,
+                                fontSize = dynamicFontSize,
+                                fontWeight = FontWeight.W800,
+                                maxLines = maxLinesCount,
+                                letterSpacing = dynamicLetterSpacing,
+                                textAlign = TextAlign.Center,
+                                lineHeight = (dynamicFontSize.value * 1.15f).sp
+                            )
+                        }
                     }
                 }
             } else {
