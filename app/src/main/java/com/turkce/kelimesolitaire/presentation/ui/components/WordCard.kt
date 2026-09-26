@@ -62,6 +62,8 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.CardBackBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.CardBackGradientBottom
 import com.turkce.kelimesolitaire.presentation.ui.theme.CardBackGradientTop
 import com.turkce.kelimesolitaire.presentation.ui.theme.CardBackPattern
+import com.turkce.kelimesolitaire.presentation.ui.theme.CardFaceBorder
+import com.turkce.kelimesolitaire.presentation.ui.theme.CardFaceInnerBorder
 import com.turkce.kelimesolitaire.presentation.ui.theme.ErrorRed
 import kotlin.math.roundToInt
 
@@ -178,7 +180,7 @@ fun WordCard(
         isSelected -> AccentGold
         !isFaceUp -> Color.White // Crisp border for card backs
         card.isCategory -> AccentGold.copy(alpha = 0.8f) // Gold outline for category cards
-        else -> Color.DarkGray.copy(alpha = 0.3f)
+        else -> CardFaceBorder
     }
 
     val cardBrush = when {
@@ -325,6 +327,13 @@ fun WordCard(
             contentAlignment = Alignment.Center
         ) {
             if (isFaceUp) {
+                // کادر نازک داخلی روی کارت
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(2.5.dp)
+                        .border(1.dp, CardFaceInnerBorder, RoundedCornerShape(6.dp))
+                )
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.padding(horizontal = 2.dp, vertical = 4.dp)
@@ -407,7 +416,7 @@ fun WordCard(
                     
                     val cardWidth = size.width
                     val cardHeight = size.height
-                    val step = 15f
+                    val step = 32f
                     
                     val path = Path()
                     for (x in -cardHeight.toInt()..cardWidth.toInt() step step.toInt()) {
@@ -422,7 +431,7 @@ fun WordCard(
                     drawPath(
                         path = path,
                         color = CardBackPattern,
-                        style = Stroke(width = 1.5f)
+                        style = Stroke(width = 2f)
                     )
                 }
             }

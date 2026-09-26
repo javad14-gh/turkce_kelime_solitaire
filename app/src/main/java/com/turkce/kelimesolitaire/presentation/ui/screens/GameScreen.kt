@@ -106,6 +106,10 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.SecondaryNeon
 import com.turkce.kelimesolitaire.presentation.ui.theme.SuccessGreen
 import com.turkce.kelimesolitaire.presentation.ui.theme.TextPrimary
 import com.turkce.kelimesolitaire.presentation.ui.theme.TextSecondary
+import com.turkce.kelimesolitaire.presentation.ui.theme.CardBackBg
+import com.turkce.kelimesolitaire.presentation.ui.theme.StockRecycleBg
+import com.turkce.kelimesolitaire.presentation.ui.theme.StockRecycleBorder
+import com.turkce.kelimesolitaire.presentation.ui.theme.StockRecycleText
 import kotlinx.coroutines.launch
 
 private fun findBestFoundationSlot(
@@ -344,44 +348,58 @@ fun GameScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Left: Coins Status Pill (matching reference design)
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
+                // Left: Coins Status Pill (matching main menu design)
+                Box(
                     modifier = Modifier
                         .scale(coinScale.value)
-                        .clip(RoundedCornerShape(24.dp))
-                        .background(Color(0xFF2A364F).copy(alpha = 0.9f))
-                        .border(1.5.dp, Color.White.copy(alpha = 0.25f), RoundedCornerShape(24.dp))
-                        .clickable { onOpenStore() }
-                        .padding(start = 4.dp, end = 12.dp, top = 2.dp, bottom = 2.dp)
+                        .clickable { onOpenStore() },
+                    contentAlignment = Alignment.CenterStart
                 ) {
-                    Box(contentAlignment = Alignment.BottomEnd) {
-                        com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 30.dp)
-                        Box(
-                            modifier = Modifier
-                                .offset(x = 2.dp, y = 2.dp)
-                                .size(14.dp)
-                                .clip(CircleShape)
-                                .background(Color(0xFF4CAF50))
-                                .border(1.dp, Color.White, CircleShape),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "+",
-                                color = Color.White,
-                                fontSize = 9.sp,
-                                fontWeight = FontWeight.Black
+                    // Pill / Box extending rightward from behind the coin
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .padding(start = 18.dp)
+                            .height(28.dp)
+                            .clip(RoundedCornerShape(topEnd = 14.dp, bottomEnd = 14.dp, topStart = 4.dp, bottomStart = 4.dp))
+                            .background(
+                                Brush.horizontalGradient(
+                                    listOf(
+                                        Color(0xFF1E293B).copy(alpha = 0.95f),
+                                        Color(0xFF0F172A).copy(alpha = 0.98f)
+                                    )
+                                )
                             )
-                        }
+                            .border(
+                                1.2.dp,
+                                Brush.horizontalGradient(
+                                    listOf(
+                                        Color(0xFFFFD700).copy(alpha = 0.7f),
+                                        Color.White.copy(alpha = 0.2f)
+                                    )
+                                ),
+                                RoundedCornerShape(topEnd = 14.dp, bottomEnd = 14.dp, topStart = 4.dp, bottomStart = 4.dp)
+                            )
+                            .padding(start = 22.dp, end = 12.dp)
+                    ) {
+                        Text(
+                            text = LocaleHelper.formatNumber(coins, isPersian),
+                            color = Color.White,
+                            fontSize = 17.sp,
+                            fontWeight = FontWeight.Black,
+                            fontFamily = nunitoFont
+                        )
                     }
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text(
-                        text = LocaleHelper.formatNumber(coins, isPersian),
-                        color = Color.White,
-                        fontSize = 21.sp,
-                        fontWeight = FontWeight.Black,
-                        fontFamily = nunitoFont
-                    )
+
+                    // 3D Coin Icon on the outside, overlapping on the left
+                    Box(
+                        modifier = Modifier
+                            .size(38.dp)
+                            .zIndex(2f),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 38.dp)
+                    }
                 }
 
                 // Center: Level Title
@@ -620,40 +638,73 @@ fun GameScreen(
                         Box(
                             modifier = Modifier
                                 .size(width = 85.dp, height = 110.dp)
-                                .clickable(enabled = !isLevelWon && isDealingFinished && movesRemaining > 0 && !showOutofMovesDialog) { onDrawFromStock() }
-                                .then(
-                                    if (isStockHinted) Modifier.border(2.5.dp, Color(0xFFF1C40F), RoundedCornerShape(12.dp))
-                                    else Modifier
-                                )
+                                .clickable(enabled = !isLevelWon && isDealingFinished && movesRemaining > 0 && !showOutofMovesDialog) { onDrawFromStock() },
+                            contentAlignment = Alignment.TopStart
                         ) {
-                            WordCard(
-                                card = SolitaireCard(
-                                    id = "stock_back",
-                                    text = "",
-                                    categoryId = "",
-                                    isCategory = false,
-                                    isFaceUp = false
-                                ),
-                                isSelected = false,
-                                isShaking = false,
-                                isHinted = isStockHinted,
-                                isDragged = false,
-                                dragOffsetProvider = { Offset.Zero },
-                                isInteractionEnabled = false,
-                                onTap = {},
-                                onDragStart = {},
-                                onDrag = {},
-                                onDragEnd = {},
-                                onDragCancel = {}
-                            )
+                            // Layer 2 (Bottom layer for thick deck appearance if 3 or more cards)
+                            if (stockPile.size >= 3) {
+                                Box(
+                                    modifier = Modifier
+                                        .offset(x = 3.dp, y = 3.dp)
+                                        .size(width = 85.dp, height = 110.dp)
+                                        .shadow(elevation = 3.dp, shape = RoundedCornerShape(8.dp))
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .background(CardBackBg.copy(alpha = 0.75f))
+                                        .border(1.dp, Color.White.copy(alpha = 0.5f), RoundedCornerShape(8.dp))
+                                )
+                            }
+                            // Layer 1 (Middle layer if 2 or more cards)
+                            if (stockPile.size >= 2) {
+                                Box(
+                                    modifier = Modifier
+                                        .offset(x = 1.5.dp, y = 1.5.dp)
+                                        .size(width = 85.dp, height = 110.dp)
+                                        .shadow(elevation = 2.dp, shape = RoundedCornerShape(8.dp))
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .background(CardBackBg)
+                                        .border(1.2.dp, Color.White.copy(alpha = 0.7f), RoundedCornerShape(8.dp))
+                                )
+                            }
+                            // Top Layer (WordCard)
+                            Box(
+                                modifier = Modifier
+                                    .size(width = 85.dp, height = 110.dp)
+                                    .then(
+                                        if (isStockHinted) Modifier.border(2.5.dp, Color(0xFFF1C40F), RoundedCornerShape(8.dp))
+                                        else Modifier
+                                    )
+                            ) {
+                                WordCard(
+                                    card = SolitaireCard(
+                                        id = "stock_back",
+                                        text = "",
+                                        categoryId = "",
+                                        isCategory = false,
+                                        isFaceUp = false
+                                    ),
+                                    isSelected = false,
+                                    isShaking = false,
+                                    isHinted = isStockHinted,
+                                    isDragged = false,
+                                    dragOffsetProvider = { Offset.Zero },
+                                    isInteractionEnabled = false,
+                                    onTap = {},
+                                    onDragStart = {},
+                                    onDrag = {},
+                                    onDragEnd = {},
+                                    onDragCancel = {}
+                                )
+                            }
                         }
                     } else {
                         Box(
                             modifier = Modifier
                                 .size(width = 85.dp, height = 110.dp)
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(StockRecycleBg)
                                 .border(
                                     width = if (isStockHinted) 2.5.dp else 1.5.dp,
-                                    color = if (isStockHinted) Color(0xFFF1C40F) else AccentGold.copy(alpha = 0.3f),
+                                    color = if (isStockHinted) Color(0xFFF1C40F) else StockRecycleBorder,
                                     shape = RoundedCornerShape(8.dp)
                                 )
                                 .clickable(enabled = !isLevelWon && isDealingFinished && movesRemaining > 0 && !showOutofMovesDialog) { onDrawFromStock() },
@@ -661,7 +712,7 @@ fun GameScreen(
                         ) {
                             Text(
                                 text = if (isPersian) "♻️\nبر زدن" else "♻️\nYenile",
-                                color = AccentGold,
+                                color = StockRecycleText,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Black,
                                 fontFamily = nunitoFont,
