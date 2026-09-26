@@ -70,7 +70,9 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.CardCategoryCrown
 import com.turkce.kelimesolitaire.presentation.ui.theme.CardCategoryText
 import com.turkce.kelimesolitaire.presentation.ui.theme.CardDraggingBorder
 import com.turkce.kelimesolitaire.presentation.ui.theme.CardFaceBg
+import com.turkce.kelimesolitaire.presentation.ui.theme.CardFaceBorder
 import com.turkce.kelimesolitaire.presentation.ui.theme.CardFaceInnerBorder
+import com.turkce.kelimesolitaire.presentation.ui.theme.CardFaceText
 import com.turkce.kelimesolitaire.presentation.ui.theme.CardSelectedBorder
 import com.turkce.kelimesolitaire.presentation.ui.theme.ErrorRed
 import kotlin.math.roundToInt
@@ -189,7 +191,7 @@ fun WordCard(
         isSelected -> CardSelectedBorder
         isJoker -> Color(0xFF7E22CE) // Vibrant Purple Border for Joker!
         card.isCategory -> CardCategoryBorder // کادر بولد و مشخص فقط هنگام رو بودن کارت دسته‌بندی
-        else -> Color.Transparent // کادر بیرونی روی کارت‌های معمولی حذف می‌شود
+        else -> CardFaceBorder // کادر بیرونی بسیار نازک روی کارت‌های معمولی
     }
 
     val borderWidth = when {
@@ -198,7 +200,7 @@ fun WordCard(
         card.isCategory -> 3.5.dp // کادر کلفت‌تر و برجسته برای کارت دسته‌بندی
         isDragged -> 2.5.dp
         isJoker || isSelected || isShaking -> 2.dp
-        else -> 1.dp
+        else -> 0.75.dp // کادر بیرونی بسیار نازک
     }
 
     val cardBrush = when {
@@ -431,7 +433,7 @@ fun WordCard(
                         } else {
                             Text(
                                 text = card.text,
-                                color = Color.Black,
+                                color = CardFaceText,
                                 fontFamily = nunitoFont,
                                 fontSize = dynamicFontSize,
                                 fontWeight = FontWeight.W800,

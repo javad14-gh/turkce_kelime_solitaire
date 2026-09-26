@@ -109,6 +109,11 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.CardBackBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.StockRecycleBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.StockRecycleBorder
 import com.turkce.kelimesolitaire.presentation.ui.theme.StockRecycleText
+import com.turkce.kelimesolitaire.presentation.ui.theme.LevelTitleText
+import com.turkce.kelimesolitaire.presentation.ui.theme.LevelTitleOutline
+import com.turkce.kelimesolitaire.presentation.ui.theme.CoinBoxBorder
+import com.turkce.kelimesolitaire.presentation.ui.theme.CoinTextColor
+import com.turkce.kelimesolitaire.presentation.ui.theme.CoinTextOutline
 import kotlinx.coroutines.launch
 
 private fun findBestFoundationSlot(
@@ -343,43 +348,29 @@ fun GameScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Left: Coins Status Pill (matching main menu design)
+                // Left: Coins Status Box (With border, no background)
                 Box(
                     modifier = Modifier
                         .scale(coinScale.value)
                         .clickable { onOpenStore() },
                     contentAlignment = Alignment.CenterStart
                 ) {
-                    // Pill / Box extending rightward from behind the coin
+                    // Box border extending rightward from behind the coin (transparent background)
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .padding(start = 18.dp)
                             .height(28.dp)
-                            .clip(RoundedCornerShape(topEnd = 14.dp, bottomEnd = 14.dp, topStart = 4.dp, bottomStart = 4.dp))
-                            .background(
-                                Brush.horizontalGradient(
-                                    listOf(
-                                        Color(0xFF1E293B).copy(alpha = 0.95f),
-                                        Color(0xFF0F172A).copy(alpha = 0.98f)
-                                    )
-                                )
-                            )
                             .border(
-                                1.2.dp,
-                                Brush.horizontalGradient(
-                                    listOf(
-                                        Color(0xFFFFD700).copy(alpha = 0.7f),
-                                        Color.White.copy(alpha = 0.2f)
-                                    )
-                                ),
+                                1.5.dp,
+                                CoinBoxBorder,
                                 RoundedCornerShape(topEnd = 14.dp, bottomEnd = 14.dp, topStart = 4.dp, bottomStart = 4.dp)
                             )
                             .padding(start = 22.dp, end = 12.dp)
                     ) {
                         Text(
                             text = LocaleHelper.formatNumber(coins, isPersian),
-                            color = Color.White,
+                            color = CoinTextColor,
                             fontSize = 17.sp,
                             fontWeight = FontWeight.Black,
                             fontFamily = nunitoFont
@@ -400,9 +391,9 @@ fun GameScreen(
                 // Center: Level Title
                 OutlinedText(
                     text = LocaleHelper.levelTitle(levelData.levelNumber, isPersian),
-                    textColor = TextPrimary,
-                    outlineColor = Color(0xFF0F172A),
-                    outlineWidth = 5f,
+                    textColor = LevelTitleText,
+                    outlineColor = LevelTitleOutline,
+                    outlineWidth = 10f,
                     fontSize = 26.sp,
                     fontWeight = FontWeight.Black
                 )
@@ -1142,7 +1133,7 @@ fun GameScreen(
                             }
                         },
                         icon = {
-                            HintIcon(size = 45.dp)
+                            HintIcon(size = 56.dp)
                         }
                     )
 
@@ -1168,7 +1159,7 @@ fun GameScreen(
                             }
                         },
                         icon = {
-                            UndoIcon(size = 45.dp)
+                            UndoIcon(size = 48.dp)
                         }
                     )
 
@@ -1194,7 +1185,7 @@ fun GameScreen(
                             }
                         },
                         icon = {
-                            JokerIcon(size = 45.dp)
+                            JokerIcon(size = 48.dp)
                         }
                     )
                 }

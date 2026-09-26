@@ -59,6 +59,7 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.CategorySlotBorder
 import com.turkce.kelimesolitaire.presentation.ui.theme.CategorySlotContent
 import com.turkce.kelimesolitaire.presentation.ui.theme.CategorySlotInnerShadow
 import com.turkce.kelimesolitaire.presentation.ui.theme.CategorySlotMatchedBorder
+import com.turkce.kelimesolitaire.presentation.ui.theme.CardFaceText
 import com.turkce.kelimesolitaire.presentation.ui.theme.SecondaryNeon
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 import kotlinx.coroutines.delay
@@ -255,7 +256,7 @@ fun CategoryDropZone(
                     ) {
                         Text(
                             text = activeCategory.name,
-                            color = Color.Black,
+                            color = CardFaceText,
                             fontSize = 9.sp,
                             fontWeight = FontWeight.W800,
                             fontFamily = nunitoFont,
@@ -275,7 +276,7 @@ fun CategoryDropZone(
                         // Match counter in top-right corner
                         Text(
                             text = "${LocaleHelper.formatNumber(matchedWords.size, isPersian)}/${LocaleHelper.formatNumber(totalWords, isPersian)}",
-                            color = Color.DarkGray,
+                            color = CardFaceText.copy(alpha = 0.75f),
                             fontSize = 9.sp,
                             fontWeight = FontWeight.W800,
                             fontFamily = nunitoFont,
@@ -312,7 +313,7 @@ fun CategoryDropZone(
                                 }
                                 Text(
                                     text = lastWord.wordText,
-                                    color = Color.Black,
+                                    color = CardFaceText,
                                     fontSize = dropZoneFontSize,
                                     fontWeight = FontWeight.W800,
                                     fontFamily = nunitoFont,
