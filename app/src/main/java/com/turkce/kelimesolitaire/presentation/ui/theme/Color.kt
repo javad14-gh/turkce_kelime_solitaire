@@ -33,10 +33,12 @@ val CardBackGradientBottom = CardBackBg       // جهت سازگاری
 val CardBackPattern = CardBackBg              // جهت سازگاری
 
 // --- ۴. روی کارت‌ها (Card Front) ---
-val CardFaceBg = Color(0xFFFFFFFF)            // رنگ زمینه کارت‌های کلمه
+val CardFaceBg = Color(0xFFFFFFFF)            // رنگ زمینه کارت‌های کلمه و کارت‌های دسته‌بندی
 val CardFaceText = Color(0xFF1E293B)          // رنگ متن کلمات روی کارت
-val CardFaceInnerBorder = Color(0xFFE0AAFF)   // رنگ کادر داخلی روی کارت‌ها
-val CardCategoryBg = Color(0xFFFFB86B)        // رنگ زمینه کارت سر‌دسته
+val CardFaceInnerBorder = Color(0xFFE0AAFF)   // رنگ کادر داخلی روی کارت‌های معمولی
+val CardCategoryBorder = Color(0xFFFFB86B)    // رنگ کادر ضخیم دور کارت دسته‌بندی (شروع از لبه، بولد و مشخص)
+val CardCategoryCrown = Color(0xFFFFB86B)     // رنگ عنوان و تاج «👑 دسته‌بندی»
+val CardCategoryBg = CardFaceBg               // جهت سازگاری (زمینه مانند سایر کارت‌ها)
 val CardDraggingBorder = Color(0xFFFBBF24)    // رنگ کادر دور کارت در حال جابجایی (Drag)
 val CardSelectedBorder = Color(0xFFFBBF24)    // رنگ کادر دور کارت در حالت انتخاب
 val CardJokerBgTop = Color(0xFFFEF08A)        // رنگ زمینه کارت جوکر

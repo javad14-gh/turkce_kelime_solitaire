@@ -61,6 +61,8 @@ import com.turkce.kelimesolitaire.data.model.SolitaireCard
 import com.turkce.kelimesolitaire.presentation.ui.theme.AccentGold
 import com.turkce.kelimesolitaire.presentation.ui.theme.CardBackBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.CardCategoryBg
+import com.turkce.kelimesolitaire.presentation.ui.theme.CardCategoryBorder
+import com.turkce.kelimesolitaire.presentation.ui.theme.CardCategoryCrown
 import com.turkce.kelimesolitaire.presentation.ui.theme.CardDraggingBorder
 import com.turkce.kelimesolitaire.presentation.ui.theme.CardFaceBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.CardFaceInnerBorder
@@ -180,8 +182,9 @@ fun WordCard(
         isDragged -> CardDraggingBorder
         isSelected -> CardSelectedBorder
         isJoker -> Color(0xFF7E22CE) // Vibrant Purple Border for Joker!
+        card.isCategory -> CardCategoryBorder // کادر بولد و مشخص دور کارت دسته‌بندی
         !isFaceUp -> Color.White // Crisp border for card backs
-        else -> Color.Transparent // کادر بیرونی روی کارت‌ها حذف می‌شود
+        else -> Color.Transparent // کادر بیرونی روی کارت‌های معمولی حذف می‌شود
     }
 
     val cardBrush = when {
@@ -193,7 +196,7 @@ fun WordCard(
                 Color(0xFFEAB308)  // Rich golden bottom
             )
         )
-        card.isCategory -> SolidColor(CardCategoryBg)
+        // کارت دسته‌بندی نیز مانند سایر کارت‌ها از رنگ یکدست CardFaceBg استفاده می‌کند
         else -> SolidColor(CardFaceBg)
     }
 
@@ -248,7 +251,7 @@ fun WordCard(
             .then(
                 if (borderColor != Color.Transparent) {
                     Modifier.border(
-                        width = if (isHinted) 3.dp else if (isDragged) 2.5.dp else if (isJoker || isSelected || isShaking || !isFaceUp) 2.dp else 1.dp,
+                        width = if (isHinted) 3.dp else if (card.isCategory) 2.5.dp else if (isDragged) 2.5.dp else if (isJoker || isSelected || isShaking || !isFaceUp) 2.dp else 1.dp,
                         color = borderColor,
                         shape = RoundedCornerShape(8.dp)
                     )
@@ -326,13 +329,15 @@ fun WordCard(
             contentAlignment = Alignment.Center
         ) {
             if (isFaceUp) {
-                // کادر داخلی روی کارت (Inner Border)
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(5.dp)
-                        .border(1.8.dp, CardFaceInnerBorder, RoundedCornerShape(5.dp))
-                )
+                // کادر داخلی روی کارت‌های معمولی (کارت دسته‌بندی کادر داخلی ندارد)
+                if (!card.isCategory) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(5.dp)
+                            .border(1.8.dp, CardFaceInnerBorder, RoundedCornerShape(5.dp))
+                    )
+                }
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.padding(horizontal = 6.dp, vertical = 5.dp)
@@ -377,10 +382,10 @@ fun WordCard(
                         )
                     } else if (card.isCategory) {
                         Text(
-                            text = if (isPersian) "👑 دسته" else "👑 KAT",
-                            color = AccentGold,
+                            text = if (isPersian) "👑 دسته‌بندی" else "👑 KATEGORİ",
+                            color = CardCategoryCrown,
                             fontFamily = nunitoFont,
-                            fontSize = 10.5.sp,
+                            fontSize = 10.sp,
                             fontWeight = FontWeight.W800,
                             modifier = Modifier.padding(bottom = 2.dp)
                         )
