@@ -43,9 +43,11 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.foundation.layout.heightIn
+import com.turkce.kelimesolitaire.presentation.ui.components.LogoProgressBar
 import com.turkce.kelimesolitaire.presentation.ui.components.OutlinedText
 import com.turkce.kelimesolitaire.presentation.ui.components.rememberNunitoFont
+import com.turkce.kelimesolitaire.presentation.ui.theme.AccentGold
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 
 @Composable
@@ -78,15 +80,19 @@ fun LevelLoadingScreen(
     )
 
     // Progressive loading fill (always fills up steadily, never reverses or drains!)
-    val progressAnim = remember { androidx.compose.animation.core.Animatable(0.08f) }
+    val progressAnim = remember { androidx.compose.animation.core.Animatable(0.04f) }
     LaunchedEffect(Unit) {
         progressAnim.animateTo(
-            targetValue = 0.50f,
-            animationSpec = tween(280, easing = FastOutSlowInEasing)
+            targetValue = 0.45f,
+            animationSpec = tween(320, easing = FastOutSlowInEasing)
         )
         progressAnim.animateTo(
-            targetValue = 0.96f,
-            animationSpec = tween(550, easing = androidx.compose.animation.core.LinearOutSlowInEasing)
+            targetValue = 0.88f,
+            animationSpec = tween(480, easing = androidx.compose.animation.core.LinearOutSlowInEasing)
+        )
+        progressAnim.animateTo(
+            targetValue = 1.0f,
+            animationSpec = tween(250, easing = FastOutSlowInEasing)
         )
     }
     val progressFraction = progressAnim.value
@@ -207,59 +213,29 @@ fun LevelLoadingScreen(
                 textAlign = TextAlign.Center
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(26.dp))
+            
+            // Stylized Game Logo Progress Bar with Glowing Frontier Beam
+            LogoProgressBar(
+                progress = progressFraction,
+                modifier = Modifier
+                    .fillMaxWidth(0.85f)
+                    .heightIn(max = 80.dp),
+                isPersian = isPersian,
+                showGlow = true
+            )
 
-            // Sleek 3D Progress Bar Container (Forced LTR so it always fills from left to right)
-            CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-                Box(
-                    modifier = Modifier
-                        .width(240.dp)
-                        .height(20.dp)
-                        .shadow(8.dp, RoundedCornerShape(10.dp))
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(
-                            Brush.verticalGradient(
-                                colors = listOf(Color(0xFF061A0E), Color(0xFF0E301A))
-                            )
-                        )
-                        .border(1.5.dp, Color(0x6686EFAC), RoundedCornerShape(10.dp))
-                        .padding(2.5.dp)
-                ) {
-                    // Active Progress Fill
-                    Box(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .fillMaxWidth(progressFraction)
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(
-                                Brush.horizontalGradient(
-                                    colors = listOf(
-                                        Color(0xFF84CC16),
-                                        Color(0xFF22C55E),
-                                        Color(0xFFF59E0B)
-                                    )
-                                )
-                            )
-                    ) {
-                        // Shimmer Gleam Layer
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(
-                                    Brush.linearGradient(
-                                        colors = listOf(
-                                            Color.Transparent,
-                                            Color.White.copy(alpha = 0.45f),
-                                            Color.Transparent
-                                        ),
-                                        start = Offset(shimmerOffset, 0f),
-                                        end = Offset(shimmerOffset + 120f, 0f)
-                                    )
-                                )
-                        )
-                    }
-                }
-            }
+            Spacer(modifier = Modifier.height(14.dp))
+
+            // Percentage Counter
+            val percent = (progressFraction * 100).toInt().coerceIn(0, 100)
+            Text(
+                text = "${LocaleHelper.formatNumber(percent, isPersian)}%",
+                color = AccentGold,
+                fontSize = 17.sp,
+                fontFamily = nunitoFont,
+                fontWeight = FontWeight.Black
+            )
         }
     }
 }

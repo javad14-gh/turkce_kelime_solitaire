@@ -91,6 +91,11 @@ import com.turkce.kelimesolitaire.presentation.ui.components.OutlinedText
 import com.turkce.kelimesolitaire.presentation.ui.components.rememberNunitoFont
 import com.turkce.kelimesolitaire.presentation.ui.components.WordCard
 import com.turkce.kelimesolitaire.presentation.ui.components.MessageType
+import com.turkce.kelimesolitaire.presentation.ui.components.Booster3DButton
+import com.turkce.kelimesolitaire.presentation.ui.components.BoosterType
+import com.turkce.kelimesolitaire.presentation.ui.components.HintIcon
+import com.turkce.kelimesolitaire.presentation.ui.components.UndoIcon
+import com.turkce.kelimesolitaire.presentation.ui.components.JokerIcon
 import com.turkce.kelimesolitaire.presentation.ui.theme.AccentGold
 import com.turkce.kelimesolitaire.presentation.ui.theme.BorderGlass
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkCard
@@ -1059,303 +1064,91 @@ fun GameScreen(
             }
 
             // 3. BOTTOM UTILITY TOOLS
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 10.dp),
-                horizontalArrangement = Arrangement.spacedBy(32.dp, Alignment.CenterHorizontally),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // 1. HINT BUTTON
-                Box(contentAlignment = Alignment.TopStart) {
-                    Box(
-                        modifier = Modifier
-                            .shadow(8.dp, RoundedCornerShape(18.dp))
-                            .clip(RoundedCornerShape(18.dp))
-                            .background(
-                                if (!isHintUnlocked) Brush.verticalGradient(listOf(Color(0xFF475569), Color(0xFF334155)))
-                                else Brush.verticalGradient(listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1)))
-                            )
-                            .padding(2.dp)
-                            .clip(RoundedCornerShape(16.dp))
-                            .background(if (!isHintUnlocked) Color(0xFF1E293B) else Color(0xFF0F2B1D))
-                            .padding(bottom = 3.dp)
-                            .clip(RoundedCornerShape(14.dp))
-                            .background(
-                                if (!isHintUnlocked) Brush.verticalGradient(listOf(Color(0xFF0F172A), Color(0xFF0F172A)))
-                                else Brush.verticalGradient(listOf(Color(0xFF1E293B), Color(0xFF0F172A)))
-                            )
-                            .border(
-                                1.dp,
-                                if (!isHintUnlocked) Color.Gray.copy(alpha = 0.3f) else AccentGold.copy(alpha = 0.5f),
-                                RoundedCornerShape(14.dp)
-                            )
-                            .size(68.dp)
-                            .clickable(enabled = !isLevelWon && isDealingFinished) {
-                                if (!isHintUnlocked) {
-                                    onShowMessage(
-                                        if (isPersian) "قابلیت راهنما در مرحله ۸ (سخت) باز می‌شود! 🔒" else "İpucu özelliği 8. seviyede açılır! 🔒",
-                                        MessageType.WARNING
-                                    )
-                                } else {
-                                    onShowHint()
-                                }
-                            },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Box(modifier = if (!isHintUnlocked) Modifier.alpha(0.35f) else Modifier) {
-                            com.turkce.kelimesolitaire.presentation.ui.components.HintIcon(size = 38.dp)
+            CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 10.dp),
+                    horizontalArrangement = Arrangement.spacedBy(28.dp, Alignment.CenterHorizontally),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // 1. HINT BUTTON (Electric Cyan)
+                    Booster3DButton(
+                        type = BoosterType.HINT,
+                        isUnlocked = isHintUnlocked,
+                        lockText = if (isPersian) "🔒 مرحله ۸" else "🔒 8. Lvl",
+                        hasFree = hasFreeHint,
+                        freeCount = freeHintCount,
+                        coinCost = 50,
+                        isPersian = isPersian,
+                        enabled = !isLevelWon && isDealingFinished,
+                        fontFamily = nunitoFont,
+                        onClick = {
+                            if (!isHintUnlocked) {
+                                onShowMessage(
+                                    if (isPersian) "قابلیت راهنما در مرحله ۸ (سخت) باز می‌شود! 🔒" else "İpucu özelliği 8. seviyede açılır! 🔒",
+                                    MessageType.WARNING
+                                )
+                            } else {
+                                onShowHint()
+                            }
+                        },
+                        icon = {
+                            HintIcon(size = 38.dp)
                         }
-                    }
+                    )
 
-                    // Badge: Lock, Free Gift, or Coins
-                    Box(
-                        modifier = Modifier
-                            .offset(x = (-8).dp, y = (-8).dp)
-                            .shadow(4.dp, CircleShape)
-                            .clip(CircleShape)
-                            .background(
-                                when {
-                                    !isHintUnlocked -> Brush.horizontalGradient(listOf(Color(0xFF64748B), Color(0xFF475569)))
-                                    hasFreeHint -> Brush.horizontalGradient(listOf(Color(0xFF10B981), Color(0xFF059669)))
-                                    else -> Brush.radialGradient(listOf(Color(0xFFFFD700), Color(0xFFD97706)))
-                                }
-                            )
-                            .border(1.5.dp, Color.White, CircleShape)
-                            .padding(horizontal = 6.dp, vertical = 3.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        when {
-                            !isHintUnlocked -> {
-                                Text(
-                                    text = if (isPersian) "🔒 مرحله ۸" else "🔒 8. Lvl",
-                                    color = Color.White,
-                                    fontSize = 10.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    fontFamily = nunitoFont
+                    // 2. UNDO BUTTON (Cosmic Royal Violet)
+                    Booster3DButton(
+                        type = BoosterType.UNDO,
+                        isUnlocked = isUndoUnlocked,
+                        lockText = if (isPersian) "🔒 مرحله ۲" else "🔒 2. Lvl",
+                        hasFree = hasFreeUndo,
+                        freeCount = freeUndoCount,
+                        coinCost = 50,
+                        isPersian = isPersian,
+                        enabled = !isLevelWon && isDealingFinished,
+                        fontFamily = nunitoFont,
+                        onClick = {
+                            if (!isUndoUnlocked) {
+                                onShowMessage(
+                                    if (isPersian) "قابلیت بازگشت در مرحله ۲ باز می‌شود! 🔒" else "Geri Al özelliği 2. seviyede açılır! 🔒",
+                                    MessageType.WARNING
                                 )
+                            } else {
+                                onUndoLastMove()
                             }
-                            hasFreeHint && freeHintCount > 0 -> {
-                                Text(
-                                    text = if (freeHintCount > 1) {
-                                        if (isPersian) "🎁 ${LocaleHelper.formatNumber(freeHintCount, true)} عدد" else "🎁 ${freeHintCount}×"
-                                    } else {
-                                        if (isPersian) "🎁 رایگان" else "🎁 Ücretsiz"
-                                    },
-                                    color = Color.White,
-                                    fontSize = 10.sp,
-                                    fontWeight = FontWeight.Black,
-                                    fontFamily = nunitoFont
-                                )
-                            }
-                            else -> {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 16.dp)
-                                    Spacer(modifier = Modifier.width(3.dp))
-                                    Text(
-                                        text = LocaleHelper.formatNumber(50, isPersian),
-                                        color = Color(0xFF0F172A),
-                                        fontSize = 15.sp,
-                                        fontWeight = FontWeight.Black,
-                                        fontFamily = nunitoFont
-                                    )
-                                }
-                            }
+                        },
+                        icon = {
+                            UndoIcon(size = 38.dp)
                         }
-                    }
-                }
+                    )
 
-                // 2. UNDO BUTTON
-                Box(contentAlignment = Alignment.TopStart) {
-                    Box(
-                        modifier = Modifier
-                            .shadow(8.dp, RoundedCornerShape(18.dp))
-                            .clip(RoundedCornerShape(18.dp))
-                            .background(
-                                if (!isUndoUnlocked) Brush.verticalGradient(listOf(Color(0xFF475569), Color(0xFF334155)))
-                                else Brush.verticalGradient(listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1)))
-                            )
-                            .padding(2.dp)
-                            .clip(RoundedCornerShape(16.dp))
-                            .background(if (!isUndoUnlocked) Color(0xFF1E293B) else Color(0xFF0F2B1D))
-                            .padding(bottom = 3.dp)
-                            .clip(RoundedCornerShape(14.dp))
-                            .background(
-                                if (!isUndoUnlocked) Brush.verticalGradient(listOf(Color(0xFF0F172A), Color(0xFF0F172A)))
-                                else Brush.verticalGradient(listOf(Color(0xFF1E293B), Color(0xFF0F172A)))
-                            )
-                            .border(
-                                1.dp,
-                                if (!isUndoUnlocked) Color.Gray.copy(alpha = 0.3f) else AccentGold.copy(alpha = 0.5f),
-                                RoundedCornerShape(14.dp)
-                            )
-                            .size(68.dp)
-                            .clickable(enabled = !isLevelWon && isDealingFinished) {
-                                if (!isUndoUnlocked) {
-                                    onShowMessage(
-                                        if (isPersian) "قابلیت بازگشت در مرحله ۲ باز می‌شود! 🔒" else "Geri Al özelliği 2. seviyede açılır! 🔒",
-                                        MessageType.WARNING
-                                    )
-                                } else {
-                                    onUndoLastMove()
-                                }
-                            },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Box(modifier = if (!isUndoUnlocked) Modifier.alpha(0.35f) else Modifier) {
-                            com.turkce.kelimesolitaire.presentation.ui.components.UndoIcon(size = 38.dp)
-                        }
-                    }
-
-                    // Badge: Lock, Free Gift, or Coins
-                    Box(
-                        modifier = Modifier
-                            .offset(x = (-8).dp, y = (-8).dp)
-                            .shadow(4.dp, CircleShape)
-                            .clip(CircleShape)
-                            .background(
-                                when {
-                                    !isUndoUnlocked -> Brush.horizontalGradient(listOf(Color(0xFF64748B), Color(0xFF475569)))
-                                    hasFreeUndo -> Brush.horizontalGradient(listOf(Color(0xFF10B981), Color(0xFF059669)))
-                                    else -> Brush.radialGradient(listOf(Color(0xFFFFD700), Color(0xFFD97706)))
-                                }
-                            )
-                            .border(1.5.dp, Color.White, CircleShape)
-                            .padding(horizontal = 6.dp, vertical = 3.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        when {
-                            !isUndoUnlocked -> {
-                                Text(
-                                    text = if (isPersian) "🔒 مرحله ۲" else "🔒 2. Lvl",
-                                    color = Color.White,
-                                    fontSize = 10.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    fontFamily = nunitoFont
+                    // 3. JOKER BUTTON (24K Gold & Amber)
+                    Booster3DButton(
+                        type = BoosterType.JOKER,
+                        isUnlocked = isJokerUnlocked,
+                        lockText = if (isPersian) "🔒 مرحله ۱۰" else "🔒 10. Lvl",
+                        hasFree = hasFreeJoker,
+                        freeCount = freeJokerCount,
+                        coinCost = 200,
+                        isPersian = isPersian,
+                        enabled = !isLevelWon && isDealingFinished,
+                        fontFamily = nunitoFont,
+                        onClick = {
+                            if (!isJokerUnlocked) {
+                                onShowMessage(
+                                    if (isPersian) "کارت جوکر در مرحله ۱۰ (خیلی سخت) باز می‌شود! 🔒" else "Joker kartı 10. seviyede açılır! 🔒",
+                                    MessageType.WARNING
                                 )
+                            } else {
+                                onUseJoker()
                             }
-                            hasFreeUndo && freeUndoCount > 0 -> {
-                                Text(
-                                    text = if (freeUndoCount > 1) {
-                                        if (isPersian) "🎁 ${LocaleHelper.formatNumber(freeUndoCount, true)} عدد" else "🎁 ${freeUndoCount}×"
-                                    } else {
-                                        if (isPersian) "🎁 رایگان" else "🎁 Ücretsiz"
-                                    },
-                                    color = Color.White,
-                                    fontSize = 10.sp,
-                                    fontWeight = FontWeight.Black,
-                                    fontFamily = nunitoFont
-                                )
-                            }
-                            else -> {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 16.dp)
-                                    Spacer(modifier = Modifier.width(3.dp))
-                                    Text(
-                                        text = LocaleHelper.formatNumber(50, isPersian),
-                                        color = Color(0xFF0F172A),
-                                        fontSize = 15.sp,
-                                        fontWeight = FontWeight.Black,
-                                        fontFamily = nunitoFont
-                                    )
-                                }
-                            }
+                        },
+                        icon = {
+                            JokerIcon(size = 38.dp)
                         }
-                    }
-                }
-
-                // 3. JOKER BUTTON
-                Box(contentAlignment = Alignment.TopStart) {
-                    Box(
-                        modifier = Modifier
-                            .shadow(8.dp, RoundedCornerShape(18.dp))
-                            .clip(RoundedCornerShape(18.dp))
-                            .background(
-                                if (!isJokerUnlocked) Brush.verticalGradient(listOf(Color(0xFF475569), Color(0xFF334155)))
-                                else Brush.verticalGradient(listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1)))
-                            )
-                            .padding(2.dp)
-                            .clip(RoundedCornerShape(16.dp))
-                            .background(if (!isJokerUnlocked) Color(0xFF1E293B) else Color(0xFFB8860B))
-                            .padding(bottom = 3.dp)
-                            .clip(RoundedCornerShape(14.dp))
-                            .background(
-                                if (!isJokerUnlocked) Brush.verticalGradient(listOf(Color(0xFF0F172A), Color(0xFF0F172A)))
-                                else Brush.verticalGradient(listOf(Color(0xFFFFD700), Color(0xFFF59E0B), Color(0xFFD97706)))
-                            )
-                            .size(68.dp)
-                            .clickable(enabled = !isLevelWon && isDealingFinished) {
-                                if (!isJokerUnlocked) {
-                                    onShowMessage(
-                                        if (isPersian) "کارت جوکر در مرحله ۱۰ (خیلی سخت) باز می‌شود! 🔒" else "Joker kartı 10. seviyede açılır! 🔒",
-                                        MessageType.WARNING
-                                    )
-                                } else {
-                                    onUseJoker()
-                                }
-                            },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Box(modifier = if (!isJokerUnlocked) Modifier.alpha(0.35f) else Modifier) {
-                            com.turkce.kelimesolitaire.presentation.ui.components.JokerIcon(size = 38.dp)
-                        }
-                    }
-
-                    // Badge: Lock, Free Gift, or Coins
-                    Box(
-                        modifier = Modifier
-                            .offset(x = (-8).dp, y = (-8).dp)
-                            .shadow(4.dp, CircleShape)
-                            .clip(CircleShape)
-                            .background(
-                                when {
-                                    !isJokerUnlocked -> Brush.horizontalGradient(listOf(Color(0xFF64748B), Color(0xFF475569)))
-                                    hasFreeJoker -> Brush.horizontalGradient(listOf(Color(0xFF10B981), Color(0xFF059669)))
-                                    else -> Brush.radialGradient(listOf(Color(0xFFFFD700), Color(0xFFD97706)))
-                                }
-                            )
-                            .border(1.5.dp, Color.White, CircleShape)
-                            .padding(horizontal = 6.dp, vertical = 3.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        when {
-                            !isJokerUnlocked -> {
-                                Text(
-                                    text = if (isPersian) "🔒 مرحله ۱۰" else "🔒 10. Lvl",
-                                    color = Color.White,
-                                    fontSize = 10.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    fontFamily = nunitoFont
-                                )
-                            }
-                            hasFreeJoker && freeJokerCount > 0 -> {
-                                Text(
-                                    text = if (freeJokerCount > 1) {
-                                        if (isPersian) "🎁 ${LocaleHelper.formatNumber(freeJokerCount, true)} عدد" else "🎁 ${freeJokerCount}×"
-                                    } else {
-                                        if (isPersian) "🎁 رایگان" else "🎁 Ücretsiz"
-                                    },
-                                    color = Color.White,
-                                    fontSize = 10.sp,
-                                    fontWeight = FontWeight.Black,
-                                    fontFamily = nunitoFont
-                                )
-                            }
-                            else -> {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 16.dp)
-                                    Spacer(modifier = Modifier.width(3.dp))
-                                    Text(
-                                        text = LocaleHelper.formatNumber(200, isPersian),
-                                        color = Color(0xFF0F172A),
-                                        fontSize = 15.sp,
-                                        fontWeight = FontWeight.Black,
-                                        fontFamily = nunitoFont
-                                    )
-                                }
-                            }
-                        }
-                    }
+                    )
                 }
             }
         }

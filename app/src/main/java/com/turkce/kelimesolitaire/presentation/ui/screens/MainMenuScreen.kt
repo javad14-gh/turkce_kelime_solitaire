@@ -57,7 +57,9 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.ui.draw.scale
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.ui.layout.ContentScale
 import com.turkce.kelimesolitaire.data.billing.MyketBillingConfig
 import com.turkce.kelimesolitaire.data.dailyreward.DailyRewardManager
 import com.turkce.kelimesolitaire.data.dailyreward.DailyRewardState
@@ -207,7 +209,7 @@ fun MainMenuScreen(
                                         ),
                                         RoundedCornerShape(topEnd = 15.dp, bottomEnd = 15.dp, topStart = 4.dp, bottomStart = 4.dp)
                                     )
-                                    .padding(start = 24.dp, end = 6.dp)
+                                    .padding(start = 24.dp, end = 12.dp)
                             ) {
                                 Text(
                                     text = LocaleHelper.formatNumber(coins, isPersian),
@@ -216,28 +218,6 @@ fun MainMenuScreen(
                                     fontWeight = FontWeight.Black,
                                     fontFamily = nunitoFont
                                 )
-                                Spacer(modifier = Modifier.width(6.dp))
-                                // Green '+' Circle Badge on the right end
-                                Box(
-                                    modifier = Modifier
-                                        .size(19.dp)
-                                        .clip(CircleShape)
-                                        .background(
-                                            Brush.verticalGradient(
-                                                listOf(Color(0xFF4ADE80), Color(0xFF16A34A))
-                                            )
-                                        )
-                                        .border(1.dp, Color.White, CircleShape),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = "+",
-                                        color = Color.White,
-                                        fontSize = 13.sp,
-                                        fontWeight = FontWeight.Black,
-                                        lineHeight = 13.sp
-                                    )
-                                }
                             }
 
                             // 3D Coin Icon on the outside, overlapping on the left
@@ -262,7 +242,7 @@ fun MainMenuScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(18.dp))
 
                 // Line 2: Centered 7-Day Daily Reward Progress Bar
                 DailyReward7DayProgressBar(
@@ -278,36 +258,37 @@ fun MainMenuScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                OutlinedText(
-                    text = if (isPersian) "پاسور" else "TÜRKÇE KELİME",
-                    textColor = SecondaryNeon,
-                    outlineColor = Color(0xFF0F172A),
-                    outlineWidth = 6f,
-                    fontSize = 38.sp,
-                    fontWeight = FontWeight.Black,
-                    letterSpacing = 1.5.sp,
-                    textAlign = TextAlign.Center
-                )
-                OutlinedText(
-                    text = if (isPersian) "کلمات" else "SOLİTAİRE",
-                    textColor = PrimaryNeon,
-                    outlineColor = Color(0xFF0F172A),
-                    outlineWidth = 6f,
-                    fontSize = 40.sp,
-                    fontWeight = FontWeight.Black,
-                    letterSpacing = 1.sp,
-                    textAlign = TextAlign.Center
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-                Text(
-                    text = if (isPersian) "بازی کلمات و سولیتیر" else "Kartları sürükle, kategorileri eşleştir ve seviyeleri tamamla!",
-                    color = TextSecondary,
-                    fontSize = 17.sp,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center,
-                    lineHeight = 24.sp,
-                    modifier = Modifier.padding(horizontal = 24.dp)
-                )
+                if (isPersian) {
+                    Image(
+                        painter = painterResource(id = R.drawable.title_logo),
+                        contentDescription = "پاسور کلمات",
+                        modifier = Modifier
+                            .fillMaxWidth(0.88f)
+                            .heightIn(max = 95.dp),
+                        contentScale = ContentScale.Fit
+                    )
+                } else {
+                    OutlinedText(
+                        text = "TÜRKÇE KELİME",
+                        textColor = SecondaryNeon,
+                        outlineColor = Color(0xFF0F172A),
+                        outlineWidth = 6f,
+                        fontSize = 38.sp,
+                        fontWeight = FontWeight.Black,
+                        letterSpacing = 1.5.sp,
+                        textAlign = TextAlign.Center
+                    )
+                    OutlinedText(
+                        text = "SOLİTAİRE",
+                        textColor = PrimaryNeon,
+                        outlineColor = Color(0xFF0F172A),
+                        outlineWidth = 6f,
+                        fontSize = 40.sp,
+                        fontWeight = FontWeight.Black,
+                        letterSpacing = 1.sp,
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
 
             // 3D Juicy Play Button with Difficulty Ribbon Banner
@@ -888,94 +869,48 @@ private fun DailyReward7DayProgressBar(
         label = "glow_alpha"
     )
 
-    Card(
+    // Outer Box: Centers the Ribbon Badge right on the top edge/rim of the card
+    Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 28.dp)
-            .widthIn(max = 280.dp)
-            .clip(RoundedCornerShape(14.dp))
-            .clickable { onClick() },
-        shape = RoundedCornerShape(14.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color(0xFF131D31).copy(alpha = 0.92f)
-        ),
-        border = androidx.compose.foundation.BorderStroke(
-            1.dp,
-            if (hasUnclaimedReward)
-                Brush.horizontalGradient(
-                    listOf(
-                        Color(0xFFFFD700).copy(alpha = glowAlpha),
-                        Color(0xFF4ADE80).copy(alpha = glowAlpha)
-                    )
-                )
-            else
-                Brush.horizontalGradient(
-                    listOf(
-                        Color.White.copy(alpha = 0.15f),
-                        Color.White.copy(alpha = 0.08f)
-                    )
-                )
-        )
+            .padding(horizontal = 24.dp)
+            .widthIn(max = 300.dp)
+            .padding(top = 10.dp),
+        contentAlignment = Alignment.TopCenter
     ) {
-        Column(
+        // The Main Card Container
+        Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 10.dp, vertical = 5.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            // Header Row: Title & Status
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.gift),
-                        contentDescription = "Daily Reward",
-                        modifier = Modifier
-                            .size(14.dp)
-                            .then(if (hasUnclaimedReward) Modifier.scale(pulseScale) else Modifier)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = if (isPersian) "جایزه ورود روزانه" else "Günlük Giriş Ödülü",
-                        color = AccentGold,
-                        fontSize = 10.5.sp,
-                        fontWeight = FontWeight.Black,
-                        fontFamily = appFont
-                    )
-                }
-
-                if (hasUnclaimedReward) {
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(6.dp))
-                            .background(
-                                Brush.horizontalGradient(
-                                    listOf(Color(0xFF16A34A), Color(0xFF22C55E))
-                                )
-                            )
-                            .padding(horizontal = 5.dp, vertical = 1.5.dp)
-                    ) {
-                        Text(
-                            text = if (isPersian) "دریافت سریع 🪙" else "Hızlı Al 🪙",
-                            color = Color.White,
-                            fontSize = 9.sp,
-                            fontWeight = FontWeight.Black,
-                            fontFamily = appFont
+                .clip(RoundedCornerShape(16.dp))
+                .clickable { onClick() },
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = Color(0xFF131D31).copy(alpha = 0.94f)
+            ),
+            border = androidx.compose.foundation.BorderStroke(
+                1.2.dp,
+                if (hasUnclaimedReward)
+                    Brush.horizontalGradient(
+                        listOf(
+                            Color(0xFFFFD700).copy(alpha = glowAlpha),
+                            Color(0xFF4ADE80).copy(alpha = glowAlpha)
                         )
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            // 7 Days Progress Track
+                    )
+                else
+                    Brush.horizontalGradient(
+                        listOf(
+                            Color.White.copy(alpha = 0.18f),
+                            Color.White.copy(alpha = 0.08f)
+                        )
+                    )
+            )
+        ) {
+            // 7 Days Progress Track inside card
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 12.dp, end = 10.dp, top = 20.dp, bottom = 10.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 for (day in 1..7) {
@@ -984,39 +919,39 @@ private fun DailyReward7DayProgressBar(
                     val isDay7 = day == 7
 
                     if (isDay7) {
-                        // Day 7: Big Prominent Freestanding Chest
+                        // Day 7: Large 42dp Chest (matching Settings icon size: 42dp)
                         Box(
                             modifier = Modifier
-                                .size(38.dp)
+                                .size(42.dp)
                                 .then(if (isReady) Modifier.scale(pulseScale) else Modifier),
                             contentAlignment = Alignment.Center
                         ) {
                             Image(
                                 painter = painterResource(id = R.drawable.chest),
                                 contentDescription = "Day 7 Chest",
-                                modifier = Modifier.size(36.dp),
+                                modifier = Modifier.size(42.dp),
                                 alpha = if (isClaimed) 0.55f else 1f
                             )
                             if (isClaimed) {
                                 Image(
                                     painter = painterResource(id = R.drawable.tick),
                                     contentDescription = "Claimed",
-                                    modifier = Modifier.size(18.dp)
+                                    modifier = Modifier.size(24.dp)
                                 )
                             }
                         }
                     } else {
-                        // Days 1 to 6: Step Nodes
+                        // Days 1 to 6: Step Nodes (Ticks at 70% scale: 29.dp)
                         if (isClaimed) {
                             Image(
                                 painter = painterResource(id = R.drawable.tick),
                                 contentDescription = "Claimed",
-                                modifier = Modifier.size(20.dp)
+                                modifier = Modifier.size(29.dp)
                             )
                         } else {
                             Box(
                                 modifier = Modifier
-                                    .size(18.dp)
+                                    .size(24.dp)
                                     .then(if (isReady) Modifier.scale(pulseScale) else Modifier)
                                     .clip(CircleShape)
                                     .background(
@@ -1027,7 +962,7 @@ private fun DailyReward7DayProgressBar(
                                     )
                                     .border(
                                         width = if (isReady) 1.5.dp else 1.dp,
-                                        color = if (isReady) Color.White else Color.White.copy(alpha = 0.15f),
+                                        color = if (isReady) Color.White else Color.White.copy(alpha = 0.2f),
                                         shape = CircleShape
                                     ),
                                 contentAlignment = Alignment.Center
@@ -1036,7 +971,7 @@ private fun DailyReward7DayProgressBar(
                                     Text(
                                         text = LocaleHelper.formatNumber(day, isPersian),
                                         color = Color(0xFF1E293B),
-                                        fontSize = 10.sp,
+                                        fontSize = 12.sp,
                                         fontWeight = FontWeight.Black,
                                         fontFamily = appFont
                                     )
@@ -1044,7 +979,7 @@ private fun DailyReward7DayProgressBar(
                                     Text(
                                         text = LocaleHelper.formatNumber(day, isPersian),
                                         color = Color.White.copy(alpha = 0.5f),
-                                        fontSize = 9.sp,
+                                        fontSize = 11.sp,
                                         fontWeight = FontWeight.Bold,
                                         fontFamily = appFont
                                     )
@@ -1059,7 +994,7 @@ private fun DailyReward7DayProgressBar(
                         Box(
                             modifier = Modifier
                                 .weight(1f)
-                                .height(2.dp)
+                                .height(2.5.dp)
                                 .background(
                                     if (isLineActive)
                                         Brush.horizontalGradient(
@@ -1074,6 +1009,41 @@ private fun DailyReward7DayProgressBar(
                     }
                 }
             }
+        }
+
+        // Ribbon Badge Centered on Top Edge (Overlapping top rim like difficulty badge)
+        Box(
+            modifier = Modifier
+                .offset(y = (-11).dp)
+                .zIndex(3f)
+                .then(if (hasUnclaimedReward) Modifier.scale(pulseScale) else Modifier)
+                .shadow(5.dp, RoundedCornerShape(10.dp))
+                .clip(RoundedCornerShape(10.dp))
+                .background(
+                    if (hasUnclaimedReward)
+                        Brush.horizontalGradient(listOf(Color(0xFFEA580C), Color(0xFFC2410C)))
+                    else
+                        Brush.horizontalGradient(listOf(Color(0xFF475569), Color(0xFF334155)))
+                )
+                .border(
+                    1.2.dp,
+                    if (hasUnclaimedReward) Color.White else Color.White.copy(alpha = 0.6f),
+                    RoundedCornerShape(10.dp)
+                )
+                .padding(horizontal = 14.dp, vertical = 3.dp)
+        ) {
+            Text(
+                text = if (isPersian) {
+                    if (hasUnclaimedReward) "جایزه روزانه (دریافت 🪙)" else "جایزه ورود روزانه"
+                } else {
+                    if (hasUnclaimedReward) "Günlük Ödül (Al 🪙)" else "Günlük Giriş Ödülü"
+                },
+                color = Color.White,
+                fontSize = 11.5.sp,
+                fontWeight = FontWeight.Black,
+                fontFamily = appFont,
+                letterSpacing = 0.4.sp
+            )
         }
     }
 }
