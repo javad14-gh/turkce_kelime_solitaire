@@ -10,6 +10,23 @@ import androidx.compose.ui.graphics.Color
 // نکته: حتماً 0xFF در ابتدای کد رنگ باقی بماند تا رنگ کاملاً مات نمایش داده شود.
 // =====================================================================
 
+// =====================================================================
+// 🛠️ توابع کمکی برای تولید خودکار طیف‌های سه‌بعدی و سایه‌ها
+// =====================================================================
+fun Color.lighten(factor: Float): Color = Color(
+    red = (red + (1f - red) * factor).coerceIn(0f, 1f),
+    green = (green + (1f - green) * factor).coerceIn(0f, 1f),
+    blue = (blue + (1f - blue) * factor).coerceIn(0f, 1f),
+    alpha = alpha
+)
+
+fun Color.darken(factor: Float): Color = Color(
+    red = (red * (1f - factor)).coerceIn(0f, 1f),
+    green = (green * (1f - factor)).coerceIn(0f, 1f),
+    blue = (blue * (1f - factor)).coerceIn(0f, 1f),
+    alpha = alpha
+)
+
 // --- ۱. پس‌زمینه‌های اصلی بازی ---
 val DarkBg = Color(0xFF131B0E)            // پس‌زمینه منوی اصلی و لودینگ بازی (سرمه‌ای کهکشانی تیره)
 val GameTableBg = Color(0xFFF0EFFB)       // رنگ پس‌زمینه میز بازی (کاملاً یکدست و ساده)
@@ -24,18 +41,19 @@ val CoinTextColor = Color(0xFF221a6c)             // رنگ عدد سکه‌ها
 val CoinTextOutline = Color.Transparent           // رنگ خط دور عدد سکه‌ها (اختیاری)
 
 // --- ۲. محل قرارگیری دسته‌بندی‌ها (باکس‌های بالای ستون‌ها - Category Slots) ---
-val CategorySlotBg = Color(0x80deead7)         // رنگ زمینه باکس خالی دسته‌بندی (یکدست و بدون گرادیان)
-val CategorySlotBgTop = CategorySlotBg         // جهت سازگاری
-val CategorySlotBgBottom = CategorySlotBg      // جهت سازگاری
-val CategorySlotBorder = Color(0xFFd3e3c9)     // کادر دور باکس خالی دسته‌بندی
-val CategorySlotContent = Color(0xFFB2CEA1)    // رنگ نوشته «کارت دسته» و آیکون تاج داخل باکس
-val CategoryActiveBannerBg = Color(0xFFFFCB70) // نوار بالای کارت فعال دسته‌بندی (طلایی)
-val CategorySlotActiveBg = Color(0xFFFFFFFF)   // رنگ بدنه کارت فعال در جایگاه بالا (محل نشستن کلمات مچ‌شده)
-val CategorySlotInnerShadow = Color(0xFFc8dcbc) // رنگ سایه داخلی باکس خالی دسته‌بندی (ایجاد حس گود بودن و عمق سوراخ)
-val CategorySlotMatchedBorder = CategoryActiveBannerBg // رنگ کادر جایگاه بالا وقتی کارت‌ها در آن قرار می‌گیرند (هماهنگ با نوار بالا)
+// 🌟 تمام رنگ‌های زیر به صورت خودکار از روی رنگ میز (GameTableBg) محاسبه می‌شوند:
+val CategorySlotBg = GameTableBg.darken(0.07f)          // رنگ زمینه باکس خالی دسته‌بندی (کمی گودتر از میز)
+val CategorySlotBgTop = CategorySlotBg                  // جهت سازگاری
+val CategorySlotBgBottom = CategorySlotBg               // جهت سازگاری
+val CategorySlotBorder = GameTableBg.darken(0.14f)      // کادر دور باکس خالی دسته‌بندی (مرز تراشیده شده)
+val CategorySlotContent = GameTableBg.darken(0.35f)     // رنگ نوشته «کارت دسته» و آیکون تاج داخل باکس
+val CategorySlotInnerShadow = GameTableBg.darken(0.40f) // رنگ سایه داخلی باکس خالی دسته‌بندی (حس عمق و سوراخ)
+val CategoryActiveBannerBg = Color(0xFFFFCB70)          // نوار بالای کارت فعال دسته‌بندی (طلایی)
+val CategorySlotActiveBg = Color(0xFFFFFFFF)            // رنگ بدنه کارت فعال در جایگاه بالا (محل نشستن کلمات مچ‌شده)
+val CategorySlotMatchedBorder = CategoryActiveBannerBg  // رنگ کادر جایگاه بالا وقتی کارت‌ها در آن قرار می‌گیرند (هماهنگ با نوار بالا)
 
 // --- ۳. پشت کارت‌ها (Card Back) ---
-val CardBackBg = Color(0xFFF78BF9)            // رنگ ساده و یکدست پشت کارت‌ها
+val CardBackBg = Color(0xFF6F1594)            // رنگ ساده و یکدست پشت کارت‌ها
 val CardBackGradientTop = CardBackBg          // جهت سازگاری
 val CardBackGradientBottom = CardBackBg       // جهت سازگاری
 val CardBackPattern = CardBackBg              // جهت سازگاری
@@ -57,23 +75,6 @@ val CardJokerBgTop = Color(0xFFFEF08A)        // رنگ زمینه کارت جو
 val StockRecycleBg = CategorySlotBg       // رنگ پس‌زمینه مخزن خالی جهت بر زدن
 val StockRecycleBorder = CategorySlotBorder   // رنگ کادر مخزن در حالت بر زدن
 val StockRecycleText = CategorySlotContent     // رنگ متن و آیکون «بر زدن»
-
-// =====================================================================
-// 🛠️ توابع کمکی برای تولید خودکار طیف‌های سه‌بعدی از روی ۱ رنگ اصلی
-// =====================================================================
-fun Color.lighten(factor: Float): Color = Color(
-    red = (red + (1f - red) * factor).coerceIn(0f, 1f),
-    green = (green + (1f - green) * factor).coerceIn(0f, 1f),
-    blue = (blue + (1f - blue) * factor).coerceIn(0f, 1f),
-    alpha = alpha
-)
-
-fun Color.darken(factor: Float): Color = Color(
-    red = (red * (1f - factor)).coerceIn(0f, 1f),
-    green = (green * (1f - factor)).coerceIn(0f, 1f),
-    blue = (blue * (1f - factor)).coerceIn(0f, 1f),
-    alpha = alpha
-)
 
 // --- ۶. دکمه‌های کمکی و راهنما در پایین صفحه بازی (Booster Buttons) ---
 // 🌟 کافیست فقط همین یک رنگ را تغییر دهید؛ تمام طیف‌های سه‌بعدی به صورت خودکار ساخته می‌شوند:
