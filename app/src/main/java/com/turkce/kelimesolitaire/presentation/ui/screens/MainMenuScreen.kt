@@ -76,6 +76,11 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.PrimaryNeon
 import com.turkce.kelimesolitaire.presentation.ui.theme.SecondaryNeon
 import com.turkce.kelimesolitaire.presentation.ui.theme.TextPrimary
 import com.turkce.kelimesolitaire.presentation.ui.theme.TextSecondary
+import com.turkce.kelimesolitaire.presentation.ui.theme.PlayButtonFaceTop
+import com.turkce.kelimesolitaire.presentation.ui.theme.PlayButtonFaceMid
+import com.turkce.kelimesolitaire.presentation.ui.theme.PlayButtonFaceBottom
+import com.turkce.kelimesolitaire.presentation.ui.theme.PlayButtonFaceBorder
+import com.turkce.kelimesolitaire.presentation.ui.theme.PlayButtonShadow
 import com.turkce.kelimesolitaire.presentation.ui.theme.getDifficultyRimColors
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 
@@ -313,19 +318,19 @@ fun MainMenuScreen(
                             .border(1.5.dp, difficultyRim.border, RoundedCornerShape(22.dp))
                             .padding(4.dp)
                             .clip(RoundedCornerShape(18.dp))
-                            .background(Color(0xFF1E3A07)) // Dark 3D bottom base shadow
+                            .background(PlayButtonShadow) // Dark 3D bottom base shadow
                             .padding(bottom = 5.dp) // Creates thick 3D bottom bevel
                             .clip(RoundedCornerShape(14.dp))
                             .background(
                                 Brush.verticalGradient(
                                     colors = listOf(
-                                        Color(0xFFA3E635), // Glossy top highlight green
-                                        Color(0xFF65A30D), // Mid vibrant green
-                                        Color(0xFF4D7C0F)  // Inner shade
+                                        PlayButtonFaceTop,
+                                        PlayButtonFaceMid,
+                                        PlayButtonFaceBottom
                                     )
                                 )
                             )
-                            .border(1.2.dp, Color(0xFFBEF264).copy(alpha = 0.6f), RoundedCornerShape(14.dp))
+                            .border(1.2.dp, PlayButtonFaceBorder.copy(alpha = 0.6f), RoundedCornerShape(14.dp))
                             .clickable(enabled = !isPlayClicked) {
                                 if (!isPlayClicked) {
                                     isPlayClicked = true

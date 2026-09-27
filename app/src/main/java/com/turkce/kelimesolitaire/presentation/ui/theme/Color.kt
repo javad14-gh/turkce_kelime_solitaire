@@ -11,16 +11,16 @@ import androidx.compose.ui.graphics.Color
 // =====================================================================
 
 // --- ۱. پس‌زمینه‌های اصلی بازی ---
-val DarkBg = Color(0xFF0D0921)            // پس‌زمینه منوی اصلی و لودینگ بازی (سرمه‌ای کهکشانی تیره)
-val GameTableBg = Color(0xFFE9F1E4)       // رنگ پس‌زمینه میز بازی (کاملاً یکدست و ساده)
+val DarkBg = Color(0xFF131B0E)            // پس‌زمینه منوی اصلی و لودینگ بازی (سرمه‌ای کهکشانی تیره)
+val GameTableBg = Color(0xFFF0EFFB)       // رنگ پس‌زمینه میز بازی (کاملاً یکدست و ساده)
 val GameTableBgTop = GameTableBg          // جهت سازگاری
 val GameTableBgBottom = GameTableBg       // جهت سازگاری
 
 // --- هدر بالای صفحه بازی (سکه و عنوان مرحله) ---
 val LevelTitleText = Color(0xFFFFFFFF)            // رنگ نوشته مرحله (مثلاً مرحله ۱)
-val LevelTitleOutline = Color(0xFF4c6c37)         // رنگ خط دور نوشته مرحله (قابل تنظیم به هر رنگ دلخواه)
+val LevelTitleOutline = Color(0xFF221a6c)         // رنگ خط دور نوشته مرحله (قابل تنظیم به هر رنگ دلخواه)
 val CoinBoxBorder = Color(0xFFFFD700)             // رنگ خط دور باکس سکه (باکس بدون پس‌زمینه)
-val CoinTextColor = Color(0xFF4c6c37)             // رنگ عدد سکه‌ها در بالای صفحه
+val CoinTextColor = Color(0xFF221a6c)             // رنگ عدد سکه‌ها در بالای صفحه
 val CoinTextOutline = Color.Transparent           // رنگ خط دور عدد سکه‌ها (اختیاری)
 
 // --- ۲. محل قرارگیری دسته‌بندی‌ها (باکس‌های بالای ستون‌ها - Category Slots) ---
@@ -35,16 +35,16 @@ val CategorySlotInnerShadow = Color(0xFFc8dcbc) // رنگ سایه داخلی ب
 val CategorySlotMatchedBorder = CategoryActiveBannerBg // رنگ کادر جایگاه بالا وقتی کارت‌ها در آن قرار می‌گیرند (هماهنگ با نوار بالا)
 
 // --- ۳. پشت کارت‌ها (Card Back) ---
-val CardBackBg = Color(0xFF91B87C)            // رنگ ساده و یکدست پشت کارت‌ها
+val CardBackBg = Color(0xFFF78BF9)            // رنگ ساده و یکدست پشت کارت‌ها
 val CardBackGradientTop = CardBackBg          // جهت سازگاری
 val CardBackGradientBottom = CardBackBg       // جهت سازگاری
 val CardBackPattern = CardBackBg              // جهت سازگاری
 
 // --- ۴. روی کارت‌ها (Card Front) ---
 val CardFaceBg = Color(0xFFFFFFFF)            // رنگ زمینه کارت‌های کلمه و کارت‌های دسته‌بندی
-val CardFaceText = Color(0xFF4c6c37)          // رنگ متن کلمات روی کارت
+val CardFaceText = Color(0xFF221a6c)          // رنگ متن کلمات روی کارت
 val CardFaceBorder = Color(0xFFE2E8F0)        // رنگ کادر بیرونی بسیار نازک روی کارت‌های معمولی
-val CardFaceInnerBorder = Color(0xFF91B87C)   // رنگ کادر داخلی روی کارت‌های معمولی
+val CardFaceInnerBorder = CardBackBg   // رنگ کادر داخلی روی کارت‌های معمولی
 val CardCategoryBorder = Color(0xFFFFCB70)    // رنگ کادر ضخیم دور کارت دسته‌بندی (شروع از لبه، بولد و مشخص)
 val CardCategoryCrown = Color(0xFFffbe0b)     // رنگ تاج کارت دسته‌بندی
 val CardCategoryText = CardFaceText           // رنگ نوشته کارت دسته‌بندی (مثلاً پوشاک)
@@ -58,15 +58,55 @@ val StockRecycleBg = CategorySlotBg       // رنگ پس‌زمینه مخزن �
 val StockRecycleBorder = CategorySlotBorder   // رنگ کادر مخزن در حالت بر زدن
 val StockRecycleText = CategorySlotContent     // رنگ متن و آیکون «بر زدن»
 
+// =====================================================================
+// 🛠️ توابع کمکی برای تولید خودکار طیف‌های سه‌بعدی از روی ۱ رنگ اصلی
+// =====================================================================
+fun Color.lighten(factor: Float): Color = Color(
+    red = (red + (1f - red) * factor).coerceIn(0f, 1f),
+    green = (green + (1f - green) * factor).coerceIn(0f, 1f),
+    blue = (blue + (1f - blue) * factor).coerceIn(0f, 1f),
+    alpha = alpha
+)
+
+fun Color.darken(factor: Float): Color = Color(
+    red = (red * (1f - factor)).coerceIn(0f, 1f),
+    green = (green * (1f - factor)).coerceIn(0f, 1f),
+    blue = (blue * (1f - factor)).coerceIn(0f, 1f),
+    alpha = alpha
+)
+
 // --- ۶. دکمه‌های کمکی و راهنما در پایین صفحه بازی (Booster Buttons) ---
-val BoosterRimBorder = Color(0x0000E5FF)       // نوار دور فیروزه‌ای/آبی براق دکمه‌ها
-val BoosterRimBase = Color(0x00FFD58C)         // پایه و لبه سه‌بعدی دور دکمه (آبی روشن)
-val BoosterButtonShadow = Color(0xFF4c6b38)    // لبه سه‌بعدی و سایه ضخیم زیر دکمه (آبی تیره)
-val BoosterButtonHighlight = Color(0x005B45F5) // هایلایت روشن بالای پد دکمه (بنفش-آبی براق)
-val BoosterButtonBg = Color(0xffdeead7)        // رنگ اصلی پد دکمه (آبی لاجوردی پررنگ)
-val BoosterButtonDark = Color(0x002412B8)      // رنگ شیب پایین پد دکمه
-val BoosterBadgeGreenTop = Color(0xFF4ADE80)   // رنگ روشن نشان سبز گوشه دکمه
-val BoosterBadgeGreenBottom = Color(0xFF16A34A) // رنگ تیره نشان سبز گوشه دکمه
+// 🌟 کافیست فقط همین یک رنگ را تغییر دهید؛ تمام طیف‌های سه‌بعدی به صورت خودکار ساخته می‌شوند:
+val BoosterPrimaryColor = Color(0xFF221a6c)      // 🟢 رنگ اصلی دکمه‌های راهنما (کافیست فقط این رنگ را تغییر دهید)
+
+// لایه‌های سه‌بعدی خودکار (Auto-Generated):
+val BoosterFaceTop = BoosterPrimaryColor.lighten(0.35f)           // رنگ روشن براق بالای پد دکمه
+val BoosterFaceMid = BoosterPrimaryColor                          // رنگ اصلی میانی پد دکمه
+val BoosterFaceBottom = BoosterPrimaryColor.darken(0.25f)        // شیب تاریک‌تر پایین پد دکمه
+val BoosterFaceBorder = BoosterPrimaryColor.lighten(0.50f)        // خط دور هایلایت روی پد دکمه
+val BoosterButtonShadow = BoosterPrimaryColor.darken(0.65f)      // حجم و سایه سه‌بعدی زیر دکمه
+
+val BoosterRimGradientTop = BoosterPrimaryColor.lighten(0.85f)    // هایلایت روشن بالای لبه بیرونی
+val BoosterRimGradientMid = BoosterPrimaryColor.lighten(0.40f)    // رنگ میانی لبه بیرونی
+val BoosterRimGradientBottom = BoosterPrimaryColor.darken(0.10f) // رنگ پایینی لبه بیرونی
+val BoosterRimBorder = BoosterPrimaryColor.lighten(0.45f)         // خط دور لبه بیرونی
+
+// متغیرهای سازگاری
+val BoosterRimBase = BoosterRimGradientMid
+val BoosterButtonHighlight = BoosterFaceTop
+val BoosterButtonBg = BoosterFaceMid
+val BoosterButtonDark = BoosterFaceBottom
+val BoosterBadgeGreenTop = Color(0xFF4ADE80)
+val BoosterBadgeGreenBottom = Color(0xFF16A34A)
+
+// --- دکمه بزرگ شروع بازی در منوی اصلی (Main Play Button) ---
+// 🌟 این دکمه نیز فقط با تغییر همین یک رنگ اصلی کنترل می‌شود:
+val PlayButtonColor = Color(0xFF65A30D)          // 🟢 رنگ اصلی دکمه شروع مرحله در منو
+val PlayButtonFaceTop = PlayButtonColor.lighten(0.35f)
+val PlayButtonFaceMid = PlayButtonColor
+val PlayButtonFaceBottom = PlayButtonColor.darken(0.25f)
+val PlayButtonFaceBorder = PlayButtonColor.lighten(0.50f)
+val PlayButtonShadow = PlayButtonColor.darken(0.65f)
 
 
 // --- ۷. رنگ‌های تاکیدی و درخشان (Accents) ---
@@ -77,7 +117,7 @@ val SuccessGreen = Color(0xFF10B981)     // سبز موفقیت و تایید
 val ErrorRed = Color(0xFFEF4444)         // قرمز خطا و باخت
 
 // --- ۷. المان‌های عمومی و کارت‌های منو ---
-val DarkCard = Color(0xFF4c6c37)
+val DarkCard = Color(0xFF221a6c)
 val TextPrimary = Color(0xFFF9FAFB)
 val TextSecondary = Color(0xFFD1D5DB)
 val BorderGlass = Color(0xFF3B2E6E)

@@ -11,8 +11,6 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -38,12 +36,15 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import com.turkce.kelimesolitaire.presentation.ui.theme.BoosterButtonBg
-import com.turkce.kelimesolitaire.presentation.ui.theme.BoosterButtonDark
-import com.turkce.kelimesolitaire.presentation.ui.theme.BoosterButtonHighlight
 import com.turkce.kelimesolitaire.presentation.ui.theme.BoosterButtonShadow
 import com.turkce.kelimesolitaire.presentation.ui.theme.BoosterRimBorder
-import com.turkce.kelimesolitaire.presentation.ui.theme.BoosterRimBase
+import com.turkce.kelimesolitaire.presentation.ui.theme.BoosterRimGradientTop
+import com.turkce.kelimesolitaire.presentation.ui.theme.BoosterRimGradientMid
+import com.turkce.kelimesolitaire.presentation.ui.theme.BoosterRimGradientBottom
+import com.turkce.kelimesolitaire.presentation.ui.theme.BoosterFaceTop
+import com.turkce.kelimesolitaire.presentation.ui.theme.BoosterFaceMid
+import com.turkce.kelimesolitaire.presentation.ui.theme.BoosterFaceBottom
+import com.turkce.kelimesolitaire.presentation.ui.theme.BoosterFaceBorder
 import com.turkce.kelimesolitaire.presentation.ui.theme.BoosterBadgeGreenTop
 import com.turkce.kelimesolitaire.presentation.ui.theme.BoosterBadgeGreenBottom
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
@@ -55,12 +56,13 @@ enum class BoosterType {
 }
 
 /**
- * Juicy, arcade-style 3D booster action button styled directly after the reference design:
- * - Rounded squircle shape with vibrant cyan/sky-blue 3D rim and bottom pedestal
- * - Deep royal blue / violet glossy pad with top reflection arc
- * - Prominent centered booster icon
- * - Overlapping 3D circular/pill badge on the BOTTOM-RIGHT with thick white border
- *   (showing available count or coin cost)
+ * 3D Juicy booster action button matching the EXACT architectural layers,
+ * glossy 3-color gradient face, and bevel styling of the Level Start Button:
+ * - Outer 3D Rim Shell with 3-tone gradient & border
+ * - Deep 3D bottom base shadow extrusion
+ * - Glossy 3-tone face pad (Top Highlight -> Mid Vibrant -> Bottom Shade)
+ * - Tactile physical press response (compressing bottom bevel on click)
+ * - Overlapping 3D circular/pill badge on the Bottom-Right corner
  */
 @Composable
 fun Booster3DButton(
@@ -91,13 +93,12 @@ fun Booster3DButton(
         label = "bevelPadding"
     )
     val shadowElevation by animateDpAsState(
-        targetValue = if (isPressed && enabled) 2.dp else 7.dp,
+        targetValue = if (isPressed && enabled) 3.dp else 8.dp,
         animationSpec = tween(durationMillis = 60, easing = FastOutSlowInEasing),
         label = "shadowElevation"
     )
 
-    // Palette per booster state:
-    // Cyan Outer Base + Royal Indigo Face (matching screenshot)
+    // Palette: Unified with the Level Start Button logic
     val (rimBrush, rimBorderColor, baseExtrusionColor, faceBrush, faceHighlightBorder) = when {
         !isUnlocked -> Quintuple(
             Brush.verticalGradient(listOf(Color(0xFF64748B), Color(0xFF475569))),
@@ -107,38 +108,38 @@ fun Booster3DButton(
             Color(0xFF475569).copy(alpha = 0.3f)
         )
         else -> Quintuple(
-            // Electric Cyan Outer Rim & Pedestal
-            Brush.verticalGradient(listOf(BoosterRimBorder, BoosterRimBase, BoosterButtonShadow)),
+            // Outer 3-tone Rim Gradient
+            Brush.verticalGradient(listOf(BoosterRimGradientTop, BoosterRimGradientMid, BoosterRimGradientBottom)),
             BoosterRimBorder,
-            BoosterButtonShadow, // 3D bottom extrusion lip
-            // Vibrant Royal Blue / Indigo Face
-            Brush.verticalGradient(listOf(BoosterButtonHighlight, BoosterButtonBg, BoosterButtonDark)),
-            Color(0xFF818CF8).copy(alpha = 0.60f)
+            BoosterButtonShadow, // Dark 3D bottom base shadow
+            // Inner 3-tone Face Gradient
+            Brush.verticalGradient(listOf(BoosterFaceTop, BoosterFaceMid, BoosterFaceBottom)),
+            BoosterFaceBorder.copy(alpha = 0.65f)
         )
     }
 
     // Always use LTR for the button container so the badge is reliably at physical Bottom-Right
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
         Box(contentAlignment = Alignment.BottomEnd) {
-            // 3D Juicy Button Shell
+            // 3D Juicy Button Shell (matching Level Start Button design)
             Box(
                 modifier = Modifier
                     .offset(y = pressOffsetY)
-                    .shadow(shadowElevation, RoundedCornerShape(18.dp))
-                    .clip(RoundedCornerShape(18.dp))
-                    // Layer 1: Outer 3D Cyan Rim & Pedestal
+                    .shadow(shadowElevation, RoundedCornerShape(20.dp))
+                    .clip(RoundedCornerShape(20.dp))
+                    // Layer 1: Outer 3D Rim Shell
                     .background(rimBrush)
-                    .border(1.5.dp, rimBorderColor, RoundedCornerShape(18.dp))
-                    .padding(2.5.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    // Layer 2: 3D Base Extrusion Shadow at bottom
+                    .border(1.5.dp, rimBorderColor, RoundedCornerShape(20.dp))
+                    .padding(3.5.dp)
+                    .clip(RoundedCornerShape(17.dp))
+                    // Layer 2: Dark 3D bottom base shadow (creates thick 3D bottom bevel)
                     .background(baseExtrusionColor)
                     .padding(bottom = bevelPadding)
-                    .clip(RoundedCornerShape(14.dp))
-                    // Layer 3: Main Vibrant Indigo Face
+                    .clip(RoundedCornerShape(13.5.dp))
+                    // Layer 3: Main Vibrant Face Pad (matching Level Start button glossy 3-color gradient)
                     .background(faceBrush)
-                    .border(1.2.dp, faceHighlightBorder, RoundedCornerShape(14.dp))
-                    .size(66.dp)
+                    .border(1.2.dp, faceHighlightBorder, RoundedCornerShape(13.5.dp))
+                    .size(68.dp)
                     .clickable(
                         interactionSource = interactionSource,
                         indication = null
@@ -147,32 +148,7 @@ fun Booster3DButton(
                     },
                 contentAlignment = Alignment.Center
             ) {
-                // Layer 4: Glossy glass curvature reflection on upper half (matching screenshot)
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(26.dp)
-                        .align(Alignment.TopCenter)
-                        .clip(
-                            RoundedCornerShape(
-                                topStart = 14.dp,
-                                topEnd = 14.dp,
-                                bottomStart = 8.dp,
-                                bottomEnd = 8.dp
-                            )
-                        )
-                        .background(
-                            Brush.verticalGradient(
-                                colors = listOf(
-                                    Color.White.copy(alpha = if (isUnlocked) 0.38f else 0.12f),
-                                    Color.White.copy(alpha = if (isUnlocked) 0.08f else 0.02f),
-                                    Color.Transparent
-                                )
-                            )
-                        )
-                )
-
-                // Layer 5: Centered Icon
+                // Centered Icon
                 Box(
                     modifier = if (!isUnlocked) Modifier.alpha(0.35f) else Modifier,
                     contentAlignment = Alignment.Center
@@ -180,7 +156,7 @@ fun Booster3DButton(
                     icon()
                 }
 
-                // If locked: Big 3D golden padlock overlay centered on button
+                // If locked: 3D golden padlock overlay centered on button
                 if (!isUnlocked) {
                     Text(
                         text = "🔒",
@@ -190,7 +166,7 @@ fun Booster3DButton(
                 }
             }
 
-            // Layer 6: Overlapping 3D Badge on Bottom-Right (matching green '+' badge in screenshot)
+            // Layer 4: Overlapping 3D Badge on Bottom-Right
             Box(
                 modifier = Modifier
                     .offset(x = 6.dp, y = 6.dp + pressOffsetY)
@@ -245,7 +221,7 @@ fun Booster3DButton(
                         }
                     }
                     else -> {
-                        // Juicy Green 3D Badge with mini Coin + Cost (e.g. 🪙 50)
+                        // 3D Badge with mini Coin + Cost (e.g. 🪙 50)
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.padding(start = 5.dp, end = 7.dp, top = 2.dp, bottom = 2.dp)
