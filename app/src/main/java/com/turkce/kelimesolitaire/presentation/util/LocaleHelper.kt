@@ -124,7 +124,7 @@ object LocaleHelper {
         if (isPersian) "فرصت‌ها تمام شد!\u200F" else "Hamleler Bitti!"
 
     fun outOfMovesPrompt(isPersian: Boolean): String =
-        if (isPersian) "آیا می‌خواهید با ۵۰ سکه، ۵ حرکت دیگر دریافت کنید؟\u200F" else "50 Altın harcayarak 5 ek hamle almak ister misiniz?"
+        if (isPersian) "آیا می‌خواهید با ۷۵ سکه، ۵ حرکت دیگر دریافت کنید؟\u200F" else "75 Altın harcayarak 5 ek hamle almak ister misiniz?"
 
     fun giveUp(isPersian: Boolean): String =
         if (isPersian) "انصراف" else "Pes Et"

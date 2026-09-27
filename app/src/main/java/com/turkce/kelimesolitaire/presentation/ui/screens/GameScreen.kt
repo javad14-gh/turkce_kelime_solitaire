@@ -1199,7 +1199,7 @@ fun GameScreen(
             }
         }
 
-        // 4. OUT OF MOVES DIALOG OVERLAY
+        // 4. OUT OF MOVES DIALOG OVERLAY (MATCHING GAME DESIGN SYSTEM)
         if (showOutofMovesDialog) {
             Box(
                 modifier = Modifier
@@ -1213,79 +1213,129 @@ fun GameScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Card(
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFF0F3B24)),
-                    shape = RoundedCornerShape(16.dp),
+                    shape = RoundedCornerShape(26.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.Transparent),
                     modifier = Modifier
-                        .width(300.dp)
-                        .border(1.dp, BorderGlass, RoundedCornerShape(16.dp))
+                        .fillMaxWidth(0.85f)
+                        .shadow(24.dp, RoundedCornerShape(26.dp))
+                        .border(
+                            width = 2.dp,
+                            brush = Brush.verticalGradient(
+                                listOf(
+                                    Color(0xFF818CF8),
+                                    Color(0xFF6366F1),
+                                    Color(0xFF4338CA)
+                                )
+                            ),
+                            shape = RoundedCornerShape(26.dp)
+                        )
                         .clickable(enabled = false) {}
                 ) {
-                    Column(
-                        modifier = Modifier.padding(24.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                    Box(
+                        modifier = Modifier
+                            .background(
+                                Brush.verticalGradient(
+                                    listOf(
+                                        Color(0xFF3826B4),
+                                        Color(0xFF241584),
+                                        Color(0xFF190D69)
+                                    )
+                                )
+                            )
+                            .padding(24.dp)
                     ) {
-                        OutlinedText(
-                            text = LocaleHelper.outOfMovesTitle(isPersian),
-                            textColor = AccentGold,
-                            outlineColor = Color(0xFF0F172A),
-                            outlineWidth = 4f,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Black,
-                            textAlign = TextAlign.Center
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Text(
-                            text = LocaleHelper.outOfMovesPrompt(isPersian),
-                            color = TextPrimary,
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Bold,
-                            fontFamily = nunitoFont,
-                            textAlign = TextAlign.Center,
-                            lineHeight = 22.sp
-                        )
-                        Spacer(modifier = Modifier.height(20.dp))
-                        
-                        // Buy Button
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable { onBuyExtraMoves() }
-                                .background(Color(0xFFE5A93C), shape = RoundedCornerShape(8.dp))
-                                .padding(vertical = 12.dp),
-                            contentAlignment = Alignment.Center
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text(
-                                text = if (isPersian) "+۵ حرکت: ۷۵ 🪙" else "5 Ek Hamle: 75 🪙",
-                                color = Color.Black,
-                                fontSize = 16.sp,
+                            OutlinedText(
+                                text = LocaleHelper.outOfMovesTitle(isPersian),
+                                textColor = Color(0xFFFBBF24),
+                                outlineColor = Color(0xFF190D69),
+                                outlineWidth = 5f,
+                                fontSize = 23.sp,
                                 fontWeight = FontWeight.Black,
-                                fontFamily = nunitoFont
+                                textAlign = TextAlign.Center
                             )
-                        }
 
-                        Spacer(modifier = Modifier.height(10.dp))
+                            Spacer(modifier = Modifier.height(14.dp))
 
-                        // Give up Button
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable { onAcceptDefeat() }
-                                .border(1.dp, Color.White.copy(alpha = 0.15f), RoundedCornerShape(8.dp))
-                                .padding(vertical = 10.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
                             Text(
-                                text = LocaleHelper.giveUp(isPersian),
-                                color = TextPrimary,
-                                fontSize = 14.sp,
+                                text = LocaleHelper.outOfMovesPrompt(isPersian),
+                                color = Color.White.copy(alpha = 0.95f),
+                                fontSize = 15.sp,
                                 fontWeight = FontWeight.Bold,
-                                fontFamily = nunitoFont
+                                fontFamily = nunitoFont,
+                                textAlign = TextAlign.Center,
+                                lineHeight = 22.sp
                             )
+
+                            Spacer(modifier = Modifier.height(22.dp))
+
+                            // 1. Buy Extra Moves 3D Gold Button
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .shadow(8.dp, RoundedCornerShape(16.dp))
+                                    .clip(RoundedCornerShape(16.dp))
+                                    .background(
+                                        Brush.verticalGradient(
+                                            listOf(Color(0xFFF59E0B), Color(0xFFD97706), Color(0xFFB45309))
+                                        )
+                                    )
+                                    .border(1.5.dp, Color(0xFFFFD700), RoundedCornerShape(16.dp))
+                                    .clickable { onBuyExtraMoves() }
+                                    .padding(vertical = 13.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 24.dp)
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = if (isPersian) "+۵ حرکت (${LocaleHelper.formatNumber(75, true)} 🪙)" else "+5 Hamle (75 🪙)",
+                                        color = Color.White,
+                                        fontSize = 17.sp,
+                                        fontWeight = FontWeight.Black,
+                                        fontFamily = nunitoFont
+                                    )
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.height(10.dp))
+
+                            // 2. Give up Button (Subdued Slate 3D)
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .shadow(6.dp, RoundedCornerShape(16.dp))
+                                    .clip(RoundedCornerShape(16.dp))
+                                    .background(
+                                        Brush.verticalGradient(
+                                            listOf(Color(0xFF64748B), Color(0xFF475569), Color(0xFF334155))
+                                        )
+                                    )
+                                    .border(1.2.dp, Color.White.copy(alpha = 0.25f), RoundedCornerShape(16.dp))
+                                    .clickable { onAcceptDefeat() }
+                                    .padding(vertical = 12.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = LocaleHelper.giveUp(isPersian),
+                                    color = Color(0xFFE2E8F0),
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.Black,
+                                    fontFamily = nunitoFont
+                                )
+                            }
                         }
                     }
                 }
             }
         }
+
 
         // 5. EXIT CONFIRMATION DIALOG OVERLAY (MATCHING GAME DESIGN SYSTEM)
         if (showExitConfirmDialog) {

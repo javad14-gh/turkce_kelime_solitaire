@@ -1,5 +1,11 @@
 package com.turkce.kelimesolitaire.presentation.ui.screens
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -11,49 +17,42 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.turkce.kelimesolitaire.R
+import com.turkce.kelimesolitaire.domain.LevelGenerator
 import com.turkce.kelimesolitaire.presentation.ui.components.AdBannerPlaceholder
+import com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon
+import com.turkce.kelimesolitaire.presentation.ui.components.ConfettiPartyPopper
 import com.turkce.kelimesolitaire.presentation.ui.components.OutlinedText
 import com.turkce.kelimesolitaire.presentation.ui.components.rememberNunitoFont
-import com.turkce.kelimesolitaire.presentation.ui.theme.AccentGold
-import com.turkce.kelimesolitaire.presentation.ui.theme.BorderGlass
-import com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg
-import com.turkce.kelimesolitaire.presentation.ui.theme.DarkCard
-import com.turkce.kelimesolitaire.presentation.ui.theme.SuccessGreen
-import com.turkce.kelimesolitaire.presentation.ui.theme.TextPrimary
 import com.turkce.kelimesolitaire.presentation.ui.theme.getDifficultyRimColors
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.graphics.graphicsLayer
-import com.turkce.kelimesolitaire.domain.LevelGenerator
-import com.turkce.kelimesolitaire.presentation.ui.components.ConfettiPartyPopper
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import kotlinx.coroutines.launch
+import com.turkce.kelimesolitaire.presentation.util.GameSettingsManager
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
+import kotlinx.coroutines.launch
 
 @Composable
 fun LevelCompleteScreen(
@@ -105,7 +104,15 @@ fun LevelCompleteScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(DarkBg)
+            .background(
+                Brush.verticalGradient(
+                    listOf(
+                        Color(0xFF1E1054), // Deep indigo game atmosphere
+                        Color(0xFF130938), // Rich game purple
+                        Color(0xFF0D0524)  // Grounding dark tone
+                    )
+                )
+            )
             .padding(16.dp),
         contentAlignment = Alignment.Center
     ) {
@@ -114,7 +121,7 @@ fun LevelCompleteScreen(
             verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
             // Victory Title with celebratory pop entrance & golden halo
             Column(
@@ -129,148 +136,179 @@ fun LevelCompleteScreen(
                     // Pulsing golden aura behind trophy
                     Box(
                         modifier = Modifier
-                            .size(110.dp)
+                            .size(120.dp)
                             .background(
                                 Brush.radialGradient(
                                     colors = listOf(
-                                        Color(0x66F59E0B),
-                                        Color(0x00F59E0B)
+                                        Color(0x77F59E0B),
+                                        Color(0x22F59E0B),
+                                        Color.Transparent
                                     )
                                 ),
                                 shape = CircleShape
                             )
                     )
-                    androidx.compose.foundation.Image(
-                        painter = androidx.compose.ui.res.painterResource(id = com.turkce.kelimesolitaire.R.drawable.trophy),
+                    Image(
+                        painter = painterResource(id = R.drawable.trophy),
                         contentDescription = "Trophy",
-                        modifier = Modifier.size(92.dp)
+                        modifier = Modifier.size(96.dp)
                     )
                 }
+
                 Spacer(modifier = Modifier.height(10.dp))
+
                 OutlinedText(
                     text = LocaleHelper.victoryTitle(isPersian),
-                    textColor = SuccessGreen,
-                    outlineColor = Color(0xFF0F172A),
+                    textColor = Color(0xFFFFD700),
+                    outlineColor = Color(0xFF190D69),
                     outlineWidth = 6f,
-                    fontSize = 52.sp,
+                    fontSize = 46.sp,
                     fontWeight = FontWeight.Black,
-                    letterSpacing = 2.sp
+                    letterSpacing = 1.5.sp
                 )
-                Spacer(modifier = Modifier.height(6.dp))
+
+                Spacer(modifier = Modifier.height(4.dp))
+
                 Text(
                     text = LocaleHelper.victorySubtitle(levelNumber, isPersian),
-                    color = TextPrimary,
-                    fontSize = 28.sp,
+                    color = Color.White.copy(alpha = 0.95f),
+                    fontSize = 22.sp,
                     fontWeight = FontWeight.Black,
                     fontFamily = nunitoFont
                 )
             }
 
-            // Reward Summary Card
+            // Reward Summary Card (Matching Game Design System)
             Box(
                 modifier = Modifier
-                    .width(290.dp)
-                    .background(DarkCard, shape = RoundedCornerShape(16.dp))
-                    .border(1.dp, BorderGlass, RoundedCornerShape(16.dp))
-                    .padding(24.dp),
+                    .fillMaxWidth(0.88f)
+                    .shadow(20.dp, RoundedCornerShape(26.dp))
+                    .clip(RoundedCornerShape(26.dp))
+                    .background(
+                        Brush.verticalGradient(
+                            listOf(
+                                Color(0xFF3826B4),
+                                Color(0xFF241584),
+                                Color(0xFF190D69)
+                            )
+                        )
+                    )
+                    .border(
+                        width = 2.dp,
+                        brush = Brush.verticalGradient(
+                            listOf(
+                                Color(0xFF818CF8),
+                                Color(0xFF6366F1),
+                                Color(0xFF4338CA)
+                            )
+                        ),
+                        shape = RoundedCornerShape(26.dp)
+                    )
+                    .padding(vertical = 18.dp, horizontal = 20.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
                     Text(
-                        text = if (isPersian) "پاداش دریافتی" else "KAZANILAN ÖDÜL",
-                        color = Color(0xFF94A3B8),
-                        fontSize = 19.sp,
-                        fontWeight = FontWeight.Black,
+                        text = if (isPersian) "پاداش مرحله" else "BÖLÜM ÖDÜLÜ",
+                        color = Color(0xFFC7D2FE),
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold,
                         fontFamily = nunitoFont,
                         letterSpacing = 1.sp
                     )
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 40.dp)
-                        Spacer(modifier = Modifier.width(8.dp))
-                        val currentCoinsDisplay = if (isRewardDoubled) bonusCoins * 2 else bonusCoins
-                        Text(
-                            text = "+${LocaleHelper.formatNumber(currentCoinsDisplay, isPersian)} ${if (isPersian) "سکه" else "Altın"}",
-                            color = AccentGold,
-                            fontSize = 32.sp,
-                            fontWeight = FontWeight.Black,
-                            fontFamily = nunitoFont
-                        )
-                    }
-                }
-            }
 
-            // 2X Reward Doubler Button with Rewarded Ad
-            if (bonusCoins > 0) {
-                if (!isRewardDoubled) {
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    // Coin Display Pill
                     Box(
                         modifier = Modifier
-                            .shadow(12.dp, RoundedCornerShape(18.dp))
-                            .clip(RoundedCornerShape(18.dp))
-                            .background(
-                                Brush.verticalGradient(
-                                    colors = listOf(Color(0xFFE0E7FF), Color(0xFFC7D2FE))
-                                )
-                            )
-                            .padding(2.dp)
                             .clip(RoundedCornerShape(16.dp))
-                            .background(Color(0xFF31104D))
-                            .padding(bottom = 3.5.dp)
-                            .clip(RoundedCornerShape(14.dp))
-                            .background(
-                                Brush.horizontalGradient(
-                                    colors = listOf(
-                                        Color(0xFF7C3AED), // Royal Purple
-                                        Color(0xFFD97706)  // Vibrant Amber Gold
-                                    )
-                                )
-                            )
-                            .border(1.5.dp, Color(0xFFFDE68A), RoundedCornerShape(14.dp))
-                            .clickable {
-                                com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playButtonClickSound(context)
-                                onDoubleRewardClicked()
-                            }
-                            .padding(horizontal = 24.dp, vertical = 12.dp),
-                        contentAlignment = Alignment.Center
+                            .background(Color.White.copy(alpha = 0.08f))
+                            .border(1.dp, Color(0xFFFFD700).copy(alpha = 0.4f), RoundedCornerShape(16.dp))
+                            .padding(horizontal = 22.dp, vertical = 8.dp)
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.Center
                         ) {
-                            androidx.compose.foundation.Image(
-                                painter = androidx.compose.ui.res.painterResource(id = com.turkce.kelimesolitaire.R.drawable.tv),
-                                contentDescription = "Watch Ad",
-                                modifier = Modifier.size(26.dp)
-                            )
+                            CoinIcon(size = 36.dp)
                             Spacer(modifier = Modifier.width(10.dp))
+                            val currentCoinsDisplay = if (isRewardDoubled) bonusCoins * 2 else bonusCoins
                             Text(
-                                text = "${LocaleHelper.doubleReward(isPersian)} (+${LocaleHelper.formatNumber(bonusCoins, isPersian)} 🪙)",
-                                color = Color.White,
-                                fontSize = 17.sp,
+                                text = "+${LocaleHelper.formatNumber(currentCoinsDisplay, isPersian)} ${if (isPersian) "سکه" else "Altın"}",
+                                color = Color(0xFFFFD700),
+                                fontSize = 28.sp,
                                 fontWeight = FontWeight.Black,
                                 fontFamily = nunitoFont
                             )
                         }
                     }
-                } else {
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(14.dp))
-                            .background(Color(0x3310B981))
-                            .border(1.5.dp, Color(0xFF34D399), RoundedCornerShape(14.dp))
-                            .padding(horizontal = 20.dp, vertical = 8.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = LocaleHelper.rewardDoubled(isPersian),
-                            color = Color(0xFF34D399),
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            fontFamily = nunitoFont
-                        )
+
+                    // 2X Reward Doubler Button with Rewarded Ad
+                    if (bonusCoins > 0) {
+                        Spacer(modifier = Modifier.height(14.dp))
+                        if (!isRewardDoubled) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .shadow(8.dp, RoundedCornerShape(16.dp))
+                                    .clip(RoundedCornerShape(16.dp))
+                                    .background(
+                                        Brush.horizontalGradient(
+                                            listOf(
+                                                Color(0xFF7C3AED), // Royal Purple
+                                                Color(0xFFD97706)  // Vibrant Amber Gold
+                                            )
+                                        )
+                                    )
+                                    .border(1.5.dp, Color(0xFFFFD700), RoundedCornerShape(16.dp))
+                                    .clickable {
+                                        GameSettingsManager.playButtonClickSound(context)
+                                        onDoubleRewardClicked()
+                                    }
+                                    .padding(vertical = 12.dp, horizontal = 16.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.tv),
+                                        contentDescription = "Watch Ad",
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = "${LocaleHelper.doubleReward(isPersian)} (+${LocaleHelper.formatNumber(bonusCoins, isPersian)} 🪙)",
+                                        color = Color.White,
+                                        fontSize = 15.sp,
+                                        fontWeight = FontWeight.Black,
+                                        fontFamily = nunitoFont
+                                    )
+                                }
+                            }
+                        } else {
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(14.dp))
+                                    .background(Color(0x3310B981))
+                                    .border(1.5.dp, Color(0xFF34D399), RoundedCornerShape(14.dp))
+                                    .padding(horizontal = 20.dp, vertical = 8.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "✓ ${LocaleHelper.rewardDoubled(isPersian)}",
+                                    color = Color(0xFF34D399),
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    fontFamily = nunitoFont
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -280,20 +318,21 @@ fun LevelCompleteScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                // 3D Next Level Button with Overlapping Difficulty Ribbon Banner
+                // 1. 3D Next Level Button with Overlapping Difficulty Ribbon Banner
                 Box(
                     contentAlignment = Alignment.TopCenter,
                     modifier = Modifier.padding(top = 10.dp)
                 ) {
                     Box(
                         modifier = Modifier
+                            .fillMaxWidth(0.88f)
                             .shadow(16.dp, RoundedCornerShape(22.dp))
                             .clip(RoundedCornerShape(22.dp))
                             .background(
                                 Brush.verticalGradient(
                                     colors = nextDifficultyRim.gradient
                                 )
-                            ) // 3D outer rim shell coordinated with level difficulty
+                            )
                             .border(1.5.dp, nextDifficultyRim.border, RoundedCornerShape(22.dp))
                             .padding(4.dp)
                             .clip(RoundedCornerShape(18.dp))
@@ -302,7 +341,7 @@ fun LevelCompleteScreen(
                             .clip(RoundedCornerShape(14.dp))
                             .background(
                                 Brush.verticalGradient(
-                                    colors = listOf(
+                                    listOf(
                                         Color(0xFFA3E635), // Glossy top highlight green
                                         Color(0xFF65A30D), // Mid vibrant green
                                         Color(0xFF4D7C0F)  // Inner shade
@@ -316,7 +355,7 @@ fun LevelCompleteScreen(
                                     onNextLevelClicked()
                                 }
                             }
-                            .padding(horizontal = 30.dp, vertical = 14.dp),
+                            .padding(vertical = 15.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         OutlinedText(
@@ -324,13 +363,13 @@ fun LevelCompleteScreen(
                             textColor = Color.White,
                             outlineColor = Color(0xFF1E3A07),
                             outlineWidth = 5f,
-                            fontSize = 28.sp,
+                            fontSize = 26.sp,
                             fontWeight = FontWeight.Black,
                             letterSpacing = 1.2.sp
                         )
                     }
 
-                    // Overlapping Difficulty Ribbon Banner (Shown for Zor and CokZor levels, exactly like MainMenuScreen)
+                    // Overlapping Difficulty Ribbon Banner (Shown for Zor and CokZor levels)
                     if (nextDifficulty == "Zor" || nextDifficulty == "CokZor") {
                         val difficultyText = LocaleHelper.difficulty(nextDifficulty, isPersian)
                         val ribbonColor = if (nextDifficulty == "CokZor") Color(0xFFDC2626) else Color(0xFFEA580C)
@@ -356,48 +395,47 @@ fun LevelCompleteScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(14.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
-                // 3D Main Menu Button (Slate Glass)
+                // 2. 3D Main Menu Button (Matching Red 3D button in Settings & Exit Dialog)
                 Box(
                     modifier = Modifier
-                        .shadow(8.dp, RoundedCornerShape(18.dp))
-                        .clip(RoundedCornerShape(18.dp))
-                        .background(
-                            Brush.verticalGradient(
-                                colors = listOf(Color(0xFF64748B), Color(0xFF334155))
-                            )
-                        )
-                        .padding(2.dp)
+                        .fillMaxWidth(0.88f)
+                        .shadow(8.dp, RoundedCornerShape(16.dp))
                         .clip(RoundedCornerShape(16.dp))
-                        .background(Color(0xFF0F172A))
-                        .padding(bottom = 3.dp)
-                        .clip(RoundedCornerShape(14.dp))
                         .background(
                             Brush.verticalGradient(
-                                colors = listOf(
-                                    Color(0xFF334155),
-                                    Color(0xFF1E293B)
-                                )
+                                listOf(Color(0xFFF87171), Color(0xFFDC2626), Color(0xFF991B1B))
                             )
                         )
+                        .border(1.5.dp, Color(0xFFFDA4AF).copy(alpha = 0.7f), RoundedCornerShape(16.dp))
                         .clickable(enabled = !isActionTriggered) {
                             if (!isActionTriggered) {
                                 isActionTriggered = true
                                 onMainMenuClicked()
                             }
                         }
-                        .padding(horizontal = 26.dp, vertical = 10.dp),
+                        .padding(vertical = 12.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
-                        text = LocaleHelper.mainMenu(isPersian),
-                        color = Color.White,
-                        fontSize = 17.sp,
-                        fontWeight = FontWeight.Black,
-                        fontFamily = nunitoFont,
-                        letterSpacing = 1.sp
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.exit),
+                            contentDescription = "Main Menu",
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = LocaleHelper.mainMenu(isPersian),
+                            color = Color.White,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Black,
+                            fontFamily = nunitoFont
+                        )
+                    }
                 }
             }
 
