@@ -203,6 +203,21 @@ object LocaleHelper {
 
     fun continuePlayingBtn(isPersian: Boolean): String =
         if (isPersian) "ادامه بازی" else "Oyuna Devam Et"
+
+    fun exitDialogTitle(isPersian: Boolean): String =
+        if (isPersian) "خروج از مرحله" else "Seviyeden Çık"
+
+    fun exitDialogPrompt(isPersian: Boolean): String =
+        if (isPersian) "آیا می‌خواهید از این مرحله خارج شوید؟" else "Bu seviyeden çıkmak istiyor musunuz?"
+
+    fun exitDialogDesc(isPersian: Boolean): String =
+        if (isPersian) "پیشرفت کلی و سکه‌های شما ذخیره است." else "Genel ilerlemeniz ve altınlarınız kaydedilecektir."
+
+    fun exitStayBtn(isPersian: Boolean): String =
+        if (isPersian) "ادامه بازی" else "Devam Et"
+
+    fun exitLeaveBtn(isPersian: Boolean): String =
+        if (isPersian) "خروج" else "Çıkış"
 }
 
 @Composable
