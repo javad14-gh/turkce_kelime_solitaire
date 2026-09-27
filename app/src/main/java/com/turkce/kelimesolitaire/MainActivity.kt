@@ -49,6 +49,7 @@ class MainActivity : ComponentActivity() {
         
         viewModel.initPreferences(this)
         viewModel.initDatabase(this)
+        com.turkce.kelimesolitaire.presentation.ui.theme.GameThemeManager.init(this)
         InAppBillingManager.getInstance().initialize(this) { ownedSkus ->
             if (ownedSkus.contains(MyketBillingConfig.SKU_REMOVE_ADS) || ownedSkus.contains(MyketBillingConfig.SKU_STARTER_PACK)) {
                 viewModel.restorePurchases(this)

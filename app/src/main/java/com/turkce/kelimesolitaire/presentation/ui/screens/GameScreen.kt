@@ -114,6 +114,10 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.LevelTitleOutline
 import com.turkce.kelimesolitaire.presentation.ui.theme.CoinBoxBorder
 import com.turkce.kelimesolitaire.presentation.ui.theme.CoinTextColor
 import com.turkce.kelimesolitaire.presentation.ui.theme.CoinTextOutline
+import com.turkce.kelimesolitaire.presentation.ui.theme.MovesCardBg
+import com.turkce.kelimesolitaire.presentation.ui.theme.MovesCardBorder
+import com.turkce.kelimesolitaire.presentation.ui.theme.MovesTitleText
+import com.turkce.kelimesolitaire.presentation.ui.theme.MovesCountText
 import kotlinx.coroutines.launch
 
 private fun findBestFoundationSlot(
@@ -238,7 +242,7 @@ fun GameScreen(
     )
 
     val movesColor by animateColorAsState(
-        targetValue = if (triggerFlash) Color(0xFFE74C3C) else Color.White,
+        targetValue = if (triggerFlash) Color(0xFFE74C3C) else MovesCountText,
         animationSpec = tween(durationMillis = 200)
     )
     var showExitConfirmDialog by remember { mutableStateOf(false) }
@@ -432,25 +436,28 @@ fun GameScreen(
             ) {
                 // Left Column: Moves Card
                 Card(
-                    colors = CardDefaults.cardColors(containerColor = DarkCard),
+                    colors = CardDefaults.cardColors(containerColor = MovesCardBg),
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier
                         .width(110.dp)
                         .height(68.dp)
-                        .border(1.dp, BorderGlass, RoundedCornerShape(12.dp))
+                        .border(1.dp, MovesCardBorder, RoundedCornerShape(12.dp))
                 ) {
                     Column(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(top = 4.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
                         Text(
                             text = LocaleHelper.remainingMovesTitle(isPersian),
-                            color = TextSecondary,
+                            color = MovesTitleText,
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
                             fontFamily = nunitoFont,
-                            letterSpacing = 0.5.sp
+                            letterSpacing = 0.5.sp,
+                            modifier = Modifier.padding(top = 2.dp)
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
@@ -1489,7 +1496,16 @@ fun GameScreen(
                             }
                         }
 
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(14.dp))
+
+                        // Theme Selector Section
+                        com.turkce.kelimesolitaire.presentation.ui.components.ThemeSelectorSection(
+                            isPersian = isPersian,
+                            fontFamily = nunitoFont,
+                            modifier = Modifier.padding(horizontal = 20.dp)
+                        )
+
+                        Spacer(modifier = Modifier.height(14.dp))
 
                         // Action Capsule Pills Column
                         Column(

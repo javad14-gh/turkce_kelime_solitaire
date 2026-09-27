@@ -597,7 +597,16 @@ fun MainMenuScreen(
                             }
                         }
 
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(14.dp))
+
+                        // Theme Selector Section
+                        com.turkce.kelimesolitaire.presentation.ui.components.ThemeSelectorSection(
+                            isPersian = isPersian,
+                            fontFamily = nunitoFont,
+                            modifier = Modifier.padding(horizontal = 20.dp)
+                        )
+
+                        Spacer(modifier = Modifier.height(14.dp))
 
                         // Action Capsule Pills Column
                         Column(

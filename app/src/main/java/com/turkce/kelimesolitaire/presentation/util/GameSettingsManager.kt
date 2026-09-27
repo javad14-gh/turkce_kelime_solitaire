@@ -311,4 +311,15 @@ object GameSettingsManager {
             } catch (_: Throwable) {}
         }
     }
+
+    // --- Game Theme Presets ---
+    private const val KEY_SELECTED_THEME = "key_selected_theme"
+
+    fun getSelectedTheme(context: Context): String {
+        return getPrefs(context).getString(KEY_SELECTED_THEME, "classic") ?: "classic"
+    }
+
+    fun setSelectedTheme(context: Context, themeId: String) {
+        getPrefs(context).edit().putString(KEY_SELECTED_THEME, themeId).apply()
+    }
 }
