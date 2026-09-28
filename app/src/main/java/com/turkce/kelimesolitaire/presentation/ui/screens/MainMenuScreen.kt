@@ -71,6 +71,10 @@ import com.turkce.kelimesolitaire.presentation.util.rememberAppFont
 import com.turkce.kelimesolitaire.presentation.ui.theme.AccentGold
 import com.turkce.kelimesolitaire.presentation.ui.theme.BorderGlass
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg
+import com.turkce.kelimesolitaire.presentation.ui.theme.PopupBg
+import com.turkce.kelimesolitaire.presentation.ui.theme.PopupBorder
+import com.turkce.kelimesolitaire.presentation.ui.theme.PopupHeaderBg
+import com.turkce.kelimesolitaire.presentation.ui.theme.SoundVibrationBoxBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkCard
 import com.turkce.kelimesolitaire.presentation.ui.theme.PrimaryNeon
 import com.turkce.kelimesolitaire.presentation.ui.theme.SecondaryNeon
@@ -150,6 +154,7 @@ fun MainMenuScreen(
     }
 
     var showSettingsMenu by remember { androidx.compose.runtime.mutableStateOf(false) }
+    var showThemeDialog by remember { androidx.compose.runtime.mutableStateOf(false) }
     var isSoundEnabled by remember { androidx.compose.runtime.mutableStateOf(com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.isSoundEnabled(context)) }
     var isHapticEnabled by remember { androidx.compose.runtime.mutableStateOf(com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.isHapticEnabled(context)) }
 
@@ -494,12 +499,8 @@ fun MainMenuScreen(
                         .width(320.dp)
                         .shadow(20.dp, RoundedCornerShape(26.dp))
                         .clip(RoundedCornerShape(26.dp))
-                        .background(
-                            Brush.verticalGradient(
-                                colors = listOf(Color(0xFF3826B4), Color(0xFF241584), Color(0xFF190D69))
-                            )
-                        )
-                        .border(2.dp, Color(0xFF6366F1), RoundedCornerShape(26.dp))
+                        .background(PopupBg)
+                        .border(2.5.dp, PopupBorder, RoundedCornerShape(26.dp))
                         .clickable(enabled = false) {}
                 ) {
                     Column(
@@ -512,12 +513,8 @@ fun MainMenuScreen(
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(58.dp)
-                                .background(
-                                    Brush.verticalGradient(
-                                        colors = listOf(Color(0xFF4C38CE), Color(0xFF2C1990))
-                                    )
-                                )
+                                .height(64.dp)
+                                .background(PopupHeaderBg)
                                 .padding(horizontal = 16.dp),
                             contentAlignment = Alignment.Center
                         ) {
@@ -525,8 +522,8 @@ fun MainMenuScreen(
                                 text = LocaleHelper.settingsTitle(isPersian),
                                 textColor = Color.White,
                                 outlineColor = Color(0xFF190D69),
-                                outlineWidth = 5f,
-                                fontSize = 23.sp,
+                                outlineWidth = 6f,
+                                fontSize = 25.sp,
                                 fontWeight = FontWeight.Black,
                                 textAlign = TextAlign.Center
                             )
@@ -537,26 +534,25 @@ fun MainMenuScreen(
                                 contentDescription = "Close",
                                 modifier = Modifier
                                     .align(Alignment.CenterEnd)
-                                    .size(34.dp)
+                                    .size(40.dp)
                                     .clickable { showSettingsMenu = false }
                             )
                         }
 
                         Spacer(modifier = Modifier.height(18.dp))
 
-                        // Sound & Haptic Toggle Outer Container Box
+                        // Sound & Haptic Box (40% darker than PopupBg, 65% width, border DarkBg)
                         Box(
                             modifier = Modifier
-                                .padding(horizontal = 20.dp)
-                                .fillMaxWidth()
+                                .fillMaxWidth(0.65f)
                                 .clip(RoundedCornerShape(18.dp))
-                                .background(Color(0xFF150A54).copy(alpha = 0.85f))
-                                .border(1.dp, Color.White.copy(alpha = 0.15f), RoundedCornerShape(18.dp))
-                                .padding(vertical = 14.dp),
+                                .background(SoundVibrationBoxBg)
+                                .border(2.dp, DarkBg, RoundedCornerShape(18.dp))
+                                .padding(vertical = 12.dp),
                             contentAlignment = Alignment.Center
                         ) {
                             Row(
-                                horizontalArrangement = Arrangement.spacedBy(36.dp),
+                                horizontalArrangement = Arrangement.spacedBy(30.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 // 1. Sound Speaker Toggle
@@ -564,7 +560,7 @@ fun MainMenuScreen(
                                     painter = painterResource(id = R.drawable.sound),
                                     contentDescription = "Sound",
                                     modifier = Modifier
-                                        .size(44.dp)
+                                        .size(52.dp)
                                         .clickable {
                                             val next = !isSoundEnabled
                                             isSoundEnabled = next
@@ -582,7 +578,7 @@ fun MainMenuScreen(
                                     painter = painterResource(id = R.drawable.vibrate),
                                     contentDescription = "Vibration",
                                     modifier = Modifier
-                                        .size(44.dp)
+                                        .size(52.dp)
                                         .clickable {
                                             val next = !isHapticEnabled
                                             isHapticEnabled = next
@@ -597,66 +593,55 @@ fun MainMenuScreen(
                             }
                         }
 
-                        Spacer(modifier = Modifier.height(14.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
 
-                        // Theme Selector Section
-                        com.turkce.kelimesolitaire.presentation.ui.components.ThemeSelectorSection(
-                            isPersian = isPersian,
-                            fontFamily = nunitoFont,
-                            modifier = Modifier.padding(horizontal = 20.dp)
-                        )
-
-                        Spacer(modifier = Modifier.height(14.dp))
-
-                        // Action Capsule Pills Column
+                        // Action Buttons Column (All buttons 65% width of popup, +30% taller height, border DarkBg, minimal internal padding)
                         Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 20.dp),
-                            verticalArrangement = Arrangement.spacedBy(10.dp),
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(12.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            // 1. Privacy Policy Pill (Teal 3D Gradient)
+                            // 1. Theme Button (Opens separate theme details dialog)
                             Box(
                                 modifier = Modifier
-                                    .fillMaxWidth()
+                                    .fillMaxWidth(0.65f)
+                                    .heightIn(min = 82.dp)
                                     .shadow(6.dp, RoundedCornerShape(16.dp))
                                     .clip(RoundedCornerShape(16.dp))
                                     .background(
                                         Brush.verticalGradient(
-                                            listOf(Color(0xFF38BDF8), Color(0xFF0284C7), Color(0xFF0369A1))
+                                            listOf(Color(0xFF8B5CF6), Color(0xFF6D28D9), Color(0xFF5B21B6))
                                         )
                                     )
-                                    .border(1.5.dp, Color.White.copy(alpha = 0.6f), RoundedCornerShape(16.dp))
-                                    .clickable {
-                                        showSettingsMenu = false
-                                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(context.getString(com.turkce.kelimesolitaire.R.string.privacy_policy_url)))
-                                        context.startActivity(intent)
-                                    }
-                                    .padding(vertical = 16.dp, horizontal = 20.dp),
+                                    .border(2.dp, DarkBg, RoundedCornerShape(16.dp))
+                                    .clickable { showThemeDialog = true }
+                                    .padding(horizontal = 2.dp, vertical = 2.dp),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Image(
-                                        painter = painterResource(id = R.drawable.shield),
-                                        contentDescription = "Privacy Policy",
-                                        modifier = Modifier.size(26.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(10.dp))
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
                                     Text(
-                                        text = LocaleHelper.privacyPolicy(isPersian),
+                                        text = "🎨",
+                                        fontSize = 32.sp
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text(
+                                        text = if (isPersian) "تم و رنگ‌بندی بازی" else "Oyun Teması",
                                         color = Color.White,
-                                        fontSize = 19.sp,
+                                        fontSize = 18.5.sp,
                                         fontWeight = FontWeight.Black,
                                         fontFamily = nunitoFont
                                     )
                                 }
                             }
 
-                            // 2. Open Store Pill
+                            // 2. Open Store Pill (Gold 3D Gradient, border DarkBg, +30% taller height, 65% width)
                             Box(
                                 modifier = Modifier
-                                    .fillMaxWidth()
+                                    .fillMaxWidth(0.65f)
+                                    .heightIn(min = 82.dp)
                                     .shadow(6.dp, RoundedCornerShape(16.dp))
                                     .clip(RoundedCornerShape(16.dp))
                                     .background(
@@ -664,23 +649,67 @@ fun MainMenuScreen(
                                             listOf(Color(0xFFF59E0B), Color(0xFFD97706), Color(0xFFB45309))
                                         )
                                     )
-                                    .border(1.5.dp, Color(0xFFFFD700), RoundedCornerShape(16.dp))
+                                    .border(2.dp, DarkBg, RoundedCornerShape(16.dp))
                                     .clickable {
                                         showSettingsMenu = false
                                         onOpenStore()
                                     }
-                                    .padding(vertical = 16.dp, horizontal = 20.dp),
+                                    .padding(horizontal = 2.dp, vertical = 2.dp),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
                                     Image(
                                         painter = painterResource(id = R.drawable.buy),
                                         contentDescription = "Store",
-                                        modifier = Modifier.size(28.dp)
+                                        modifier = Modifier.size(40.dp)
                                     )
-                                    Spacer(modifier = Modifier.width(10.dp))
+                                    Spacer(modifier = Modifier.width(8.dp))
                                     Text(
                                         text = LocaleHelper.storeTitle(isPersian),
+                                        color = Color.White,
+                                        fontSize = 22.sp,
+                                        fontWeight = FontWeight.Black,
+                                        fontFamily = nunitoFont
+                                    )
+                                }
+                            }
+
+                            // 3. Privacy Policy Pill (Teal 3D Gradient, border DarkBg, +30% taller height, 65% width)
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth(0.65f)
+                                    .heightIn(min = 82.dp)
+                                    .shadow(6.dp, RoundedCornerShape(16.dp))
+                                    .clip(RoundedCornerShape(16.dp))
+                                    .background(
+                                        Brush.verticalGradient(
+                                            listOf(Color(0xFF38BDF8), Color(0xFF0284C7), Color(0xFF0369A1))
+                                        )
+                                    )
+                                    .border(2.dp, DarkBg, RoundedCornerShape(16.dp))
+                                    .clickable {
+                                        showSettingsMenu = false
+                                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(context.getString(com.turkce.kelimesolitaire.R.string.privacy_policy_url)))
+                                        context.startActivity(intent)
+                                    }
+                                    .padding(horizontal = 2.dp, vertical = 2.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.shield),
+                                        contentDescription = "Privacy Policy",
+                                        modifier = Modifier.size(38.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = LocaleHelper.privacyPolicy(isPersian),
                                         color = Color.White,
                                         fontSize = 20.sp,
                                         fontWeight = FontWeight.Black,
@@ -689,6 +718,76 @@ fun MainMenuScreen(
                                 }
                             }
                         }
+                    }
+                }
+            }
+        }
+
+        // SEPARATE THEME SELECTION MODAL DIALOG
+        if (showThemeDialog) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.75f))
+                    .zIndex(260f)
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
+                    ) { showThemeDialog = false },
+                contentAlignment = Alignment.Center
+            ) {
+                Box(
+                    modifier = Modifier
+                        .width(320.dp)
+                        .shadow(24.dp, RoundedCornerShape(26.dp))
+                        .clip(RoundedCornerShape(26.dp))
+                        .background(PopupBg)
+                        .border(2.5.dp, PopupBorder, RoundedCornerShape(26.dp))
+                        .clickable(enabled = false) {}
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 20.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        // Header Bar
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(64.dp)
+                                .background(PopupHeaderBg)
+                                .padding(horizontal = 16.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            OutlinedText(
+                                text = if (isPersian) "انتخاب تم بازی" else "Tema Seçimi",
+                                textColor = Color.White,
+                                outlineColor = Color(0xFF190D69),
+                                outlineWidth = 6f,
+                                fontSize = 24.sp,
+                                fontWeight = FontWeight.Black,
+                                textAlign = TextAlign.Center
+                            )
+
+                            // Close Button
+                            Image(
+                                painter = painterResource(id = R.drawable.cancel),
+                                contentDescription = "Close",
+                                modifier = Modifier
+                                    .align(Alignment.CenterEnd)
+                                    .size(40.dp)
+                                    .clickable { showThemeDialog = false }
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(18.dp))
+
+                        com.turkce.kelimesolitaire.presentation.ui.components.ThemeSelectorSection(
+                            isPersian = isPersian,
+                            fontFamily = nunitoFont,
+                            modifier = Modifier.padding(horizontal = 16.dp)
+                        )
                     }
                 }
             }

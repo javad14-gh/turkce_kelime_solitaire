@@ -834,8 +834,16 @@ class GameViewModel : ViewModel() {
         startNewGame(activity)
     }
 
-    fun returnToMainMenu() {
-        _uiState.update { it.copy(screenState = ScreenState.MainMenu) }
+    fun returnToMainMenu(context: Context? = null) {
+        if (context != null && _uiState.value.movesRemaining <= 0) {
+            clearActiveSessionFromPrefs(context, _uiState.value.levelNumber)
+        }
+        _uiState.update { 
+            it.copy(
+                screenState = ScreenState.MainMenu,
+                showOutofMovesDialog = false
+            ) 
+        }
     }
 
     fun watchRewardedAdForCoins(activity: Activity) {
@@ -1223,7 +1231,7 @@ class GameViewModel : ViewModel() {
     fun playLevel(levelNum: Int, activity: Activity) {
         _uiState.update { it.copy(levelNumber = levelNum, screenState = ScreenState.Loading) }
         val session = getSavedSession(activity, levelNum)
-        if (session != null) {
+        if (session != null && session.movesRemaining > 0) {
             undoStack.clear()
             val prefs = activity.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)
             val isUndoUnlocked = session.levelNumber >= 2
@@ -1252,6 +1260,7 @@ class GameViewModel : ViewModel() {
                         shouldAnimateDeal = false,
                         selectedCardId = null,
                         shakingCardId = null,
+                        showOutofMovesDialog = false,
                         isUndoUnlocked = isUndoUnlocked,
                         isHintUnlocked = isHintUnlocked,
                         isJokerUnlocked = isJokerUnlocked,
@@ -1267,6 +1276,7 @@ class GameViewModel : ViewModel() {
                 }
             }
         } else {
+            clearActiveSessionFromPrefs(activity, levelNum)
             startNewGame(activity)
         }
     }
@@ -1274,6 +1284,10 @@ class GameViewModel : ViewModel() {
     private fun saveActiveSessionToPrefs(context: Context) {
         val state = _uiState.value
         val levelData = state.levelData ?: return
+        if (state.movesRemaining <= 0) {
+            clearActiveSessionFromPrefs(context, state.levelNumber)
+            return
+        }
         val session = SavedGameSession(
             levelNumber = state.levelNumber,
             levelData = levelData,
@@ -1666,7 +1680,10 @@ class GameViewModel : ViewModel() {
         onShowToast(if (isPersian) "۵ فرصت اضافه دریافت شد! (-۷۵ 🪙)\u200F" else "5 Ek Hamle alındı! (-75 🪙)")
     }
 
-    fun acceptDefeat() {
+    fun acceptDefeat(context: Context? = null) {
+        if (context != null) {
+            clearActiveSessionFromPrefs(context, _uiState.value.levelNumber)
+        }
         _uiState.update {
             it.copy(
                 showOutofMovesDialog = false,

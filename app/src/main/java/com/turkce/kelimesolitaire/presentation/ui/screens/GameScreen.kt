@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -118,6 +119,11 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.MovesCardBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.MovesCardBorder
 import com.turkce.kelimesolitaire.presentation.ui.theme.MovesTitleText
 import com.turkce.kelimesolitaire.presentation.ui.theme.MovesCountText
+import com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg
+import com.turkce.kelimesolitaire.presentation.ui.theme.PopupBg
+import com.turkce.kelimesolitaire.presentation.ui.theme.PopupBorder
+import com.turkce.kelimesolitaire.presentation.ui.theme.PopupHeaderBg
+import com.turkce.kelimesolitaire.presentation.ui.theme.SoundVibrationBoxBg
 import kotlinx.coroutines.launch
 
 private fun findBestFoundationSlot(
@@ -273,6 +279,7 @@ fun GameScreen(
     // List of floating coins text (+2) to animate
     var floatingCoins by remember { mutableStateOf<List<FloatingCoinText>>(emptyList()) }
     var showHamburgerMenu by remember { mutableStateOf(false) }
+    var showThemeDialog by remember { mutableStateOf(false) }
     var isSoundEnabled by rememberSaveable { mutableStateOf(com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.isSoundEnabled(context)) }
     var isHapticEnabled by rememberSaveable { mutableStateOf(com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.isHapticEnabled(context)) }
     
@@ -1219,116 +1226,116 @@ fun GameScreen(
                         .fillMaxWidth(0.85f)
                         .shadow(24.dp, RoundedCornerShape(26.dp))
                         .border(
-                            width = 2.dp,
-                            brush = Brush.verticalGradient(
-                                listOf(
-                                    Color(0xFF818CF8),
-                                    Color(0xFF6366F1),
-                                    Color(0xFF4338CA)
-                                )
-                            ),
+                            width = 2.5.dp,
+                            color = PopupBorder,
                             shape = RoundedCornerShape(26.dp)
                         )
                         .clickable(enabled = false) {}
                 ) {
                     Box(
                         modifier = Modifier
-                            .background(
-                                Brush.verticalGradient(
-                                    listOf(
-                                        Color(0xFF3826B4),
-                                        Color(0xFF241584),
-                                        Color(0xFF190D69)
-                                    )
-                                )
-                            )
-                            .padding(24.dp)
+                            .background(PopupBg)
                     ) {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            OutlinedText(
-                                text = LocaleHelper.outOfMovesTitle(isPersian),
-                                textColor = Color(0xFFFBBF24),
-                                outlineColor = Color(0xFF190D69),
-                                outlineWidth = 5f,
-                                fontSize = 23.sp,
-                                fontWeight = FontWeight.Black,
-                                textAlign = TextAlign.Center
-                            )
-
-                            Spacer(modifier = Modifier.height(14.dp))
-
-                            Text(
-                                text = LocaleHelper.outOfMovesPrompt(isPersian),
-                                color = Color.White.copy(alpha = 0.95f),
-                                fontSize = 15.sp,
-                                fontWeight = FontWeight.Bold,
-                                fontFamily = nunitoFont,
-                                textAlign = TextAlign.Center,
-                                lineHeight = 22.sp
-                            )
-
-                            Spacer(modifier = Modifier.height(22.dp))
-
-                            // 1. Buy Extra Moves 3D Gold Button
+                            // Top Header matching background
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .shadow(8.dp, RoundedCornerShape(16.dp))
-                                    .clip(RoundedCornerShape(16.dp))
-                                    .background(
-                                        Brush.verticalGradient(
-                                            listOf(Color(0xFFF59E0B), Color(0xFFD97706), Color(0xFFB45309))
-                                        )
-                                    )
-                                    .border(1.5.dp, Color(0xFFFFD700), RoundedCornerShape(16.dp))
-                                    .clickable { onBuyExtraMoves() }
-                                    .padding(vertical = 13.dp),
+                                    .height(64.dp)
+                                    .background(PopupHeaderBg)
+                                    .padding(horizontal = 16.dp),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.Center
+                                OutlinedText(
+                                    text = LocaleHelper.outOfMovesTitle(isPersian),
+                                    textColor = Color(0xFFFFD700),
+                                    outlineColor = Color(0xFF190D69),
+                                    outlineWidth = 6f,
+                                    fontSize = 25.sp,
+                                    fontWeight = FontWeight.Black,
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+
+                            Column(
+                                modifier = Modifier.padding(20.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = LocaleHelper.outOfMovesPrompt(isPersian),
+                                    color = DarkBg,
+                                    fontSize = 17.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    fontFamily = nunitoFont,
+                                    textAlign = TextAlign.Center,
+                                    lineHeight = 24.sp
+                                )
+
+                                Spacer(modifier = Modifier.height(20.dp))
+
+                                // 1. Buy Extra Moves 3D Gold Button
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth(0.85f)
+                                        .heightIn(min = 62.dp)
+                                        .shadow(8.dp, RoundedCornerShape(16.dp))
+                                        .clip(RoundedCornerShape(16.dp))
+                                        .background(
+                                            Brush.verticalGradient(
+                                                listOf(Color(0xFFF59E0B), Color(0xFFD97706), Color(0xFFB45309))
+                                            )
+                                        )
+                                        .border(2.dp, DarkBg, RoundedCornerShape(16.dp))
+                                        .clickable { onBuyExtraMoves() }
+                                        .padding(horizontal = 8.dp, vertical = 6.dp),
+                                    contentAlignment = Alignment.Center
                                 ) {
-                                    com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 24.dp)
-                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.Center
+                                    ) {
+                                        com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 30.dp)
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text(
+                                            text = if (isPersian) "+۵ حرکت (${LocaleHelper.formatNumber(75, true)} 🪙)" else "+5 Hamle (75 🪙)",
+                                            color = Color.White,
+                                            fontSize = 19.sp,
+                                            fontWeight = FontWeight.Black,
+                                            fontFamily = nunitoFont
+                                        )
+                                    }
+                                }
+
+                                Spacer(modifier = Modifier.height(10.dp))
+
+                                // 2. Give up Button (Subdued Slate 3D)
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth(0.85f)
+                                        .heightIn(min = 54.dp)
+                                        .shadow(6.dp, RoundedCornerShape(16.dp))
+                                        .clip(RoundedCornerShape(16.dp))
+                                        .background(
+                                            Brush.verticalGradient(
+                                                listOf(Color(0xFF64748B), Color(0xFF475569), Color(0xFF334155))
+                                            )
+                                        )
+                                        .border(2.dp, DarkBg, RoundedCornerShape(16.dp))
+                                        .clickable { onAcceptDefeat() }
+                                        .padding(horizontal = 8.dp, vertical = 6.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
                                     Text(
-                                        text = if (isPersian) "+۵ حرکت (${LocaleHelper.formatNumber(75, true)} 🪙)" else "+5 Hamle (75 🪙)",
-                                        color = Color.White,
-                                        fontSize = 17.sp,
+                                        text = LocaleHelper.giveUp(isPersian),
+                                        color = Color(0xFFE2E8F0),
+                                        fontSize = 16.5.sp,
                                         fontWeight = FontWeight.Black,
                                         fontFamily = nunitoFont
                                     )
                                 }
-                            }
-
-                            Spacer(modifier = Modifier.height(10.dp))
-
-                            // 2. Give up Button (Subdued Slate 3D)
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .shadow(6.dp, RoundedCornerShape(16.dp))
-                                    .clip(RoundedCornerShape(16.dp))
-                                    .background(
-                                        Brush.verticalGradient(
-                                            listOf(Color(0xFF64748B), Color(0xFF475569), Color(0xFF334155))
-                                        )
-                                    )
-                                    .border(1.2.dp, Color.White.copy(alpha = 0.25f), RoundedCornerShape(16.dp))
-                                    .clickable { onAcceptDefeat() }
-                                    .padding(vertical = 12.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = LocaleHelper.giveUp(isPersian),
-                                    color = Color(0xFFE2E8F0),
-                                    fontSize = 15.sp,
-                                    fontWeight = FontWeight.Black,
-                                    fontFamily = nunitoFont
-                                )
                             }
                         }
                     }
@@ -1355,12 +1362,8 @@ fun GameScreen(
                         .width(320.dp)
                         .shadow(24.dp, RoundedCornerShape(26.dp))
                         .clip(RoundedCornerShape(26.dp))
-                        .background(
-                            Brush.verticalGradient(
-                                colors = listOf(Color(0xFF3826B4), Color(0xFF241584), Color(0xFF190D69))
-                            )
-                        )
-                        .border(2.dp, Color(0xFF6366F1), RoundedCornerShape(26.dp))
+                        .background(PopupBg)
+                        .border(2.5.dp, PopupBorder, RoundedCornerShape(26.dp))
                         .clickable(enabled = false) {}
                 ) {
                     Column(
@@ -1373,12 +1376,8 @@ fun GameScreen(
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(58.dp)
-                                .background(
-                                    Brush.verticalGradient(
-                                        colors = listOf(Color(0xFF4C38CE), Color(0xFF2C1990))
-                                    )
-                                )
+                                .height(64.dp)
+                                .background(PopupHeaderBg)
                                 .padding(horizontal = 16.dp),
                             contentAlignment = Alignment.Center
                         ) {
@@ -1386,8 +1385,8 @@ fun GameScreen(
                                 text = LocaleHelper.exitDialogTitle(isPersian),
                                 textColor = Color.White,
                                 outlineColor = Color(0xFF190D69),
-                                outlineWidth = 5f,
-                                fontSize = 23.sp,
+                                outlineWidth = 6f,
+                                fontSize = 25.sp,
                                 fontWeight = FontWeight.Black,
                                 textAlign = TextAlign.Center
                             )
@@ -1398,7 +1397,7 @@ fun GameScreen(
                                 contentDescription = "Close",
                                 modifier = Modifier
                                     .align(Alignment.CenterEnd)
-                                    .size(34.dp)
+                                    .size(40.dp)
                                     .clickable { showExitConfirmDialog = false }
                             )
                         }
@@ -1408,40 +1407,40 @@ fun GameScreen(
                         // Question Prompt & Subtitle
                         Text(
                             text = LocaleHelper.exitDialogPrompt(isPersian),
-                            color = Color.White,
-                            fontSize = 15.sp,
+                            color = DarkBg,
+                            fontSize = 17.sp,
                             fontWeight = FontWeight.Bold,
                             fontFamily = nunitoFont,
                             textAlign = TextAlign.Center,
                             modifier = Modifier.padding(horizontal = 20.dp)
                         )
 
-                        Spacer(modifier = Modifier.height(4.dp))
+                        Spacer(modifier = Modifier.height(6.dp))
 
                         Text(
                             text = LocaleHelper.exitDialogDesc(isPersian),
-                            color = Color(0xFFCBD5E1),
-                            fontSize = 12.sp,
+                            color = DarkBg.copy(alpha = 0.75f),
+                            fontSize = 13.5.sp,
                             fontWeight = FontWeight.Medium,
                             fontFamily = nunitoFont,
                             textAlign = TextAlign.Center,
                             modifier = Modifier.padding(horizontal = 20.dp)
                         )
 
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(18.dp))
 
-                        // Two Action Capsule Buttons Side by Side (Stay & Leave)
+                        // Two Action Capsule Buttons Side by Side (Stay & Leave) - 65% width
                         Row(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp),
-                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                                .fillMaxWidth(0.65f),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             // 1. Leave to Menu (Red/Rose 3D Gradient)
                             Box(
                                 modifier = Modifier
                                     .weight(1f)
+                                    .heightIn(min = 78.dp)
                                     .shadow(6.dp, RoundedCornerShape(14.dp))
                                     .clip(RoundedCornerShape(14.dp))
                                     .background(
@@ -1449,28 +1448,28 @@ fun GameScreen(
                                             listOf(Color(0xFFF87171), Color(0xFFDC2626), Color(0xFF991B1B))
                                         )
                                     )
-                                    .border(1.5.dp, Color(0xFFFDA4AF).copy(alpha = 0.7f), RoundedCornerShape(14.dp))
+                                    .border(2.dp, DarkBg, RoundedCornerShape(14.dp))
                                     .clickable {
                                         showExitConfirmDialog = false
                                         onBackToMenu()
                                     }
-                                    .padding(vertical = 12.dp),
+                                    .padding(horizontal = 2.dp, vertical = 2.dp),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.Center
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.Center
                                 ) {
                                     androidx.compose.foundation.Image(
                                         painter = painterResource(id = R.drawable.exit),
                                         contentDescription = "Exit to Menu",
-                                        modifier = Modifier.size(18.dp)
+                                        modifier = Modifier.size(30.dp)
                                     )
-                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Spacer(modifier = Modifier.height(4.dp))
                                     Text(
                                         text = LocaleHelper.exitLeaveBtn(isPersian),
                                         color = Color.White,
-                                        fontSize = 15.sp,
+                                        fontSize = 14.5.sp,
                                         fontWeight = FontWeight.Black,
                                         fontFamily = nunitoFont
                                     )
@@ -1481,6 +1480,7 @@ fun GameScreen(
                             Box(
                                 modifier = Modifier
                                     .weight(1f)
+                                    .heightIn(min = 78.dp)
                                     .shadow(6.dp, RoundedCornerShape(14.dp))
                                     .clip(RoundedCornerShape(14.dp))
                                     .background(
@@ -1488,28 +1488,28 @@ fun GameScreen(
                                             listOf(Color(0xFF2DD4BF), Color(0xFF0D9488), Color(0xFF0F766E))
                                         )
                                     )
-                                    .border(1.5.dp, Color.White.copy(alpha = 0.6f), RoundedCornerShape(14.dp))
+                                    .border(2.dp, DarkBg, RoundedCornerShape(14.dp))
                                     .clickable {
                                         showExitConfirmDialog = false
                                         com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playButtonClickSound(context)
                                     }
-                                    .padding(vertical = 12.dp),
+                                    .padding(horizontal = 2.dp, vertical = 2.dp),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.Center
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.Center
                                 ) {
                                     androidx.compose.foundation.Image(
                                         painter = painterResource(id = R.drawable.play),
                                         contentDescription = "Stay",
-                                        modifier = Modifier.size(18.dp)
+                                        modifier = Modifier.size(30.dp)
                                     )
-                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Spacer(modifier = Modifier.height(4.dp))
                                     Text(
                                         text = LocaleHelper.exitStayBtn(isPersian),
                                         color = Color.White,
-                                        fontSize = 15.sp,
+                                        fontSize = 14.5.sp,
                                         fontWeight = FontWeight.Black,
                                         fontFamily = nunitoFont
                                     )
@@ -1539,12 +1539,8 @@ fun GameScreen(
                         .width(320.dp)
                         .shadow(20.dp, RoundedCornerShape(26.dp))
                         .clip(RoundedCornerShape(26.dp))
-                        .background(
-                            Brush.verticalGradient(
-                                colors = listOf(Color(0xFF3826B4), Color(0xFF241584), Color(0xFF190D69))
-                            )
-                        )
-                        .border(2.dp, Color(0xFF6366F1), RoundedCornerShape(26.dp))
+                        .background(PopupBg)
+                        .border(2.5.dp, PopupBorder, RoundedCornerShape(26.dp))
                         .clickable(enabled = false) {}
                 ) {
                     Column(
@@ -1557,12 +1553,8 @@ fun GameScreen(
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(58.dp)
-                                .background(
-                                    Brush.verticalGradient(
-                                        colors = listOf(Color(0xFF4C38CE), Color(0xFF2C1990))
-                                    )
-                                )
+                                .height(64.dp)
+                                .background(PopupHeaderBg)
                                 .padding(horizontal = 16.dp),
                             contentAlignment = Alignment.Center
                         ) {
@@ -1570,8 +1562,8 @@ fun GameScreen(
                                 text = LocaleHelper.settingsTitle(isPersian),
                                 textColor = Color.White,
                                 outlineColor = Color(0xFF190D69),
-                                outlineWidth = 5f,
-                                fontSize = 23.sp,
+                                outlineWidth = 6f,
+                                fontSize = 25.sp,
                                 fontWeight = FontWeight.Black,
                                 textAlign = TextAlign.Center
                             )
@@ -1582,83 +1574,114 @@ fun GameScreen(
                                 contentDescription = "Close Settings",
                                 modifier = Modifier
                                     .align(Alignment.CenterEnd)
-                                    .size(34.dp)
+                                    .size(40.dp)
                                     .clickable { showHamburgerMenu = false }
                             )
                         }
 
                         Spacer(modifier = Modifier.height(18.dp))
 
-                        // Sound & Haptic Toggle Icons (Clean floating row without container box)
-                        Row(
+                        // Sound & Haptic Box (40% darker than PopupBg, 65% width, border DarkBg)
+                        Box(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 4.dp),
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically
+                                .fillMaxWidth(0.65f)
+                                .clip(RoundedCornerShape(18.dp))
+                                .background(SoundVibrationBoxBg)
+                                .border(2.dp, DarkBg, RoundedCornerShape(18.dp))
+                                .padding(vertical = 12.dp),
+                            contentAlignment = Alignment.Center
                         ) {
-                            // 1. Sound Speaker Toggle
-                            Image(
-                                painter = painterResource(id = R.drawable.sound),
-                                contentDescription = "Sound",
-                                modifier = Modifier
-                                    .size(46.dp)
-                                    .clickable {
-                                        val next = !isSoundEnabled
-                                        isSoundEnabled = next
-                                        com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.setSoundEnabled(context, next)
-                                        if (next) {
-                                            com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playButtonClickSound(context)
-                                        }
-                                    },
-                                colorFilter = if (!isSoundEnabled) ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) }) else null,
-                                alpha = if (isSoundEnabled) 1f else 0.4f
-                            )
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(30.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                // 1. Sound Speaker Toggle
+                                Image(
+                                    painter = painterResource(id = R.drawable.sound),
+                                    contentDescription = "Sound",
+                                    modifier = Modifier
+                                        .size(52.dp)
+                                        .clickable {
+                                            val next = !isSoundEnabled
+                                            isSoundEnabled = next
+                                            com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.setSoundEnabled(context, next)
+                                            if (next) {
+                                                com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playButtonClickSound(context)
+                                            }
+                                        },
+                                    colorFilter = if (!isSoundEnabled) ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) }) else null,
+                                    alpha = if (isSoundEnabled) 1f else 0.4f
+                                )
 
-                            Spacer(modifier = Modifier.width(44.dp))
-
-                            // 2. Haptic Vibration Toggle
-                            Image(
-                                painter = painterResource(id = R.drawable.vibrate),
-                                contentDescription = "Vibration",
-                                modifier = Modifier
-                                    .size(46.dp)
-                                    .clickable {
-                                        val next = !isHapticEnabled
-                                        isHapticEnabled = next
-                                        com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.setHapticEnabled(context, next)
-                                        if (next) {
-                                            com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.vibrateLight(context)
-                                        }
-                                    },
-                                colorFilter = if (!isHapticEnabled) ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) }) else null,
-                                alpha = if (isHapticEnabled) 1f else 0.4f
-                            )
+                                // 2. Haptic Vibration Toggle
+                                Image(
+                                    painter = painterResource(id = R.drawable.vibrate),
+                                    contentDescription = "Vibration",
+                                    modifier = Modifier
+                                        .size(52.dp)
+                                        .clickable {
+                                            val next = !isHapticEnabled
+                                            isHapticEnabled = next
+                                            com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.setHapticEnabled(context, next)
+                                            if (next) {
+                                                com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.vibrateLight(context)
+                                            }
+                                        },
+                                    colorFilter = if (!isHapticEnabled) ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) }) else null,
+                                    alpha = if (isHapticEnabled) 1f else 0.4f
+                                )
+                            }
                         }
 
-                        Spacer(modifier = Modifier.height(14.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
 
-                        // Theme Selector Section
-                        com.turkce.kelimesolitaire.presentation.ui.components.ThemeSelectorSection(
-                            isPersian = isPersian,
-                            fontFamily = nunitoFont,
-                            modifier = Modifier.padding(horizontal = 20.dp)
-                        )
-
-                        Spacer(modifier = Modifier.height(14.dp))
-
-                        // Action Buttons Column
+                        // Action Buttons Column (All buttons 65% width of popup, +30% taller height, border DarkBg, minimal internal padding)
                         Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 20.dp),
-                            verticalArrangement = Arrangement.spacedBy(10.dp),
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(12.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            // 1. Open Store Pill (Gold 3D Gradient)
+                            // 1. Theme Button (Opens separate theme details dialog)
                             Box(
                                 modifier = Modifier
-                                    .fillMaxWidth()
+                                    .fillMaxWidth(0.65f)
+                                    .heightIn(min = 82.dp)
+                                    .shadow(6.dp, RoundedCornerShape(16.dp))
+                                    .clip(RoundedCornerShape(16.dp))
+                                    .background(
+                                        Brush.verticalGradient(
+                                            listOf(Color(0xFF8B5CF6), Color(0xFF6D28D9), Color(0xFF5B21B6))
+                                        )
+                                    )
+                                    .border(2.dp, DarkBg, RoundedCornerShape(16.dp))
+                                    .clickable { showThemeDialog = true }
+                                    .padding(horizontal = 2.dp, vertical = 2.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    Text(
+                                        text = "🎨",
+                                        fontSize = 32.sp
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text(
+                                        text = if (isPersian) "تم و رنگ‌بندی بازی" else "Oyun Teması",
+                                        color = Color.White,
+                                        fontSize = 18.5.sp,
+                                        fontWeight = FontWeight.Black,
+                                        fontFamily = nunitoFont
+                                    )
+                                }
+                            }
+
+                            // 2. Open Store Pill (Gold 3D Gradient, border DarkBg, +30% taller height, 65% width)
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth(0.65f)
+                                    .heightIn(min = 82.dp)
                                     .shadow(6.dp, RoundedCornerShape(16.dp))
                                     .clip(RoundedCornerShape(16.dp))
                                     .background(
@@ -1666,41 +1689,45 @@ fun GameScreen(
                                             listOf(Color(0xFFF59E0B), Color(0xFFD97706), Color(0xFFB45309))
                                         )
                                     )
-                                    .border(1.5.dp, Color(0xFFFFD700), RoundedCornerShape(16.dp))
+                                    .border(2.dp, DarkBg, RoundedCornerShape(16.dp))
                                     .clickable {
                                         showHamburgerMenu = false
                                         onOpenStore()
                                     }
-                                    .padding(vertical = 14.dp, horizontal = 20.dp),
+                                    .padding(horizontal = 2.dp, vertical = 2.dp),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
                                     Image(
                                         painter = painterResource(id = R.drawable.buy),
                                         contentDescription = "Store",
-                                        modifier = Modifier.size(26.dp)
+                                        modifier = Modifier.size(40.dp)
                                     )
-                                    Spacer(modifier = Modifier.width(10.dp))
+                                    Spacer(modifier = Modifier.width(8.dp))
                                     Text(
                                         text = LocaleHelper.storeTitle(isPersian),
                                         color = Color.White,
-                                        fontSize = 19.sp,
+                                        fontSize = 22.sp,
                                         fontWeight = FontWeight.Black,
                                         fontFamily = nunitoFont
                                     )
                                 }
                             }
 
-                            // 2. Side-by-Side: Exit to Menu & Restart Level
+                            // 3. Side-by-Side: Exit to Menu & Restart Level (Total row 65% width of popup, +30% taller)
                             Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                                modifier = Modifier.fillMaxWidth(0.65f),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                // Exit to Main Menu (Red 3D Gradient)
+                                // Exit to Main Menu (Red 3D Gradient, border DarkBg, taller height, minimal padding)
                                 Box(
                                     modifier = Modifier
                                         .weight(1f)
+                                        .heightIn(min = 78.dp)
                                         .shadow(6.dp, RoundedCornerShape(16.dp))
                                         .clip(RoundedCornerShape(16.dp))
                                         .background(
@@ -1708,38 +1735,39 @@ fun GameScreen(
                                                 listOf(Color(0xFFF87171), Color(0xFFDC2626), Color(0xFF991B1B))
                                             )
                                         )
-                                        .border(1.5.dp, Color(0xFFFDA4AF).copy(alpha = 0.7f), RoundedCornerShape(16.dp))
+                                        .border(2.dp, DarkBg, RoundedCornerShape(16.dp))
                                         .clickable {
                                             showHamburgerMenu = false
                                             onBackToMenu()
                                         }
-                                        .padding(vertical = 14.dp),
+                                        .padding(horizontal = 2.dp, vertical = 2.dp),
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.Center
+                                    Column(
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        verticalArrangement = Arrangement.Center
                                     ) {
-                                        androidx.compose.foundation.Image(
+                                        Image(
                                             painter = painterResource(id = R.drawable.exit),
                                             contentDescription = "Main Menu",
-                                            modifier = Modifier.size(20.dp)
+                                            modifier = Modifier.size(30.dp)
                                         )
-                                        Spacer(modifier = Modifier.width(6.dp))
+                                        Spacer(modifier = Modifier.height(4.dp))
                                         Text(
                                             text = if (isPersian) "منوی اصلی" else "Ana Menü",
                                             color = Color.White,
-                                            fontSize = 15.sp,
+                                            fontSize = 14.5.sp,
                                             fontWeight = FontWeight.Black,
                                             fontFamily = nunitoFont
                                         )
                                     }
                                 }
 
-                                // Restart Level (Teal 3D Gradient)
+                                // Restart Level (Teal 3D Gradient, border DarkBg, taller height, minimal padding)
                                 Box(
                                     modifier = Modifier
                                         .weight(1f)
+                                        .heightIn(min = 78.dp)
                                         .shadow(6.dp, RoundedCornerShape(16.dp))
                                         .clip(RoundedCornerShape(16.dp))
                                         .background(
@@ -1747,28 +1775,28 @@ fun GameScreen(
                                                 listOf(Color(0xFF2DD4BF), Color(0xFF0D9488), Color(0xFF0F766E))
                                             )
                                         )
-                                        .border(1.5.dp, Color.White.copy(alpha = 0.6f), RoundedCornerShape(16.dp))
+                                        .border(2.dp, DarkBg, RoundedCornerShape(16.dp))
                                         .clickable {
                                             showHamburgerMenu = false
                                             onRestartLevel()
                                         }
-                                        .padding(vertical = 14.dp),
+                                        .padding(horizontal = 2.dp, vertical = 2.dp),
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.Center
+                                    Column(
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        verticalArrangement = Arrangement.Center
                                     ) {
-                                        androidx.compose.foundation.Image(
+                                        Image(
                                             painter = painterResource(id = R.drawable.restart),
                                             contentDescription = "Restart",
-                                            modifier = Modifier.size(20.dp)
+                                            modifier = Modifier.size(30.dp)
                                         )
-                                        Spacer(modifier = Modifier.width(6.dp))
+                                        Spacer(modifier = Modifier.height(4.dp))
                                         Text(
                                             text = if (isPersian) "شروع مجدد" else "Tekrar",
                                             color = Color.White,
-                                            fontSize = 15.sp,
+                                            fontSize = 14.5.sp,
                                             fontWeight = FontWeight.Black,
                                             fontFamily = nunitoFont
                                         )
@@ -1776,6 +1804,76 @@ fun GameScreen(
                                 }
                             }
                         }
+                    }
+                }
+            }
+        }
+
+        // 7. SEPARATE THEME SELECTION MODAL DIALOG
+        if (showThemeDialog) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.75f))
+                    .zIndex(260f)
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ) { showThemeDialog = false },
+                contentAlignment = Alignment.Center
+            ) {
+                Box(
+                    modifier = Modifier
+                        .width(320.dp)
+                        .shadow(24.dp, RoundedCornerShape(26.dp))
+                        .clip(RoundedCornerShape(26.dp))
+                        .background(PopupBg)
+                        .border(2.5.dp, PopupBorder, RoundedCornerShape(26.dp))
+                        .clickable(enabled = false) {}
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 20.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        // Header Bar
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(64.dp)
+                                .background(PopupHeaderBg)
+                                .padding(horizontal = 16.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            OutlinedText(
+                                text = if (isPersian) "انتخاب تم بازی" else "Tema Seçimi",
+                                textColor = Color.White,
+                                outlineColor = Color(0xFF190D69),
+                                outlineWidth = 6f,
+                                fontSize = 24.sp,
+                                fontWeight = FontWeight.Black,
+                                textAlign = TextAlign.Center
+                            )
+
+                            // Close Button
+                            Image(
+                                painter = painterResource(id = R.drawable.cancel),
+                                contentDescription = "Close",
+                                modifier = Modifier
+                                    .align(Alignment.CenterEnd)
+                                    .size(40.dp)
+                                    .clickable { showThemeDialog = false }
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(18.dp))
+
+                        com.turkce.kelimesolitaire.presentation.ui.components.ThemeSelectorSection(
+                            isPersian = isPersian,
+                            fontFamily = nunitoFont,
+                            modifier = Modifier.padding(horizontal = 16.dp)
+                        )
                     }
                 }
             }

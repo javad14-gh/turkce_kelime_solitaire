@@ -54,8 +54,8 @@ fun ThemeSelectorSection(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(18.dp))
-            .background(Color(0xFF150A54).copy(alpha = 0.85f))
-            .border(1.dp, Color.White.copy(alpha = 0.15f), RoundedCornerShape(18.dp))
+            .background(Color.White.copy(alpha = 0.55f))
+            .border(1.2.dp, com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg.copy(alpha = 0.25f), RoundedCornerShape(18.dp))
             .padding(vertical = 12.dp, horizontal = 10.dp),
         contentAlignment = Alignment.Center
     ) {
@@ -66,14 +66,14 @@ fun ThemeSelectorSection(
             // Section Title
             Text(
                 text = if (isPersian) "🎨 تم و رنگ‌بندی بازی" else "🎨 Oyun Teması",
-                color = Color(0xFFE2E8F0),
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
+                color = com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Black,
                 fontFamily = fontFamily,
                 textAlign = TextAlign.Center
             )
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             // Presets Horizontal Row
             Row(
@@ -107,7 +107,7 @@ fun ThemeSelectorSection(
                         // 4-Color Palette Swatch Circle
                         Box(
                             modifier = Modifier
-                                .size(46.dp)
+                                .size(54.dp)
                                 .shadow(
                                     elevation = if (isSelected) 8.dp else 2.dp,
                                     shape = CircleShape,
@@ -134,7 +134,7 @@ fun ThemeSelectorSection(
                             if (isSelected) {
                                 Box(
                                     modifier = Modifier
-                                        .size(20.dp)
+                                        .size(24.dp)
                                         .clip(CircleShape)
                                         .background(Color(0xFFFFD700)),
                                     contentAlignment = Alignment.Center
@@ -143,7 +143,7 @@ fun ThemeSelectorSection(
                                         imageVector = Icons.Default.Check,
                                         contentDescription = "Selected",
                                         tint = Color(0xFF190D69),
-                                        modifier = Modifier.size(14.dp)
+                                        modifier = Modifier.size(17.dp)
                                     )
                                 }
                             }
@@ -154,9 +154,9 @@ fun ThemeSelectorSection(
                         // Theme Name
                         Text(
                             text = if (isPersian) preset.titlePersian else preset.titleTurkish,
-                            color = if (isSelected) Color(0xFFFFD700) else Color(0xFFCBD5E1),
-                            fontSize = 11.sp,
-                            fontWeight = if (isSelected) FontWeight.Black else FontWeight.Medium,
+                            color = if (isSelected) com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg else com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg.copy(alpha = 0.7f),
+                            fontSize = 13.sp,
+                            fontWeight = if (isSelected) FontWeight.Black else FontWeight.Bold,
                             fontFamily = fontFamily,
                             textAlign = TextAlign.Center
                         )

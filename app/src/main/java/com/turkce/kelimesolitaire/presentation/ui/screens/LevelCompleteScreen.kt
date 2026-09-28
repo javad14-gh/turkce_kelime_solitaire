@@ -49,6 +49,9 @@ import com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon
 import com.turkce.kelimesolitaire.presentation.ui.components.ConfettiPartyPopper
 import com.turkce.kelimesolitaire.presentation.ui.components.OutlinedText
 import com.turkce.kelimesolitaire.presentation.ui.components.rememberNunitoFont
+import com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg
+import com.turkce.kelimesolitaire.presentation.ui.theme.PopupBg
+import com.turkce.kelimesolitaire.presentation.ui.theme.PopupBorder
 import com.turkce.kelimesolitaire.presentation.ui.theme.getDifficultyRimColors
 import com.turkce.kelimesolitaire.presentation.util.GameSettingsManager
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
@@ -104,15 +107,7 @@ fun LevelCompleteScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    listOf(
-                        Color(0xFF1E1054), // Deep indigo game atmosphere
-                        Color(0xFF130938), // Rich game purple
-                        Color(0xFF0D0524)  // Grounding dark tone
-                    )
-                )
-            )
+            .background(DarkBg)
             .padding(16.dp),
         contentAlignment = Alignment.Center
     ) {
@@ -184,24 +179,10 @@ fun LevelCompleteScreen(
                     .fillMaxWidth(0.88f)
                     .shadow(20.dp, RoundedCornerShape(26.dp))
                     .clip(RoundedCornerShape(26.dp))
-                    .background(
-                        Brush.verticalGradient(
-                            listOf(
-                                Color(0xFF3826B4),
-                                Color(0xFF241584),
-                                Color(0xFF190D69)
-                            )
-                        )
-                    )
+                    .background(PopupBg)
                     .border(
-                        width = 2.dp,
-                        brush = Brush.verticalGradient(
-                            listOf(
-                                Color(0xFF818CF8),
-                                Color(0xFF6366F1),
-                                Color(0xFF4338CA)
-                            )
-                        ),
+                        width = 2.5.dp,
+                        color = PopupBorder,
                         shape = RoundedCornerShape(26.dp)
                     )
                     .padding(vertical = 18.dp, horizontal = 20.dp),
@@ -213,9 +194,9 @@ fun LevelCompleteScreen(
                 ) {
                     Text(
                         text = if (isPersian) "پاداش مرحله" else "BÖLÜM ÖDÜLÜ",
-                        color = Color(0xFFC7D2FE),
+                        color = DarkBg,
                         fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.Black,
                         fontFamily = nunitoFont,
                         letterSpacing = 1.sp
                     )
@@ -226,8 +207,8 @@ fun LevelCompleteScreen(
                     Box(
                         modifier = Modifier
                             .clip(RoundedCornerShape(16.dp))
-                            .background(Color.White.copy(alpha = 0.08f))
-                            .border(1.dp, Color(0xFFFFD700).copy(alpha = 0.4f), RoundedCornerShape(16.dp))
+                            .background(Color.White.copy(alpha = 0.55f))
+                            .border(1.2.dp, DarkBg.copy(alpha = 0.25f), RoundedCornerShape(16.dp))
                             .padding(horizontal = 22.dp, vertical = 8.dp)
                     ) {
                         Row(
@@ -239,7 +220,7 @@ fun LevelCompleteScreen(
                             val currentCoinsDisplay = if (isRewardDoubled) bonusCoins * 2 else bonusCoins
                             Text(
                                 text = "+${LocaleHelper.formatNumber(currentCoinsDisplay, isPersian)} ${if (isPersian) "سکه" else "Altın"}",
-                                color = Color(0xFFFFD700),
+                                color = DarkBg,
                                 fontSize = 28.sp,
                                 fontWeight = FontWeight.Black,
                                 fontFamily = nunitoFont

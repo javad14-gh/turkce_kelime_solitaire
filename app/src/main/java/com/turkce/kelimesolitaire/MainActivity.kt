@@ -157,7 +157,7 @@ class MainActivity : ComponentActivity() {
                                         },
                                         onDrawFromStock = { viewModel.drawFromStock(this@MainActivity) },
                                         onRestartLevel = { viewModel.requestRestartLevel(this@MainActivity) },
-                                        onBackToMenu = { viewModel.returnToMainMenu() },
+                                        onBackToMenu = { viewModel.returnToMainMenu(this@MainActivity) },
                                         onShowMessage = { msg, type -> viewModel.showUserMessage(msg, type) },
                                         onShowHint = {
                                             viewModel.showHint(this@MainActivity) { msg ->
@@ -180,7 +180,7 @@ class MainActivity : ComponentActivity() {
                                             }
                                         },
                                         onAcceptDefeat = {
-                                            viewModel.acceptDefeat()
+                                            viewModel.acceptDefeat(this@MainActivity)
                                         }
                                     )
                                 } ?: LevelLoadingScreen(
@@ -194,7 +194,7 @@ class MainActivity : ComponentActivity() {
                                     isRewardDoubled = state.isLevelRewardDoubled,
                                     onDoubleRewardClicked = { viewModel.doubleLevelRewardWithAd(this@MainActivity) },
                                     onNextLevelClicked = { viewModel.advanceToNextLevel(this@MainActivity) },
-                                    onMainMenuClicked = { viewModel.returnToMainMenu() }
+                                    onMainMenuClicked = { viewModel.returnToMainMenu(this@MainActivity) }
                                 )
                             }
                             is ScreenState.GameOver -> {
@@ -204,7 +204,7 @@ class MainActivity : ComponentActivity() {
                                     onContinueForCoins = { viewModel.purchaseExtraMoves(this@MainActivity) },
                                     onContinueForAd = { viewModel.watchAdForExtraMoves(this@MainActivity) },
                                     onRestartClicked = { viewModel.restartLevel(this@MainActivity) },
-                                    onMainMenuClicked = { viewModel.returnToMainMenu() }
+                                    onMainMenuClicked = { viewModel.returnToMainMenu(this@MainActivity) }
                                 )
                             }
                             is ScreenState.Store -> {

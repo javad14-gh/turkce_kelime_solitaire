@@ -172,7 +172,7 @@ fun SplashScreen(
         modifier = modifier
             .fillMaxSize()
             .alpha(screenAlpha.value)
-            .background(DarkBg)
+            .background(Color.Black)
             .clickable {
                 // Allow tapping to proceed immediately
                 onSplashFinished()

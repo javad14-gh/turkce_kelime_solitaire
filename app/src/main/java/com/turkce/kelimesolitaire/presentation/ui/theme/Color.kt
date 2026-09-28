@@ -43,40 +43,40 @@ enum class ThemePreset(
     val c4: Color  // ۴. رنگ تاکیدی و طلایی‌ها (تاج، نوار بالا، کادر انتخابی)
 ) {
     CLASSIC(
-        id = "classic",
-        titlePersian = "کلاسیک",
-        titleTurkish = "Klasik",
-        c1 = Color(0xFFF0EFFB), // یاسی بسیار ملایم
-        c2 = Color(0xFF221A6C), // سرمه‌ای سلطنتی
-        c3 = Color(0xFF6F1594), // بنفش شاهانه
-        c4 = Color(0xFFFFCB70)  // طلایی گرم
+    id = "rose_twilight",
+    titlePersian = "گلبهی غروب",
+    titleTurkish = "Alacakaranlık Gül",
+    c1 = Color(0xFFFCE8F1), // صورتی پودری بسیار ملایم (میز)
+    c2 = Color(0xFF6B1B4C), // زرشکی-بنفش عمیق (المان‌ها و دکمه‌ها)
+    c3 = Color(0xFFD6336C), // صورتی توت‌فرنگی پررنگ (پشت کارت‌ها)
+    c4 = Color(0xFFFFC94D)  // طلایی گرم (تاکیدی)
     ),
-    CASINO_GREEN(
-        id = "casino_green",
-        titlePersian = "سبز کازینو",
-        titleTurkish = "Yeşil Masa",
-        c1 = Color(0xFFE8F5E9), // سبز ملایم نمدی میز
-        c2 = Color(0xFF134E3F), // سبز زمردی تیره
-        c3 = Color(0xFF991B1B), // قرمز زرشکی درباری کارت‌ها
-        c4 = Color(0xFFF59E0B)  // طلایی کهربایی
+    MIDNIGHT_NEON(
+    id = "midnight_neon",
+    titlePersian = "نئون نیمه‌شب",
+    titleTurkish = "Gece Neonu",
+    c1 = Color(0xFF12101E), // بنفش-مشکی خیلی تیره (تم دارک، میز)
+    c2 = Color(0xFF7C3AED), // بنفش نئونی روشن (دکمه‌ها و المان‌ها)
+    c3 = Color(0xFFEC4899), // صورتی نئونی (پشت کارت‌ها)
+    c4 = Color(0xFF22D3EE)  // فیروزه‌ای نئونی (تاکیدی، به‌جای طلایی)
     ),
-    OCEAN_BLUE(
-        id = "ocean_blue",
-        titlePersian = "اقیانوس",
-        titleTurkish = "Okyanus",
-        c1 = Color(0xFFE0F2FE), // آبی آسمانی ملایم
-        c2 = Color(0xFF0C4A6E), // آبی نفتی عمیق
-        c3 = Color(0xFF0284C7), // آبی لاجوردی براق
-        c4 = Color(0xFFF59E0B)  // طلایی آفتابی
+    ROYAL_RUBY(
+    id = "royal_ruby",
+    titlePersian = "یاقوت سلطنتی",
+    titleTurkish = "Kraliyet Yakutu",
+    c1 = Color(0xFFFBF1E5), // عاجی/کرم گرم (میز)
+    c2 = Color(0xFF5C0A1E), // زرشکی شرابی تیره (دکمه‌ها)
+    c3 = Color(0xFFB91C3C), // قرمز یاقوتی روشن‌تر (پشت کارت‌ها)
+    c4 = Color(0xFFE8B84B)  // طلایی عتیقه (تاکیدی)
     ),
-    WARM_AMBER(
-        id = "warm_amber",
-        titlePersian = "چوبی گرم",
-        titleTurkish = "Sıcak Ahşap",
-        c1 = Color(0xFFFDF4E3), // کرم چوبی دنج
-        c2 = Color(0xFF5D2E16), // قهوه‌ای چرم شیک
-        c3 = Color(0xFFC05621), // تراکوتا / خرمایی
-        c4 = Color(0xFFD97706)  // طلایی کهربایی گرم
+    MINT_FRESH(
+    id = "mint_fresh",
+    titlePersian = "نعنایی تازه",
+    titleTurkish = "Taze Nane",
+    c1 = Color(0xFFE7FBF4), // نعنایی بسیار روشن (میز)
+    c2 = Color(0xFF0F5C4C), // سبز صنوبری تیره (دکمه‌ها)
+    c3 = Color(0xFFFF7A59), // مرجانی گرم، مکمل سبز (پشت کارت‌ها)
+    c4 = Color(0xFFFFB347)  // نارنجی-طلایی (تاکیدی)
     )
 }
 
@@ -109,10 +109,16 @@ val maincolor4: Color get() = GameThemeManager.currentTheme.c4
 
 
 // --- ۱. پس‌زمینه‌های اصلی بازی ---
-val DarkBg = Color(0xFF131B0E)            // پس‌زمینه منوی اصلی و لودینگ بازی (سرمه‌ای کهکشانی تیره)
+val DarkBg = Color(0xFF4c00b0)            // پس‌زمینه اصلی بازی (هماهنگ با هدر پاپ‌آپ‌ها)
 val GameTableBg: Color get() = maincolor1       // رنگ پس‌زمینه میز بازی (کاملاً یکدست و ساده)
 val GameTableBgTop: Color get() = GameTableBg          // جهت سازگاری
 val GameTableBgBottom: Color get() = GameTableBg       // جهت سازگاری
+
+// --- پاپ‌آپ‌ها و دیالوگ‌های بازی ---
+val PopupBg = Color(0xFFD1C4E9)            // پس‌زمینه پاپ‌آپ‌ها (یاسی ملایم)
+val PopupBorder: Color get() = DarkBg      // کادر دور پاپ‌آپ‌ها (هم‌رنگ پس‌زمینه اصلی)
+val PopupHeaderBg: Color get() = DarkBg    // رنگ هدر پاپ‌آپ‌ها (هم‌رنگ پس‌زمینه اصلی)
+val SoundVibrationBoxBg: Color get() = Color(0xFFaf97d8) // زمینه باکس صدا و ویبره (۴۰٪ تیره‌تر از پاپ‌آپ)
 
 // --- هدر بالای صفحه بازی (سکه و عنوان مرحله) ---
 val LevelTitleText = Color(0xFFFFFFFF)            // رنگ نوشته مرحله (مثلاً مرحله ۱)
