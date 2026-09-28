@@ -54,10 +54,7 @@ fun ThemeSelectorSection(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(18.dp))
-            .background(Color.White.copy(alpha = 0.55f))
-            .border(1.2.dp, com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg.copy(alpha = 0.25f), RoundedCornerShape(18.dp))
-            .padding(vertical = 16.dp, horizontal = 8.dp),
+            .padding(vertical = 6.dp, horizontal = 4.dp),
         contentAlignment = Alignment.Center
     ) {
         Column(

@@ -191,71 +191,89 @@ fun MainMenuScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // 1. Coins Display: 3D Coin on the outside, box extending to the right
+                        // 1. Coins Display: 3D Coin on the outside, box extending to the right (like menu buttons)
                         Box(
                             modifier = Modifier
                                 .clickable { onOpenStore() },
                             contentAlignment = Alignment.CenterStart
                         ) {
-                            // Pill / Box extending rightward from behind the coin
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
+                            // 3D Pill extending rightward from behind the coin (height 40dp matching settings button)
+                            Box(
                                 modifier = Modifier
                                     .padding(start = 20.dp)
-                                    .height(30.dp)
-                                    .clip(RoundedCornerShape(topEnd = 15.dp, bottomEnd = 15.dp, topStart = 4.dp, bottomStart = 4.dp))
+                                    .height(40.dp)
+                                    .shadow(5.dp, RoundedCornerShape(topEnd = 18.dp, bottomEnd = 18.dp, topStart = 7.dp, bottomStart = 7.dp))
+                                    .clip(RoundedCornerShape(topEnd = 18.dp, bottomEnd = 18.dp, topStart = 7.dp, bottomStart = 7.dp))
+                                    .background(Color(0xFF6B5196))
+                                    .padding(bottom = 3.dp)
+                                    .clip(RoundedCornerShape(topEnd = 15.dp, bottomEnd = 15.dp, topStart = 5.dp, bottomStart = 5.dp))
                                     .background(
-                                        Brush.horizontalGradient(
-                                            listOf(
-                                                Color(0xFF1E293B).copy(alpha = 0.95f),
-                                                Color(0xFF0F172A).copy(alpha = 0.98f)
+                                        Brush.verticalGradient(
+                                            colors = listOf(
+                                                Color(0xFFD4C7EE),
+                                                Color(0xFFBAA6DD),
+                                                Color(0xFFA58ED0)
                                             )
                                         )
                                     )
-                                    .border(
-                                        1.2.dp,
-                                        Brush.horizontalGradient(
-                                            listOf(
-                                                Color(0xFFFFD700).copy(alpha = 0.7f),
-                                                Color.White.copy(alpha = 0.2f)
-                                            )
-                                        ),
-                                        RoundedCornerShape(topEnd = 15.dp, bottomEnd = 15.dp, topStart = 4.dp, bottomStart = 4.dp)
-                                    )
-                                    .padding(start = 24.dp, end = 12.dp)
+                                    .padding(start = 36.dp, end = 20.dp),
+                                contentAlignment = Alignment.Center
                             ) {
-                                Text(
+                                OutlinedText(
                                     text = LocaleHelper.formatNumber(coins, isPersian),
-                                    color = Color.White,
-                                    fontSize = 17.sp,
-                                    fontWeight = FontWeight.Black,
-                                    fontFamily = nunitoFont
+                                    textColor = Color.White,
+                                    outlineColor = Color(0xFF6B5196),
+                                    outlineWidth = 8f,
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Black
                                 )
                             }
 
                             // 3D Coin Icon on the outside, overlapping on the left
                             Box(
                                 modifier = Modifier
-                                    .size(42.dp)
+                                    .size(54.dp)
                                     .zIndex(2f),
                                 contentAlignment = Alignment.Center
                             ) {
-                                com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 42.dp)
+                                com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 54.dp)
                             }
                         }
 
-                        // 2. Settings Menu Icon (Right)
-                        Image(
-                            painter = painterResource(id = R.drawable.setting),
-                            contentDescription = "Settings",
+                        // 2. Settings Menu Icon (Right) - 3D Button like Sound & Vibration (size 40dp, gear 34dp)
+                        Box(
                             modifier = Modifier
-                                .size(42.dp)
-                                .clickable { showSettingsMenu = true }
-                        )
+                                .size(40.dp)
+                                .shadow(5.dp, RoundedCornerShape(12.dp))
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(Color(0xFF6B5196))
+                                .padding(bottom = 3.dp)
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(
+                                    Brush.verticalGradient(
+                                        colors = listOf(
+                                            Color(0xFFD4C7EE),
+                                            Color(0xFFBAA6DD),
+                                            Color(0xFFA58ED0)
+                                        )
+                                    )
+                                )
+                                .clickable {
+                                    showSettingsMenu = true
+                                    com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playButtonClickSound(context)
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.setting),
+                                contentDescription = "Settings",
+                                modifier = Modifier.size(34.dp)
+                            )
+                        }
                     }
                 }
 
-                Spacer(modifier = Modifier.height(18.dp))
+                Spacer(modifier = Modifier.height(30.dp))
 
                 // Line 2: Centered 7-Day Daily Reward Progress Bar
                 DailyReward7DayProgressBar(
@@ -311,11 +329,12 @@ fun MainMenuScreen(
             ) {
                 Box(
                     contentAlignment = Alignment.TopCenter,
-                    modifier = Modifier.padding(top = 14.dp, bottom = 8.dp)
+                    modifier = Modifier.padding(top = 38.dp, bottom = 12.dp)
                 ) {
-                    // Compact 3D Play Button Shell (rim themed dynamically with difficulty)
+                    // Elongated & Enlarged 3D Play Button Shell (rim themed dynamically with difficulty)
                     Box(
                         modifier = Modifier
+                            .widthIn(min = 224.dp)
                             .shadow(16.dp, RoundedCornerShape(22.dp))
                             .clip(RoundedCornerShape(22.dp))
                             .background(
@@ -327,7 +346,7 @@ fun MainMenuScreen(
                             .padding(4.dp)
                             .clip(RoundedCornerShape(18.dp))
                             .background(PlayButtonShadow) // Dark 3D bottom base shadow
-                            .padding(bottom = 5.dp) // Creates thick 3D bottom bevel
+                            .padding(bottom = 5.5.dp) // Creates thick 3D bottom bevel
                             .clip(RoundedCornerShape(14.dp))
                             .background(
                                 Brush.verticalGradient(
@@ -345,15 +364,15 @@ fun MainMenuScreen(
                                     onStartGameClicked(lastUnsolvedLevel)
                                 }
                             }
-                            .padding(horizontal = 30.dp, vertical = 14.dp),
+                            .padding(horizontal = 40.dp, vertical = 15.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         OutlinedText(
                             text = LocaleHelper.levelTitle(lastUnsolvedLevel, isPersian),
                             textColor = Color.White,
-                            outlineColor = Color(0xFF1E3A07),
-                            outlineWidth = 5f,
-                            fontSize = 32.sp,
+                            outlineColor = PlayButtonShadow,
+                            outlineWidth = 10f,
+                            fontSize = 36.sp,
                             fontWeight = FontWeight.Black,
                             letterSpacing = 1.2.sp
                         )
@@ -371,7 +390,7 @@ fun MainMenuScreen(
                                 .clip(RoundedCornerShape(12.dp))
                                 .background(ribbonColor)
                                 .border(1.5.dp, Color.White, RoundedCornerShape(12.dp))
-                                .padding(horizontal = 24.dp, vertical = 5.dp)
+                                .padding(horizontal = 26.dp, vertical = 5.dp)
                         ) {
                             Text(
                                 text = difficultyText,
@@ -382,49 +401,6 @@ fun MainMenuScreen(
                                 letterSpacing = 0.5.sp
                             )
                         }
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // 3D Store Button on Main Screen (with LARGE buy.png icon extending to button edges)
-                Box(
-                    modifier = Modifier
-                        .shadow(12.dp, RoundedCornerShape(20.dp))
-                        .clip(RoundedCornerShape(20.dp))
-                        .background(Color(0xFF78350F))
-                        .padding(bottom = 4.dp)
-                        .clip(RoundedCornerShape(17.dp))
-                        .background(
-                            Brush.verticalGradient(
-                                colors = listOf(
-                                    Color(0xFFF59E0B),
-                                    Color(0xFFD97706),
-                                    Color(0xFFB45309)
-                                )
-                            )
-                        )
-                        .clickable { onOpenStore() }
-                        .height(58.dp)
-                        .padding(horizontal = 24.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.buy),
-                            contentDescription = "Store",
-                            modifier = Modifier.size(46.dp)
-                        )
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Text(
-                            text = LocaleHelper.storeTitle(isPersian),
-                            color = Color.White,
-                            fontSize = 22.sp,
-                            fontWeight = FontWeight.Black,
-                            fontFamily = nunitoFont
-                        )
                     }
                 }
             }
@@ -490,28 +466,36 @@ fun MainMenuScreen(
                     ) { showSettingsMenu = false },
                 contentAlignment = Alignment.Center
             ) {
+                // Outer Dark 3D Frame
                 Box(
                     modifier = Modifier
-                        .width(320.dp)
-                        .shadow(20.dp, RoundedCornerShape(26.dp))
-                        .clip(RoundedCornerShape(26.dp))
-                        .background(PopupBg)
-                        .border(2.5.dp, PopupBorder, RoundedCornerShape(26.dp))
+                        .width(330.dp)
+                        .shadow(24.dp, RoundedCornerShape(32.dp))
+                        .clip(RoundedCornerShape(32.dp))
+                        .background(Color(0xFF26005A))
+                        .padding(bottom = 7.dp)
+                        .clip(RoundedCornerShape(30.dp))
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(
+                                    Color(0xFF8B35FA),
+                                    Color(0xFF6414CE),
+                                    DarkBg,
+                                    Color(0xFF380084)
+                                )
+                            )
+                        )
                         .clickable(enabled = false) {}
                 ) {
                     Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .verticalScroll(rememberScrollState())
-                            .padding(bottom = 20.dp),
+                        modifier = Modifier.fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        // Top Arched Header Bar with Close (X) Button
+                        // Outer Header Bar (Title + Close Button)
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(64.dp)
-                                .background(PopupHeaderBg)
+                                .height(72.dp)
                                 .padding(horizontal = 16.dp),
                             contentAlignment = Alignment.Center
                         ) {
@@ -519,8 +503,8 @@ fun MainMenuScreen(
                                 text = LocaleHelper.settingsTitle(isPersian),
                                 textColor = Color.White,
                                 outlineColor = Color(0xFF190D69),
-                                outlineWidth = 6f,
-                                fontSize = 25.sp,
+                                outlineWidth = 12.5f,
+                                fontSize = 32.sp,
                                 fontWeight = FontWeight.Black,
                                 textAlign = TextAlign.Center
                             )
@@ -536,14 +520,40 @@ fun MainMenuScreen(
                             )
                         }
 
-                        Spacer(modifier = Modifier.height(14.dp))
-
-                        // Sound & Haptic Row (Two Square 84dp x 84dp 3D Buttons in BAA6DD style, space-between aligns with 65% width)
-                        Row(
-                            modifier = Modifier.fillMaxWidth(0.65f),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
+                        // Inner Light 3D Tray (کادر داخلی روشن کمی کوچک‌تر دکمه‌ها)
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 10.dp, end = 10.dp, bottom = 12.dp)
+                                .shadow(10.dp, RoundedCornerShape(22.dp))
+                                .clip(RoundedCornerShape(22.dp))
+                                .background(Color(0xFF8F76BE))
+                                .padding(bottom = 5.dp)
+                                .clip(RoundedCornerShape(20.dp))
+                                .background(
+                                    Brush.verticalGradient(
+                                        colors = listOf(
+                                            Color(0xFFEADBFC),
+                                            PopupBg,
+                                            Color(0xFFC7B6E4)
+                                        )
+                                    )
+                                )
                         ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .heightIn(max = 490.dp)
+                                    .verticalScroll(rememberScrollState())
+                                    .padding(vertical = 16.dp, horizontal = 6.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                // Sound & Haptic Row (Two Square 84dp x 84dp 3D Buttons in BAA6DD style)
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(0.72f),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
                             // 1. Sound Speaker Toggle (Square 84dp x 84dp 3D Button)
                             Box(
                                 modifier = Modifier
@@ -632,7 +642,7 @@ fun MainMenuScreen(
                              // 1. Theme Button (Opens separate theme details dialog)
                              Box(
                                  modifier = Modifier
-                                     .fillMaxWidth(0.65f)
+                                     .fillMaxWidth(0.72f)
                                      .heightIn(min = 84.dp)
                                      .shadow(10.dp, RoundedCornerShape(20.dp))
                                      .clip(RoundedCornerShape(20.dp))
@@ -661,8 +671,8 @@ fun MainMenuScreen(
                                          OutlinedText(
                                              text = "رنگ‌بندی بازی",
                                              textColor = Color.White,
-                                             outlineColor = DarkBg,
-                                             outlineWidth = 7.5f,
+                                             outlineColor = Color(0xFF6B5196),
+                                             outlineWidth = 12.5f,
                                              fontSize = 25.sp,
                                              fontWeight = FontWeight.Black
                                          )
@@ -680,8 +690,8 @@ fun MainMenuScreen(
                                          OutlinedText(
                                              text = "Oyun Teması",
                                              textColor = Color.White,
-                                             outlineColor = DarkBg,
-                                             outlineWidth = 7.5f,
+                                             outlineColor = Color(0xFF6B5196),
+                                             outlineWidth = 12.5f,
                                              fontSize = 24.sp,
                                              fontWeight = FontWeight.Black
                                          )
@@ -689,10 +699,10 @@ fun MainMenuScreen(
                                  }
                              }
 
-                             // 2. Open Store Pill (BAA6DD, 57dp icon, 65% width)
+                             // 2. Open Store Pill (BAA6DD, 57dp icon, 72% width)
                              Box(
                                  modifier = Modifier
-                                     .fillMaxWidth(0.65f)
+                                     .fillMaxWidth(0.72f)
                                      .heightIn(min = 84.dp)
                                      .shadow(10.dp, RoundedCornerShape(20.dp))
                                      .clip(RoundedCornerShape(20.dp))
@@ -724,8 +734,8 @@ fun MainMenuScreen(
                                          OutlinedText(
                                              text = LocaleHelper.storeTitle(isPersian),
                                              textColor = Color.White,
-                                             outlineColor = DarkBg,
-                                             outlineWidth = 7.5f,
+                                             outlineColor = Color(0xFF6B5196),
+                                             outlineWidth = 12.5f,
                                              fontSize = 27.sp,
                                              fontWeight = FontWeight.Black
                                          )
@@ -745,8 +755,8 @@ fun MainMenuScreen(
                                          OutlinedText(
                                              text = LocaleHelper.storeTitle(isPersian),
                                              textColor = Color.White,
-                                             outlineColor = DarkBg,
-                                             outlineWidth = 7.5f,
+                                             outlineColor = Color(0xFF6B5196),
+                                             outlineWidth = 12.5f,
                                              fontSize = 27.sp,
                                              fontWeight = FontWeight.Black
                                          )
@@ -754,10 +764,10 @@ fun MainMenuScreen(
                                  }
                              }
 
-                             // 3. Privacy Policy Pill (BAA6DD, 57dp icon, 65% width)
+                             // 3. Privacy Policy Pill (BAA6DD, 57dp icon, 72% width)
                              Box(
                                  modifier = Modifier
-                                     .fillMaxWidth(0.65f)
+                                     .fillMaxWidth(0.72f)
                                      .heightIn(min = 84.dp)
                                      .shadow(10.dp, RoundedCornerShape(20.dp))
                                      .clip(RoundedCornerShape(20.dp))
@@ -790,8 +800,8 @@ fun MainMenuScreen(
                                          OutlinedText(
                                              text = LocaleHelper.privacyPolicy(isPersian),
                                              textColor = Color.White,
-                                             outlineColor = DarkBg,
-                                             outlineWidth = 7.5f,
+                                             outlineColor = Color(0xFF6B5196),
+                                             outlineWidth = 12.5f,
                                              fontSize = 24.sp,
                                              fontWeight = FontWeight.Black
                                          )
@@ -811,8 +821,8 @@ fun MainMenuScreen(
                                          OutlinedText(
                                              text = LocaleHelper.privacyPolicy(isPersian),
                                              textColor = Color.White,
-                                             outlineColor = DarkBg,
-                                             outlineWidth = 7.5f,
+                                             outlineColor = Color(0xFF6B5196),
+                                             outlineWidth = 12.5f,
                                              fontSize = 24.sp,
                                              fontWeight = FontWeight.Black
                                          )
@@ -820,10 +830,12 @@ fun MainMenuScreen(
                                  }
                              }
                          }
-                    }
-                }
-            }
-        }
+                     }
+                 }
+             }
+         }
+     }
+ }
 
         // SEPARATE THEME SELECTION MODAL DIALOG
         if (showThemeDialog) {
@@ -838,36 +850,45 @@ fun MainMenuScreen(
                     ) { showThemeDialog = false },
                 contentAlignment = Alignment.Center
             ) {
+                // Outer Dark 3D Frame
                 Box(
                     modifier = Modifier
-                        .width(320.dp)
-                        .shadow(20.dp, RoundedCornerShape(26.dp))
-                        .clip(RoundedCornerShape(26.dp))
-                        .background(PopupBg)
-                        .border(2.5.dp, PopupBorder, RoundedCornerShape(26.dp))
+                        .width(330.dp)
+                        .shadow(24.dp, RoundedCornerShape(32.dp))
+                        .clip(RoundedCornerShape(32.dp))
+                        .background(Color(0xFF26005A))
+                        .padding(bottom = 7.dp)
+                        .clip(RoundedCornerShape(30.dp))
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(
+                                    Color(0xFF8B35FA),
+                                    Color(0xFF6414CE),
+                                    DarkBg,
+                                    Color(0xFF380084)
+                                )
+                            )
+                        )
                         .clickable(enabled = false) {}
                 ) {
                     Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 20.dp),
+                        modifier = Modifier.fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        // Top Arched Header Bar with Close (X) Button
+                        // Outer Header Bar (Title + Close Button)
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(64.dp)
-                                .background(PopupHeaderBg)
-                                .padding(horizontal = 16.dp),
+                                .height(72.dp)
+                                .padding(horizontal = 14.dp),
                             contentAlignment = Alignment.Center
                         ) {
                             OutlinedText(
                                 text = if (isPersian) "انتخاب رنگ‌بندی بازی" else "Tema Seçimi",
                                 textColor = Color.White,
                                 outlineColor = Color(0xFF190D69),
-                                outlineWidth = 6f,
-                                fontSize = if (isPersian) 21.sp else 24.sp,
+                                outlineWidth = 12.5f,
+                                fontSize = if (isPersian) 24.sp else 28.sp,
                                 fontWeight = FontWeight.Black,
                                 textAlign = TextAlign.Center
                             )
@@ -878,40 +899,52 @@ fun MainMenuScreen(
                                 contentDescription = "Close",
                                 modifier = Modifier
                                     .align(Alignment.CenterEnd)
-                                    .size(40.dp)
+                                    .size(38.dp)
                                     .clickable { showThemeDialog = false }
                             )
                         }
 
-                        Spacer(modifier = Modifier.height(18.dp))
-
-                        com.turkce.kelimesolitaire.presentation.ui.components.ThemeSelectorSection(
-                            isPersian = isPersian,
-                            fontFamily = nunitoFont,
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                            onThemeSelected = {
-                                showThemeDialog = false
-                                showSettingsMenu = false
+                        // Inner Light 3D Tray (کادر داخلی روشن کمی کوچک‌تر دکمه‌ها)
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 10.dp, end = 10.dp, bottom = 12.dp)
+                                .shadow(10.dp, RoundedCornerShape(22.dp))
+                                .clip(RoundedCornerShape(22.dp))
+                                .background(Color(0xFF8F76BE))
+                                .padding(bottom = 5.dp)
+                                .clip(RoundedCornerShape(20.dp))
+                                .background(
+                                    Brush.verticalGradient(
+                                        colors = listOf(
+                                            Color(0xFFEADBFC),
+                                            PopupBg,
+                                            Color(0xFFC7B6E4)
+                                        )
+                                    )
+                                )
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 12.dp, horizontal = 6.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                com.turkce.kelimesolitaire.presentation.ui.components.ThemeSelectorSection(
+                                    isPersian = isPersian,
+                                    fontFamily = nunitoFont,
+                                    onThemeSelected = {
+                                        showThemeDialog = false
+                                        showSettingsMenu = false
+                                    }
+                                )
                             }
-                        )
+                        }
                     }
                 }
             }
         }
 
-        // Floating Side Offer Badge for Starter Pack (like top mobile casual games)
-        if (isEligibleForStarterPack) {
-            StarterPackSideButton(
-                isPersian = isPersian,
-                onClick = {
-                    com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playButtonClickSound(context)
-                    showStarterPackDialog = true
-                },
-                modifier = Modifier
-                    .align(Alignment.CenterStart)
-                    .offset(y = 20.dp)
-            )
-        }
 
         // STARTER PACK SPECIAL OFFER MODAL DIALOG
         if (showStarterPackDialog && isEligibleForStarterPack) {
@@ -1088,48 +1121,48 @@ private fun DailyReward7DayProgressBar(
         label = "glow_alpha"
     )
 
-    // Outer Box: Centers the Ribbon Badge right on the top edge/rim of the card
+    // Outer Center Container
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp)
-            .widthIn(max = 300.dp)
-            .padding(top = 10.dp),
-        contentAlignment = Alignment.TopCenter
+            .padding(horizontal = 20.dp)
+            .widthIn(max = 330.dp),
+        contentAlignment = Alignment.Center
     ) {
-        // The Main Card Container
-        Card(
+        // 3D Plump Daily Reward Box (با رنگ پس‌زمینه دکمه‌های توی منو)
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(16.dp))
-                .clickable { onClick() },
-            shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = Color(0xFF131D31).copy(alpha = 0.94f)
-            ),
-            border = androidx.compose.foundation.BorderStroke(
-                1.2.dp,
-                if (hasUnclaimedReward)
-                    Brush.horizontalGradient(
-                        listOf(
+                .shadow(10.dp, RoundedCornerShape(18.dp))
+                .clip(RoundedCornerShape(18.dp))
+                .background(Color(0xFF6B5196))
+                .padding(bottom = 4.dp)
+                .clip(RoundedCornerShape(15.dp))
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            Color(0xFFD4C7EE),
+                            Color(0xFFBAA6DD),
+                            Color(0xFFA58ED0)
+                        )
+                    )
+                )
+                .then(
+                    if (hasUnclaimedReward) {
+                        Modifier.border(
+                            1.8.dp,
                             Color(0xFFFFD700).copy(alpha = glowAlpha),
-                            Color(0xFF4ADE80).copy(alpha = glowAlpha)
+                            RoundedCornerShape(15.dp)
                         )
-                    )
-                else
-                    Brush.horizontalGradient(
-                        listOf(
-                            Color.White.copy(alpha = 0.18f),
-                            Color.White.copy(alpha = 0.08f)
-                        )
-                    )
-            )
+                    } else Modifier
+                )
+                .clickable { onClick() }
         ) {
-            // 7 Days Progress Track inside card
+            // 7 Days Progress Track inside 3D Box
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 12.dp, end = 10.dp, top = 20.dp, bottom = 10.dp),
+                    .padding(horizontal = 8.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 for (day in 1..7) {
@@ -1138,34 +1171,34 @@ private fun DailyReward7DayProgressBar(
                     val isDay7 = day == 7
 
                     if (isDay7) {
-                        // Day 7: Large 42dp Chest (matching Settings icon size: 42dp)
+                        // Day 7: Chest
                         Box(
                             modifier = Modifier
-                                .size(42.dp)
+                                .size(38.dp)
                                 .then(if (isReady) Modifier.scale(pulseScale) else Modifier),
                             contentAlignment = Alignment.Center
                         ) {
                             Image(
                                 painter = painterResource(id = R.drawable.chest),
                                 contentDescription = "Day 7 Chest",
-                                modifier = Modifier.size(42.dp),
+                                modifier = Modifier.size(38.dp),
                                 alpha = if (isClaimed) 0.55f else 1f
                             )
                             if (isClaimed) {
                                 Image(
                                     painter = painterResource(id = R.drawable.tick),
                                     contentDescription = "Claimed",
-                                    modifier = Modifier.size(24.dp)
+                                    modifier = Modifier.size(22.dp)
                                 )
                             }
                         }
                     } else {
-                        // Days 1 to 6: Step Nodes (Ticks at 70% scale: 29.dp)
+                        // Days 1 to 6: Step Nodes
                         if (isClaimed) {
                             Image(
                                 painter = painterResource(id = R.drawable.tick),
                                 contentDescription = "Claimed",
-                                modifier = Modifier.size(29.dp)
+                                modifier = Modifier.size(26.dp)
                             )
                         } else {
                             Box(
@@ -1177,11 +1210,11 @@ private fun DailyReward7DayProgressBar(
                                         if (isReady)
                                             Brush.verticalGradient(listOf(Color(0xFFFFE066), Color(0xFFF59E0B)))
                                         else
-                                            Brush.verticalGradient(listOf(Color(0xFF1E293B), Color(0xFF0F172A)))
+                                            Brush.verticalGradient(listOf(Color(0xFF7E65A8), Color(0xFF5A4184)))
                                     )
                                     .border(
                                         width = if (isReady) 1.5.dp else 1.dp,
-                                        color = if (isReady) Color.White else Color.White.copy(alpha = 0.2f),
+                                        color = if (isReady) Color.White else Color.White.copy(alpha = 0.5f),
                                         shape = CircleShape
                                     ),
                                 contentAlignment = Alignment.Center
@@ -1197,7 +1230,7 @@ private fun DailyReward7DayProgressBar(
                                 } else {
                                     Text(
                                         text = LocaleHelper.formatNumber(day, isPersian),
-                                        color = Color.White.copy(alpha = 0.5f),
+                                        color = Color.White,
                                         fontSize = 11.sp,
                                         fontWeight = FontWeight.Bold,
                                         fontFamily = appFont
@@ -1213,56 +1246,22 @@ private fun DailyReward7DayProgressBar(
                         Box(
                             modifier = Modifier
                                 .weight(1f)
-                                .height(2.5.dp)
+                                .height(3.dp)
+                                .clip(RoundedCornerShape(1.5.dp))
                                 .background(
                                     if (isLineActive)
                                         Brush.horizontalGradient(
-                                            listOf(Color(0xFF22C55E), Color(0xFFFFD700))
+                                            listOf(Color(0xFF16A34A), Color(0xFFFFD700))
                                         )
                                     else
                                         Brush.horizontalGradient(
-                                            listOf(Color(0xFF334155), Color(0xFF1E293B))
+                                            listOf(Color(0xFF8F76BE), Color(0xFF7A60A8))
                                         )
                                 )
                         )
                     }
                 }
             }
-        }
-
-        // Ribbon Badge Centered on Top Edge (Overlapping top rim like difficulty badge)
-        Box(
-            modifier = Modifier
-                .offset(y = (-11).dp)
-                .zIndex(3f)
-                .then(if (hasUnclaimedReward) Modifier.scale(pulseScale) else Modifier)
-                .shadow(5.dp, RoundedCornerShape(10.dp))
-                .clip(RoundedCornerShape(10.dp))
-                .background(
-                    if (hasUnclaimedReward)
-                        Brush.horizontalGradient(listOf(Color(0xFFEA580C), Color(0xFFC2410C)))
-                    else
-                        Brush.horizontalGradient(listOf(Color(0xFF475569), Color(0xFF334155)))
-                )
-                .border(
-                    1.2.dp,
-                    if (hasUnclaimedReward) Color.White else Color.White.copy(alpha = 0.6f),
-                    RoundedCornerShape(10.dp)
-                )
-                .padding(horizontal = 14.dp, vertical = 3.dp)
-        ) {
-            Text(
-                text = if (isPersian) {
-                    if (hasUnclaimedReward) "جایزه روزانه (دریافت 🪙)" else "جایزه ورود روزانه"
-                } else {
-                    if (hasUnclaimedReward) "Günlük Ödül (Al 🪙)" else "Günlük Giriş Ödülü"
-                },
-                color = Color.White,
-                fontSize = 11.5.sp,
-                fontWeight = FontWeight.Black,
-                fontFamily = appFont,
-                letterSpacing = 0.4.sp
-            )
         }
     }
 }
