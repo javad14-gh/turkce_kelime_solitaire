@@ -202,11 +202,7 @@ fun GameOverScreen(
                     modifier = Modifier
                         .shadow(10.dp, RoundedCornerShape(18.dp))
                         .clip(RoundedCornerShape(18.dp))
-                        .background(
-                            Brush.verticalGradient(
-                                colors = listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1))
-                            )
-                        )
+                        .background(DarkBg)
                         .padding(3.dp)
                         .clip(RoundedCornerShape(15.dp))
                         .background(Color(0xFF6B5196))
@@ -227,7 +223,7 @@ fun GameOverScreen(
                 ) {
                     Text(
                         text = LocaleHelper.retry(isPersian),
-                        color = DarkBg,
+                        color = Color.White,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Black,
                         fontFamily = nunitoFont,
@@ -240,11 +236,7 @@ fun GameOverScreen(
                     modifier = Modifier
                         .shadow(10.dp, RoundedCornerShape(18.dp))
                         .clip(RoundedCornerShape(18.dp))
-                        .background(
-                            Brush.verticalGradient(
-                                colors = listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1))
-                            )
-                        )
+                        .background(DarkBg)
                         .padding(3.dp)
                         .clip(RoundedCornerShape(15.dp))
                         .background(Color(0xFF7F1D1D))

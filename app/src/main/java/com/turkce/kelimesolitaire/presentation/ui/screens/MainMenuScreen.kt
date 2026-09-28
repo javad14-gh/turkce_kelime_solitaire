@@ -557,11 +557,7 @@ fun MainMenuScreen(
                                     .size(84.dp)
                                     .shadow(10.dp, RoundedCornerShape(22.dp))
                                     .clip(RoundedCornerShape(22.dp))
-                                    .background(
-                                        Brush.verticalGradient(
-                                            colors = listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1))
-                                        )
-                                    )
+                                    .background(DarkBg)
                                     .padding(3.dp)
                                     .clip(RoundedCornerShape(19.dp))
                                     .background(Color(0xFF6B5196))
@@ -602,11 +598,7 @@ fun MainMenuScreen(
                                     .size(84.dp)
                                     .shadow(10.dp, RoundedCornerShape(22.dp))
                                     .clip(RoundedCornerShape(22.dp))
-                                    .background(
-                                        Brush.verticalGradient(
-                                            colors = listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1))
-                                        )
-                                    )
+                                    .background(DarkBg)
                                     .padding(3.dp)
                                     .clip(RoundedCornerShape(19.dp))
                                     .background(Color(0xFF6B5196))
@@ -657,11 +649,7 @@ fun MainMenuScreen(
                                      .heightIn(min = 84.dp)
                                      .shadow(10.dp, RoundedCornerShape(22.dp))
                                      .clip(RoundedCornerShape(22.dp))
-                                     .background(
-                                         Brush.verticalGradient(
-                                             colors = listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1))
-                                         )
-                                     )
+                                     .background(DarkBg)
                                      .padding(3.dp)
                                      .clip(RoundedCornerShape(19.dp))
                                      .background(Color(0xFF6B5196))
@@ -687,9 +675,9 @@ fun MainMenuScreen(
                                  ) {
                                      if (isPersian) {
                                          Text(
-                                             text = "تم و رنگ‌بندی بازی",
-                                             color = DarkBg,
-                                             fontSize = 21.sp,
+                                             text = "رنگ‌بندی بازی",
+                                             color = Color.White,
+                                             fontSize = 25.sp,
                                              fontWeight = FontWeight.Black,
                                              fontFamily = nunitoFont
                                          )
@@ -706,8 +694,8 @@ fun MainMenuScreen(
                                          Spacer(modifier = Modifier.width(8.dp))
                                          Text(
                                              text = "Oyun Teması",
-                                             color = DarkBg,
-                                             fontSize = 21.sp,
+                                             color = Color.White,
+                                             fontSize = 24.sp,
                                              fontWeight = FontWeight.Black,
                                              fontFamily = nunitoFont
                                          )
@@ -722,11 +710,7 @@ fun MainMenuScreen(
                                      .heightIn(min = 84.dp)
                                      .shadow(10.dp, RoundedCornerShape(22.dp))
                                      .clip(RoundedCornerShape(22.dp))
-                                     .background(
-                                         Brush.verticalGradient(
-                                             colors = listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1))
-                                         )
-                                     )
+                                     .background(DarkBg)
                                      .padding(3.dp)
                                      .clip(RoundedCornerShape(19.dp))
                                      .background(Color(0xFF6B5196))
@@ -756,7 +740,7 @@ fun MainMenuScreen(
                                      if (isPersian) {
                                          Text(
                                              text = LocaleHelper.storeTitle(isPersian),
-                                             color = DarkBg,
+                                             color = Color.White,
                                              fontSize = 27.sp,
                                              fontWeight = FontWeight.Black,
                                              fontFamily = nunitoFont
@@ -776,7 +760,7 @@ fun MainMenuScreen(
                                          Spacer(modifier = Modifier.width(8.dp))
                                          Text(
                                              text = LocaleHelper.storeTitle(isPersian),
-                                             color = DarkBg,
+                                             color = Color.White,
                                              fontSize = 27.sp,
                                              fontWeight = FontWeight.Black,
                                              fontFamily = nunitoFont
@@ -792,11 +776,7 @@ fun MainMenuScreen(
                                      .heightIn(min = 84.dp)
                                      .shadow(10.dp, RoundedCornerShape(22.dp))
                                      .clip(RoundedCornerShape(22.dp))
-                                     .background(
-                                         Brush.verticalGradient(
-                                             colors = listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1))
-                                         )
-                                     )
+                                     .background(DarkBg)
                                      .padding(3.dp)
                                      .clip(RoundedCornerShape(19.dp))
                                      .background(Color(0xFF6B5196))
@@ -827,7 +807,7 @@ fun MainMenuScreen(
                                      if (isPersian) {
                                          Text(
                                              text = LocaleHelper.privacyPolicy(isPersian),
-                                             color = DarkBg,
+                                             color = Color.White,
                                              fontSize = 24.sp,
                                              fontWeight = FontWeight.Black,
                                              fontFamily = nunitoFont
@@ -847,7 +827,7 @@ fun MainMenuScreen(
                                          Spacer(modifier = Modifier.width(8.dp))
                                          Text(
                                              text = LocaleHelper.privacyPolicy(isPersian),
-                                             color = DarkBg,
+                                             color = Color.White,
                                              fontSize = 24.sp,
                                              fontWeight = FontWeight.Black,
                                              fontFamily = nunitoFont
@@ -899,11 +879,11 @@ fun MainMenuScreen(
                             contentAlignment = Alignment.Center
                         ) {
                             OutlinedText(
-                                text = if (isPersian) "انتخاب تم بازی" else "Tema Seçimi",
+                                text = if (isPersian) "انتخاب رنگ‌بندی بازی" else "Tema Seçimi",
                                 textColor = Color.White,
                                 outlineColor = Color(0xFF190D69),
                                 outlineWidth = 6f,
-                                fontSize = 24.sp,
+                                fontSize = if (isPersian) 21.sp else 24.sp,
                                 fontWeight = FontWeight.Black,
                                 textAlign = TextAlign.Center
                             )
@@ -924,7 +904,11 @@ fun MainMenuScreen(
                         com.turkce.kelimesolitaire.presentation.ui.components.ThemeSelectorSection(
                             isPersian = isPersian,
                             fontFamily = nunitoFont,
-                            modifier = Modifier.padding(horizontal = 16.dp)
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            onThemeSelected = {
+                                showThemeDialog = false
+                                showSettingsMenu = false
+                            }
                         )
                     }
                 }

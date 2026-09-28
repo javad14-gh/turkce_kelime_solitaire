@@ -45,7 +45,8 @@ import com.turkce.kelimesolitaire.presentation.util.GameSettingsManager
 fun ThemeSelectorSection(
     isPersian: Boolean,
     fontFamily: FontFamily,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onThemeSelected: (() -> Unit)? = null
 ) {
     val context = LocalContext.current
     val currentTheme = GameThemeManager.currentTheme
@@ -56,25 +57,13 @@ fun ThemeSelectorSection(
             .clip(RoundedCornerShape(18.dp))
             .background(Color.White.copy(alpha = 0.55f))
             .border(1.2.dp, com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg.copy(alpha = 0.25f), RoundedCornerShape(18.dp))
-            .padding(vertical = 12.dp, horizontal = 10.dp),
+            .padding(vertical = 16.dp, horizontal = 8.dp),
         contentAlignment = Alignment.Center
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Section Title
-            Text(
-                text = if (isPersian) "🎨 تم و رنگ‌بندی بازی" else "🎨 Oyun Teması",
-                color = com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Black,
-                fontFamily = fontFamily,
-                textAlign = TextAlign.Center
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
             // Presets Horizontal Row
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -102,6 +91,7 @@ fun ThemeSelectorSection(
                                     GameSettingsManager.playButtonClickSound(context)
                                     GameSettingsManager.vibrateLight(context)
                                 }
+                                onThemeSelected?.invoke()
                             }
                     ) {
                         // 4-Color Palette Swatch Circle
