@@ -197,7 +197,7 @@ fun GameOverScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                // 3D Restart Level Button (Red)
+                // 3D Restart Level Button (BAA6DD Store structure)
                 Box(
                     modifier = Modifier
                         .shadow(10.dp, RoundedCornerShape(18.dp))
@@ -209,12 +209,16 @@ fun GameOverScreen(
                         )
                         .padding(3.dp)
                         .clip(RoundedCornerShape(15.dp))
-                        .background(Color(0xFF991B1B))
+                        .background(Color(0xFF6B5196))
                         .padding(bottom = 4.dp)
                         .clip(RoundedCornerShape(12.dp))
                         .background(
                             Brush.verticalGradient(
-                                colors = listOf(Color(0xFFAF2626), Color(0xFFDC2626), Color(0xFF991B1B))
+                                colors = listOf(
+                                    Color(0xFFD4C7EE),
+                                    Color(0xFFBAA6DD),
+                                    Color(0xFFA58ED0)
+                                )
                             )
                         )
                         .clickable { onRestartClicked() }
@@ -223,7 +227,7 @@ fun GameOverScreen(
                 ) {
                     Text(
                         text = LocaleHelper.retry(isPersian),
-                        color = Color.White,
+                        color = DarkBg,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Black,
                         fontFamily = nunitoFont,
@@ -231,34 +235,38 @@ fun GameOverScreen(
                     )
                 }
 
-                // 3D Main Menu Button (Slate)
+                // 3D Main Menu Exit Button (RED Store structure)
                 Box(
                     modifier = Modifier
-                        .shadow(8.dp, RoundedCornerShape(18.dp))
+                        .shadow(10.dp, RoundedCornerShape(18.dp))
                         .clip(RoundedCornerShape(18.dp))
                         .background(
                             Brush.verticalGradient(
-                                colors = listOf(Color(0xFF64748B), Color(0xFF334155))
+                                colors = listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1))
                             )
                         )
-                        .padding(2.dp)
-                        .clip(RoundedCornerShape(16.dp))
-                        .background(Color(0xFF0F172A))
-                        .padding(bottom = 3.dp)
-                        .clip(RoundedCornerShape(14.dp))
+                        .padding(3.dp)
+                        .clip(RoundedCornerShape(15.dp))
+                        .background(Color(0xFF7F1D1D))
+                        .padding(bottom = 4.dp)
+                        .clip(RoundedCornerShape(12.dp))
                         .background(
                             Brush.verticalGradient(
-                                colors = listOf(Color(0xFF334155), Color(0xFF1E293B))
+                                colors = listOf(
+                                    Color(0xFFF87171),
+                                    Color(0xFFDC2626),
+                                    Color(0xFFB91C1C)
+                                )
                             )
                         )
                         .clickable { onMainMenuClicked() }
-                        .padding(horizontal = 26.dp, vertical = 10.dp),
+                        .padding(horizontal = 26.dp, vertical = 12.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = LocaleHelper.mainMenu(isPersian),
                         color = Color.White,
-                        fontSize = 17.sp,
+                        fontSize = 18.sp,
                         fontWeight = FontWeight.Black,
                         fontFamily = nunitoFont,
                         letterSpacing = 1.sp

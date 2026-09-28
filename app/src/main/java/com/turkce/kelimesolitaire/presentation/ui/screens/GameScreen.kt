@@ -1313,27 +1313,40 @@ fun GameScreen(
 
                                 Spacer(modifier = Modifier.height(10.dp))
 
-                                // 2. Give up Button (Subdued Slate 3D)
+                                // 2. Give up Button (3D Store structure, RED Exit/GiveUp Button)
                                 Box(
                                     modifier = Modifier
                                         .fillMaxWidth(0.85f)
                                         .heightIn(min = 54.dp)
-                                        .shadow(6.dp, RoundedCornerShape(16.dp))
+                                        .shadow(10.dp, RoundedCornerShape(22.dp))
+                                        .clip(RoundedCornerShape(22.dp))
+                                        .background(
+                                            Brush.verticalGradient(
+                                                colors = listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1))
+                                            )
+                                        )
+                                        .padding(3.dp)
+                                        .clip(RoundedCornerShape(19.dp))
+                                        .background(Color(0xFF7F1D1D))
+                                        .padding(bottom = 4.dp)
                                         .clip(RoundedCornerShape(16.dp))
                                         .background(
                                             Brush.verticalGradient(
-                                                listOf(Color(0xFF64748B), Color(0xFF475569), Color(0xFF334155))
+                                                colors = listOf(
+                                                    Color(0xFFF87171),
+                                                    Color(0xFFDC2626),
+                                                    Color(0xFFB91C1C)
+                                                )
                                             )
                                         )
-                                        .border(2.dp, DarkBg, RoundedCornerShape(16.dp))
                                         .clickable { onAcceptDefeat() }
                                         .padding(horizontal = 8.dp, vertical = 6.dp),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
                                         text = LocaleHelper.giveUp(isPersian),
-                                        color = Color(0xFFE2E8F0),
-                                        fontSize = 16.5.sp,
+                                        color = Color.White,
+                                        fontSize = 18.sp,
                                         fontWeight = FontWeight.Black,
                                         fontFamily = nunitoFont
                                     )
@@ -1437,15 +1450,32 @@ fun GameScreen(
                             verticalArrangement = Arrangement.spacedBy(12.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            // 1. Primary Action: Stay / Continue Playing (BAA6DD, border 3dp DarkBg, 57dp icon, 65% width)
+                            // 1. Primary Action: Stay / Continue Playing (3D Store structure, BAA6DD)
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth(0.65f)
                                     .heightIn(min = 84.dp)
-                                    .shadow(6.dp, RoundedCornerShape(16.dp))
+                                    .shadow(10.dp, RoundedCornerShape(22.dp))
+                                    .clip(RoundedCornerShape(22.dp))
+                                    .background(
+                                        Brush.verticalGradient(
+                                            colors = listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1))
+                                        )
+                                    )
+                                    .padding(3.dp)
+                                    .clip(RoundedCornerShape(19.dp))
+                                    .background(Color(0xFF6B5196))
+                                    .padding(bottom = 4.dp)
                                     .clip(RoundedCornerShape(16.dp))
-                                    .background(Color(0xFFBAA6DD))
-                                    .border(3.dp, DarkBg, RoundedCornerShape(16.dp))
+                                    .background(
+                                        Brush.verticalGradient(
+                                            colors = listOf(
+                                                Color(0xFFD4C7EE),
+                                                Color(0xFFBAA6DD),
+                                                Color(0xFFA58ED0)
+                                            )
+                                        )
+                                    )
                                     .clickable {
                                         showExitConfirmDialog = false
                                         com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playButtonClickSound(context)
@@ -1490,15 +1520,32 @@ fun GameScreen(
                                 }
                             }
 
-                            // 2. Secondary Action: Leave to Menu (BAA6DD, border 3dp DarkBg, 57dp icon, 65% width)
+                            // 2. Secondary Action: Leave to Menu (3D Store structure, RED Exit Button)
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth(0.65f)
                                     .heightIn(min = 84.dp)
-                                    .shadow(6.dp, RoundedCornerShape(16.dp))
+                                    .shadow(10.dp, RoundedCornerShape(22.dp))
+                                    .clip(RoundedCornerShape(22.dp))
+                                    .background(
+                                        Brush.verticalGradient(
+                                            colors = listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1))
+                                        )
+                                    )
+                                    .padding(3.dp)
+                                    .clip(RoundedCornerShape(19.dp))
+                                    .background(Color(0xFF7F1D1D))
+                                    .padding(bottom = 4.dp)
                                     .clip(RoundedCornerShape(16.dp))
-                                    .background(Color(0xFFBAA6DD))
-                                    .border(3.dp, DarkBg, RoundedCornerShape(16.dp))
+                                    .background(
+                                        Brush.verticalGradient(
+                                            colors = listOf(
+                                                Color(0xFFF87171),
+                                                Color(0xFFDC2626),
+                                                Color(0xFFB91C1C)
+                                            )
+                                        )
+                                    )
                                     .clickable {
                                         showExitConfirmDialog = false
                                         onBackToMenu()
@@ -1514,7 +1561,7 @@ fun GameScreen(
                                     if (isPersian) {
                                         Text(
                                             text = LocaleHelper.exitLeaveBtn(isPersian),
-                                            color = DarkBg,
+                                            color = Color.White,
                                             fontSize = 24.sp,
                                             fontWeight = FontWeight.Black,
                                             fontFamily = nunitoFont
@@ -1534,7 +1581,7 @@ fun GameScreen(
                                         Spacer(modifier = Modifier.width(8.dp))
                                         Text(
                                             text = LocaleHelper.exitLeaveBtn(isPersian),
-                                            color = DarkBg,
+                                            color = Color.White,
                                             fontSize = 24.sp,
                                             fontWeight = FontWeight.Black,
                                             fontFamily = nunitoFont
@@ -1674,10 +1721,27 @@ fun GameScreen(
                                 modifier = Modifier
                                     .fillMaxWidth(0.65f)
                                     .heightIn(min = 84.dp)
-                                    .shadow(6.dp, RoundedCornerShape(16.dp))
+                                    .shadow(10.dp, RoundedCornerShape(22.dp))
+                                    .clip(RoundedCornerShape(22.dp))
+                                    .background(
+                                        Brush.verticalGradient(
+                                            colors = listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1))
+                                        )
+                                    )
+                                    .padding(3.dp)
+                                    .clip(RoundedCornerShape(19.dp))
+                                    .background(Color(0xFF6B5196))
+                                    .padding(bottom = 4.dp)
                                     .clip(RoundedCornerShape(16.dp))
-                                    .background(Color(0xFFBAA6DD))
-                                    .border(3.dp, DarkBg, RoundedCornerShape(16.dp))
+                                    .background(
+                                        Brush.verticalGradient(
+                                            colors = listOf(
+                                                Color(0xFFD4C7EE),
+                                                Color(0xFFBAA6DD),
+                                                Color(0xFFA58ED0)
+                                            )
+                                        )
+                                    )
                                     .clickable { showThemeDialog = true }
                                     .padding(2.dp),
                                 contentAlignment = if (isPersian) Alignment.CenterEnd else Alignment.Center
@@ -1722,10 +1786,27 @@ fun GameScreen(
                                 modifier = Modifier
                                     .fillMaxWidth(0.65f)
                                     .heightIn(min = 84.dp)
-                                    .shadow(6.dp, RoundedCornerShape(16.dp))
+                                    .shadow(10.dp, RoundedCornerShape(22.dp))
+                                    .clip(RoundedCornerShape(22.dp))
+                                    .background(
+                                        Brush.verticalGradient(
+                                            colors = listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1))
+                                        )
+                                    )
+                                    .padding(3.dp)
+                                    .clip(RoundedCornerShape(19.dp))
+                                    .background(Color(0xFF6B5196))
+                                    .padding(bottom = 4.dp)
                                     .clip(RoundedCornerShape(16.dp))
-                                    .background(Color(0xFFBAA6DD))
-                                    .border(3.dp, DarkBg, RoundedCornerShape(16.dp))
+                                    .background(
+                                        Brush.verticalGradient(
+                                            colors = listOf(
+                                                Color(0xFFD4C7EE),
+                                                Color(0xFFBAA6DD),
+                                                Color(0xFFA58ED0)
+                                            )
+                                        )
+                                    )
                                     .clickable {
                                         showHamburgerMenu = false
                                         onOpenStore()
@@ -1775,10 +1856,27 @@ fun GameScreen(
                                 modifier = Modifier
                                     .fillMaxWidth(0.65f)
                                     .heightIn(min = 84.dp)
-                                    .shadow(6.dp, RoundedCornerShape(16.dp))
+                                    .shadow(10.dp, RoundedCornerShape(22.dp))
+                                    .clip(RoundedCornerShape(22.dp))
+                                    .background(
+                                        Brush.verticalGradient(
+                                            colors = listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1))
+                                        )
+                                    )
+                                    .padding(3.dp)
+                                    .clip(RoundedCornerShape(19.dp))
+                                    .background(Color(0xFF6B5196))
+                                    .padding(bottom = 4.dp)
                                     .clip(RoundedCornerShape(16.dp))
-                                    .background(Color(0xFFBAA6DD))
-                                    .border(3.dp, DarkBg, RoundedCornerShape(16.dp))
+                                    .background(
+                                        Brush.verticalGradient(
+                                            colors = listOf(
+                                                Color(0xFFD4C7EE),
+                                                Color(0xFFBAA6DD),
+                                                Color(0xFFA58ED0)
+                                            )
+                                        )
+                                    )
                                     .clickable {
                                         showHamburgerMenu = false
                                         onRestartLevel()
@@ -1823,15 +1921,32 @@ fun GameScreen(
                                 }
                             }
 
-                            // 4. Exit to Main Menu (BAA6DD, border 3dp DarkBg, 57dp icon, 65% width)
+                            // 4. Exit to Main Menu (3D Store structure, RED Exit Button)
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth(0.65f)
                                     .heightIn(min = 84.dp)
-                                    .shadow(6.dp, RoundedCornerShape(16.dp))
+                                    .shadow(10.dp, RoundedCornerShape(22.dp))
+                                    .clip(RoundedCornerShape(22.dp))
+                                    .background(
+                                        Brush.verticalGradient(
+                                            colors = listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1))
+                                        )
+                                    )
+                                    .padding(3.dp)
+                                    .clip(RoundedCornerShape(19.dp))
+                                    .background(Color(0xFF7F1D1D))
+                                    .padding(bottom = 4.dp)
                                     .clip(RoundedCornerShape(16.dp))
-                                    .background(Color(0xFFBAA6DD))
-                                    .border(3.dp, DarkBg, RoundedCornerShape(16.dp))
+                                    .background(
+                                        Brush.verticalGradient(
+                                            colors = listOf(
+                                                Color(0xFFF87171),
+                                                Color(0xFFDC2626),
+                                                Color(0xFFB91C1C)
+                                            )
+                                        )
+                                    )
                                     .clickable {
                                         showHamburgerMenu = false
                                         onBackToMenu()
@@ -1847,7 +1962,7 @@ fun GameScreen(
                                     if (isPersian) {
                                         Text(
                                             text = if (isPersian) "منوی اصلی" else "Ana Menü",
-                                            color = DarkBg,
+                                            color = Color.White,
                                             fontSize = 25.sp,
                                             fontWeight = FontWeight.Black,
                                             fontFamily = nunitoFont
@@ -1867,7 +1982,7 @@ fun GameScreen(
                                         Spacer(modifier = Modifier.width(8.dp))
                                         Text(
                                             text = if (isPersian) "منوی اصلی" else "Ana Menü",
-                                            color = DarkBg,
+                                            color = Color.White,
                                             fontSize = 25.sp,
                                             fontWeight = FontWeight.Black,
                                             fontFamily = nunitoFont

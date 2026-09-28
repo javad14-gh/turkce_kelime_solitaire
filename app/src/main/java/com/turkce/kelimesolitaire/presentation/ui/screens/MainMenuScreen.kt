@@ -609,10 +609,27 @@ fun MainMenuScreen(
                                  modifier = Modifier
                                      .fillMaxWidth(0.65f)
                                      .heightIn(min = 84.dp)
-                                     .shadow(6.dp, RoundedCornerShape(16.dp))
+                                     .shadow(10.dp, RoundedCornerShape(22.dp))
+                                     .clip(RoundedCornerShape(22.dp))
+                                     .background(
+                                         Brush.verticalGradient(
+                                             colors = listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1))
+                                         )
+                                     )
+                                     .padding(3.dp)
+                                     .clip(RoundedCornerShape(19.dp))
+                                     .background(Color(0xFF6B5196))
+                                     .padding(bottom = 4.dp)
                                      .clip(RoundedCornerShape(16.dp))
-                                     .background(Color(0xFFBAA6DD))
-                                     .border(3.dp, DarkBg, RoundedCornerShape(16.dp))
+                                     .background(
+                                         Brush.verticalGradient(
+                                             colors = listOf(
+                                                 Color(0xFFD4C7EE),
+                                                 Color(0xFFBAA6DD),
+                                                 Color(0xFFA58ED0)
+                                             )
+                                         )
+                                     )
                                      .clickable { showThemeDialog = true }
                                      .padding(2.dp),
                                  contentAlignment = if (isPersian) Alignment.CenterEnd else Alignment.Center
@@ -657,10 +674,27 @@ fun MainMenuScreen(
                                  modifier = Modifier
                                      .fillMaxWidth(0.65f)
                                      .heightIn(min = 84.dp)
-                                     .shadow(6.dp, RoundedCornerShape(16.dp))
+                                     .shadow(10.dp, RoundedCornerShape(22.dp))
+                                     .clip(RoundedCornerShape(22.dp))
+                                     .background(
+                                         Brush.verticalGradient(
+                                             colors = listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1))
+                                         )
+                                     )
+                                     .padding(3.dp)
+                                     .clip(RoundedCornerShape(19.dp))
+                                     .background(Color(0xFF6B5196))
+                                     .padding(bottom = 4.dp)
                                      .clip(RoundedCornerShape(16.dp))
-                                     .background(Color(0xFFBAA6DD))
-                                     .border(3.dp, DarkBg, RoundedCornerShape(16.dp))
+                                     .background(
+                                         Brush.verticalGradient(
+                                             colors = listOf(
+                                                 Color(0xFFD4C7EE),
+                                                 Color(0xFFBAA6DD),
+                                                 Color(0xFFA58ED0)
+                                             )
+                                         )
+                                     )
                                      .clickable {
                                          showSettingsMenu = false
                                          onOpenStore()
@@ -710,10 +744,27 @@ fun MainMenuScreen(
                                  modifier = Modifier
                                      .fillMaxWidth(0.65f)
                                      .heightIn(min = 84.dp)
-                                     .shadow(6.dp, RoundedCornerShape(16.dp))
+                                     .shadow(10.dp, RoundedCornerShape(22.dp))
+                                     .clip(RoundedCornerShape(22.dp))
+                                     .background(
+                                         Brush.verticalGradient(
+                                             colors = listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1))
+                                         )
+                                     )
+                                     .padding(3.dp)
+                                     .clip(RoundedCornerShape(19.dp))
+                                     .background(Color(0xFF6B5196))
+                                     .padding(bottom = 4.dp)
                                      .clip(RoundedCornerShape(16.dp))
-                                     .background(Color(0xFFBAA6DD))
-                                     .border(3.dp, DarkBg, RoundedCornerShape(16.dp))
+                                     .background(
+                                         Brush.verticalGradient(
+                                             colors = listOf(
+                                                 Color(0xFFD4C7EE),
+                                                 Color(0xFFBAA6DD),
+                                                 Color(0xFFA58ED0)
+                                             )
+                                         )
+                                     )
                                      .clickable {
                                          showSettingsMenu = false
                                          val intent = Intent(Intent.ACTION_VIEW, Uri.parse(context.getString(com.turkce.kelimesolitaire.R.string.privacy_policy_url)))

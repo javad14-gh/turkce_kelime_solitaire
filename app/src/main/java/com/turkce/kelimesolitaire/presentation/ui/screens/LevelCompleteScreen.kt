@@ -378,18 +378,27 @@ fun LevelCompleteScreen(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // 2. 3D Main Menu Button (Matching Red 3D button in Settings & Exit Dialog)
+                // 2. 3D Main Menu Button (3D Store structure, RED Exit Button)
                 Box(
                     modifier = Modifier
                         .fillMaxWidth(0.88f)
-                        .shadow(8.dp, RoundedCornerShape(16.dp))
+                        .shadow(10.dp, RoundedCornerShape(22.dp))
+                        .clip(RoundedCornerShape(22.dp))
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1))
+                            )
+                        )
+                        .padding(3.dp)
+                        .clip(RoundedCornerShape(19.dp))
+                        .background(Color(0xFF7F1D1D))
+                        .padding(bottom = 4.dp)
                         .clip(RoundedCornerShape(16.dp))
                         .background(
                             Brush.verticalGradient(
-                                listOf(Color(0xFFF87171), Color(0xFFDC2626), Color(0xFF991B1B))
+                                listOf(Color(0xFFF87171), Color(0xFFDC2626), Color(0xFFB91C1C))
                             )
                         )
-                        .border(1.5.dp, Color(0xFFFDA4AF).copy(alpha = 0.7f), RoundedCornerShape(16.dp))
                         .clickable(enabled = !isActionTriggered) {
                             if (!isActionTriggered) {
                                 isActionTriggered = true
