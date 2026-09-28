@@ -1369,7 +1369,7 @@ fun GameScreen(
                 Box(
                     modifier = Modifier
                         .width(320.dp)
-                        .shadow(24.dp, RoundedCornerShape(26.dp))
+                        .shadow(20.dp, RoundedCornerShape(26.dp))
                         .clip(RoundedCornerShape(26.dp))
                         .background(PopupBg)
                         .border(2.5.dp, PopupBorder, RoundedCornerShape(26.dp))
@@ -1760,7 +1760,7 @@ fun GameScreen(
                                              text = "رنگ‌بندی بازی",
                                              textColor = Color.White,
                                              outlineColor = DarkBg,
-                                             outlineWidth = 5f,
+                                             outlineWidth = 7.5f,
                                              fontSize = 25.sp,
                                              fontWeight = FontWeight.Black
                                          )
@@ -1779,7 +1779,7 @@ fun GameScreen(
                                              text = "Oyun Teması",
                                              textColor = Color.White,
                                              outlineColor = DarkBg,
-                                             outlineWidth = 5f,
+                                             outlineWidth = 7.5f,
                                              fontSize = 24.sp,
                                              fontWeight = FontWeight.Black
                                          )
@@ -1823,7 +1823,7 @@ fun GameScreen(
                                              text = LocaleHelper.storeTitle(isPersian),
                                              textColor = Color.White,
                                              outlineColor = DarkBg,
-                                             outlineWidth = 5f,
+                                             outlineWidth = 7.5f,
                                              fontSize = 27.sp,
                                              fontWeight = FontWeight.Black
                                          )
@@ -1844,7 +1844,7 @@ fun GameScreen(
                                              text = LocaleHelper.storeTitle(isPersian),
                                              textColor = Color.White,
                                              outlineColor = DarkBg,
-                                             outlineWidth = 5f,
+                                             outlineWidth = 7.5f,
                                              fontSize = 27.sp,
                                              fontWeight = FontWeight.Black
                                          )
@@ -1888,7 +1888,7 @@ fun GameScreen(
                                              text = if (isPersian) "شروع مجدد" else "Tekrar",
                                              textColor = Color.White,
                                              outlineColor = DarkBg,
-                                             outlineWidth = 5f,
+                                             outlineWidth = 7.5f,
                                              fontSize = 25.sp,
                                              fontWeight = FontWeight.Black
                                          )
@@ -1909,7 +1909,7 @@ fun GameScreen(
                                              text = if (isPersian) "شروع مجدد" else "Tekrar",
                                              textColor = Color.White,
                                              outlineColor = DarkBg,
-                                             outlineWidth = 5f,
+                                             outlineWidth = 7.5f,
                                              fontSize = 25.sp,
                                              fontWeight = FontWeight.Black
                                          )
@@ -1953,7 +1953,7 @@ fun GameScreen(
                                              text = if (isPersian) "منوی اصلی" else "Ana Menü",
                                              textColor = Color.White,
                                              outlineColor = DarkBg,
-                                             outlineWidth = 5f,
+                                             outlineWidth = 7.5f,
                                              fontSize = 25.sp,
                                              fontWeight = FontWeight.Black
                                          )
@@ -1974,7 +1974,7 @@ fun GameScreen(
                                              text = if (isPersian) "منوی اصلی" else "Ana Menü",
                                              textColor = Color.White,
                                              outlineColor = DarkBg,
-                                             outlineWidth = 5f,
+                                             outlineWidth = 7.5f,
                                              fontSize = 25.sp,
                                              fontWeight = FontWeight.Black
                                          )
@@ -2003,7 +2003,7 @@ fun GameScreen(
                 Box(
                     modifier = Modifier
                         .width(320.dp)
-                        .shadow(24.dp, RoundedCornerShape(26.dp))
+                        .shadow(20.dp, RoundedCornerShape(26.dp))
                         .clip(RoundedCornerShape(26.dp))
                         .background(PopupBg)
                         .border(2.5.dp, PopupBorder, RoundedCornerShape(26.dp))
@@ -2015,7 +2015,7 @@ fun GameScreen(
                             .padding(bottom = 20.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        // Header Bar
+                        // Top Arched Header Bar with Close (X) Button
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
