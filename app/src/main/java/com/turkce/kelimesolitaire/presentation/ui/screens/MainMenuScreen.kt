@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -542,61 +543,106 @@ fun MainMenuScreen(
                             )
                         }
 
-                        Spacer(modifier = Modifier.height(18.dp))
+                        Spacer(modifier = Modifier.height(14.dp))
 
-                        // Sound & Haptic Box (40% darker than PopupBg, 65% width, border DarkBg)
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth(0.65f)
-                                .clip(RoundedCornerShape(18.dp))
-                                .background(SoundVibrationBoxBg)
-                                .border(2.dp, DarkBg, RoundedCornerShape(18.dp))
-                                .padding(vertical = 3.dp),
-                            contentAlignment = Alignment.Center
+                        // Sound & Haptic Row (Two Square 84dp x 84dp 3D Buttons in BAA6DD style, space-between aligns with 65% width)
+                        Row(
+                            modifier = Modifier.fillMaxWidth(0.65f),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(30.dp),
-                                verticalAlignment = Alignment.CenterVertically
+                            // 1. Sound Speaker Toggle (Square 84dp x 84dp 3D Button)
+                            Box(
+                                modifier = Modifier
+                                    .size(84.dp)
+                                    .shadow(10.dp, RoundedCornerShape(22.dp))
+                                    .clip(RoundedCornerShape(22.dp))
+                                    .background(
+                                        Brush.verticalGradient(
+                                            colors = listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1))
+                                        )
+                                    )
+                                    .padding(3.dp)
+                                    .clip(RoundedCornerShape(19.dp))
+                                    .background(Color(0xFF6B5196))
+                                    .padding(bottom = 4.dp)
+                                    .clip(RoundedCornerShape(16.dp))
+                                    .background(
+                                        Brush.verticalGradient(
+                                            colors = listOf(
+                                                Color(0xFFD4C7EE),
+                                                Color(0xFFBAA6DD),
+                                                Color(0xFFA58ED0)
+                                            )
+                                        )
+                                    )
+                                    .clickable {
+                                        val next = !isSoundEnabled
+                                        isSoundEnabled = next
+                                        com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.setSoundEnabled(context, next)
+                                        if (next) {
+                                            com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playButtonClickSound(context)
+                                        }
+                                    }
+                                    .padding(2.dp),
+                                contentAlignment = Alignment.Center
                             ) {
-                                // 1. Sound Speaker Toggle
                                 Image(
                                     painter = painterResource(id = R.drawable.sound),
                                     contentDescription = "Sound",
-                                    modifier = Modifier
-                                        .size(60.dp)
-                                        .clickable {
-                                             val next = !isSoundEnabled
-                                             isSoundEnabled = next
-                                             com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.setSoundEnabled(context, next)
-                                             if (next) {
-                                                 com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playButtonClickSound(context)
-                                             }
-                                         },
-                                     colorFilter = if (!isSoundEnabled) ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) }) else null,
-                                     alpha = if (isSoundEnabled) 1f else 0.4f
-                                 )
+                                    modifier = Modifier.size(60.dp),
+                                    colorFilter = if (!isSoundEnabled) ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) }) else null,
+                                    alpha = if (isSoundEnabled) 1f else 0.4f
+                                )
+                            }
 
-                                 // 2. Haptic Vibration Toggle
-                                 Image(
-                                     painter = painterResource(id = R.drawable.vibrate),
-                                     contentDescription = "Vibration",
-                                     modifier = Modifier
-                                         .size(60.dp)
-                                         .clickable {
-                                             val next = !isHapticEnabled
-                                             isHapticEnabled = next
-                                             com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.setHapticEnabled(context, next)
-                                             if (next) {
-                                                 com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.vibrateLight(context)
-                                             }
-                                         },
-                                     colorFilter = if (!isHapticEnabled) ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) }) else null,
-                                     alpha = if (isHapticEnabled) 1f else 0.4f
-                                 )
-                             }
-                         }
+                            // 2. Haptic Vibration Toggle (Square 84dp x 84dp 3D Button)
+                            Box(
+                                modifier = Modifier
+                                    .size(84.dp)
+                                    .shadow(10.dp, RoundedCornerShape(22.dp))
+                                    .clip(RoundedCornerShape(22.dp))
+                                    .background(
+                                        Brush.verticalGradient(
+                                            colors = listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1))
+                                        )
+                                    )
+                                    .padding(3.dp)
+                                    .clip(RoundedCornerShape(19.dp))
+                                    .background(Color(0xFF6B5196))
+                                    .padding(bottom = 4.dp)
+                                    .clip(RoundedCornerShape(16.dp))
+                                    .background(
+                                        Brush.verticalGradient(
+                                            colors = listOf(
+                                                Color(0xFFD4C7EE),
+                                                Color(0xFFBAA6DD),
+                                                Color(0xFFA58ED0)
+                                            )
+                                        )
+                                    )
+                                    .clickable {
+                                        val next = !isHapticEnabled
+                                        isHapticEnabled = next
+                                        com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.setHapticEnabled(context, next)
+                                        if (next) {
+                                            com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.vibrateLight(context)
+                                        }
+                                    }
+                                    .padding(2.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.vibrate),
+                                    contentDescription = "Vibration",
+                                    modifier = Modifier.size(60.dp),
+                                    colorFilter = if (!isHapticEnabled) ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) }) else null,
+                                    alpha = if (isHapticEnabled) 1f else 0.4f
+                                )
+                            }
+                        }
 
-                         Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(12.dp))
 
                          // Action Buttons Column (All buttons 65% width of popup, +30% taller height, border DarkBg, 2dp internal padding, 60dp icons)
                          Column(
