@@ -384,12 +384,9 @@ fun LevelCompleteScreen(
                         .fillMaxWidth(0.88f)
                         .shadow(10.dp, RoundedCornerShape(22.dp))
                         .clip(RoundedCornerShape(22.dp))
-                        .background(DarkBg)
-                        .padding(3.dp)
-                        .clip(RoundedCornerShape(19.dp))
                         .background(Color(0xFF7F1D1D))
                         .padding(bottom = 4.dp)
-                        .clip(RoundedCornerShape(16.dp))
+                        .clip(RoundedCornerShape(19.dp))
                         .background(
                             Brush.verticalGradient(
                                 listOf(Color(0xFFF87171), Color(0xFFDC2626), Color(0xFFB91C1C))

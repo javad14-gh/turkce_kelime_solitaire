@@ -202,12 +202,9 @@ fun GameOverScreen(
                     modifier = Modifier
                         .shadow(10.dp, RoundedCornerShape(18.dp))
                         .clip(RoundedCornerShape(18.dp))
-                        .background(DarkBg)
-                        .padding(3.dp)
-                        .clip(RoundedCornerShape(15.dp))
                         .background(Color(0xFF6B5196))
                         .padding(bottom = 4.dp)
-                        .clip(RoundedCornerShape(12.dp))
+                        .clip(RoundedCornerShape(15.dp))
                         .background(
                             Brush.verticalGradient(
                                 colors = listOf(
@@ -236,12 +233,9 @@ fun GameOverScreen(
                     modifier = Modifier
                         .shadow(10.dp, RoundedCornerShape(18.dp))
                         .clip(RoundedCornerShape(18.dp))
-                        .background(DarkBg)
-                        .padding(3.dp)
-                        .clip(RoundedCornerShape(15.dp))
                         .background(Color(0xFF7F1D1D))
                         .padding(bottom = 4.dp)
-                        .clip(RoundedCornerShape(12.dp))
+                        .clip(RoundedCornerShape(15.dp))
                         .background(
                             Brush.verticalGradient(
                                 colors = listOf(

@@ -390,18 +390,11 @@ fun MainMenuScreen(
                 // 3D Store Button on Main Screen (with LARGE buy.png icon extending to button edges)
                 Box(
                     modifier = Modifier
-                        .shadow(12.dp, RoundedCornerShape(22.dp))
-                        .clip(RoundedCornerShape(22.dp))
-                        .background(
-                            Brush.verticalGradient(
-                                colors = listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1))
-                            )
-                        )
-                        .padding(3.dp)
-                        .clip(RoundedCornerShape(19.dp))
+                        .shadow(12.dp, RoundedCornerShape(20.dp))
+                        .clip(RoundedCornerShape(20.dp))
                         .background(Color(0xFF78350F))
                         .padding(bottom = 4.dp)
-                        .clip(RoundedCornerShape(16.dp))
+                        .clip(RoundedCornerShape(17.dp))
                         .background(
                             Brush.verticalGradient(
                                 colors = listOf(
@@ -555,14 +548,11 @@ fun MainMenuScreen(
                             Box(
                                 modifier = Modifier
                                     .size(84.dp)
-                                    .shadow(10.dp, RoundedCornerShape(22.dp))
-                                    .clip(RoundedCornerShape(22.dp))
-                                    .background(DarkBg)
-                                    .padding(3.dp)
-                                    .clip(RoundedCornerShape(19.dp))
+                                    .shadow(10.dp, RoundedCornerShape(20.dp))
+                                    .clip(RoundedCornerShape(20.dp))
                                     .background(Color(0xFF6B5196))
                                     .padding(bottom = 4.dp)
-                                    .clip(RoundedCornerShape(16.dp))
+                                    .clip(RoundedCornerShape(17.dp))
                                     .background(
                                         Brush.verticalGradient(
                                             colors = listOf(
@@ -596,14 +586,11 @@ fun MainMenuScreen(
                             Box(
                                 modifier = Modifier
                                     .size(84.dp)
-                                    .shadow(10.dp, RoundedCornerShape(22.dp))
-                                    .clip(RoundedCornerShape(22.dp))
-                                    .background(DarkBg)
-                                    .padding(3.dp)
-                                    .clip(RoundedCornerShape(19.dp))
+                                    .shadow(10.dp, RoundedCornerShape(20.dp))
+                                    .clip(RoundedCornerShape(20.dp))
                                     .background(Color(0xFF6B5196))
                                     .padding(bottom = 4.dp)
-                                    .clip(RoundedCornerShape(16.dp))
+                                    .clip(RoundedCornerShape(17.dp))
                                     .background(
                                         Brush.verticalGradient(
                                             colors = listOf(
@@ -647,14 +634,11 @@ fun MainMenuScreen(
                                  modifier = Modifier
                                      .fillMaxWidth(0.65f)
                                      .heightIn(min = 84.dp)
-                                     .shadow(10.dp, RoundedCornerShape(22.dp))
-                                     .clip(RoundedCornerShape(22.dp))
-                                     .background(DarkBg)
-                                     .padding(3.dp)
-                                     .clip(RoundedCornerShape(19.dp))
+                                     .shadow(10.dp, RoundedCornerShape(20.dp))
+                                     .clip(RoundedCornerShape(20.dp))
                                      .background(Color(0xFF6B5196))
                                      .padding(bottom = 4.dp)
-                                     .clip(RoundedCornerShape(16.dp))
+                                     .clip(RoundedCornerShape(17.dp))
                                      .background(
                                          Brush.verticalGradient(
                                              colors = listOf(
@@ -674,12 +658,13 @@ fun MainMenuScreen(
                                      horizontalArrangement = if (isPersian) Arrangement.End else Arrangement.Center
                                  ) {
                                      if (isPersian) {
-                                         Text(
+                                         OutlinedText(
                                              text = "رنگ‌بندی بازی",
-                                             color = Color.White,
+                                             textColor = Color.White,
+                                             outlineColor = DarkBg,
+                                             outlineWidth = 5f,
                                              fontSize = 25.sp,
-                                             fontWeight = FontWeight.Black,
-                                             fontFamily = nunitoFont
+                                             fontWeight = FontWeight.Black
                                          )
                                          Spacer(modifier = Modifier.width(8.dp))
                                          Text(
@@ -692,30 +677,28 @@ fun MainMenuScreen(
                                              fontSize = 45.sp
                                          )
                                          Spacer(modifier = Modifier.width(8.dp))
-                                         Text(
+                                         OutlinedText(
                                              text = "Oyun Teması",
-                                             color = Color.White,
+                                             textColor = Color.White,
+                                             outlineColor = DarkBg,
+                                             outlineWidth = 5f,
                                              fontSize = 24.sp,
-                                             fontWeight = FontWeight.Black,
-                                             fontFamily = nunitoFont
+                                             fontWeight = FontWeight.Black
                                          )
                                      }
                                  }
                              }
 
-                             // 2. Open Store Pill (BAA6DD, border 3dp DarkBg, 57dp icon, 65% width)
+                             // 2. Open Store Pill (BAA6DD, 57dp icon, 65% width)
                              Box(
                                  modifier = Modifier
                                      .fillMaxWidth(0.65f)
                                      .heightIn(min = 84.dp)
-                                     .shadow(10.dp, RoundedCornerShape(22.dp))
-                                     .clip(RoundedCornerShape(22.dp))
-                                     .background(DarkBg)
-                                     .padding(3.dp)
-                                     .clip(RoundedCornerShape(19.dp))
+                                     .shadow(10.dp, RoundedCornerShape(20.dp))
+                                     .clip(RoundedCornerShape(20.dp))
                                      .background(Color(0xFF6B5196))
                                      .padding(bottom = 4.dp)
-                                     .clip(RoundedCornerShape(16.dp))
+                                     .clip(RoundedCornerShape(17.dp))
                                      .background(
                                          Brush.verticalGradient(
                                              colors = listOf(
@@ -738,12 +721,13 @@ fun MainMenuScreen(
                                      horizontalArrangement = if (isPersian) Arrangement.End else Arrangement.Center
                                  ) {
                                      if (isPersian) {
-                                         Text(
+                                         OutlinedText(
                                              text = LocaleHelper.storeTitle(isPersian),
-                                             color = Color.White,
+                                             textColor = Color.White,
+                                             outlineColor = DarkBg,
+                                             outlineWidth = 5f,
                                              fontSize = 27.sp,
-                                             fontWeight = FontWeight.Black,
-                                             fontFamily = nunitoFont
+                                             fontWeight = FontWeight.Black
                                          )
                                          Spacer(modifier = Modifier.width(8.dp))
                                          Image(
@@ -758,30 +742,28 @@ fun MainMenuScreen(
                                              modifier = Modifier.size(57.dp)
                                          )
                                          Spacer(modifier = Modifier.width(8.dp))
-                                         Text(
+                                         OutlinedText(
                                              text = LocaleHelper.storeTitle(isPersian),
-                                             color = Color.White,
+                                             textColor = Color.White,
+                                             outlineColor = DarkBg,
+                                             outlineWidth = 5f,
                                              fontSize = 27.sp,
-                                             fontWeight = FontWeight.Black,
-                                             fontFamily = nunitoFont
+                                             fontWeight = FontWeight.Black
                                          )
                                      }
                                  }
                              }
 
-                             // 3. Privacy Policy Pill (BAA6DD, border 3dp DarkBg, 57dp icon, 65% width)
+                             // 3. Privacy Policy Pill (BAA6DD, 57dp icon, 65% width)
                              Box(
                                  modifier = Modifier
                                      .fillMaxWidth(0.65f)
                                      .heightIn(min = 84.dp)
-                                     .shadow(10.dp, RoundedCornerShape(22.dp))
-                                     .clip(RoundedCornerShape(22.dp))
-                                     .background(DarkBg)
-                                     .padding(3.dp)
-                                     .clip(RoundedCornerShape(19.dp))
+                                     .shadow(10.dp, RoundedCornerShape(20.dp))
+                                     .clip(RoundedCornerShape(20.dp))
                                      .background(Color(0xFF6B5196))
                                      .padding(bottom = 4.dp)
-                                     .clip(RoundedCornerShape(16.dp))
+                                     .clip(RoundedCornerShape(17.dp))
                                      .background(
                                          Brush.verticalGradient(
                                              colors = listOf(
@@ -805,12 +787,13 @@ fun MainMenuScreen(
                                      horizontalArrangement = if (isPersian) Arrangement.End else Arrangement.Center
                                  ) {
                                      if (isPersian) {
-                                         Text(
+                                         OutlinedText(
                                              text = LocaleHelper.privacyPolicy(isPersian),
-                                             color = Color.White,
+                                             textColor = Color.White,
+                                             outlineColor = DarkBg,
+                                             outlineWidth = 5f,
                                              fontSize = 24.sp,
-                                             fontWeight = FontWeight.Black,
-                                             fontFamily = nunitoFont
+                                             fontWeight = FontWeight.Black
                                          )
                                          Spacer(modifier = Modifier.width(8.dp))
                                          Image(
@@ -825,12 +808,13 @@ fun MainMenuScreen(
                                              modifier = Modifier.size(57.dp)
                                          )
                                          Spacer(modifier = Modifier.width(8.dp))
-                                         Text(
+                                         OutlinedText(
                                              text = LocaleHelper.privacyPolicy(isPersian),
-                                             color = Color.White,
+                                             textColor = Color.White,
+                                             outlineColor = DarkBg,
+                                             outlineWidth = 5f,
                                              fontSize = 24.sp,
-                                             fontWeight = FontWeight.Black,
-                                             fontFamily = nunitoFont
+                                             fontWeight = FontWeight.Black
                                          )
                                      }
                                  }

@@ -1319,14 +1319,11 @@ fun GameScreen(
                                     modifier = Modifier
                                         .fillMaxWidth(0.85f)
                                         .heightIn(min = 54.dp)
-                                        .shadow(10.dp, RoundedCornerShape(22.dp))
-                                        .clip(RoundedCornerShape(22.dp))
-                                        .background(DarkBg)
-                                        .padding(3.dp)
-                                        .clip(RoundedCornerShape(19.dp))
+                                        .shadow(10.dp, RoundedCornerShape(20.dp))
+                                        .clip(RoundedCornerShape(20.dp))
                                         .background(Color(0xFF7F1D1D))
                                         .padding(bottom = 4.dp)
-                                        .clip(RoundedCornerShape(16.dp))
+                                        .clip(RoundedCornerShape(17.dp))
                                         .background(
                                             Brush.verticalGradient(
                                                 colors = listOf(
@@ -1452,14 +1449,11 @@ fun GameScreen(
                                 modifier = Modifier
                                     .fillMaxWidth(0.65f)
                                     .heightIn(min = 84.dp)
-                                    .shadow(10.dp, RoundedCornerShape(22.dp))
-                                    .clip(RoundedCornerShape(22.dp))
-                                    .background(DarkBg)
-                                    .padding(3.dp)
-                                    .clip(RoundedCornerShape(19.dp))
+                                    .shadow(10.dp, RoundedCornerShape(20.dp))
+                                    .clip(RoundedCornerShape(20.dp))
                                     .background(Color(0xFF6B5196))
                                     .padding(bottom = 4.dp)
-                                    .clip(RoundedCornerShape(16.dp))
+                                    .clip(RoundedCornerShape(17.dp))
                                     .background(
                                         Brush.verticalGradient(
                                             colors = listOf(
@@ -1518,14 +1512,11 @@ fun GameScreen(
                                 modifier = Modifier
                                     .fillMaxWidth(0.65f)
                                     .heightIn(min = 84.dp)
-                                    .shadow(10.dp, RoundedCornerShape(22.dp))
-                                    .clip(RoundedCornerShape(22.dp))
-                                    .background(DarkBg)
-                                    .padding(3.dp)
-                                    .clip(RoundedCornerShape(19.dp))
+                                    .shadow(10.dp, RoundedCornerShape(20.dp))
+                                    .clip(RoundedCornerShape(20.dp))
                                     .background(Color(0xFF7F1D1D))
                                     .padding(bottom = 4.dp)
-                                    .clip(RoundedCornerShape(16.dp))
+                                    .clip(RoundedCornerShape(17.dp))
                                     .background(
                                         Brush.verticalGradient(
                                             colors = listOf(
@@ -1655,14 +1646,11 @@ fun GameScreen(
                             Box(
                                 modifier = Modifier
                                     .size(84.dp)
-                                    .shadow(10.dp, RoundedCornerShape(22.dp))
-                                    .clip(RoundedCornerShape(22.dp))
-                                    .background(DarkBg)
-                                    .padding(3.dp)
-                                    .clip(RoundedCornerShape(19.dp))
+                                    .shadow(10.dp, RoundedCornerShape(20.dp))
+                                    .clip(RoundedCornerShape(20.dp))
                                     .background(Color(0xFF6B5196))
                                     .padding(bottom = 4.dp)
-                                    .clip(RoundedCornerShape(16.dp))
+                                    .clip(RoundedCornerShape(17.dp))
                                     .background(
                                         Brush.verticalGradient(
                                             colors = listOf(
@@ -1696,14 +1684,11 @@ fun GameScreen(
                             Box(
                                 modifier = Modifier
                                     .size(84.dp)
-                                    .shadow(10.dp, RoundedCornerShape(22.dp))
-                                    .clip(RoundedCornerShape(22.dp))
-                                    .background(DarkBg)
-                                    .padding(3.dp)
-                                    .clip(RoundedCornerShape(19.dp))
+                                    .shadow(10.dp, RoundedCornerShape(20.dp))
+                                    .clip(RoundedCornerShape(20.dp))
                                     .background(Color(0xFF6B5196))
                                     .padding(bottom = 4.dp)
-                                    .clip(RoundedCornerShape(16.dp))
+                                    .clip(RoundedCornerShape(17.dp))
                                     .background(
                                         Brush.verticalGradient(
                                             colors = listOf(
@@ -1747,14 +1732,11 @@ fun GameScreen(
                                 modifier = Modifier
                                     .fillMaxWidth(0.65f)
                                     .heightIn(min = 84.dp)
-                                    .shadow(10.dp, RoundedCornerShape(22.dp))
-                                    .clip(RoundedCornerShape(22.dp))
-                                    .background(DarkBg)
-                                    .padding(3.dp)
-                                    .clip(RoundedCornerShape(19.dp))
+                                    .shadow(10.dp, RoundedCornerShape(20.dp))
+                                    .clip(RoundedCornerShape(20.dp))
                                     .background(Color(0xFF6B5196))
                                     .padding(bottom = 4.dp)
-                                    .clip(RoundedCornerShape(16.dp))
+                                    .clip(RoundedCornerShape(17.dp))
                                     .background(
                                         Brush.verticalGradient(
                                             colors = listOf(
@@ -1774,13 +1756,14 @@ fun GameScreen(
                                     horizontalArrangement = if (isPersian) Arrangement.End else Arrangement.Center
                                 ) {
                                     if (isPersian) {
-                                        Text(
-                                            text = "رنگ‌بندی بازی",
-                                            color = Color.White,
-                                            fontSize = 25.sp,
-                                            fontWeight = FontWeight.Black,
-                                            fontFamily = nunitoFont
-                                        )
+                                        OutlinedText(
+                                             text = "رنگ‌بندی بازی",
+                                             textColor = Color.White,
+                                             outlineColor = DarkBg,
+                                             outlineWidth = 5f,
+                                             fontSize = 25.sp,
+                                             fontWeight = FontWeight.Black
+                                         )
                                         Spacer(modifier = Modifier.width(8.dp))
                                         Text(
                                             text = "🎨",
@@ -1792,30 +1775,28 @@ fun GameScreen(
                                             fontSize = 45.sp
                                         )
                                         Spacer(modifier = Modifier.width(8.dp))
-                                        Text(
-                                            text = "Oyun Teması",
-                                            color = Color.White,
-                                            fontSize = 24.sp,
-                                            fontWeight = FontWeight.Black,
-                                            fontFamily = nunitoFont
-                                        )
+                                        OutlinedText(
+                                             text = "Oyun Teması",
+                                             textColor = Color.White,
+                                             outlineColor = DarkBg,
+                                             outlineWidth = 5f,
+                                             fontSize = 24.sp,
+                                             fontWeight = FontWeight.Black
+                                         )
                                     }
                                 }
                             }
 
-                            // 2. Open Store Pill (BAA6DD, border 3dp DarkBg, 57dp icon, 65% width)
+                            // 2. Open Store Pill (BAA6DD, 57dp icon, 65% width)
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth(0.65f)
                                     .heightIn(min = 84.dp)
-                                    .shadow(10.dp, RoundedCornerShape(22.dp))
-                                    .clip(RoundedCornerShape(22.dp))
-                                    .background(DarkBg)
-                                    .padding(3.dp)
-                                    .clip(RoundedCornerShape(19.dp))
+                                    .shadow(10.dp, RoundedCornerShape(20.dp))
+                                    .clip(RoundedCornerShape(20.dp))
                                     .background(Color(0xFF6B5196))
                                     .padding(bottom = 4.dp)
-                                    .clip(RoundedCornerShape(16.dp))
+                                    .clip(RoundedCornerShape(17.dp))
                                     .background(
                                         Brush.verticalGradient(
                                             colors = listOf(
@@ -1838,13 +1819,14 @@ fun GameScreen(
                                     horizontalArrangement = if (isPersian) Arrangement.End else Arrangement.Center
                                 ) {
                                     if (isPersian) {
-                                        Text(
-                                            text = LocaleHelper.storeTitle(isPersian),
-                                            color = Color.White,
-                                            fontSize = 27.sp,
-                                            fontWeight = FontWeight.Black,
-                                            fontFamily = nunitoFont
-                                        )
+                                        OutlinedText(
+                                             text = LocaleHelper.storeTitle(isPersian),
+                                             textColor = Color.White,
+                                             outlineColor = DarkBg,
+                                             outlineWidth = 5f,
+                                             fontSize = 27.sp,
+                                             fontWeight = FontWeight.Black
+                                         )
                                         Spacer(modifier = Modifier.width(8.dp))
                                         Image(
                                             painter = painterResource(id = R.drawable.buy),
@@ -1858,30 +1840,28 @@ fun GameScreen(
                                             modifier = Modifier.size(57.dp)
                                         )
                                         Spacer(modifier = Modifier.width(8.dp))
-                                        Text(
-                                            text = LocaleHelper.storeTitle(isPersian),
-                                            color = Color.White,
-                                            fontSize = 27.sp,
-                                            fontWeight = FontWeight.Black,
-                                            fontFamily = nunitoFont
-                                        )
+                                        OutlinedText(
+                                             text = LocaleHelper.storeTitle(isPersian),
+                                             textColor = Color.White,
+                                             outlineColor = DarkBg,
+                                             outlineWidth = 5f,
+                                             fontSize = 27.sp,
+                                             fontWeight = FontWeight.Black
+                                         )
                                     }
                                 }
                             }
 
-                            // 3. Restart Level (BAA6DD, border 3dp DarkBg, 57dp icon, 65% width)
+                            // 3. Restart Level (BAA6DD, 57dp icon, 65% width)
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth(0.65f)
                                     .heightIn(min = 84.dp)
-                                    .shadow(10.dp, RoundedCornerShape(22.dp))
-                                    .clip(RoundedCornerShape(22.dp))
-                                    .background(DarkBg)
-                                    .padding(3.dp)
-                                    .clip(RoundedCornerShape(19.dp))
+                                    .shadow(10.dp, RoundedCornerShape(20.dp))
+                                    .clip(RoundedCornerShape(20.dp))
                                     .background(Color(0xFF6B5196))
                                     .padding(bottom = 4.dp)
-                                    .clip(RoundedCornerShape(16.dp))
+                                    .clip(RoundedCornerShape(17.dp))
                                     .background(
                                         Brush.verticalGradient(
                                             colors = listOf(
@@ -1904,13 +1884,14 @@ fun GameScreen(
                                     horizontalArrangement = if (isPersian) Arrangement.End else Arrangement.Center
                                 ) {
                                     if (isPersian) {
-                                        Text(
-                                            text = if (isPersian) "شروع مجدد" else "Tekrar",
-                                            color = Color.White,
-                                            fontSize = 25.sp,
-                                            fontWeight = FontWeight.Black,
-                                            fontFamily = nunitoFont
-                                        )
+                                        OutlinedText(
+                                             text = if (isPersian) "شروع مجدد" else "Tekrar",
+                                             textColor = Color.White,
+                                             outlineColor = DarkBg,
+                                             outlineWidth = 5f,
+                                             fontSize = 25.sp,
+                                             fontWeight = FontWeight.Black
+                                         )
                                         Spacer(modifier = Modifier.width(8.dp))
                                         Image(
                                             painter = painterResource(id = R.drawable.restart),
@@ -1924,13 +1905,14 @@ fun GameScreen(
                                             modifier = Modifier.size(57.dp)
                                         )
                                         Spacer(modifier = Modifier.width(8.dp))
-                                        Text(
-                                            text = if (isPersian) "شروع مجدد" else "Tekrar",
-                                            color = Color.White,
-                                            fontSize = 25.sp,
-                                            fontWeight = FontWeight.Black,
-                                            fontFamily = nunitoFont
-                                        )
+                                        OutlinedText(
+                                             text = if (isPersian) "شروع مجدد" else "Tekrar",
+                                             textColor = Color.White,
+                                             outlineColor = DarkBg,
+                                             outlineWidth = 5f,
+                                             fontSize = 25.sp,
+                                             fontWeight = FontWeight.Black
+                                         )
                                     }
                                 }
                             }
@@ -1940,14 +1922,11 @@ fun GameScreen(
                                 modifier = Modifier
                                     .fillMaxWidth(0.65f)
                                     .heightIn(min = 84.dp)
-                                    .shadow(10.dp, RoundedCornerShape(22.dp))
-                                    .clip(RoundedCornerShape(22.dp))
-                                    .background(DarkBg)
-                                    .padding(3.dp)
-                                    .clip(RoundedCornerShape(19.dp))
+                                    .shadow(10.dp, RoundedCornerShape(20.dp))
+                                    .clip(RoundedCornerShape(20.dp))
                                     .background(Color(0xFF7F1D1D))
                                     .padding(bottom = 4.dp)
-                                    .clip(RoundedCornerShape(16.dp))
+                                    .clip(RoundedCornerShape(17.dp))
                                     .background(
                                         Brush.verticalGradient(
                                             colors = listOf(
@@ -1970,13 +1949,14 @@ fun GameScreen(
                                     horizontalArrangement = if (isPersian) Arrangement.End else Arrangement.Center
                                 ) {
                                     if (isPersian) {
-                                        Text(
-                                            text = if (isPersian) "منوی اصلی" else "Ana Menü",
-                                            color = Color.White,
-                                            fontSize = 25.sp,
-                                            fontWeight = FontWeight.Black,
-                                            fontFamily = nunitoFont
-                                        )
+                                        OutlinedText(
+                                             text = if (isPersian) "منوی اصلی" else "Ana Menü",
+                                             textColor = Color.White,
+                                             outlineColor = DarkBg,
+                                             outlineWidth = 5f,
+                                             fontSize = 25.sp,
+                                             fontWeight = FontWeight.Black
+                                         )
                                         Spacer(modifier = Modifier.width(8.dp))
                                         Image(
                                             painter = painterResource(id = R.drawable.exit),
@@ -1990,13 +1970,14 @@ fun GameScreen(
                                             modifier = Modifier.size(57.dp)
                                         )
                                         Spacer(modifier = Modifier.width(8.dp))
-                                        Text(
-                                            text = if (isPersian) "منوی اصلی" else "Ana Menü",
-                                            color = Color.White,
-                                            fontSize = 25.sp,
-                                            fontWeight = FontWeight.Black,
-                                            fontFamily = nunitoFont
-                                        )
+                                        OutlinedText(
+                                             text = if (isPersian) "منوی اصلی" else "Ana Menü",
+                                             textColor = Color.White,
+                                             outlineColor = DarkBg,
+                                             outlineWidth = 5f,
+                                             fontSize = 25.sp,
+                                             fontWeight = FontWeight.Black
+                                         )
                                     }
                                 }
                             }
