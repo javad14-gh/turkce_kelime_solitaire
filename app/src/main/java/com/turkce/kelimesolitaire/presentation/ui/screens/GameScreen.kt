@@ -18,6 +18,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -1429,90 +1431,115 @@ fun GameScreen(
 
                         Spacer(modifier = Modifier.height(18.dp))
 
-                        // Two Action Capsule Buttons Side by Side (Stay & Leave) - 65% width
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth(0.65f),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                        // Action Buttons Column: Stay & Leave (Same uniform 65% Row structure, 84dp height, RTL-aware)
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(12.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            // 1. Leave to Menu (Red/Rose 3D Gradient)
+                            // 1. Primary Action: Stay / Continue Playing (BAA6DD, border 3dp DarkBg, 57dp icon, 65% width)
                             Box(
                                 modifier = Modifier
-                                    .weight(1f)
-                                    .heightIn(min = 78.dp)
-                                    .shadow(6.dp, RoundedCornerShape(14.dp))
-                                    .clip(RoundedCornerShape(14.dp))
-                                    .background(
-                                        Brush.verticalGradient(
-                                            listOf(Color(0xFFF87171), Color(0xFFDC2626), Color(0xFF991B1B))
-                                        )
-                                    )
-                                    .border(2.dp, DarkBg, RoundedCornerShape(14.dp))
-                                    .clickable {
-                                        showExitConfirmDialog = false
-                                        onBackToMenu()
-                                    }
-                                    .padding(horizontal = 2.dp, vertical = 2.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Column(
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.Center
-                                ) {
-                                    androidx.compose.foundation.Image(
-                                        painter = painterResource(id = R.drawable.exit),
-                                        contentDescription = "Exit to Menu",
-                                        modifier = Modifier.size(30.dp)
-                                    )
-                                    Spacer(modifier = Modifier.height(4.dp))
-                                    Text(
-                                        text = LocaleHelper.exitLeaveBtn(isPersian),
-                                        color = Color.White,
-                                        fontSize = 14.5.sp,
-                                        fontWeight = FontWeight.Black,
-                                        fontFamily = nunitoFont
-                                    )
-                                }
-                            }
-
-                            // 2. Primary Action: Stay / Continue Playing (Teal 3D Gradient)
-                            Box(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .heightIn(min = 78.dp)
-                                    .shadow(6.dp, RoundedCornerShape(14.dp))
-                                    .clip(RoundedCornerShape(14.dp))
-                                    .background(
-                                        Brush.verticalGradient(
-                                            listOf(Color(0xFF2DD4BF), Color(0xFF0D9488), Color(0xFF0F766E))
-                                        )
-                                    )
-                                    .border(2.dp, DarkBg, RoundedCornerShape(14.dp))
+                                    .fillMaxWidth(0.65f)
+                                    .heightIn(min = 84.dp)
+                                    .shadow(6.dp, RoundedCornerShape(16.dp))
+                                    .clip(RoundedCornerShape(16.dp))
+                                    .background(Color(0xFFBAA6DD))
+                                    .border(3.dp, DarkBg, RoundedCornerShape(16.dp))
                                     .clickable {
                                         showExitConfirmDialog = false
                                         com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playButtonClickSound(context)
                                     }
-                                    .padding(horizontal = 2.dp, vertical = 2.dp),
-                                contentAlignment = Alignment.Center
+                                    .padding(2.dp),
+                                contentAlignment = if (isPersian) Alignment.CenterEnd else Alignment.Center
                             ) {
-                                Column(
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.Center
+                                Row(
+                                    modifier = if (isPersian) Modifier.padding(end = 6.dp) else Modifier,
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = if (isPersian) Arrangement.End else Arrangement.Center
                                 ) {
-                                    androidx.compose.foundation.Image(
-                                        painter = painterResource(id = R.drawable.play),
-                                        contentDescription = "Stay",
-                                        modifier = Modifier.size(30.dp)
-                                    )
-                                    Spacer(modifier = Modifier.height(4.dp))
-                                    Text(
-                                        text = LocaleHelper.exitStayBtn(isPersian),
-                                        color = Color.White,
-                                        fontSize = 14.5.sp,
-                                        fontWeight = FontWeight.Black,
-                                        fontFamily = nunitoFont
-                                    )
+                                    if (isPersian) {
+                                        Text(
+                                            text = LocaleHelper.exitStayBtn(isPersian),
+                                            color = DarkBg,
+                                            fontSize = 24.sp,
+                                            fontWeight = FontWeight.Black,
+                                            fontFamily = nunitoFont
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        androidx.compose.foundation.Image(
+                                            painter = painterResource(id = R.drawable.play),
+                                            contentDescription = "Stay",
+                                            modifier = Modifier.size(57.dp)
+                                        )
+                                    } else {
+                                        androidx.compose.foundation.Image(
+                                            painter = painterResource(id = R.drawable.play),
+                                            contentDescription = "Stay",
+                                            modifier = Modifier.size(57.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text(
+                                            text = LocaleHelper.exitStayBtn(isPersian),
+                                            color = DarkBg,
+                                            fontSize = 24.sp,
+                                            fontWeight = FontWeight.Black,
+                                            fontFamily = nunitoFont
+                                        )
+                                    }
+                                }
+                            }
+
+                            // 2. Secondary Action: Leave to Menu (BAA6DD, border 3dp DarkBg, 57dp icon, 65% width)
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth(0.65f)
+                                    .heightIn(min = 84.dp)
+                                    .shadow(6.dp, RoundedCornerShape(16.dp))
+                                    .clip(RoundedCornerShape(16.dp))
+                                    .background(Color(0xFFBAA6DD))
+                                    .border(3.dp, DarkBg, RoundedCornerShape(16.dp))
+                                    .clickable {
+                                        showExitConfirmDialog = false
+                                        onBackToMenu()
+                                    }
+                                    .padding(2.dp),
+                                contentAlignment = if (isPersian) Alignment.CenterEnd else Alignment.Center
+                            ) {
+                                Row(
+                                    modifier = if (isPersian) Modifier.padding(end = 6.dp) else Modifier,
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = if (isPersian) Arrangement.End else Arrangement.Center
+                                ) {
+                                    if (isPersian) {
+                                        Text(
+                                            text = LocaleHelper.exitLeaveBtn(isPersian),
+                                            color = DarkBg,
+                                            fontSize = 24.sp,
+                                            fontWeight = FontWeight.Black,
+                                            fontFamily = nunitoFont
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        androidx.compose.foundation.Image(
+                                            painter = painterResource(id = R.drawable.exit),
+                                            contentDescription = "Exit to Menu",
+                                            modifier = Modifier.size(57.dp)
+                                        )
+                                    } else {
+                                        androidx.compose.foundation.Image(
+                                            painter = painterResource(id = R.drawable.exit),
+                                            contentDescription = "Exit to Menu",
+                                            modifier = Modifier.size(57.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text(
+                                            text = LocaleHelper.exitLeaveBtn(isPersian),
+                                            color = DarkBg,
+                                            fontSize = 24.sp,
+                                            fontWeight = FontWeight.Black,
+                                            fontFamily = nunitoFont
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -1546,6 +1573,7 @@ fun GameScreen(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
+                            .verticalScroll(rememberScrollState())
                             .padding(bottom = 20.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
@@ -1588,7 +1616,7 @@ fun GameScreen(
                                 .clip(RoundedCornerShape(18.dp))
                                 .background(SoundVibrationBoxBg)
                                 .border(2.dp, DarkBg, RoundedCornerShape(18.dp))
-                                .padding(vertical = 12.dp),
+                                .padding(vertical = 3.dp),
                             contentAlignment = Alignment.Center
                         ) {
                             Row(
@@ -1600,7 +1628,7 @@ fun GameScreen(
                                     painter = painterResource(id = R.drawable.sound),
                                     contentDescription = "Sound",
                                     modifier = Modifier
-                                        .size(52.dp)
+                                        .size(60.dp)
                                         .clickable {
                                             val next = !isSoundEnabled
                                             isSoundEnabled = next
@@ -1618,7 +1646,7 @@ fun GameScreen(
                                     painter = painterResource(id = R.drawable.vibrate),
                                     contentDescription = "Vibration",
                                     modifier = Modifier
-                                        .size(52.dp)
+                                        .size(60.dp)
                                         .clickable {
                                             val next = !isHapticEnabled
                                             isHapticEnabled = next
@@ -1635,7 +1663,7 @@ fun GameScreen(
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        // Action Buttons Column (All buttons 65% width of popup, +30% taller height, border DarkBg, minimal internal padding)
+                        // Action Buttons Column (All buttons 65% width of popup, +30% taller height, border DarkBg, 2dp internal padding, 60dp icons)
                         Column(
                             modifier = Modifier.fillMaxWidth(),
                             verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -1645,158 +1673,202 @@ fun GameScreen(
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth(0.65f)
-                                    .heightIn(min = 82.dp)
+                                    .heightIn(min = 84.dp)
                                     .shadow(6.dp, RoundedCornerShape(16.dp))
                                     .clip(RoundedCornerShape(16.dp))
-                                    .background(
-                                        Brush.verticalGradient(
-                                            listOf(Color(0xFF8B5CF6), Color(0xFF6D28D9), Color(0xFF5B21B6))
-                                        )
-                                    )
-                                    .border(2.dp, DarkBg, RoundedCornerShape(16.dp))
+                                    .background(Color(0xFFBAA6DD))
+                                    .border(3.dp, DarkBg, RoundedCornerShape(16.dp))
                                     .clickable { showThemeDialog = true }
-                                    .padding(horizontal = 2.dp, vertical = 2.dp),
-                                contentAlignment = Alignment.Center
+                                    .padding(2.dp),
+                                contentAlignment = if (isPersian) Alignment.CenterEnd else Alignment.Center
                             ) {
                                 Row(
+                                    modifier = if (isPersian) Modifier.padding(end = 6.dp) else Modifier,
                                     verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.Center
+                                    horizontalArrangement = if (isPersian) Arrangement.End else Arrangement.Center
                                 ) {
-                                    Text(
-                                        text = "🎨",
-                                        fontSize = 32.sp
-                                    )
-                                    Spacer(modifier = Modifier.width(6.dp))
-                                    Text(
-                                        text = if (isPersian) "تم و رنگ‌بندی بازی" else "Oyun Teması",
-                                        color = Color.White,
-                                        fontSize = 18.5.sp,
-                                        fontWeight = FontWeight.Black,
-                                        fontFamily = nunitoFont
-                                    )
-                                }
-                            }
-
-                            // 2. Open Store Pill (Gold 3D Gradient, border DarkBg, +30% taller height, 65% width)
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth(0.65f)
-                                    .heightIn(min = 82.dp)
-                                    .shadow(6.dp, RoundedCornerShape(16.dp))
-                                    .clip(RoundedCornerShape(16.dp))
-                                    .background(
-                                        Brush.verticalGradient(
-                                            listOf(Color(0xFFF59E0B), Color(0xFFD97706), Color(0xFFB45309))
-                                        )
-                                    )
-                                    .border(2.dp, DarkBg, RoundedCornerShape(16.dp))
-                                    .clickable {
-                                        showHamburgerMenu = false
-                                        onOpenStore()
-                                    }
-                                    .padding(horizontal = 2.dp, vertical = 2.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.Center
-                                ) {
-                                    Image(
-                                        painter = painterResource(id = R.drawable.buy),
-                                        contentDescription = "Store",
-                                        modifier = Modifier.size(40.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text(
-                                        text = LocaleHelper.storeTitle(isPersian),
-                                        color = Color.White,
-                                        fontSize = 22.sp,
-                                        fontWeight = FontWeight.Black,
-                                        fontFamily = nunitoFont
-                                    )
-                                }
-                            }
-
-                            // 3. Side-by-Side: Exit to Menu & Restart Level (Total row 65% width of popup, +30% taller)
-                            Row(
-                                modifier = Modifier.fillMaxWidth(0.65f),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                // Exit to Main Menu (Red 3D Gradient, border DarkBg, taller height, minimal padding)
-                                Box(
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .heightIn(min = 78.dp)
-                                        .shadow(6.dp, RoundedCornerShape(16.dp))
-                                        .clip(RoundedCornerShape(16.dp))
-                                        .background(
-                                            Brush.verticalGradient(
-                                                listOf(Color(0xFFF87171), Color(0xFFDC2626), Color(0xFF991B1B))
-                                            )
-                                        )
-                                        .border(2.dp, DarkBg, RoundedCornerShape(16.dp))
-                                        .clickable {
-                                            showHamburgerMenu = false
-                                            onBackToMenu()
-                                        }
-                                        .padding(horizontal = 2.dp, vertical = 2.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Column(
-                                        horizontalAlignment = Alignment.CenterHorizontally,
-                                        verticalArrangement = Arrangement.Center
-                                    ) {
-                                        Image(
-                                            painter = painterResource(id = R.drawable.exit),
-                                            contentDescription = "Main Menu",
-                                            modifier = Modifier.size(30.dp)
-                                        )
-                                        Spacer(modifier = Modifier.height(4.dp))
+                                    if (isPersian) {
                                         Text(
-                                            text = if (isPersian) "منوی اصلی" else "Ana Menü",
-                                            color = Color.White,
-                                            fontSize = 14.5.sp,
+                                            text = "تم و رنگ‌بندی بازی",
+                                            color = DarkBg,
+                                            fontSize = 21.sp,
+                                            fontWeight = FontWeight.Black,
+                                            fontFamily = nunitoFont
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text(
+                                            text = "🎨",
+                                            fontSize = 45.sp
+                                        )
+                                    } else {
+                                        Text(
+                                            text = "🎨",
+                                            fontSize = 45.sp
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text(
+                                            text = "Oyun Teması",
+                                            color = DarkBg,
+                                            fontSize = 21.sp,
                                             fontWeight = FontWeight.Black,
                                             fontFamily = nunitoFont
                                         )
                                     }
                                 }
+                            }
 
-                                // Restart Level (Teal 3D Gradient, border DarkBg, taller height, minimal padding)
-                                Box(
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .heightIn(min = 78.dp)
-                                        .shadow(6.dp, RoundedCornerShape(16.dp))
-                                        .clip(RoundedCornerShape(16.dp))
-                                        .background(
-                                            Brush.verticalGradient(
-                                                listOf(Color(0xFF2DD4BF), Color(0xFF0D9488), Color(0xFF0F766E))
-                                            )
-                                        )
-                                        .border(2.dp, DarkBg, RoundedCornerShape(16.dp))
-                                        .clickable {
-                                            showHamburgerMenu = false
-                                            onRestartLevel()
-                                        }
-                                        .padding(horizontal = 2.dp, vertical = 2.dp),
-                                    contentAlignment = Alignment.Center
+                            // 2. Open Store Pill (BAA6DD, border 3dp DarkBg, 57dp icon, 65% width)
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth(0.65f)
+                                    .heightIn(min = 84.dp)
+                                    .shadow(6.dp, RoundedCornerShape(16.dp))
+                                    .clip(RoundedCornerShape(16.dp))
+                                    .background(Color(0xFFBAA6DD))
+                                    .border(3.dp, DarkBg, RoundedCornerShape(16.dp))
+                                    .clickable {
+                                        showHamburgerMenu = false
+                                        onOpenStore()
+                                    }
+                                    .padding(2.dp),
+                                contentAlignment = if (isPersian) Alignment.CenterEnd else Alignment.Center
+                            ) {
+                                Row(
+                                    modifier = if (isPersian) Modifier.padding(end = 6.dp) else Modifier,
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = if (isPersian) Arrangement.End else Arrangement.Center
                                 ) {
-                                    Column(
-                                        horizontalAlignment = Alignment.CenterHorizontally,
-                                        verticalArrangement = Arrangement.Center
-                                    ) {
+                                    if (isPersian) {
+                                        Text(
+                                            text = LocaleHelper.storeTitle(isPersian),
+                                            color = DarkBg,
+                                            fontSize = 27.sp,
+                                            fontWeight = FontWeight.Black,
+                                            fontFamily = nunitoFont
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Image(
+                                            painter = painterResource(id = R.drawable.buy),
+                                            contentDescription = "Store",
+                                            modifier = Modifier.size(57.dp)
+                                        )
+                                    } else {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.buy),
+                                            contentDescription = "Store",
+                                            modifier = Modifier.size(57.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text(
+                                            text = LocaleHelper.storeTitle(isPersian),
+                                            color = DarkBg,
+                                            fontSize = 27.sp,
+                                            fontWeight = FontWeight.Black,
+                                            fontFamily = nunitoFont
+                                        )
+                                    }
+                                }
+                            }
+
+                            // 3. Restart Level (BAA6DD, border 3dp DarkBg, 57dp icon, 65% width)
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth(0.65f)
+                                    .heightIn(min = 84.dp)
+                                    .shadow(6.dp, RoundedCornerShape(16.dp))
+                                    .clip(RoundedCornerShape(16.dp))
+                                    .background(Color(0xFFBAA6DD))
+                                    .border(3.dp, DarkBg, RoundedCornerShape(16.dp))
+                                    .clickable {
+                                        showHamburgerMenu = false
+                                        onRestartLevel()
+                                    }
+                                    .padding(2.dp),
+                                contentAlignment = if (isPersian) Alignment.CenterEnd else Alignment.Center
+                            ) {
+                                Row(
+                                    modifier = if (isPersian) Modifier.padding(end = 6.dp) else Modifier,
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = if (isPersian) Arrangement.End else Arrangement.Center
+                                ) {
+                                    if (isPersian) {
+                                        Text(
+                                            text = if (isPersian) "شروع مجدد" else "Tekrar",
+                                            color = DarkBg,
+                                            fontSize = 25.sp,
+                                            fontWeight = FontWeight.Black,
+                                            fontFamily = nunitoFont
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
                                         Image(
                                             painter = painterResource(id = R.drawable.restart),
                                             contentDescription = "Restart",
-                                            modifier = Modifier.size(30.dp)
+                                            modifier = Modifier.size(57.dp)
                                         )
-                                        Spacer(modifier = Modifier.height(4.dp))
+                                    } else {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.restart),
+                                            contentDescription = "Restart",
+                                            modifier = Modifier.size(57.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
                                         Text(
                                             text = if (isPersian) "شروع مجدد" else "Tekrar",
-                                            color = Color.White,
-                                            fontSize = 14.5.sp,
+                                            color = DarkBg,
+                                            fontSize = 25.sp,
+                                            fontWeight = FontWeight.Black,
+                                            fontFamily = nunitoFont
+                                        )
+                                    }
+                                }
+                            }
+
+                            // 4. Exit to Main Menu (BAA6DD, border 3dp DarkBg, 57dp icon, 65% width)
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth(0.65f)
+                                    .heightIn(min = 84.dp)
+                                    .shadow(6.dp, RoundedCornerShape(16.dp))
+                                    .clip(RoundedCornerShape(16.dp))
+                                    .background(Color(0xFFBAA6DD))
+                                    .border(3.dp, DarkBg, RoundedCornerShape(16.dp))
+                                    .clickable {
+                                        showHamburgerMenu = false
+                                        onBackToMenu()
+                                    }
+                                    .padding(2.dp),
+                                contentAlignment = if (isPersian) Alignment.CenterEnd else Alignment.Center
+                            ) {
+                                Row(
+                                    modifier = if (isPersian) Modifier.padding(end = 6.dp) else Modifier,
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = if (isPersian) Arrangement.End else Arrangement.Center
+                                ) {
+                                    if (isPersian) {
+                                        Text(
+                                            text = if (isPersian) "منوی اصلی" else "Ana Menü",
+                                            color = DarkBg,
+                                            fontSize = 25.sp,
+                                            fontWeight = FontWeight.Black,
+                                            fontFamily = nunitoFont
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Image(
+                                            painter = painterResource(id = R.drawable.exit),
+                                            contentDescription = "Main Menu",
+                                            modifier = Modifier.size(57.dp)
+                                        )
+                                    } else {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.exit),
+                                            contentDescription = "Main Menu",
+                                            modifier = Modifier.size(57.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text(
+                                            text = if (isPersian) "منوی اصلی" else "Ana Menü",
+                                            color = DarkBg,
+                                            fontSize = 25.sp,
                                             fontWeight = FontWeight.Black,
                                             fontFamily = nunitoFont
                                         )

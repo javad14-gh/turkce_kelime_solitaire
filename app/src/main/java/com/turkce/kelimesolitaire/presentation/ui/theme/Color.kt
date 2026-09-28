@@ -119,6 +119,7 @@ val PopupBg = Color(0xFFD1C4E9)            // پس‌زمینه پاپ‌آپ‌
 val PopupBorder: Color get() = DarkBg      // کادر دور پاپ‌آپ‌ها (هم‌رنگ پس‌زمینه اصلی)
 val PopupHeaderBg: Color get() = DarkBg    // رنگ هدر پاپ‌آپ‌ها (هم‌رنگ پس‌زمینه اصلی)
 val SoundVibrationBoxBg: Color get() = Color(0xFFaf97d8) // زمینه باکس صدا و ویبره (۴۰٪ تیره‌تر از پاپ‌آپ)
+val PopupButtonBg = Color(0xFFBAA6DD)       // رنگ دکمه‌های داخل پاپ‌آپ‌ها
 
 // --- هدر بالای صفحه بازی (سکه و عنوان مرحله) ---
 val LevelTitleText = Color(0xFFFFFFFF)            // رنگ نوشته مرحله (مثلاً مرحله ۱)

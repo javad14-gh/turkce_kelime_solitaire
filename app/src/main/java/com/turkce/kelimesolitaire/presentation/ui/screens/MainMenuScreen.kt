@@ -6,6 +6,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -506,6 +508,7 @@ fun MainMenuScreen(
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
+                            .verticalScroll(rememberScrollState())
                             .padding(bottom = 20.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
@@ -548,7 +551,7 @@ fun MainMenuScreen(
                                 .clip(RoundedCornerShape(18.dp))
                                 .background(SoundVibrationBoxBg)
                                 .border(2.dp, DarkBg, RoundedCornerShape(18.dp))
-                                .padding(vertical = 12.dp),
+                                .padding(vertical = 3.dp),
                             contentAlignment = Alignment.Center
                         ) {
                             Row(
@@ -560,164 +563,202 @@ fun MainMenuScreen(
                                     painter = painterResource(id = R.drawable.sound),
                                     contentDescription = "Sound",
                                     modifier = Modifier
-                                        .size(52.dp)
+                                        .size(60.dp)
                                         .clickable {
-                                            val next = !isSoundEnabled
-                                            isSoundEnabled = next
-                                            com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.setSoundEnabled(context, next)
-                                            if (next) {
-                                                com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playButtonClickSound(context)
-                                            }
-                                        },
-                                    colorFilter = if (!isSoundEnabled) ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) }) else null,
-                                    alpha = if (isSoundEnabled) 1f else 0.4f
-                                )
+                                             val next = !isSoundEnabled
+                                             isSoundEnabled = next
+                                             com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.setSoundEnabled(context, next)
+                                             if (next) {
+                                                 com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playButtonClickSound(context)
+                                             }
+                                         },
+                                     colorFilter = if (!isSoundEnabled) ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) }) else null,
+                                     alpha = if (isSoundEnabled) 1f else 0.4f
+                                 )
 
-                                // 2. Haptic Vibration Toggle
-                                Image(
-                                    painter = painterResource(id = R.drawable.vibrate),
-                                    contentDescription = "Vibration",
-                                    modifier = Modifier
-                                        .size(52.dp)
-                                        .clickable {
-                                            val next = !isHapticEnabled
-                                            isHapticEnabled = next
-                                            com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.setHapticEnabled(context, next)
-                                            if (next) {
-                                                com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.vibrateLight(context)
-                                            }
-                                        },
-                                    colorFilter = if (!isHapticEnabled) ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) }) else null,
-                                    alpha = if (isHapticEnabled) 1f else 0.4f
-                                )
-                            }
-                        }
+                                 // 2. Haptic Vibration Toggle
+                                 Image(
+                                     painter = painterResource(id = R.drawable.vibrate),
+                                     contentDescription = "Vibration",
+                                     modifier = Modifier
+                                         .size(60.dp)
+                                         .clickable {
+                                             val next = !isHapticEnabled
+                                             isHapticEnabled = next
+                                             com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.setHapticEnabled(context, next)
+                                             if (next) {
+                                                 com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.vibrateLight(context)
+                                             }
+                                         },
+                                     colorFilter = if (!isHapticEnabled) ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) }) else null,
+                                     alpha = if (isHapticEnabled) 1f else 0.4f
+                                 )
+                             }
+                         }
 
-                        Spacer(modifier = Modifier.height(16.dp))
+                         Spacer(modifier = Modifier.height(16.dp))
 
-                        // Action Buttons Column (All buttons 65% width of popup, +30% taller height, border DarkBg, minimal internal padding)
-                        Column(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalArrangement = Arrangement.spacedBy(12.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            // 1. Theme Button (Opens separate theme details dialog)
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth(0.65f)
-                                    .heightIn(min = 82.dp)
-                                    .shadow(6.dp, RoundedCornerShape(16.dp))
-                                    .clip(RoundedCornerShape(16.dp))
-                                    .background(
-                                        Brush.verticalGradient(
-                                            listOf(Color(0xFF8B5CF6), Color(0xFF6D28D9), Color(0xFF5B21B6))
-                                        )
-                                    )
-                                    .border(2.dp, DarkBg, RoundedCornerShape(16.dp))
-                                    .clickable { showThemeDialog = true }
-                                    .padding(horizontal = 2.dp, vertical = 2.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.Center
-                                ) {
-                                    Text(
-                                        text = "🎨",
-                                        fontSize = 32.sp
-                                    )
-                                    Spacer(modifier = Modifier.width(6.dp))
-                                    Text(
-                                        text = if (isPersian) "تم و رنگ‌بندی بازی" else "Oyun Teması",
-                                        color = Color.White,
-                                        fontSize = 18.5.sp,
-                                        fontWeight = FontWeight.Black,
-                                        fontFamily = nunitoFont
-                                    )
-                                }
-                            }
+                         // Action Buttons Column (All buttons 65% width of popup, +30% taller height, border DarkBg, 2dp internal padding, 60dp icons)
+                         Column(
+                             modifier = Modifier.fillMaxWidth(),
+                             verticalArrangement = Arrangement.spacedBy(12.dp),
+                             horizontalAlignment = Alignment.CenterHorizontally
+                         ) {
+                             // 1. Theme Button (Opens separate theme details dialog)
+                             Box(
+                                 modifier = Modifier
+                                     .fillMaxWidth(0.65f)
+                                     .heightIn(min = 84.dp)
+                                     .shadow(6.dp, RoundedCornerShape(16.dp))
+                                     .clip(RoundedCornerShape(16.dp))
+                                     .background(Color(0xFFBAA6DD))
+                                     .border(3.dp, DarkBg, RoundedCornerShape(16.dp))
+                                     .clickable { showThemeDialog = true }
+                                     .padding(2.dp),
+                                 contentAlignment = if (isPersian) Alignment.CenterEnd else Alignment.Center
+                             ) {
+                                 Row(
+                                     modifier = if (isPersian) Modifier.padding(end = 6.dp) else Modifier,
+                                     verticalAlignment = Alignment.CenterVertically,
+                                     horizontalArrangement = if (isPersian) Arrangement.End else Arrangement.Center
+                                 ) {
+                                     if (isPersian) {
+                                         Text(
+                                             text = "تم و رنگ‌بندی بازی",
+                                             color = DarkBg,
+                                             fontSize = 21.sp,
+                                             fontWeight = FontWeight.Black,
+                                             fontFamily = nunitoFont
+                                         )
+                                         Spacer(modifier = Modifier.width(8.dp))
+                                         Text(
+                                             text = "🎨",
+                                             fontSize = 45.sp
+                                         )
+                                     } else {
+                                         Text(
+                                             text = "🎨",
+                                             fontSize = 45.sp
+                                         )
+                                         Spacer(modifier = Modifier.width(8.dp))
+                                         Text(
+                                             text = "Oyun Teması",
+                                             color = DarkBg,
+                                             fontSize = 21.sp,
+                                             fontWeight = FontWeight.Black,
+                                             fontFamily = nunitoFont
+                                         )
+                                     }
+                                 }
+                             }
 
-                            // 2. Open Store Pill (Gold 3D Gradient, border DarkBg, +30% taller height, 65% width)
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth(0.65f)
-                                    .heightIn(min = 82.dp)
-                                    .shadow(6.dp, RoundedCornerShape(16.dp))
-                                    .clip(RoundedCornerShape(16.dp))
-                                    .background(
-                                        Brush.verticalGradient(
-                                            listOf(Color(0xFFF59E0B), Color(0xFFD97706), Color(0xFFB45309))
-                                        )
-                                    )
-                                    .border(2.dp, DarkBg, RoundedCornerShape(16.dp))
-                                    .clickable {
-                                        showSettingsMenu = false
-                                        onOpenStore()
-                                    }
-                                    .padding(horizontal = 2.dp, vertical = 2.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.Center
-                                ) {
-                                    Image(
-                                        painter = painterResource(id = R.drawable.buy),
-                                        contentDescription = "Store",
-                                        modifier = Modifier.size(40.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text(
-                                        text = LocaleHelper.storeTitle(isPersian),
-                                        color = Color.White,
-                                        fontSize = 22.sp,
-                                        fontWeight = FontWeight.Black,
-                                        fontFamily = nunitoFont
-                                    )
-                                }
-                            }
+                             // 2. Open Store Pill (BAA6DD, border 3dp DarkBg, 57dp icon, 65% width)
+                             Box(
+                                 modifier = Modifier
+                                     .fillMaxWidth(0.65f)
+                                     .heightIn(min = 84.dp)
+                                     .shadow(6.dp, RoundedCornerShape(16.dp))
+                                     .clip(RoundedCornerShape(16.dp))
+                                     .background(Color(0xFFBAA6DD))
+                                     .border(3.dp, DarkBg, RoundedCornerShape(16.dp))
+                                     .clickable {
+                                         showSettingsMenu = false
+                                         onOpenStore()
+                                     }
+                                     .padding(2.dp),
+                                 contentAlignment = if (isPersian) Alignment.CenterEnd else Alignment.Center
+                             ) {
+                                 Row(
+                                     modifier = if (isPersian) Modifier.padding(end = 6.dp) else Modifier,
+                                     verticalAlignment = Alignment.CenterVertically,
+                                     horizontalArrangement = if (isPersian) Arrangement.End else Arrangement.Center
+                                 ) {
+                                     if (isPersian) {
+                                         Text(
+                                             text = LocaleHelper.storeTitle(isPersian),
+                                             color = DarkBg,
+                                             fontSize = 27.sp,
+                                             fontWeight = FontWeight.Black,
+                                             fontFamily = nunitoFont
+                                         )
+                                         Spacer(modifier = Modifier.width(8.dp))
+                                         Image(
+                                             painter = painterResource(id = R.drawable.buy),
+                                             contentDescription = "Store",
+                                             modifier = Modifier.size(57.dp)
+                                         )
+                                     } else {
+                                         Image(
+                                             painter = painterResource(id = R.drawable.buy),
+                                             contentDescription = "Store",
+                                             modifier = Modifier.size(57.dp)
+                                         )
+                                         Spacer(modifier = Modifier.width(8.dp))
+                                         Text(
+                                             text = LocaleHelper.storeTitle(isPersian),
+                                             color = DarkBg,
+                                             fontSize = 27.sp,
+                                             fontWeight = FontWeight.Black,
+                                             fontFamily = nunitoFont
+                                         )
+                                     }
+                                 }
+                             }
 
-                            // 3. Privacy Policy Pill (Teal 3D Gradient, border DarkBg, +30% taller height, 65% width)
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth(0.65f)
-                                    .heightIn(min = 82.dp)
-                                    .shadow(6.dp, RoundedCornerShape(16.dp))
-                                    .clip(RoundedCornerShape(16.dp))
-                                    .background(
-                                        Brush.verticalGradient(
-                                            listOf(Color(0xFF38BDF8), Color(0xFF0284C7), Color(0xFF0369A1))
-                                        )
-                                    )
-                                    .border(2.dp, DarkBg, RoundedCornerShape(16.dp))
-                                    .clickable {
-                                        showSettingsMenu = false
-                                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(context.getString(com.turkce.kelimesolitaire.R.string.privacy_policy_url)))
-                                        context.startActivity(intent)
-                                    }
-                                    .padding(horizontal = 2.dp, vertical = 2.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.Center
-                                ) {
-                                    Image(
-                                        painter = painterResource(id = R.drawable.shield),
-                                        contentDescription = "Privacy Policy",
-                                        modifier = Modifier.size(38.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text(
-                                        text = LocaleHelper.privacyPolicy(isPersian),
-                                        color = Color.White,
-                                        fontSize = 20.sp,
-                                        fontWeight = FontWeight.Black,
-                                        fontFamily = nunitoFont
-                                    )
-                                }
-                            }
-                        }
+                             // 3. Privacy Policy Pill (BAA6DD, border 3dp DarkBg, 57dp icon, 65% width)
+                             Box(
+                                 modifier = Modifier
+                                     .fillMaxWidth(0.65f)
+                                     .heightIn(min = 84.dp)
+                                     .shadow(6.dp, RoundedCornerShape(16.dp))
+                                     .clip(RoundedCornerShape(16.dp))
+                                     .background(Color(0xFFBAA6DD))
+                                     .border(3.dp, DarkBg, RoundedCornerShape(16.dp))
+                                     .clickable {
+                                         showSettingsMenu = false
+                                         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(context.getString(com.turkce.kelimesolitaire.R.string.privacy_policy_url)))
+                                         context.startActivity(intent)
+                                     }
+                                     .padding(2.dp),
+                                 contentAlignment = if (isPersian) Alignment.CenterEnd else Alignment.Center
+                             ) {
+                                 Row(
+                                     modifier = if (isPersian) Modifier.padding(end = 6.dp) else Modifier,
+                                     verticalAlignment = Alignment.CenterVertically,
+                                     horizontalArrangement = if (isPersian) Arrangement.End else Arrangement.Center
+                                 ) {
+                                     if (isPersian) {
+                                         Text(
+                                             text = LocaleHelper.privacyPolicy(isPersian),
+                                             color = DarkBg,
+                                             fontSize = 24.sp,
+                                             fontWeight = FontWeight.Black,
+                                             fontFamily = nunitoFont
+                                         )
+                                         Spacer(modifier = Modifier.width(8.dp))
+                                         Image(
+                                             painter = painterResource(id = R.drawable.shield),
+                                             contentDescription = "Privacy Policy",
+                                             modifier = Modifier.size(57.dp)
+                                         )
+                                     } else {
+                                         Image(
+                                             painter = painterResource(id = R.drawable.shield),
+                                             contentDescription = "Privacy Policy",
+                                             modifier = Modifier.size(57.dp)
+                                         )
+                                         Spacer(modifier = Modifier.width(8.dp))
+                                         Text(
+                                             text = LocaleHelper.privacyPolicy(isPersian),
+                                             color = DarkBg,
+                                             fontSize = 24.sp,
+                                             fontWeight = FontWeight.Black,
+                                             fontFamily = nunitoFont
+                                         )
+                                     }
+                                 }
+                             }
+                         }
                     }
                 }
             }
