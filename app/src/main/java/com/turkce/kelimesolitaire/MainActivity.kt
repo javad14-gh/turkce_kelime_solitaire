@@ -193,8 +193,9 @@ class MainActivity : ComponentActivity() {
                                     bonusCoins = state.levelCompletedBonus,
                                     isRewardDoubled = state.isLevelRewardDoubled,
                                     onDoubleRewardClicked = { viewModel.doubleLevelRewardWithAd(this@MainActivity) },
-                                    onNextLevelClicked = { viewModel.advanceToNextLevel(this@MainActivity) },
-                                    onMainMenuClicked = { viewModel.returnToMainMenu(this@MainActivity) }
+                                    onNormalRewardClicked = { viewModel.returnToMainMenu(this@MainActivity) },
+                                    onMainMenuClicked = { viewModel.returnToMainMenu(this@MainActivity) },
+                                    isAdFree = state.isAdFree
                                 )
                             }
                             is ScreenState.GameOver -> {

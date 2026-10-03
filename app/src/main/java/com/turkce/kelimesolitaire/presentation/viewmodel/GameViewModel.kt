@@ -699,12 +699,12 @@ class GameViewModel : ViewModel() {
     private fun triggerLevelComplete(context: Context) {
         val currentLvl = _uiState.value.levelNumber
         val isReplay = _uiState.value.completedLevels.contains(currentLvl)
-        val bonus = if (isReplay) 0 else when (_uiState.value.levelData?.difficulty) {
-            "Kolay" -> 10
-            "Orta" -> 15
+        val bonus = if (isReplay) 10 else when (_uiState.value.levelData?.difficulty) {
+            "Kolay" -> 15
+            "Orta" -> 20
             "Zor" -> 25
             "CokZor" -> 35
-            else -> 15
+            else -> 20
         }
 
         val updatedSet = _uiState.value.completedLevels + currentLvl
@@ -838,9 +838,12 @@ class GameViewModel : ViewModel() {
         if (context != null && _uiState.value.movesRemaining <= 0) {
             clearActiveSessionFromPrefs(context, _uiState.value.levelNumber)
         }
+        val isFromLevelComplete = _uiState.value.screenState == ScreenState.LevelComplete
+        val nextLevel = _uiState.value.levelNumber + 1
         _uiState.update { 
             it.copy(
                 screenState = ScreenState.MainMenu,
+                levelNumber = if (isFromLevelComplete) nextLevel else it.levelNumber,
                 showOutofMovesDialog = false
             ) 
         }
@@ -860,7 +863,10 @@ class GameViewModel : ViewModel() {
 
     fun doubleLevelRewardWithAd(activity: Activity) {
         val bonus = _uiState.value.levelCompletedBonus
-        if (bonus <= 0 || _uiState.value.isLevelRewardDoubled) return
+        if (bonus <= 0 || _uiState.value.isLevelRewardDoubled) {
+            returnToMainMenu(activity)
+            return
+        }
         adManager.showRewarded(activity) { _ ->
             val prefs = activity.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)
             levelsSinceLastAd = 0
@@ -873,6 +879,7 @@ class GameViewModel : ViewModel() {
                 )
             }
             saveCoinsToPrefs(activity, _uiState.value.coins)
+            returnToMainMenu(activity)
         }
     }
 
