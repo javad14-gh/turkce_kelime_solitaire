@@ -26,19 +26,14 @@ class LevelGenerator {
             else -> 2
         }
         val baseCategories = when (difficultyLevel) {
-            "Kolay" -> 3
-            "Orta" -> 4
-            "Zor" -> 5
-            else -> 6 // CokZor
+            "Kolay" -> 5
+            "Orta" -> 6
+            "Zor" -> 8
+            else -> 9 // CokZor
         }
-        val numCategories = minOf(7, baseCategories + scaleFactor)
+        val numCategories = minOf(10, baseCategories + scaleFactor)
 
-        val wordsPerCategory = when (difficultyLevel) {
-            "Kolay" -> 4
-            "Orta" -> 5
-            "Zor" -> 6
-            else -> 7 // CokZor
-        }
+        val wordsPerCategory = 4
 
         val allowedDifficulties = when (difficultyLevel) {
             "Kolay" -> listOf("Kolay")

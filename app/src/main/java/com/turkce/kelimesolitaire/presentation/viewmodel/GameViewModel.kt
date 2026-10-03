@@ -230,13 +230,8 @@ class GameViewModel : ViewModel() {
         )
 
         val baseMoves = allWords.size + generated.targetCategories.size + generated.initialStock.size
-        val (bufferRatio, minBuffer) = when (generated.difficulty) {
-            "Kolay" -> Pair(0.25, 4)
-            "Orta"  -> Pair(0.35, 6)
-            "Zor"   -> Pair(0.45, 8)
-            else    -> Pair(0.50, 10) // CokZor
-        }
-        val bufferMoves = maxOf(minBuffer, (baseMoves * bufferRatio).toInt())
+        val bufferRatio = 0.20
+        val bufferMoves = maxOf(2, (baseMoves * bufferRatio).toInt())
         val calculatedMoves = baseMoves + bufferMoves
 
         val prefs = context.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)
