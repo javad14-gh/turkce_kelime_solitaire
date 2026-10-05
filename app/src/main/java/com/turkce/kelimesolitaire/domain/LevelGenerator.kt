@@ -33,7 +33,19 @@ class LevelGenerator {
         }
         val numCategories = minOf(10, baseCategories + scaleFactor)
 
-        val wordsPerCategory = 4
+        val wordsPerCategory = when (difficultyLevel) {
+            "Kolay" -> 4
+            "Orta" -> 5
+            "Zor" -> 6
+            else -> 6 // CokZor
+        }
+
+        val steppedCounts = when (difficultyLevel) {
+            "Kolay" -> listOf(2, 3, 4, 5)
+            "Orta" -> listOf(3, 4, 5, 6)
+            "Zor" -> listOf(4, 5, 6, 7)
+            else -> listOf(5, 6, 7, 8) // CokZor
+        }
 
         val allowedDifficulties = when (difficultyLevel) {
             "Kolay" -> listOf("Kolay")
@@ -128,14 +140,16 @@ class LevelGenerator {
             // Shuffle full deck
             val shuffled = cards.shuffled(random)
 
-            // Deal 4 Tableau columns and Stock (30% to stock, remaining to tableau)
+            // Deal 4 Tableau columns with stepped cascading counts, remaining cards to stock
             val tableaus = List(4) { mutableListOf<SolitaireCard>() }
-            val stockSize = maxOf(5, (shuffled.size * 0.30).toInt())
-            val tableauSize = shuffled.size - stockSize
-            
-            for (i in 0 until tableauSize) {
-                val col = i % 4
-                tableaus[col].add(shuffled[i])
+            var cardIdx = 0
+            for (col in 0..3) {
+                val count = steppedCounts[col]
+                for (i in 0 until count) {
+                    if (cardIdx < shuffled.size) {
+                        tableaus[col].add(shuffled[cardIdx++])
+                    }
+                }
             }
 
             // Flip bottom card of each Tableau column face-up
@@ -148,7 +162,7 @@ class LevelGenerator {
             }
 
             // Remaining cards go to stock
-            val stock = if (shuffled.size > tableauSize) shuffled.drop(tableauSize) else emptyList()
+            val stock = if (cardIdx < shuffled.size) shuffled.drop(cardIdx) else emptyList()
 
             // Run Solvability Simulation
             val categoryWordCounts = targetWords.groupBy { it.categoryId }.mapValues { it.value.size }
@@ -167,23 +181,47 @@ class LevelGenerator {
             attempts++
         }
 
-        // Fallback: If no layout passed validation, return the last generated deal as a fallback
+        // Fallback: If no layout passed validation, return a properly distributed deal as fallback
         val defaultCategories = selectedCategories.take(numCategories)
-        val defaultWords = allWords.filter { it.categoryId in defaultCategories.map { c -> c.id } }
+        val defaultWords = mutableListOf<Word>()
+        for (cat in defaultCategories) {
+            val catWords = allWords.filter { it.categoryId == cat.id }
+            defaultWords.addAll(catWords.take(wordsPerCategory))
+        }
         val cards = mutableListOf<SolitaireCard>()
         defaultCategories.forEach { cat ->
-            cards.add(SolitaireCard("cat_${cat.id}", cat.name, cat.id, true, true, category = cat))
+            cards.add(SolitaireCard("cat_${cat.id}", cat.name, cat.id, true, false, category = cat))
         }
         defaultWords.forEach { w ->
-            cards.add(SolitaireCard("word_${w.id}", w.wordText, w.categoryId, false, true, word = w))
+            cards.add(SolitaireCard("word_${w.id}", w.wordText, w.categoryId, false, false, word = w))
         }
+        val shuffledFallback = cards.shuffled(Random(levelNumber.toLong()))
+        val fallbackTableaus = List(4) { mutableListOf<SolitaireCard>() }
+        var fCardIdx = 0
+        for (col in 0..3) {
+            val count = steppedCounts[col]
+            for (i in 0 until count) {
+                if (fCardIdx < shuffledFallback.size) {
+                    fallbackTableaus[col].add(shuffledFallback[fCardIdx++])
+                }
+            }
+        }
+        for (col in 0..3) {
+            val list = fallbackTableaus[col]
+            if (list.isNotEmpty()) {
+                val lastIdx = list.size - 1
+                list[lastIdx] = list[lastIdx].copy(isFaceUp = true)
+            }
+        }
+        val fallbackStock = if (fCardIdx < shuffledFallback.size) shuffledFallback.drop(fCardIdx) else emptyList()
+
         return LevelData(
             levelNumber = levelNumber,
             difficulty = difficultyLevel,
             targetCategories = defaultCategories,
             targetWords = defaultWords,
-            initialTableau = listOf(cards, emptyList(), emptyList(), emptyList()),
-            initialStock = emptyList()
+            initialTableau = fallbackTableaus,
+            initialStock = fallbackStock
         )
     }
 

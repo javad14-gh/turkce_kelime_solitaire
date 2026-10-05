@@ -50,6 +50,7 @@ import com.turkce.kelimesolitaire.presentation.ui.components.rememberNunitoFont
 import com.turkce.kelimesolitaire.presentation.ui.theme.AccentGold
 import com.turkce.kelimesolitaire.presentation.ui.theme.CardBackGradientBottom
 import com.turkce.kelimesolitaire.presentation.ui.theme.CardBackGradientTop
+import com.turkce.kelimesolitaire.presentation.ui.theme.maincolor4
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 
 @Composable
@@ -127,19 +128,26 @@ fun LevelLoadingScreen(
             .fillMaxSize()
             .background(
                 Brush.radialGradient(
-                    colors = listOf(Color(0xFF1E5E3A), Color(0xFF0A2616))
+                    colors = listOf(
+                        Color(0xFF5B11B8), // Royal purple center glow
+                        Color(0xFF260058)  // Deep rich purple border
+                    )
                 )
             ),
         contentAlignment = Alignment.Center
     ) {
-        // Subtle decorative background glows
+        // Ambient golden-purple atmospheric glow behind card
         Box(
             modifier = Modifier
-                .size(320.dp)
+                .size(340.dp)
                 .scale(cardScale)
                 .background(
                     Brush.radialGradient(
-                        colors = listOf(Color(0x33A3E635), Color.Transparent)
+                        colors = listOf(
+                            maincolor4.copy(alpha = 0.28f),
+                            Color(0x228B5CF6),
+                            Color.Transparent
+                        )
                     ),
                     shape = CircleShape
                 )
@@ -154,17 +162,17 @@ fun LevelLoadingScreen(
             // 3D Playing Card Icon
             Box(
                 modifier = Modifier
-                    .size(width = 72.dp, height = 98.dp)
+                    .size(width = 76.dp, height = 104.dp)
                     .rotate(cardRotation)
                     .scale(cardScale)
-                    .shadow(16.dp, RoundedCornerShape(12.dp))
-                    .clip(RoundedCornerShape(12.dp))
+                    .shadow(20.dp, RoundedCornerShape(14.dp), ambientColor = maincolor4.copy(alpha = 0.4f))
+                    .clip(RoundedCornerShape(14.dp))
                     .background(
                         Brush.linearGradient(
-                            colors = listOf(Color(0xFFFFFFFF), Color(0xFFF1F5F9))
+                            colors = listOf(Color(0xFFFFFFFF), Color(0xFFF3E8FF))
                         )
                     )
-                    .border(2.dp, Color(0xFFFBBF24), RoundedCornerShape(12.dp))
+                    .border(2.5.dp, maincolor4, RoundedCornerShape(14.dp))
                     .padding(5.dp),
                 contentAlignment = Alignment.Center
             ) {
@@ -172,20 +180,18 @@ fun LevelLoadingScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .clip(RoundedCornerShape(8.dp))
+                        .clip(RoundedCornerShape(10.dp))
                         .background(
                             Brush.verticalGradient(
                                 colors = listOf(CardBackGradientTop, CardBackGradientBottom)
                             )
                         )
-                        .border(1.dp, Color(0x66FBBF24), RoundedCornerShape(8.dp)),
+                        .border(1.dp, maincolor4.copy(alpha = 0.5f), RoundedCornerShape(10.dp)),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "♠",
-                        fontSize = 32.sp,
-                        color = Color(0xFFFBBF24),
-                        fontWeight = FontWeight.Bold
+                        text = "👑",
+                        fontSize = 32.sp
                     )
                 }
             }
@@ -196,7 +202,7 @@ fun LevelLoadingScreen(
             OutlinedText(
                 text = title,
                 textColor = Color.White,
-                outlineColor = Color(0xFF052E16),
+                outlineColor = Color(0xFF1E0048),
                 outlineWidth = 6f,
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Black,
@@ -205,10 +211,10 @@ fun LevelLoadingScreen(
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            // Subtitle text
+            // Subtitle text (Soft lilac for high legibility)
             Text(
                 text = subtitle,
-                color = Color(0xFFD1FAE5),
+                color = Color(0xFFD4C7EE),
                 fontSize = 15.sp,
                 fontFamily = nunitoFont,
                 fontWeight = FontWeight.Bold,
