@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Myket-specific billing permission (only included in Myket builds) -->
+    <uses-permission android:name="ir.mservices.market.BILLING" />
+
+    <!-- Myket package visibility queries for Android 11+ -->
+    <queries>
+        <package android:name="ir.mservices.market" />
+        <intent>
+            <action android:name="ir.mservices.market.InAppBillingService.BIND" />
+            <data android:mimeType="*/*" />
+        </intent>
+    </queries>
+
+</manifest>

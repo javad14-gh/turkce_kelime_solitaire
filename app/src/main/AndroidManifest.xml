@@ -7,17 +7,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
-    <uses-permission android:name="ir.mservices.market.BILLING" />
     <uses-permission android:name="com.android.vending.BILLING" />
-
-    <!-- Package Visibility Queries for In-App Billing on Android 11+ -->
-    <queries>
-        <!-- Myket -->
-        <package android:name="ir.mservices.market" />
-        <intent>
-            <action android:name="ir.mservices.market.InAppBillingService.BIND" />
-        </intent>
-    </queries>
 
     <application
         android:allowBackup="true"

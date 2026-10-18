@@ -69,6 +69,7 @@ class InAppBillingManager private constructor() {
         override fun onServiceDisconnected(name: ComponentName?) {
             Log.d(TAG, "Billing service disconnected")
             billingService = null
+            isBound = false
         }
     }
 
@@ -80,10 +81,8 @@ class InAppBillingManager private constructor() {
         }
         setupTargetMarket(appCtx)
 
-        if (isBound) {
-            if (billingService != null) {
-                queryAndRestorePurchases()
-            }
+        if (isBound && billingService != null) {
+            queryAndRestorePurchases()
             return
         }
 
@@ -91,13 +90,9 @@ class InAppBillingManager private constructor() {
             val intent = Intent(activeBindAction).apply {
                 `package` = activeMarketPackage
             }
-            val resolved = appCtx.packageManager.queryIntentServices(intent, 0)
-            if (resolved.isNotEmpty()) {
-                isBound = appCtx.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
-                Log.d(TAG, "Binding to $activeMarketPackage returned $isBound")
-            } else {
-                Log.w(TAG, "No service resolved for $activeBindAction on $activeMarketPackage")
-            }
+            // Directly bind service to avoid queryIntentServices visibility issues on Android 11-14
+            isBound = appCtx.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+            Log.d(TAG, "Binding to $activeMarketPackage returned $isBound")
         } catch (e: Exception) {
             Log.e(TAG, "Error binding billing service: ${e.message}")
         }
@@ -170,16 +165,29 @@ class InAppBillingManager private constructor() {
 
                 val responseCode = buyBundle.getInt("RESPONSE_CODE", -1)
                 if (responseCode == 0) { // BILLING_RESPONSE_RESULT_OK
-                    val buyIntent = buyBundle.getParcelable<PendingIntent>("BUY_INTENT")
+                    val buyIntent = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                        buyBundle.getParcelable("BUY_INTENT", PendingIntent::class.java)
+                    } else {
+                        @Suppress("DEPRECATION")
+                        buyBundle.getParcelable("BUY_INTENT")
+                    }
+
                     if (buyIntent != null) {
-                        activity.startIntentSenderForResult(
-                            buyIntent.intentSender,
-                            RC_BUY,
-                            Intent(),
-                            0,
-                            0,
-                            0
-                        )
+                        withContext(Dispatchers.Main) {
+                            try {
+                                activity.startIntentSenderForResult(
+                                    buyIntent.intentSender,
+                                    RC_BUY,
+                                    Intent(),
+                                    0,
+                                    0,
+                                    0
+                                )
+                            } catch (e: Exception) {
+                                Log.e(TAG, "Error starting intent sender: ${e.message}", e)
+                                onError("خطا در باز کردن درگاه پرداخت: ${e.message}")
+                            }
+                        }
                     } else {
                         withContext(Dispatchers.Main) {
                             onError("خطا در دریافت درگاه پرداخت مارکت.")
