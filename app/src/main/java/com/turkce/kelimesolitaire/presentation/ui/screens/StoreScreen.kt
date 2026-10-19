@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -67,7 +66,7 @@ fun StoreScreen(
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(
-                    colors = listOf(Color(0xFF708AFF), Color(0xFF5271ff), Color(0xFF4769FF))
+                    colors = listOf(Color(0xFF5271ff), Color(0xFF5271ff))
                 )
             )
     ) {
@@ -312,9 +311,10 @@ fun StoreScreen(
                         badge = if (isPersian) "پیشنهاد ویژه" else "ÖZEL FIRSAT",
                         badgeColor = Color(0xFFDC2626),
                         price = if (isPersian) "۹۹,۰۰۰ تومان" else "₺99.99",
-                        gradientColors = listOf(Color(0xFF581C87), Color(0xFF3B0764), Color(0xFF2E1065)),
-                        borderColor = Color(0xFFFFD700),
-                        isGoldPriceButton = true,
+                        gradientColors = listOf(Color(0xFFD6DDFF),Color(0xFFD6DDFF)),
+                        borderColor = Color(0xFFFF1FA9),
+                        titleColor = Color(0xFFFF1FA9),
+                        isGoldPriceButton = false,
                         row1Items = if (isPersian) listOf(
                             R.drawable.coins to "۲۰۰۰",
                             R.drawable.no_ads to "بدون تبلیغ"
@@ -343,9 +343,9 @@ fun StoreScreen(
                     badge = if (isPersian) "پرقدرت‌ترین" else "EFSANE FIRSAT",
                     badgeColor = Color(0xFFD97706),
                     price = if (isPersian) "۱۴۹,۰۰۰ تومان" else "₺149.99",
-                    gradientColors = listOf(Color(0xFF701A75), Color(0xFF4C0519), Color(0xFF2E0213)),
-                    borderColor = Color(0xFFF472B6),
-                    isGoldPriceButton = true,
+                    gradientColors = listOf(Color(0xFFD6DDFF),Color(0xFFD6DDFF)),
+                    borderColor = Color(0xFFFF751F),
+                    titleColor = Color(0xFFFF751F),
                     row1Items = if (isPersian) listOf(
                         R.drawable.coins to "۴۰۰۰",
                         R.drawable.hint to "۴×"
@@ -360,7 +360,7 @@ fun StoreScreen(
                         R.drawable.undo to "4x",
                         R.drawable.joker to "4x"
                     ),
-                    onBuy = { onPurchaseSku(MyketBillingConfig.SKU_BUNDLE_MEGA) }
+                    onBuy = { onPurchaseSku(MyketBillingConfig.SKU_BUNDLE_MEGA) },
                 )
 
                 // ------------------------------------------
@@ -369,10 +369,10 @@ fun StoreScreen(
                 ComboPackCard(
                     title = if (isPersian) "بسته ویژه" else "SÜPER PAKET",
                     badge = if (isPersian) "پرفروش" else "ÇOK SATAN",
-                    badgeColor = Color(0xFFDC2626),
                     price = if (isPersian) "۸۹,۰۰۰ تومان" else "₺89.99",
-                    gradientColors = listOf(Color(0xFF1E3A8A), Color(0xFF1E40AF)),
-                    borderColor = Color(0xFF60A5FA),
+                    gradientColors = listOf(Color(0xFFD6DDFF),Color(0xFFD6DDFF)),
+                    borderColor = Color(0xFF6B1FAD),
+                    titleColor = Color(0xFF6B1FAD),
                     row1Items = if (isPersian) listOf(
                         R.drawable.coins to "۱۰۰۰",
                         R.drawable.hint to "۲×"
@@ -387,7 +387,7 @@ fun StoreScreen(
                         R.drawable.undo to "2x",
                         R.drawable.joker to "2x"
                     ),
-                    onBuy = { onPurchaseSku(MyketBillingConfig.SKU_BUNDLE_SPECIAL) }
+                    onBuy = { onPurchaseSku(MyketBillingConfig.SKU_BUNDLE_SPECIAL) },
                 )
 
                 // ------------------------------------------
@@ -396,10 +396,10 @@ fun StoreScreen(
                 ComboPackCard(
                     title = if (isPersian) "بسته اقتصادی" else "AVANTAJ PAKETİ",
                     badge = if (isPersian) "به‌صرفه" else "FIRSAT",
-                    badgeColor = Color(0xFFDC2626),
                     price = if (isPersian) "۴۹,۰۰۰ تومان" else "₺49.99",
-                    gradientColors = listOf(Color(0xFF065F46), Color(0xFF047857)),
-                    borderColor = Color(0xFF34D399),
+                    gradientColors = listOf(Color(0xFFD6DDFF),Color(0xFFD6DDFF)),
+                    borderColor = Color(0xFFCC0000),
+                    titleColor = Color(0xFFCC0000),
                     row1Items = if (isPersian) listOf(
                         R.drawable.coins to "۵۰۰",
                         R.drawable.hint to "۱×"
@@ -414,7 +414,7 @@ fun StoreScreen(
                         R.drawable.undo to "1x",
                         R.drawable.joker to "1x"
                     ),
-                    onBuy = { onPurchaseSku(MyketBillingConfig.SKU_BUNDLE_ECONOMY) }
+                    onBuy = { onPurchaseSku(MyketBillingConfig.SKU_BUNDLE_ECONOMY) },
                 )
 
                 // ------------------------------------------
@@ -590,7 +590,7 @@ private fun BundleItemChip(iconRes: Int, text: String) {
         Spacer(modifier = Modifier.height(2.dp))
         Text(
             text = text,
-            color = Color.White,
+            color = Color(0xFF5271ff),
             fontSize = 12.sp,
             fontWeight = FontWeight.Black,
             fontFamily = nunitoFont,
@@ -613,7 +613,8 @@ private fun ComboPackCard(
     buttonText: String? = null,
     row1Items: List<Pair<Int, String>>,
     row2Items: List<Pair<Int, String>>,
-    onBuy: () -> Unit
+    onBuy: () -> Unit,
+    titleColor: Color = Color(0xFF5271ff)
 ) {
     val nunitoFont = rememberNunitoFont()
     Box(
@@ -627,7 +628,7 @@ private fun ComboPackCard(
                 .shadow(10.dp, RoundedCornerShape(22.dp))
                 .clip(RoundedCornerShape(22.dp))
                 .background(Brush.verticalGradient(gradientColors))
-                .border(1.5.dp, borderColor, RoundedCornerShape(22.dp))
+                .border(5.dp, borderColor, RoundedCornerShape(22.dp))
                 .padding(horizontal = 14.dp, vertical = 12.dp)
         ) {
             Row(
@@ -687,7 +688,7 @@ private fun ComboPackCard(
                 ) {
                     Text(
                         text = title,
-                        color = if (isGoldPriceButton) AccentGold else Color.White,
+                        color = titleColor,
                         fontSize = 17.sp,
                         fontWeight = FontWeight.Black,
                         fontFamily = nunitoFont,
@@ -707,7 +708,7 @@ private fun ComboPackCard(
                                     )
                                 } else if (isGoldPriceButton) {
                                     Brush.verticalGradient(
-                                        listOf(Color(0xFFFFD700), Color(0xFFF59E0B), Color(0xFFD97706))
+                                        listOf(titleColor, Color(0xFFF59E0B), Color(0xFFD97706))
                                     )
                                 } else {
                                     Brush.verticalGradient(
