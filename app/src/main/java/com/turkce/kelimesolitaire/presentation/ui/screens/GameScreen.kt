@@ -126,6 +126,9 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupBorder
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupHeaderBg
+import com.turkce.kelimesolitaire.presentation.ui.theme.PopupButtonBg
+import com.turkce.kelimesolitaire.presentation.ui.theme.PopupButtonShadow
+import com.turkce.kelimesolitaire.presentation.ui.theme.PopupTrayDepth
 import com.turkce.kelimesolitaire.presentation.ui.theme.SoundVibrationBoxBg
 import kotlinx.coroutines.launch
 
@@ -1450,18 +1453,10 @@ fun GameScreen(
                                 .padding(start = 10.dp, end = 10.dp, bottom = 12.dp)
                                 .shadow(10.dp, RoundedCornerShape(22.dp))
                                 .clip(RoundedCornerShape(22.dp))
-                                .background(Color(0xFF8F76BE))
+                                .background(PopupTrayDepth)
                                 .padding(bottom = 5.dp)
                                 .clip(RoundedCornerShape(20.dp))
-                                .background(
-                                    Brush.verticalGradient(
-                                        colors = listOf(
-                                            Color(0xFFEADBFC),
-                                            PopupBg,
-                                            Color(0xFFC7B6E4)
-                                        )
-                                    )
-                                )
+                                .background(PopupBg)
                         ) {
                             Column(
                                 modifier = Modifier
@@ -1507,18 +1502,10 @@ fun GameScreen(
                                             .heightIn(min = 84.dp)
                                             .shadow(10.dp, RoundedCornerShape(20.dp))
                                             .clip(RoundedCornerShape(20.dp))
-                                            .background(Color(0xFF6B5196))
+                                            .background(PopupButtonShadow)
                                             .padding(bottom = 4.dp)
                                             .clip(RoundedCornerShape(17.dp))
-                                            .background(
-                                                Brush.verticalGradient(
-                                                    colors = listOf(
-                                                        Color(0xFFD4C7EE),
-                                                        Color(0xFFBAA6DD),
-                                                        Color(0xFFA58ED0)
-                                                    )
-                                                )
-                                            )
+                                            .background(PopupButtonBg)
                                             .clickable {
                                                 showExitConfirmDialog = false
                                                 com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playButtonClickSound(context)
@@ -1711,18 +1698,10 @@ fun GameScreen(
                                 .padding(start = 10.dp, end = 10.dp, bottom = 12.dp)
                                 .shadow(10.dp, RoundedCornerShape(22.dp))
                                 .clip(RoundedCornerShape(22.dp))
-                                .background(Color(0xFF8F76BE))
+                                .background(PopupTrayDepth)
                                 .padding(bottom = 5.dp)
                                 .clip(RoundedCornerShape(20.dp))
-                                .background(
-                                    Brush.verticalGradient(
-                                        colors = listOf(
-                                            Color(0xFFEADBFC),
-                                            PopupBg,
-                                            Color(0xFFC7B6E4)
-                                        )
-                                    )
-                                )
+                                .background(PopupBg)
                         ) {
                             Column(
                                 modifier = Modifier
@@ -1744,18 +1723,10 @@ fun GameScreen(
                                     .size(84.dp)
                                     .shadow(10.dp, RoundedCornerShape(20.dp))
                                     .clip(RoundedCornerShape(20.dp))
-                                    .background(Color(0xFF6B5196))
+                                    .background(PopupButtonShadow)
                                     .padding(bottom = 4.dp)
                                     .clip(RoundedCornerShape(17.dp))
-                                    .background(
-                                        Brush.verticalGradient(
-                                            colors = listOf(
-                                                Color(0xFFD4C7EE),
-                                                Color(0xFFBAA6DD),
-                                                Color(0xFFA58ED0)
-                                            )
-                                        )
-                                    )
+                                    .background(PopupButtonBg)
                                     .clickable {
                                         val next = !isSoundEnabled
                                         isSoundEnabled = next
@@ -1782,18 +1753,10 @@ fun GameScreen(
                                     .size(84.dp)
                                     .shadow(10.dp, RoundedCornerShape(20.dp))
                                     .clip(RoundedCornerShape(20.dp))
-                                    .background(Color(0xFF6B5196))
+                                    .background(PopupButtonShadow)
                                     .padding(bottom = 4.dp)
                                     .clip(RoundedCornerShape(17.dp))
-                                    .background(
-                                        Brush.verticalGradient(
-                                            colors = listOf(
-                                                Color(0xFFD4C7EE),
-                                                Color(0xFFBAA6DD),
-                                                Color(0xFFA58ED0)
-                                            )
-                                        )
-                                    )
+                                    .background(PopupButtonBg)
                                     .clickable {
                                         val next = !isHapticEnabled
                                         isHapticEnabled = next
@@ -1830,18 +1793,10 @@ fun GameScreen(
                                     .heightIn(min = 84.dp)
                                     .shadow(10.dp, RoundedCornerShape(20.dp))
                                     .clip(RoundedCornerShape(20.dp))
-                                    .background(Color(0xFF6B5196))
+                                    .background(PopupButtonShadow)
                                     .padding(bottom = 4.dp)
                                     .clip(RoundedCornerShape(17.dp))
-                                    .background(
-                                        Brush.verticalGradient(
-                                            colors = listOf(
-                                                Color(0xFFD4C7EE),
-                                                Color(0xFFBAA6DD),
-                                                Color(0xFFA58ED0)
-                                            )
-                                        )
-                                    )
+                                    .background(PopupButtonBg)
                                     .clickable { showThemeDialog = true }
                                     .padding(2.dp),
                                 contentAlignment = if (isPersian) Alignment.CenterEnd else Alignment.Center
@@ -1890,18 +1845,10 @@ fun GameScreen(
                                     .heightIn(min = 84.dp)
                                     .shadow(10.dp, RoundedCornerShape(20.dp))
                                     .clip(RoundedCornerShape(20.dp))
-                                    .background(Color(0xFF6B5196))
+                                    .background(PopupButtonShadow)
                                     .padding(bottom = 4.dp)
                                     .clip(RoundedCornerShape(17.dp))
-                                    .background(
-                                        Brush.verticalGradient(
-                                            colors = listOf(
-                                                Color(0xFFD4C7EE),
-                                                Color(0xFFBAA6DD),
-                                                Color(0xFFA58ED0)
-                                            )
-                                        )
-                                    )
+                                    .background(PopupButtonBg)
                                     .clickable {
                                         showHamburgerMenu = false
                                         onOpenStore()
@@ -1955,18 +1902,10 @@ fun GameScreen(
                                     .heightIn(min = 84.dp)
                                     .shadow(10.dp, RoundedCornerShape(20.dp))
                                     .clip(RoundedCornerShape(20.dp))
-                                    .background(Color(0xFF6B5196))
+                                    .background(PopupButtonShadow)
                                     .padding(bottom = 4.dp)
                                     .clip(RoundedCornerShape(17.dp))
-                                    .background(
-                                        Brush.verticalGradient(
-                                            colors = listOf(
-                                                Color(0xFFD4C7EE),
-                                                Color(0xFFBAA6DD),
-                                                Color(0xFFA58ED0)
-                                            )
-                                        )
-                                    )
+                                    .background(PopupButtonBg)
                                     .clickable {
                                         showHamburgerMenu = false
                                         onRestartLevel()
@@ -2159,18 +2098,10 @@ fun GameScreen(
                                 .padding(start = 10.dp, end = 10.dp, bottom = 12.dp)
                                 .shadow(10.dp, RoundedCornerShape(22.dp))
                                 .clip(RoundedCornerShape(22.dp))
-                                .background(Color(0xFF8F76BE))
+                                .background(PopupTrayDepth)
                                 .padding(bottom = 5.dp)
                                 .clip(RoundedCornerShape(20.dp))
-                                .background(
-                                    Brush.verticalGradient(
-                                        colors = listOf(
-                                            Color(0xFFEADBFC),
-                                            PopupBg,
-                                            Color(0xFFC7B6E4)
-                                        )
-                                    )
-                                )
+                                .background(PopupBg)
                         ) {
                             Column(
                                 modifier = Modifier

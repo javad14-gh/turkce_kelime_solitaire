@@ -77,6 +77,9 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupBorder
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupHeaderBg
+import com.turkce.kelimesolitaire.presentation.ui.theme.PopupButtonBg
+import com.turkce.kelimesolitaire.presentation.ui.theme.PopupButtonShadow
+import com.turkce.kelimesolitaire.presentation.ui.theme.PopupTrayDepth
 import com.turkce.kelimesolitaire.presentation.ui.theme.SoundVibrationBoxBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkCard
 import com.turkce.kelimesolitaire.presentation.ui.theme.PrimaryNeon
@@ -527,18 +530,10 @@ fun MainMenuScreen(
                                 .padding(start = 10.dp, end = 10.dp, bottom = 12.dp)
                                 .shadow(10.dp, RoundedCornerShape(22.dp))
                                 .clip(RoundedCornerShape(22.dp))
-                                .background(Color(0xFF8F76BE))
+                                .background(PopupTrayDepth)
                                 .padding(bottom = 5.dp)
                                 .clip(RoundedCornerShape(20.dp))
-                                .background(
-                                    Brush.verticalGradient(
-                                        colors = listOf(
-                                            Color(0xFFEADBFC),
-                                            PopupBg,
-                                            Color(0xFFC7B6E4)
-                                        )
-                                    )
-                                )
+                                .background(PopupBg)
                         ) {
                             Column(
                                 modifier = Modifier
@@ -560,18 +555,10 @@ fun MainMenuScreen(
                                     .size(84.dp)
                                     .shadow(10.dp, RoundedCornerShape(20.dp))
                                     .clip(RoundedCornerShape(20.dp))
-                                    .background(Color(0xFF6B5196))
+                                    .background(PopupButtonShadow)
                                     .padding(bottom = 4.dp)
                                     .clip(RoundedCornerShape(17.dp))
-                                    .background(
-                                        Brush.verticalGradient(
-                                            colors = listOf(
-                                                Color(0xFFD4C7EE),
-                                                Color(0xFFBAA6DD),
-                                                Color(0xFFA58ED0)
-                                            )
-                                        )
-                                    )
+                                    .background(PopupButtonBg)
                                     .clickable {
                                         val next = !isSoundEnabled
                                         isSoundEnabled = next
@@ -598,18 +585,10 @@ fun MainMenuScreen(
                                     .size(84.dp)
                                     .shadow(10.dp, RoundedCornerShape(20.dp))
                                     .clip(RoundedCornerShape(20.dp))
-                                    .background(Color(0xFF6B5196))
+                                    .background(PopupButtonShadow)
                                     .padding(bottom = 4.dp)
                                     .clip(RoundedCornerShape(17.dp))
-                                    .background(
-                                        Brush.verticalGradient(
-                                            colors = listOf(
-                                                Color(0xFFD4C7EE),
-                                                Color(0xFFBAA6DD),
-                                                Color(0xFFA58ED0)
-                                            )
-                                        )
-                                    )
+                                    .background(PopupButtonBg)
                                     .clickable {
                                         val next = !isHapticEnabled
                                         isHapticEnabled = next
@@ -646,18 +625,10 @@ fun MainMenuScreen(
                                      .heightIn(min = 84.dp)
                                      .shadow(10.dp, RoundedCornerShape(20.dp))
                                      .clip(RoundedCornerShape(20.dp))
-                                     .background(Color(0xFF6B5196))
+                                     .background(PopupButtonShadow)
                                      .padding(bottom = 4.dp)
                                      .clip(RoundedCornerShape(17.dp))
-                                     .background(
-                                         Brush.verticalGradient(
-                                             colors = listOf(
-                                                 Color(0xFFD4C7EE),
-                                                 Color(0xFFBAA6DD),
-                                                 Color(0xFFA58ED0)
-                                             )
-                                         )
-                                     )
+                                     .background(PopupButtonBg)
                                      .clickable { showThemeDialog = true }
                                      .padding(2.dp),
                                  contentAlignment = if (isPersian) Alignment.CenterEnd else Alignment.Center
@@ -706,18 +677,10 @@ fun MainMenuScreen(
                                      .heightIn(min = 84.dp)
                                      .shadow(10.dp, RoundedCornerShape(20.dp))
                                      .clip(RoundedCornerShape(20.dp))
-                                     .background(Color(0xFF6B5196))
+                                     .background(PopupButtonShadow)
                                      .padding(bottom = 4.dp)
                                      .clip(RoundedCornerShape(17.dp))
-                                     .background(
-                                         Brush.verticalGradient(
-                                             colors = listOf(
-                                                 Color(0xFFD4C7EE),
-                                                 Color(0xFFBAA6DD),
-                                                 Color(0xFFA58ED0)
-                                             )
-                                         )
-                                     )
+                                     .background(PopupButtonBg)
                                      .clickable {
                                          showSettingsMenu = false
                                          onOpenStore()
@@ -771,18 +734,10 @@ fun MainMenuScreen(
                                      .heightIn(min = 84.dp)
                                      .shadow(10.dp, RoundedCornerShape(20.dp))
                                      .clip(RoundedCornerShape(20.dp))
-                                     .background(Color(0xFF6B5196))
+                                     .background(PopupButtonShadow)
                                      .padding(bottom = 4.dp)
                                      .clip(RoundedCornerShape(17.dp))
-                                     .background(
-                                         Brush.verticalGradient(
-                                             colors = listOf(
-                                                 Color(0xFFD4C7EE),
-                                                 Color(0xFFBAA6DD),
-                                                 Color(0xFFA58ED0)
-                                             )
-                                         )
-                                     )
+                                     .background(PopupButtonBg)
                                      .clickable {
                                          showSettingsMenu = false
                                          val intent = Intent(Intent.ACTION_VIEW, Uri.parse(context.getString(com.turkce.kelimesolitaire.R.string.privacy_policy_url)))
@@ -911,18 +866,10 @@ fun MainMenuScreen(
                                 .padding(start = 10.dp, end = 10.dp, bottom = 12.dp)
                                 .shadow(10.dp, RoundedCornerShape(22.dp))
                                 .clip(RoundedCornerShape(22.dp))
-                                .background(Color(0xFF8F76BE))
+                                .background(PopupTrayDepth)
                                 .padding(bottom = 5.dp)
                                 .clip(RoundedCornerShape(20.dp))
-                                .background(
-                                    Brush.verticalGradient(
-                                        colors = listOf(
-                                            Color(0xFFEADBFC),
-                                            PopupBg,
-                                            Color(0xFFC7B6E4)
-                                        )
-                                    )
-                                )
+                                .background(PopupBg)
                         ) {
                             Column(
                                 modifier = Modifier

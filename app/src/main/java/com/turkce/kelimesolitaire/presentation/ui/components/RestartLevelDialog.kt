@@ -67,12 +67,8 @@ fun RestartLevelDialog(
                     .fillMaxWidth()
                     .shadow(24.dp, RoundedCornerShape(24.dp))
                     .clip(RoundedCornerShape(24.dp))
-                    .background(
-                        Brush.verticalGradient(
-                            listOf(Color(0xFF1E293B), DarkCard)
-                        )
-                    )
-                    .border(1.5.dp, Color(0xFF38BDF8).copy(alpha = 0.5f), RoundedCornerShape(24.dp))
+                    .background(com.turkce.kelimesolitaire.presentation.ui.theme.PopupBg)
+                    .border(2.dp, com.turkce.kelimesolitaire.presentation.ui.theme.PopupBorder, RoundedCornerShape(24.dp))
                     .clickable(enabled = false) {}
                     .padding(24.dp),
                 contentAlignment = Alignment.Center
@@ -93,7 +89,7 @@ fun RestartLevelDialog(
                     // Dialog Title
                     Text(
                         text = LocaleHelper.restartDialogTitle(isPersian),
-                        color = Color.White,
+                        color = com.turkce.kelimesolitaire.presentation.ui.theme.PopupTextPrimary,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Black,
                         fontFamily = appFont,
@@ -105,7 +101,7 @@ fun RestartLevelDialog(
                     // Prompt message
                     Text(
                         text = LocaleHelper.restartDialogPrompt(isPersian),
-                        color = Color(0xFFCBD5E1),
+                        color = com.turkce.kelimesolitaire.presentation.ui.theme.PopupTextSecondary,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
                         fontFamily = appFont,
@@ -121,15 +117,15 @@ fun RestartLevelDialog(
                         horizontalArrangement = Arrangement.Center,
                         modifier = Modifier
                             .clip(RoundedCornerShape(12.dp))
-                            .background(Color(0xFF0F172A))
-                            .border(1.dp, Color(0xFF334155), RoundedCornerShape(12.dp))
+                            .background(com.turkce.kelimesolitaire.presentation.ui.theme.PopupButtonBg)
+                            .border(1.dp, com.turkce.kelimesolitaire.presentation.ui.theme.PopupButtonShadow, RoundedCornerShape(12.dp))
                             .padding(horizontal = 14.dp, vertical = 6.dp)
                     ) {
                         CoinIcon(size = 20.dp)
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             text = "${LocaleHelper.formatNumber(coins, isPersian)} ${if (isPersian) "سکه موجود" else "Mevcut Altın"}",
-                            color = AccentGold,
+                            color = com.turkce.kelimesolitaire.presentation.ui.theme.PopupTextPrimary,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
                             fontFamily = appFont
@@ -138,18 +134,17 @@ fun RestartLevelDialog(
 
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    // Option 1: Pay 15 Coins (3D Emerald Green)
+                    // Option 1: Pay 15 Coins (3D Button with PopupButtonBg)
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .shadow(8.dp, RoundedCornerShape(16.dp))
                             .clip(RoundedCornerShape(16.dp))
-                            .background(
-                                Brush.verticalGradient(
-                                    listOf(Color(0xFF4ADE80), Color(0xFF16A34A), Color(0xFF15803D))
-                                )
-                            )
-                            .border(1.5.dp, Color(0xFF86EFAC), RoundedCornerShape(16.dp))
+                            .background(com.turkce.kelimesolitaire.presentation.ui.theme.PopupButtonShadow)
+                            .padding(bottom = 3.dp)
+                            .clip(RoundedCornerShape(14.dp))
+                            .background(com.turkce.kelimesolitaire.presentation.ui.theme.PopupButtonBg)
+                            .border(1.dp, com.turkce.kelimesolitaire.presentation.ui.theme.PopupTrayBorder, RoundedCornerShape(14.dp))
                             .clickable {
                                 GameSettingsManager.playButtonClickSound(context)
                                 onRestartWithCoins()
@@ -159,7 +154,7 @@ fun RestartLevelDialog(
                     ) {
                         Text(
                             text = LocaleHelper.restartWithCoinsBtn(cost, isPersian),
-                            color = Color.White,
+                            color = com.turkce.kelimesolitaire.presentation.ui.theme.PopupTextPrimary,
                             fontSize = 17.sp,
                             fontWeight = FontWeight.Black,
                             fontFamily = appFont
@@ -168,18 +163,17 @@ fun RestartLevelDialog(
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    // Option 2: Watch Ad (3D Royal Purple / Amber Gradient)
+                    // Option 2: Watch Ad (3D Button with PopupButtonBg)
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .shadow(8.dp, RoundedCornerShape(16.dp))
                             .clip(RoundedCornerShape(16.dp))
-                            .background(
-                                Brush.horizontalGradient(
-                                    listOf(Color(0xFF7C3AED), Color(0xFFD97706))
-                                )
-                            )
-                            .border(1.5.dp, Color(0xFFFDE68A), RoundedCornerShape(16.dp))
+                            .background(com.turkce.kelimesolitaire.presentation.ui.theme.PopupButtonShadow)
+                            .padding(bottom = 3.dp)
+                            .clip(RoundedCornerShape(14.dp))
+                            .background(com.turkce.kelimesolitaire.presentation.ui.theme.PopupButtonBg)
+                            .border(1.dp, com.turkce.kelimesolitaire.presentation.ui.theme.PopupTrayBorder, RoundedCornerShape(14.dp))
                             .clickable {
                                 GameSettingsManager.playButtonClickSound(context)
                                 onRestartWithAd()
@@ -199,7 +193,7 @@ fun RestartLevelDialog(
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 text = LocaleHelper.restartWithAdBtn(isPersian),
-                                color = Color.White,
+                                color = com.turkce.kelimesolitaire.presentation.ui.theme.PopupTextPrimary,
                                 fontSize = 17.sp,
                                 fontWeight = FontWeight.Black,
                                 fontFamily = appFont
@@ -212,7 +206,7 @@ fun RestartLevelDialog(
                     // Option 3: Continue Playing / Dismiss
                     Text(
                         text = LocaleHelper.continuePlayingBtn(isPersian),
-                        color = Color(0xFF94A3B8),
+                        color = com.turkce.kelimesolitaire.presentation.ui.theme.PopupTextSecondary,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
                         fontFamily = appFont,

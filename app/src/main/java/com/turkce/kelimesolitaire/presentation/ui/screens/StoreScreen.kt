@@ -40,9 +40,11 @@ import com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon
 import com.turkce.kelimesolitaire.presentation.ui.components.rememberNunitoFont
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.remember
+import androidx.compose.ui.zIndex
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 import com.turkce.kelimesolitaire.presentation.ui.theme.AccentGold
 import com.turkce.kelimesolitaire.data.billing.MyketBillingConfig
+import com.turkce.kelimesolitaire.presentation.ui.components.OutlinedText
 
 @Composable
 fun StoreScreen(
@@ -65,7 +67,7 @@ fun StoreScreen(
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(
-                    colors = listOf(Color(0xFF1B0E4D), Color(0xFF0F0738), Color(0xFF07031D))
+                    colors = listOf(Color(0xFF708AFF), Color(0xFF5271ff), Color(0xFF4769FF))
                 )
             )
     ) {
@@ -78,48 +80,132 @@ fun StoreScreen(
             // ==========================================
             // 1. HEADER BAR (Coins Left, Cancel Right)
             // ==========================================
-            Box(
+
+//            Box(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(72.dp)
+//                    .background(
+//                        Brush.verticalGradient(
+//                            colors = listOf(Color(0xFFF59E0B), Color(0xFFB8860B), Color(0xFF78350F))
+//                        )
+//                    )
+//                    .padding(horizontal = 16.dp),
+//                contentAlignment = Alignment.Center
+//            ) {
+//                // LEFT: Coins Status Pill
+//                Row(
+//                    verticalAlignment = Alignment.CenterVertically,
+//                    modifier = Modifier
+//                        .align(Alignment.CenterStart)
+//                        .clip(RoundedCornerShape(20.dp))
+//                        .background(Color(0xFF0F172A).copy(alpha = 0.9f))
+//                        .border(1.dp, Color.White.copy(alpha = 0.3f), RoundedCornerShape(20.dp))
+//                        .padding(horizontal = 12.dp, vertical = 6.dp)
+//                ) {
+//                    CoinIcon(size = 24.dp)
+//                    Spacer(modifier = Modifier.width(6.dp))
+//                    Text(
+//                        text = LocaleHelper.formatNumber(coins, isPersian),
+//                        color = Color.White,
+//                        fontSize = 18.sp,
+//                        fontWeight = FontWeight.Black,
+//                        fontFamily = nunitoFont
+//                    )
+//                }
+//
+//                // RIGHT: Cancel / Close Button
+//                Image(
+//                    painter = painterResource(id = R.drawable.cancel),
+//                    contentDescription = "Close Store",
+//                    modifier = Modifier
+//                        .align(Alignment.CenterEnd)
+//                        .size(40.dp)
+//                        .clickable { onClose() }
+//                )
+//            }
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(72.dp)
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(Color(0xFFF59E0B), Color(0xFFB8860B), Color(0xFF78350F))
-                        )
-                    )
-                    .padding(horizontal = 16.dp),
-                contentAlignment = Alignment.Center
+                    .padding(top = 16.dp, start = 8.dp, end = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                // LEFT: Coins Status Pill
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .align(Alignment.CenterStart)
-                        .clip(RoundedCornerShape(20.dp))
-                        .background(Color(0xFF0F172A).copy(alpha = 0.9f))
-                        .border(1.dp, Color.White.copy(alpha = 0.3f), RoundedCornerShape(20.dp))
-                        .padding(horizontal = 12.dp, vertical = 6.dp)
+                // 1. Coins Display: 3D Coin on the outside, box extending to the right (like menu buttons)
+                Box(
+                    modifier = Modifier,
+                    contentAlignment = Alignment.CenterStart
                 ) {
-                    CoinIcon(size = 24.dp)
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text(
-                        text = LocaleHelper.formatNumber(coins, isPersian),
-                        color = Color.White,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Black,
-                        fontFamily = nunitoFont
-                    )
+                    // 3D Pill extending rightward from behind the coin (height 40dp matching settings button)
+                    Box(
+                        modifier = Modifier
+                            .padding(start = 20.dp)
+                            .height(40.dp)
+                            .shadow(5.dp, RoundedCornerShape(topEnd = 18.dp, bottomEnd = 18.dp, topStart = 7.dp, bottomStart = 7.dp))
+                            .clip(RoundedCornerShape(topEnd = 18.dp, bottomEnd = 18.dp, topStart = 7.dp, bottomStart = 7.dp))
+                            .background(Color(0xFF6B5196))
+                            .padding(bottom = 3.dp)
+                            .clip(RoundedCornerShape(topEnd = 15.dp, bottomEnd = 15.dp, topStart = 5.dp, bottomStart = 5.dp))
+                            .background(
+                                Brush.verticalGradient(
+                                    colors = listOf(
+                                        Color(0xFFD4C7EE),
+                                        Color(0xFFBAA6DD),
+                                        Color(0xFFA58ED0)
+                                    )
+                                )
+                            )
+                            .padding(start = 36.dp, end = 20.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        OutlinedText(
+                            text = LocaleHelper.formatNumber(coins, isPersian),
+                            textColor = Color.White,
+                            outlineColor = Color(0xFF6B5196),
+                            outlineWidth = 8f,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Black
+                        )
+                    }
+
+                    // 3D Coin Icon on the outside, overlapping on the left
+                    Box(
+                        modifier = Modifier
+                            .size(54.dp)
+                            .zIndex(2f),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 54.dp)
+                    }
                 }
 
-                // RIGHT: Cancel / Close Button
-                Image(
-                    painter = painterResource(id = R.drawable.cancel),
-                    contentDescription = "Close Store",
+                // 2. Settings Menu Icon (Right) - 3D Button like Sound & Vibration (size 40dp, gear 34dp)
+                Box(
                     modifier = Modifier
-                        .align(Alignment.CenterEnd)
                         .size(40.dp)
-                        .clickable { onClose() }
-                )
+                        .shadow(5.dp, RoundedCornerShape(12.dp))
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(Color(0xFF6B5196))
+                        .padding(bottom = 3.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(
+                                    Color(0xFFD4C7EE),
+                                    Color(0xFFBAA6DD),
+                                    Color(0xFFA58ED0)
+                                )
+                            )
+                        )
+                        .clickable {onClose()},
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.cancel),
+                        contentDescription = "Settings",
+                        modifier = Modifier.size(34.dp)
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(14.dp))
