@@ -194,6 +194,18 @@ object LocaleHelper {
     fun restartDialogTitle(isPersian: Boolean): String =
         if (isPersian) "شروع مجدد مرحله" else "Seviyeyi Yeniden Başlat"
 
+    fun restartFreeTitle(isPersian: Boolean): String =
+        if (isPersian) "شروع مجدد مرحله" else "Seviyeyi Yeniden Başlat"
+
+    fun restartFreePrompt(isPersian: Boolean): String =
+        if (isPersian) "اولین شروع مجدد در هر مرحله رایگان است. دفعات بعد باید سکه بپردازی یا ویدیو ببینی."
+        else "Her seviyede ilk yeniden başlatma ücretsizdir. Sonrakiler için altın ödemeniz veya video izlemeniz gerekir."
+
+    fun restartFreeBtn(isPersian: Boolean): String =
+        if (isPersian) "شروع مجدد (رایگان)" else "Yeniden Başlat (Ücretsiz)"
+
+    fun continueBtn(isPersian: Boolean): String =
+        if (isPersian) "ادامه بازی" else "Oyuna Devam Et"
     fun restartDialogPrompt(isPersian: Boolean): String =
         if (isPersian) "شروع مجدد اول رایگان بود! برای شروع دوباره این مرحله یکی از روش‌های زیر را انتخاب کنید:" else "İlk yeniden başlatma ücretsizdi! Bu seviyeyi tekrar başlatmak için bir yöntem seçin:"
 

@@ -1,7 +1,7 @@
 package com.turkce.kelimesolitaire.presentation.ui.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,270 +9,400 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.turkce.kelimesolitaire.R
 import com.turkce.kelimesolitaire.presentation.ui.components.AdBannerPlaceholder
+import com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon
+import com.turkce.kelimesolitaire.presentation.ui.components.OutlinedText
+import com.turkce.kelimesolitaire.presentation.ui.components.TvIcon
 import com.turkce.kelimesolitaire.presentation.ui.components.rememberNunitoFont
-import com.turkce.kelimesolitaire.presentation.ui.theme.AccentGold
-import com.turkce.kelimesolitaire.presentation.ui.theme.BorderGlass
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg
-import com.turkce.kelimesolitaire.presentation.ui.theme.DarkCard
-import com.turkce.kelimesolitaire.presentation.ui.theme.ErrorRed
-import com.turkce.kelimesolitaire.presentation.ui.theme.TextPrimary
-import com.turkce.kelimesolitaire.presentation.ui.theme.TextSecondary
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.runtime.remember
+import com.turkce.kelimesolitaire.presentation.ui.theme.PopupBg
+import com.turkce.kelimesolitaire.presentation.ui.theme.PopupButtonBg
+import com.turkce.kelimesolitaire.presentation.ui.theme.PopupButtonShadow
+import com.turkce.kelimesolitaire.presentation.ui.theme.PopupTextPrimary
+import com.turkce.kelimesolitaire.presentation.ui.theme.PopupTrayDepth
+import com.turkce.kelimesolitaire.presentation.util.GameSettingsManager
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 import com.turkce.kelimesolitaire.presentation.viewmodel.GameViewModel
 
 @Composable
 fun GameOverScreen(
-    modifier: Modifier = Modifier,
     levelNumber: Int,
     coins: Int,
     onContinueForCoins: () -> Unit,
     onContinueForAd: () -> Unit,
     onRestartClicked: () -> Unit,
     onMainMenuClicked: () -> Unit,
-    isAdFree: Boolean = false
+    isAdFree: Boolean = false,
+    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     val isPersian = remember(context) { LocaleHelper.isPersian(context) }
     val nunitoFont = rememberNunitoFont()
+
+    val cost = GameViewModel.EXTRA_MOVES_COIN_COST
+    val movesForCoins = GameViewModel.EXTRA_MOVES_FOR_COINS
+    val movesForAd = GameViewModel.EXTRA_MOVES_FOR_AD
+    val canAfford = coins >= cost
+
+    val coinLabel = if (isPersian) {
+        "${LocaleHelper.formatNumber(cost, true)} سکه (\u200F+${LocaleHelper.formatNumber(movesForCoins, true)} حرکت)"
+    } else {
+        "$cost Altın (+$movesForCoins Hamle)"
+    }
+    val adLabel = if (isPersian) {
+        "ویدیو (\u200F+${LocaleHelper.formatNumber(movesForAd, true)} حرکت)"
+    } else {
+        "Video İzle (+$movesForAd Hamle)"
+    }
+
     Box(
         modifier = modifier
             .fillMaxSize()
             .background(DarkBg)
-            .padding(16.dp),
-        contentAlignment = Alignment.Center
+            .padding(16.dp)
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Defeat Header
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // ---- Title ----
+                OutlinedText(
                     text = LocaleHelper.defeatTitle(isPersian),
-                    color = ErrorRed,
-                    fontSize = 38.sp,
+                    textColor = Color.White,
+                    outlineColor = Color(0xFF190D69),
+                    outlineWidth = 12.5f,
+                    fontSize = 34.sp,
                     fontWeight = FontWeight.Black,
-                    fontFamily = nunitoFont,
-                    letterSpacing = 1.sp,
                     textAlign = TextAlign.Center
                 )
+
                 Spacer(modifier = Modifier.height(8.dp))
+
                 Text(
                     text = LocaleHelper.defeatSubtitle(levelNumber, isPersian),
-                    color = TextSecondary,
-                    fontSize = 17.sp,
-                    fontWeight = FontWeight.Black,
+                    color = Color.White.copy(alpha = 0.85f),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
                     fontFamily = nunitoFont,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(horizontal = 12.dp)
                 )
-            }
 
-            // Central Option Card
-            Box(
-                modifier = Modifier
-                    .width(290.dp)
-                    .background(DarkCard, shape = RoundedCornerShape(16.dp))
-                    .border(1.dp, BorderGlass, RoundedCornerShape(16.dp))
-                    .padding(20.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        text = LocaleHelper.continueForCoins(isPersian),
-                        color = TextPrimary,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Black,
-                        fontFamily = nunitoFont,
-                        textAlign = TextAlign.Center
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(28.dp))
 
-                    // 3D Continue for Coins Button
-                    Box(
-                        modifier = Modifier
-                            .shadow(10.dp, RoundedCornerShape(18.dp))
-                            .clip(RoundedCornerShape(18.dp))
-                            .background(
-                                Brush.verticalGradient(
-                                    colors = listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1))
+                // ---- Continue card: dark 3D frame + header + light tray ----
+                Box(
+                    modifier = Modifier
+                        .widthIn(max = 330.dp)
+                        .fillMaxWidth()
+                        .shadow(24.dp, RoundedCornerShape(32.dp))
+                        .clip(RoundedCornerShape(32.dp))
+                        .background(Color(0xFF26005A))
+                        .padding(bottom = 7.dp)
+                        .clip(RoundedCornerShape(30.dp))
+                        .background(
+                            Brush.verticalGradient(
+                                listOf(
+                                    Color(0xFF8B35FA),
+                                    Color(0xFF6414CE),
+                                    DarkBg,
+                                    Color(0xFF380084)
                                 )
                             )
-                            .padding(3.dp)
-                            .clip(RoundedCornerShape(15.dp))
-                            .background(if (coins >= 50) Color(0xFFB8860B) else Color(0xFF475569))
-                            .padding(bottom = 4.dp)
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(
-                                if (coins >= 75) {
-                                    Brush.verticalGradient(
-                                        colors = listOf(Color(0xFFFFD700), Color(0xFFF59E0B), Color(0xFFD97706))
-                                    )
-                                } else {
-                                    Brush.verticalGradient(
-                                        colors = listOf(Color(0xFF64748B), Color(0xFF475569))
+                        )
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(68.dp)
+                                .padding(horizontal = 16.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            OutlinedText(
+                                text = if (isPersian) "ادامه بازی" else "Oyuna Devam Et",
+                                textColor = Color.White,
+                                outlineColor = Color(0xFF190D69),
+                                outlineWidth = 12.5f,
+                                fontSize = 28.sp,
+                                fontWeight = FontWeight.Black,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 10.dp, end = 10.dp, bottom = 12.dp)
+                                .shadow(10.dp, RoundedCornerShape(22.dp))
+                                .clip(RoundedCornerShape(22.dp))
+                                .background(PopupTrayDepth)
+                                .padding(bottom = 5.dp)
+                                .clip(RoundedCornerShape(20.dp))
+                                .background(PopupBg)
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 16.dp, horizontal = 8.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(12.dp)
+                            ) {
+                                // Coins balance pill
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Center,
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(12.dp))
+                                        .background(PopupButtonBg)
+                                        .padding(horizontal = 14.dp, vertical = 6.dp)
+                                ) {
+                                    CoinIcon(size = 20.dp)
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text(
+                                        text = "${LocaleHelper.formatNumber(coins, isPersian)} " +
+                                                if (isPersian) "سکه موجود" else "Mevcut Altın",
+                                        color = PopupTextPrimary,
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        fontFamily = nunitoFont
                                     )
                                 }
-                            )
-                            .clickable(enabled = coins >= 75) { onContinueForCoins() }
-                            .padding(horizontal = 22.dp, vertical = 11.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        val extraMoves = GameViewModel.EXTRA_MOVES_FOR_COINS
-                        val cost = GameViewModel.EXTRA_MOVES_COIN_COST
 
-                        val buyLabel = if (isPersian) {
-                            "${LocaleHelper.formatNumber(cost, true)} سکه (+${LocaleHelper.formatNumber(extraMoves, true)} حرکت)"
-                        } else {
-                            "$cost Altın (+$extraMoves Hamle)"
-                        }
-                        Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
-                            com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 22.dp)
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text(
-                                text = buyLabel,
-                                color = if (coins >= 75) Color(0xFF0F172A) else Color(0xFF94A3B8),
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Black,
-                                fontFamily = nunitoFont
-                            )
-                        }
-                    }
+                                // 1. Continue with coins (gold)
+                                GameOverButton(
+                                    modifier = Modifier.fillMaxWidth(0.88f),
+                                    baseColor = if (canAfford) Color(0xFF78350F) else Color(0xFF475569),
+                                    face = if (canAfford) {
+                                        Brush.verticalGradient(
+                                            listOf(Color(0xFFFFD700), Color(0xFFF59E0B), Color(0xFFD97706))
+                                        )
+                                    } else {
+                                        Brush.verticalGradient(
+                                            listOf(Color(0xFF94A3B8), Color(0xFF64748B))
+                                        )
+                                    },
+                                    enabled = canAfford,
+                                    onClick = {
+                                        GameSettingsManager.playButtonClickSound(context)
+                                        onContinueForCoins()
+                                    }
+                                ) {
+                                    IconLabelRow(
+                                        isPersian = isPersian,
+                                        icon = { CoinIcon(size = 30.dp) },
+                                        label = {
+                                            Text(
+                                                text = coinLabel,
+                                                color = if (canAfford) Color(0xFF451A03) else Color.White,
+                                                fontSize = 17.sp,
+                                                fontWeight = FontWeight.Black,
+                                                fontFamily = nunitoFont,
+                                                textAlign = TextAlign.Center
+                                            )
+                                        }
+                                    )
+                                }
 
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    // 3D Continue for Ad Button
-                    Box(
-                        modifier = Modifier
-                            .shadow(10.dp, RoundedCornerShape(18.dp))
-                            .clip(RoundedCornerShape(18.dp))
-                            .background(
-                                Brush.verticalGradient(
-                                    colors = listOf(Color(0xFFFFFFFF), Color(0xFFCBD5E1))
-                                )
-                            )
-                            .padding(3.dp)
-                            .clip(RoundedCornerShape(15.dp))
-                            .background(Color(0xFF0369A1))
-                            .padding(bottom = 4.dp)
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(
-                                Brush.verticalGradient(
-                                    colors = listOf(Color(0xFF38BDF8), Color(0xFF0284C7), Color(0xFF0369A1))
-                                )
-                            )
-                            .clickable { onContinueForAd() }
-                            .padding(horizontal = 20.dp, vertical = 11.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            com.turkce.kelimesolitaire.presentation.ui.components.AdIcon(size = 20.dp)
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text(
-                                text = if (isPersian)
-                                    "ویدیو (+${LocaleHelper.formatNumber(GameViewModel.EXTRA_MOVES_FOR_AD, true)} حرکت)"
-                                else "Video İzle (+${GameViewModel.EXTRA_MOVES_FOR_AD} Hamle)",
-                                color = Color.White,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Black,
-                                fontFamily = nunitoFont
-                            )
+                                // 2. Continue with rewarded video (blue)
+                                GameOverButton(
+                                    modifier = Modifier.fillMaxWidth(0.88f),
+                                    baseColor = Color(0xFF0C4A6E),
+                                    face = Brush.verticalGradient(
+                                        listOf(Color(0xFF38BDF8), Color(0xFF0284C7), Color(0xFF0369A1))
+                                    ),
+                                    onClick = {
+                                        GameSettingsManager.playButtonClickSound(context)
+                                        onContinueForAd()
+                                    }
+                                ) {
+                                    IconLabelRow(
+                                        isPersian = isPersian,
+                                        icon = { TvIcon(size = 28.dp) },
+                                        label = {
+                                            Text(
+                                                text = adLabel,
+                                                color = Color.White,
+                                                fontSize = 17.sp,
+                                                fontWeight = FontWeight.Black,
+                                                fontFamily = nunitoFont,
+                                                textAlign = TextAlign.Center
+                                            )
+                                        }
+                                    )
+                                }
+                            }
                         }
                     }
                 }
-            }
 
-            // Control Action Buttons
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                // 3D Restart Level Button (BAA6DD Store structure)
-                Box(
-                    modifier = Modifier
-                        .shadow(10.dp, RoundedCornerShape(18.dp))
-                        .clip(RoundedCornerShape(18.dp))
-                        .background(Color(0xFF6B5196))
-                        .padding(bottom = 4.dp)
-                        .clip(RoundedCornerShape(15.dp))
-                        .background(
-                            Brush.verticalGradient(
-                                colors = listOf(
-                                    Color(0xFFD4C7EE),
-                                    Color(0xFFBAA6DD),
-                                    Color(0xFFA58ED0)
-                                )
-                            )
-                        )
-                        .clickable { onRestartClicked() }
-                        .padding(horizontal = 26.dp, vertical = 12.dp),
-                    contentAlignment = Alignment.Center
+                Spacer(modifier = Modifier.height(28.dp))
+
+                // ---- Retry (popup style) ----
+                GameOverButton(
+                    modifier = Modifier.fillMaxWidth(0.72f),
+                    baseColor = PopupButtonShadow,
+                    face = Brush.verticalGradient(listOf(PopupButtonBg, PopupButtonBg)),
+                    minHeight = 68.dp,
+                    onClick = {
+                        GameSettingsManager.playButtonClickSound(context)
+                        onRestartClicked()
+                    }
                 ) {
-                    Text(
-                        text = LocaleHelper.retry(isPersian),
-                        color = Color.White,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Black,
-                        fontFamily = nunitoFont,
-                        letterSpacing = 1.sp
+                    IconLabelRow(
+                        isPersian = isPersian,
+                        icon = {
+                            Image(
+                                painter = painterResource(id = R.drawable.restart),
+                                contentDescription = "Retry",
+                                modifier = Modifier.size(46.dp)
+                            )
+                        },
+                        label = {
+                            OutlinedText(
+                                text = LocaleHelper.retry(isPersian),
+                                textColor = Color.White,
+                                outlineColor = Color(0xFF6B5196),
+                                outlineWidth = 12.5f,
+                                fontSize = 22.sp,
+                                fontWeight = FontWeight.Black
+                            )
+                        }
                     )
                 }
 
-                // 3D Main Menu Exit Button (RED Store structure)
-                Box(
-                    modifier = Modifier
-                        .shadow(10.dp, RoundedCornerShape(18.dp))
-                        .clip(RoundedCornerShape(18.dp))
-                        .background(Color(0xFF7F1D1D))
-                        .padding(bottom = 4.dp)
-                        .clip(RoundedCornerShape(15.dp))
-                        .background(
-                            Brush.verticalGradient(
-                                colors = listOf(
-                                    Color(0xFFF87171),
-                                    Color(0xFFDC2626),
-                                    Color(0xFFB91C1C)
-                                )
-                            )
-                        )
-                        .clickable { onMainMenuClicked() }
-                        .padding(horizontal = 26.dp, vertical = 12.dp),
-                    contentAlignment = Alignment.Center
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // ---- Main menu (red) ----
+                GameOverButton(
+                    modifier = Modifier.fillMaxWidth(0.72f),
+                    baseColor = Color(0xFF7F1D1D),
+                    face = Brush.verticalGradient(
+                        listOf(Color(0xFFF87171), Color(0xFFDC2626), Color(0xFFB91C1C))
+                    ),
+                    minHeight = 68.dp,
+                    onClick = {
+                        GameSettingsManager.playButtonClickSound(context)
+                        onMainMenuClicked()
+                    }
                 ) {
-                    Text(
-                        text = LocaleHelper.mainMenu(isPersian),
-                        color = Color.White,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Black,
-                        fontFamily = nunitoFont,
-                        letterSpacing = 1.sp
+                    IconLabelRow(
+                        isPersian = isPersian,
+                        icon = {
+                            Image(
+                                painter = painterResource(id = R.drawable.exit),
+                                contentDescription = "Main Menu",
+                                modifier = Modifier.size(46.dp)
+                            )
+                        },
+                        label = {
+                            OutlinedText(
+                                text = LocaleHelper.mainMenu(isPersian),
+                                textColor = Color.White,
+                                outlineColor = Color(0xFF7F1D1D),
+                                outlineWidth = 12.5f,
+                                fontSize = 22.sp,
+                                fontWeight = FontWeight.Black
+                            )
+                        }
                     )
                 }
+
+                Spacer(modifier = Modifier.height(16.dp))
             }
 
-            // Static Bottom Ad
             AdBannerPlaceholder(isAdFree = isAdFree)
+        }
+    }
+}
+
+/** Shared 3D button: base shadow color + 4dp bevel + face brush. */
+@Composable
+private fun GameOverButton(
+    baseColor: Color,
+    face: Brush,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    minHeight: Dp = 64.dp,
+    onClick: () -> Unit,
+    content: @Composable () -> Unit
+) {
+    Box(
+        modifier = modifier
+            .heightIn(min = minHeight)
+            .alpha(if (enabled) 1f else 0.7f)
+            .shadow(10.dp, RoundedCornerShape(20.dp))
+            .clip(RoundedCornerShape(20.dp))
+            .background(baseColor)
+            .padding(bottom = 4.dp)
+            .clip(RoundedCornerShape(17.dp))
+            .background(face)
+            .clickable(enabled = enabled, onClick = onClick)
+            .padding(horizontal = 10.dp, vertical = 6.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        content()
+    }
+}
+
+/** Icon + label, order flipped for Persian (same pattern as the settings menu). */
+@Composable
+private fun IconLabelRow(
+    isPersian: Boolean,
+    icon: @Composable () -> Unit,
+    label: @Composable () -> Unit
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        if (isPersian) {
+            label()
+            Spacer(modifier = Modifier.width(8.dp))
+            icon()
+        } else {
+            icon()
+            Spacer(modifier = Modifier.width(8.dp))
+            label()
         }
     }
 }

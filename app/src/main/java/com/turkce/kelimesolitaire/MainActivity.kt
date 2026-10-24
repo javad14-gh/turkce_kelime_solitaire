@@ -228,17 +228,15 @@ class MainActivity : ComponentActivity() {
                         RestartLevelDialog(
                             coins = state.coins,
                             cost = 15,
+                            isFree = state.restartCountInLevel == 0,
+                            onFreeRestart = { viewModel.confirmFreeRestart(this@MainActivity) },
                             onRestartWithCoins = {
                                 viewModel.confirmRestartWithCoins(this@MainActivity) { msg ->
                                     viewModel.showUserMessage(msg, MessageType.WARNING)
                                 }
                             },
-                            onRestartWithAd = {
-                                viewModel.confirmRestartWithAd(this@MainActivity)
-                            },
-                            onDismiss = {
-                                viewModel.dismissRestartDialog()
-                            }
+                            onRestartWithAd = { viewModel.confirmRestartWithAd(this@MainActivity) },
+                            onDismiss = { viewModel.dismissRestartDialog() }
                         )
                     }
 

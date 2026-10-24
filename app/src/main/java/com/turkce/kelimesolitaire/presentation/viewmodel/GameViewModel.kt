@@ -771,16 +771,18 @@ class GameViewModel : ViewModel() {
     }
 
     fun requestRestartLevel(activity: Activity) {
-        val currentRestarts = _uiState.value.restartCountInLevel
-        if (currentRestarts == 0) {
-            _uiState.update { it.copy(restartCountInLevel = 1) }
-            val isPersian = LocaleHelper.isPersian(activity)
-            val msg = if (isPersian) "شروع مجدد مرحله (اولین بار رایگان) 🔄" else "Seviye Yeniden Başlatıldı (İlk Sefer Ücretsiz) 🔄"
-            showUserMessage(msg, MessageType.INFO)
-            restartLevel(activity)
-        } else {
-            _uiState.update { it.copy(showRestartDialog = true) }
+        // دیالوگ برای هر دو حالت (رایگان و پولی) باز می‌شود
+        _uiState.update { it.copy(showRestartDialog = true) }
+    }
+
+    fun confirmFreeRestart(activity: Activity) {
+        _uiState.update {
+            it.copy(
+                showRestartDialog = false,
+                restartCountInLevel = it.restartCountInLevel + 1
+            )
         }
+        restartLevel(activity)
     }
 
     fun confirmRestartWithCoins(activity: Activity, onShowToast: (String) -> Unit = {}) {

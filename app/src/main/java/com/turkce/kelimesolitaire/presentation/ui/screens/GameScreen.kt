@@ -1397,8 +1397,8 @@ fun GameScreen(
                                         )
                                     }
                                 }
-
                                 Spacer(modifier = Modifier.height(10.dp))
+
                                 Box(
                                     modifier = Modifier
                                         .fillMaxWidth(0.85f)
