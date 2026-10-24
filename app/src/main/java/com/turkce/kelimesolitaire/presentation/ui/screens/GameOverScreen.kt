@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -41,6 +42,8 @@ import com.turkce.kelimesolitaire.presentation.ui.components.AdBannerPlaceholder
 import com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon
 import com.turkce.kelimesolitaire.presentation.ui.components.OutlinedText
 import com.turkce.kelimesolitaire.presentation.ui.components.TvIcon
+import com.turkce.kelimesolitaire.presentation.ui.components.candyGloss
+import com.turkce.kelimesolitaire.presentation.ui.components.specularGlint
 import com.turkce.kelimesolitaire.presentation.ui.components.rememberNunitoFont
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupBg
@@ -231,13 +234,17 @@ fun GameOverScreen(
                                         isPersian = isPersian,
                                         icon = { CoinIcon(size = 30.dp) },
                                         label = {
-                                            Text(
+                                            val outline = if (canAfford) Color(0xFF78350F) else Color(0xFF475569)
+                                            OutlinedText(
                                                 text = coinLabel,
-                                                color = if (canAfford) Color(0xFF451A03) else Color.White,
+                                                textColor = Color.White,
+                                                outlineColor = outline,
+                                                outlineWidth = 6f,
                                                 fontSize = 17.sp,
                                                 fontWeight = FontWeight.Black,
-                                                fontFamily = nunitoFont,
-                                                textAlign = TextAlign.Center
+                                                textAlign = TextAlign.Center,
+                                                shadowColor = outline.copy(alpha = 0.6f),
+                                                shadowOffsetY = 3f
                                             )
                                         }
                                     )
@@ -259,13 +266,17 @@ fun GameOverScreen(
                                         isPersian = isPersian,
                                         icon = { TvIcon(size = 28.dp) },
                                         label = {
-                                            Text(
+                                            val outline = Color(0xFF0C4A6E)
+                                            OutlinedText(
                                                 text = adLabel,
-                                                color = Color.White,
+                                                textColor = Color.White,
+                                                outlineColor = outline,
+                                                outlineWidth = 6f,
                                                 fontSize = 17.sp,
                                                 fontWeight = FontWeight.Black,
-                                                fontFamily = nunitoFont,
-                                                textAlign = TextAlign.Center
+                                                textAlign = TextAlign.Center,
+                                                shadowColor = outline.copy(alpha = 0.6f),
+                                                shadowOffsetY = 3f
                                             )
                                         }
                                     )
@@ -355,29 +366,31 @@ fun GameOverScreen(
     }
 }
 
-/** Shared 3D button: base shadow color + 4dp bevel + face brush. */
+/** Shared 3D Candy Button matching the store pack buttons. */
 @Composable
 private fun GameOverButton(
     baseColor: Color,
     face: Brush,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    minHeight: Dp = 64.dp,
+    minHeight: Dp = 60.dp,
+    corner: Dp = 16.dp,
     onClick: () -> Unit,
     content: @Composable () -> Unit
 ) {
+    val shape = RoundedCornerShape(corner)
     Box(
         modifier = modifier
             .heightIn(min = minHeight)
             .alpha(if (enabled) 1f else 0.7f)
-            .shadow(10.dp, RoundedCornerShape(20.dp))
-            .clip(RoundedCornerShape(20.dp))
-            .background(baseColor)
-            .padding(bottom = 4.dp)
-            .clip(RoundedCornerShape(17.dp))
+            .shadow(8.dp, shape)
+            .clip(shape)
             .background(face)
+            .candyGloss(corner = corner, inset = 2.dp)
+            .specularGlint(offsetX = 12.dp, offsetY = 5.dp, scale = 1.15f)
+            .border(1.dp, baseColor, shape)
             .clickable(enabled = enabled, onClick = onClick)
-            .padding(horizontal = 10.dp, vertical = 6.dp),
+            .padding(horizontal = 14.dp, vertical = 8.dp),
         contentAlignment = Alignment.Center
     ) {
         content()

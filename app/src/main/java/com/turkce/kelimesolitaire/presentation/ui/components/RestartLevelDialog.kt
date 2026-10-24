@@ -208,13 +208,16 @@ fun RestartLevelDialog(
                                             )
                                         },
                                         label = {
-                                            Text(
+                                            OutlinedText(
                                                 text = LocaleHelper.restartFreeBtn(isPersian),
-                                                color = Color.White,
+                                                textColor = Color.White,
+                                                outlineColor = Color(0x802D5A0E),
+                                                outlineWidth = 6f,
                                                 fontSize = 16.sp,
                                                 fontWeight = FontWeight.Black,
-                                                fontFamily = appFont,
-                                                textAlign = TextAlign.Center
+                                                textAlign = TextAlign.Center,
+                                                shadowColor = Color(0x802D5A0E).copy(alpha = 0.6f),
+                                                shadowOffsetY = 3f
                                             )
                                         }
                                     )
@@ -230,13 +233,17 @@ fun RestartLevelDialog(
                                         onDismiss()
                                     }
                                 ) {
-                                    Text(
+                                    val btnOutline = Color(0xFF0284C7).darker(0.35f)
+                                    OutlinedText(
                                         text = LocaleHelper.continueBtn(isPersian),
-                                        color = Color.White,
+                                        textColor = Color.White,
+                                        outlineColor = btnOutline,
+                                        outlineWidth = 6f,
                                         fontSize = 16.sp,
                                         fontWeight = FontWeight.Black,
-                                        fontFamily = appFont,
-                                        textAlign = TextAlign.Center
+                                        textAlign = TextAlign.Center,
+                                        shadowColor = btnOutline.copy(alpha = 0.6f),
+                                        shadowOffsetY = 3f
                                     )
                                 }
                             } else {
@@ -273,17 +280,21 @@ fun RestartLevelDialog(
                                         onRestartWithCoins()
                                     }
                                 ) {
+                                    val outline = if (canAfford) Color(0x802D5A0E) else Color(0xFF475569).darker(0.35f)
                                     IconLabelRow(
                                         isPersian = isPersian,
                                         icon = { CoinIcon(size = 26.dp) },
                                         label = {
-                                            Text(
+                                            OutlinedText(
                                                 text = coinLabel,
-                                                color = Color.White,
+                                                textColor = Color.White,
+                                                outlineColor = outline,
+                                                outlineWidth = 6f,
                                                 fontSize = 16.sp,
                                                 fontWeight = FontWeight.Black,
-                                                fontFamily = appFont,
-                                                textAlign = TextAlign.Center
+                                                textAlign = TextAlign.Center,
+                                                shadowColor = outline.copy(alpha = 0.6f),
+                                                shadowOffsetY = 3f
                                             )
                                         }
                                     )
@@ -299,17 +310,21 @@ fun RestartLevelDialog(
                                         onRestartWithAd()
                                     }
                                 ) {
+                                    val outline = Color(0xFF0284C7).darker(0.35f)
                                     IconLabelRow(
                                         isPersian = isPersian,
                                         icon = { TvIcon(size = 26.dp) },
                                         label = {
-                                            Text(
+                                            OutlinedText(
                                                 text = adLabel,
-                                                color = Color.White,
+                                                textColor = Color.White,
+                                                outlineColor = outline,
+                                                outlineWidth = 6f,
                                                 fontSize = 16.sp,
                                                 fontWeight = FontWeight.Black,
-                                                fontFamily = appFont,
-                                                textAlign = TextAlign.Center
+                                                textAlign = TextAlign.Center,
+                                                shadowColor = outline.copy(alpha = 0.6f),
+                                                shadowOffsetY = 3f
                                             )
                                         }
                                     )
@@ -330,6 +345,7 @@ private fun StoreStyleButton(
     onClick: () -> Unit,
     content: @Composable () -> Unit
 ) {
+    val outline = gradient.last().darker(0.35f)
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -337,7 +353,9 @@ private fun StoreStyleButton(
             .shadow(6.dp, RoundedCornerShape(14.dp))
             .clip(RoundedCornerShape(14.dp))
             .background(Brush.verticalGradient(gradient))
-            .border(1.dp, Color.White, RoundedCornerShape(14.dp))
+            .candyGloss(corner = 14.dp, inset = 2.dp)
+            .specularGlint()
+            .border(1.dp, outline, RoundedCornerShape(14.dp))
             .clickable(onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 10.dp),
         contentAlignment = Alignment.Center

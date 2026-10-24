@@ -234,29 +234,24 @@ fun StarterPackDialog(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Pulsating 3D Gold Buy Button
+                // Pulsating 3D Candy Gold Buy Button
+                val buyShape = RoundedCornerShape(18.dp)
+                val buyOutline = Color(0xFF78350F)
                 Box(
                     modifier = Modifier
                         .scale(buttonScale)
                         .padding(horizontal = 20.dp)
                         .fillMaxWidth()
-                        .shadow(14.dp, RoundedCornerShape(18.dp))
-                        .clip(RoundedCornerShape(18.dp))
-                        .background(
-                            Brush.verticalGradient(
-                                listOf(Color(0xFFFFFFFF), Color(0xFFE2E8F0))
-                            )
-                        )
-                        .padding(2.5.dp)
-                        .clip(RoundedCornerShape(16.dp))
-                        .background(Color(0xFF78350F))
-                        .padding(bottom = 4.dp)
-                        .clip(RoundedCornerShape(14.dp))
+                        .shadow(10.dp, buyShape)
+                        .clip(buyShape)
                         .background(
                             Brush.verticalGradient(
                                 listOf(Color(0xFFFBBF24), Color(0xFFF59E0B), Color(0xFFD97706))
                             )
                         )
+                        .candyGloss(corner = 18.dp, inset = 2.dp)
+                        .specularGlint(offsetX = 14.dp, offsetY = 6.dp, scale = 1.3f)
+                        .border(1.dp, buyOutline, buyShape)
                         .clickable { onBuy() }
                         .padding(vertical = 12.dp),
                     contentAlignment = Alignment.Center
@@ -271,12 +266,15 @@ fun StarterPackDialog(
                             modifier = Modifier.size(24.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text(
+                        OutlinedText(
                             text = if (isPersian) "خرید فوری - ۹۹,۰۰۰ تومان" else "Hemen Al - ₺99.99",
-                            color = Color(0xFF451A03),
+                            textColor = Color.White,
+                            outlineColor = buyOutline,
+                            outlineWidth = 6f,
                             fontSize = 17.sp,
                             fontWeight = FontWeight.Black,
-                            fontFamily = nunitoFont
+                            shadowColor = buyOutline.copy(alpha = 0.6f),
+                            shadowOffsetY = 3f
                         )
                     }
                 }

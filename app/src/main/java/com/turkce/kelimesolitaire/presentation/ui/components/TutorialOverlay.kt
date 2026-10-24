@@ -175,27 +175,35 @@ fun BoosterUnlockDialog(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Action Button
+            // Action Button (Candy Gloss Style)
+            val btnShape = RoundedCornerShape(16.dp)
+            val outline = Color(0xFF78350F)
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(52.dp)
-                    .shadow(8.dp, RoundedCornerShape(16.dp))
-                    .clip(RoundedCornerShape(16.dp))
+                    .height(56.dp)
+                    .shadow(8.dp, btnShape)
+                    .clip(btnShape)
                     .background(
-                        Brush.horizontalGradient(
-                            colors = listOf(Color(0xFFFFD700), Color(0xFFF59E0B))
+                        Brush.verticalGradient(
+                            colors = listOf(Color(0xFFFBBF24), Color(0xFFF59E0B), Color(0xFFD97706))
                         )
                     )
+                    .candyGloss(corner = 16.dp, inset = 2.dp)
+                    .specularGlint(offsetX = 8.dp, offsetY = 4.dp, scale = 0.9f)
+                    .border(1.dp, outline, btnShape)
                     .clickable { onDismiss() },
                 contentAlignment = Alignment.Center
             ) {
-                Text(
+                OutlinedText(
                     text = buttonText,
                     fontSize = 17.sp,
                     fontWeight = FontWeight.Black,
-                    color = Color(0xFF0F172A),
-                    fontFamily = fontFamily
+                    textColor = Color.White,
+                    outlineColor = outline,
+                    outlineWidth = 10f,
+                    shadowColor = outline.copy(alpha = 0.6f),
+                    shadowOffsetY = 3f
                 )
             }
         }

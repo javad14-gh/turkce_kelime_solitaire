@@ -70,6 +70,9 @@ import com.turkce.kelimesolitaire.presentation.ui.components.StarterPackDialog
 import com.turkce.kelimesolitaire.presentation.ui.components.AdBannerPlaceholder
 import com.turkce.kelimesolitaire.presentation.ui.components.OutlinedText
 import com.turkce.kelimesolitaire.presentation.ui.components.rememberNunitoFont
+import com.turkce.kelimesolitaire.presentation.ui.components.candyGloss
+import com.turkce.kelimesolitaire.presentation.ui.components.specularGlint
+import com.turkce.kelimesolitaire.presentation.ui.components.darker
 import com.turkce.kelimesolitaire.presentation.util.rememberAppFont
 import com.turkce.kelimesolitaire.presentation.ui.theme.AccentGold
 import com.turkce.kelimesolitaire.presentation.ui.theme.BorderGlass
@@ -86,12 +89,6 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.PrimaryNeon
 import com.turkce.kelimesolitaire.presentation.ui.theme.SecondaryNeon
 import com.turkce.kelimesolitaire.presentation.ui.theme.TextPrimary
 import com.turkce.kelimesolitaire.presentation.ui.theme.TextSecondary
-import com.turkce.kelimesolitaire.presentation.ui.theme.PlayButtonFaceTop
-import com.turkce.kelimesolitaire.presentation.ui.theme.PlayButtonFaceMid
-import com.turkce.kelimesolitaire.presentation.ui.theme.PlayButtonFaceBottom
-import com.turkce.kelimesolitaire.presentation.ui.theme.PlayButtonFaceBorder
-import com.turkce.kelimesolitaire.presentation.ui.theme.PlayButtonShadow
-import com.turkce.kelimesolitaire.presentation.ui.theme.getDifficultyRimColors
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 
 @Suppress("UNUSED_PARAMETER")
@@ -128,9 +125,6 @@ fun MainMenuScreen(
     // Determine difficulty of the last unsolved level
     val difficulty = remember(lastUnsolvedLevel) {
         com.turkce.kelimesolitaire.domain.LevelGenerator.getDifficultyForLevel(lastUnsolvedLevel)
-    }
-    val difficultyRim = remember(difficulty) {
-        getDifficultyRimColors(difficulty)
     }
 
     // Starter pack eligibility: only after level 3 is completed and not yet purchased
@@ -334,50 +328,46 @@ fun MainMenuScreen(
                     contentAlignment = Alignment.TopCenter,
                     modifier = Modifier.padding(top = 38.dp, bottom = 12.dp)
                 ) {
-                    // Elongated & Enlarged 3D Play Button Shell (rim themed dynamically with difficulty)
+                    val buttonShape = RoundedCornerShape(18.dp)
+                    val buttonOutline = Color(0x802D5A0E) // سبز تیره دکمه خرید بسته
+
                     Box(
                         modifier = Modifier
-                            .widthIn(min = 224.dp)
-                            .shadow(16.dp, RoundedCornerShape(22.dp))
-                            .clip(RoundedCornerShape(22.dp))
+                            .widthIn(min = 230.dp)
+                            .shadow(8.dp, buttonShape)
+                            .clip(buttonShape)
                             .background(
                                 Brush.verticalGradient(
-                                    colors = difficultyRim.gradient
-                                )
-                            ) // 3D outer rim shell coordinated with level difficulty
-                            .border(1.5.dp, difficultyRim.border, RoundedCornerShape(22.dp))
-                            .padding(4.dp)
-                            .clip(RoundedCornerShape(18.dp))
-                            .background(PlayButtonShadow) // Dark 3D bottom base shadow
-                            .padding(bottom = 5.5.dp) // Creates thick 3D bottom bevel
-                            .clip(RoundedCornerShape(14.dp))
-                            .background(
-                                Brush.verticalGradient(
-                                    colors = listOf(
-                                        PlayButtonFaceTop,
-                                        PlayButtonFaceMid,
-                                        PlayButtonFaceBottom
+                                    listOf(
+                                        Color(0xFFA3E635),
+                                        Color(0xFF65A30D),
+                                        Color(0xFF4D7C0F)
                                     )
                                 )
                             )
-                            .border(1.2.dp, PlayButtonFaceBorder.copy(alpha = 0.6f), RoundedCornerShape(14.dp))
+                            .candyGloss(corner = 18.dp, inset = 2.dp)
+                            .specularGlint(offsetX = 14.dp, offsetY = 6.dp, scale = 1.3f)
+                            .border(1.dp, buttonOutline, buttonShape)
                             .clickable(enabled = !isPlayClicked) {
                                 if (!isPlayClicked) {
                                     isPlayClicked = true
+                                    com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playButtonClickSound(context)
                                     onStartGameClicked(lastUnsolvedLevel)
                                 }
                             }
-                            .padding(horizontal = 40.dp, vertical = 15.dp),
+                            .padding(horizontal = 40.dp, vertical = 14.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         OutlinedText(
                             text = LocaleHelper.levelTitle(lastUnsolvedLevel, isPersian),
                             textColor = Color.White,
-                            outlineColor = PlayButtonShadow,
-                            outlineWidth = 10f,
-                            fontSize = 36.sp,
+                            outlineColor = buttonOutline,
+                            outlineWidth = 8f,
+                            fontSize = 34.sp,
                             fontWeight = FontWeight.Black,
-                            letterSpacing = 1.2.sp
+                            letterSpacing = 1.2.sp,
+                            shadowColor = buttonOutline.copy(alpha = 0.6f),
+                            shadowOffsetY = 3f
                         )
                     }
 
@@ -618,17 +608,27 @@ fun MainMenuScreen(
                              verticalArrangement = Arrangement.spacedBy(12.dp),
                              horizontalAlignment = Alignment.CenterHorizontally
                          ) {
+                             val menuBtnShape = RoundedCornerShape(18.dp)
+                             val menuBtnOutline = Color(0xFF6B5196)
+                             val menuBtnBrush = Brush.verticalGradient(
+                                 listOf(
+                                     Color(0xFFBAA6DD),
+                                     Color(0xFFA58ED0),
+                                     Color(0xFF8B6CB8)
+                                 )
+                             )
+
                              // 1. Theme Button (Opens separate theme details dialog)
                              Box(
                                  modifier = Modifier
                                      .fillMaxWidth(0.72f)
                                      .heightIn(min = 84.dp)
-                                     .shadow(10.dp, RoundedCornerShape(20.dp))
-                                     .clip(RoundedCornerShape(20.dp))
-                                     .background(PopupButtonShadow)
-                                     .padding(bottom = 4.dp)
-                                     .clip(RoundedCornerShape(17.dp))
-                                     .background(PopupButtonBg)
+                                     .shadow(8.dp, menuBtnShape)
+                                     .clip(menuBtnShape)
+                                     .background(menuBtnBrush)
+                                     .candyGloss(corner = 18.dp, inset = 2.dp)
+                                     .specularGlint(offsetX = 10.dp, offsetY = 6.dp, scale = 1.1f)
+                                     .border(1.dp, menuBtnOutline, menuBtnShape)
                                      .clickable { showThemeDialog = true }
                                      .padding(2.dp),
                                  contentAlignment = if (isPersian) Alignment.CenterEnd else Alignment.Center
@@ -642,8 +642,10 @@ fun MainMenuScreen(
                                          OutlinedText(
                                              text = "رنگ‌بندی بازی",
                                              textColor = Color.White,
-                                             outlineColor = Color(0xFF6B5196),
+                                             outlineColor = menuBtnOutline,
                                              outlineWidth = 12.5f,
+                                             shadowColor = menuBtnOutline.copy(alpha = 0.6f),
+                                             shadowOffsetY = 3f,
                                              fontSize = 25.sp,
                                              fontWeight = FontWeight.Black
                                          )
@@ -661,8 +663,10 @@ fun MainMenuScreen(
                                          OutlinedText(
                                              text = "Oyun Teması",
                                              textColor = Color.White,
-                                             outlineColor = Color(0xFF6B5196),
+                                             outlineColor = menuBtnOutline,
                                              outlineWidth = 12.5f,
+                                             shadowColor = menuBtnOutline.copy(alpha = 0.6f),
+                                             shadowOffsetY = 3f,
                                              fontSize = 24.sp,
                                              fontWeight = FontWeight.Black
                                          )
@@ -675,12 +679,12 @@ fun MainMenuScreen(
                                  modifier = Modifier
                                      .fillMaxWidth(0.72f)
                                      .heightIn(min = 84.dp)
-                                     .shadow(10.dp, RoundedCornerShape(20.dp))
-                                     .clip(RoundedCornerShape(20.dp))
-                                     .background(PopupButtonShadow)
-                                     .padding(bottom = 4.dp)
-                                     .clip(RoundedCornerShape(17.dp))
-                                     .background(PopupButtonBg)
+                                     .shadow(8.dp, menuBtnShape)
+                                     .clip(menuBtnShape)
+                                     .background(menuBtnBrush)
+                                     .candyGloss(corner = 18.dp, inset = 2.dp)
+                                     .specularGlint(offsetX = 10.dp, offsetY = 6.dp, scale = 1.1f)
+                                     .border(1.dp, menuBtnOutline, menuBtnShape)
                                      .clickable {
                                          showSettingsMenu = false
                                          onOpenStore()
@@ -697,8 +701,10 @@ fun MainMenuScreen(
                                          OutlinedText(
                                              text = LocaleHelper.storeTitle(isPersian),
                                              textColor = Color.White,
-                                             outlineColor = Color(0xFF6B5196),
+                                             outlineColor = menuBtnOutline,
                                              outlineWidth = 12.5f,
+                                             shadowColor = menuBtnOutline.copy(alpha = 0.6f),
+                                             shadowOffsetY = 3f,
                                              fontSize = 27.sp,
                                              fontWeight = FontWeight.Black
                                          )
@@ -718,8 +724,10 @@ fun MainMenuScreen(
                                          OutlinedText(
                                              text = LocaleHelper.storeTitle(isPersian),
                                              textColor = Color.White,
-                                             outlineColor = Color(0xFF6B5196),
+                                             outlineColor = menuBtnOutline,
                                              outlineWidth = 12.5f,
+                                             shadowColor = menuBtnOutline.copy(alpha = 0.6f),
+                                             shadowOffsetY = 3f,
                                              fontSize = 27.sp,
                                              fontWeight = FontWeight.Black
                                          )
@@ -732,12 +740,12 @@ fun MainMenuScreen(
                                  modifier = Modifier
                                      .fillMaxWidth(0.72f)
                                      .heightIn(min = 84.dp)
-                                     .shadow(10.dp, RoundedCornerShape(20.dp))
-                                     .clip(RoundedCornerShape(20.dp))
-                                     .background(PopupButtonShadow)
-                                     .padding(bottom = 4.dp)
-                                     .clip(RoundedCornerShape(17.dp))
-                                     .background(PopupButtonBg)
+                                     .shadow(8.dp, menuBtnShape)
+                                     .clip(menuBtnShape)
+                                     .background(menuBtnBrush)
+                                     .candyGloss(corner = 18.dp, inset = 2.dp)
+                                     .specularGlint(offsetX = 10.dp, offsetY = 6.dp, scale = 1.1f)
+                                     .border(1.dp, menuBtnOutline, menuBtnShape)
                                      .clickable {
                                          showSettingsMenu = false
                                          val intent = Intent(Intent.ACTION_VIEW, Uri.parse(context.getString(com.turkce.kelimesolitaire.R.string.privacy_policy_url)))
@@ -755,8 +763,10 @@ fun MainMenuScreen(
                                          OutlinedText(
                                              text = LocaleHelper.privacyPolicy(isPersian),
                                              textColor = Color.White,
-                                             outlineColor = Color(0xFF6B5196),
+                                             outlineColor = menuBtnOutline,
                                              outlineWidth = 12.5f,
+                                             shadowColor = menuBtnOutline.copy(alpha = 0.6f),
+                                             shadowOffsetY = 3f,
                                              fontSize = 24.sp,
                                              fontWeight = FontWeight.Black
                                          )
@@ -776,8 +786,10 @@ fun MainMenuScreen(
                                          OutlinedText(
                                              text = LocaleHelper.privacyPolicy(isPersian),
                                              textColor = Color.White,
-                                             outlineColor = Color(0xFF6B5196),
+                                             outlineColor = menuBtnOutline,
                                              outlineWidth = 12.5f,
+                                             shadowColor = menuBtnOutline.copy(alpha = 0.6f),
+                                             shadowOffsetY = 3f,
                                              fontSize = 24.sp,
                                              fontWeight = FontWeight.Black
                                          )

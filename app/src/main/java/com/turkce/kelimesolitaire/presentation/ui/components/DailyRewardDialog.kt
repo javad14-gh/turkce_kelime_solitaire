@@ -188,96 +188,92 @@ fun DailyRewardDialog(
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             // Multiplier Button (2x with Ad)
-                            Button(
-                                onClick = { onClaim(true) },
+                            val ad2xShape = RoundedCornerShape(14.dp)
+                            val ad2xOutline = Color(0xFF7E22CE)
+                            Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .height(48.dp)
-                                    .shadow(8.dp, RoundedCornerShape(14.dp)),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color.Transparent
-                                ),
-                                contentPadding = PaddingValues(0.dp),
-                                shape = RoundedCornerShape(14.dp)
+                                    .shadow(6.dp, ad2xShape)
+                                    .clip(ad2xShape)
+                                    .background(
+                                        Brush.verticalGradient(
+                                            listOf(Color(0xFF8B5CF6), Color(0xFF7C3AED), Color(0xFF6D28D9))
+                                        )
+                                    )
+                                    .candyGloss(corner = 14.dp, inset = 2.dp)
+                                    .specularGlint()
+                                    .border(1.dp, ad2xOutline, ad2xShape)
+                                    .clickable { onClaim(true) },
+                                contentAlignment = Alignment.Center
                             ) {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .background(
-                                            Brush.horizontalGradient(
-                                                listOf(Color(0xFF8B5CF6), Color(0xFFEC4899))
-                                            ),
-                                            RoundedCornerShape(14.dp)
-                                        ),
-                                    contentAlignment = Alignment.Center
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Center
                                 ) {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.Center
-                                    ) {
-                                        Text(
-                                            text = LocaleHelper.claim2x(isPersian),
-                                            color = Color.White,
-                                            fontSize = 15.sp,
-                                            fontWeight = FontWeight.Black,
-                                            fontFamily = appFont
-                                        )
-                                        Spacer(modifier = Modifier.width(6.dp))
-                                        Text(
-                                            text = "(+${LocaleHelper.formatNumber(currentRewardTier.coins * 2, isPersian)} 🪙)",
-                                            color = AccentGold,
-                                            fontSize = 14.sp,
-                                            fontWeight = FontWeight.Bold,
-                                            fontFamily = appFont
-                                        )
-                                    }
+                                    OutlinedText(
+                                        text = LocaleHelper.claim2x(isPersian),
+                                        textColor = Color.White,
+                                        outlineColor = ad2xOutline,
+                                        outlineWidth = 6f,
+                                        fontSize = 15.sp,
+                                        fontWeight = FontWeight.Black,
+                                        shadowColor = ad2xOutline.copy(alpha = 0.6f),
+                                        shadowOffsetY = 3f
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text(
+                                        text = "(+${LocaleHelper.formatNumber(currentRewardTier.coins * 2, isPersian)} 🪙)",
+                                        color = AccentGold,
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        fontFamily = appFont
+                                    )
                                 }
                             }
 
                             // Regular Claim (1x)
-                            Button(
-                                onClick = { onClaim(false) },
+                            val claimShape = RoundedCornerShape(14.dp)
+                            val claimOutline = Color(0x802D5A0E)
+                            Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(44.dp)
-                                    .shadow(6.dp, RoundedCornerShape(14.dp)),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color.Transparent
-                                ),
-                                contentPadding = PaddingValues(0.dp),
-                                shape = RoundedCornerShape(14.dp)
+                                    .height(46.dp)
+                                    .shadow(6.dp, claimShape)
+                                    .clip(claimShape)
+                                    .background(
+                                        Brush.verticalGradient(
+                                            listOf(Color(0xFFA3E635), Color(0xFF65A30D), Color(0xFF4D7C0F))
+                                        )
+                                    )
+                                    .candyGloss(corner = 14.dp, inset = 2.dp)
+                                    .specularGlint()
+                                    .border(1.dp, claimOutline, claimShape)
+                                    .clickable { onClaim(false) },
+                                contentAlignment = Alignment.Center
                             ) {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .background(
-                                            Brush.horizontalGradient(
-                                                listOf(Color(0xFF10B981), Color(0xFF059669))
-                                            ),
-                                            RoundedCornerShape(14.dp)
-                                        ),
-                                    contentAlignment = Alignment.Center
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Center
                                 ) {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.Center
-                                    ) {
-                                        Text(
-                                            text = LocaleHelper.claim(isPersian),
-                                            color = Color.White,
-                                            fontSize = 15.sp,
-                                            fontWeight = FontWeight.Black,
-                                            fontFamily = appFont
-                                        )
-                                        Spacer(modifier = Modifier.width(6.dp))
-                                        Text(
-                                            text = "(+${LocaleHelper.formatNumber(currentRewardTier.coins, isPersian)} 🪙)",
-                                            color = Color.White.copy(alpha = 0.9f),
-                                            fontSize = 13.sp,
-                                            fontWeight = FontWeight.Bold,
-                                            fontFamily = appFont
-                                        )
-                                    }
+                                    OutlinedText(
+                                        text = LocaleHelper.claim(isPersian),
+                                        textColor = Color.White,
+                                        outlineColor = claimOutline,
+                                        outlineWidth = 6f,
+                                        fontSize = 15.sp,
+                                        fontWeight = FontWeight.Black,
+                                        shadowColor = claimOutline.copy(alpha = 0.6f),
+                                        shadowOffsetY = 3f
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text(
+                                        text = "(+${LocaleHelper.formatNumber(currentRewardTier.coins, isPersian)} 🪙)",
+                                        color = Color.White.copy(alpha = 0.9f),
+                                        fontSize = 13.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        fontFamily = appFont
+                                    )
                                 }
                             }
                         }

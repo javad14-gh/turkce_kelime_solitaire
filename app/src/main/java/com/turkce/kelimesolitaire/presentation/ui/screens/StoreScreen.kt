@@ -49,13 +49,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.zIndex
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 import com.turkce.kelimesolitaire.presentation.ui.theme.AccentGold
-import com.turkce.kelimesolitaire.data.billing.MyketBillingConfig
+import com.turkce.kelimesolitaire.presentation.ui.components.CandyButton
+import com.turkce.kelimesolitaire.presentation.ui.components.candyGloss
+import com.turkce.kelimesolitaire.presentation.ui.components.specularGlint
+import com.turkce.kelimesolitaire.presentation.ui.components.glassReflection
+import com.turkce.kelimesolitaire.presentation.ui.components.darker
 import com.turkce.kelimesolitaire.presentation.ui.components.OutlinedText
+import com.turkce.kelimesolitaire.data.billing.MyketBillingConfig
 
 val inner = RoundedCornerShape(19.dp)
 val outer = RoundedCornerShape(24.dp)
 
-fun Color.darker(f: Float = 0.55f) = lerp(this, Color.Black, f)
 @Composable
 fun StoreScreen(
     coins: Int,
@@ -546,8 +550,8 @@ fun StoreScreen(
 
                         Box(
                             modifier = Modifier
-                                .shadow(6.dp, RoundedCornerShape(12.dp))
-                                .clip(RoundedCornerShape(12.dp))
+                                .shadow(6.dp, RoundedCornerShape(14.dp))
+                                .clip(RoundedCornerShape(14.dp))
                                 .background(
                                     Brush.verticalGradient(
                                         listOf(
@@ -557,11 +561,14 @@ fun StoreScreen(
                                         )
                                     )
                                 )
-                                .border(1.dp, Color.White, RoundedCornerShape(12.dp))
+                                .candyGloss(corner = 14.dp, inset = 2.dp)
+                                .specularGlint()
+                                .border(1.dp, Color(0x802D5A0E), RoundedCornerShape(14.dp))
                                 .clickable { onWatchAdForCoins() }
                                 .padding(horizontal = 14.dp, vertical = 10.dp),
                             contentAlignment = Alignment.Center
                         ) {
+                            val btnOutline = Color(0x802D5A0E)
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Image(
                                     painter = painterResource(id = R.drawable.play),
@@ -569,14 +576,15 @@ fun StoreScreen(
                                     modifier = Modifier.size(20.dp)
                                 )
                                 Spacer(modifier = Modifier.width(6.dp))
-                                Text(
+                                OutlinedText(
                                     text = if (isPersian) "+۵۰" else "+50",
-                                    color = Color.White,
+                                    textColor = Color.White,
+                                    outlineColor = btnOutline,
+                                    outlineWidth = 6f,
                                     fontSize = 15.sp,
                                     fontWeight = FontWeight.Black,
-                                    fontFamily = nunitoFont,
-                                    maxLines = 1,
-                                    softWrap = false
+                                    shadowColor = btnOutline.copy(alpha = 0.6f),
+                                    shadowOffsetY = 3f
                                 )
                             }
                         }
@@ -635,77 +643,6 @@ fun StoreScreen(
     }
 }
 
-fun Modifier.candyGloss(
-    corner: Dp,
-    inset: Dp = 3.dp,
-    topAlpha: Float = 0.25f,
-    bottomAlpha: Float = 0.10f,
-    heightFraction: Float = 0.85f
-): Modifier = this.drawBehind {
-    // val i = inset.toPx()
-    val h = size.height * heightFraction
-    val i = (size.height - h) * 0.50f
-    val r = (corner.toPx() - i).coerceAtLeast(0f)
-    drawRoundRect(
-        brush = Brush.verticalGradient(
-            colors = listOf(
-                //Color.White.copy(alpha = bottomAlpha),
-                Color.White.copy(alpha = topAlpha),
-                Color.White.copy(alpha = bottomAlpha)
-            ),
-
-            startY = i,
-            endY = i + h
-        ),
-        topLeft = Offset(i, i),
-        size = Size(size.width - 2 * i, h),
-        cornerRadius = CornerRadius(r, r)
-    )
-}
-// ۱ و ۲: رگه‌های مورب + درخشش نرم، پشت محتوا می‌مونه تا آیکون و متن واضح بمونن
-fun Modifier.glassReflection(
-    streakAlpha: Float = 0.29f,
-    glowAlpha: Float = 0.75f
-): Modifier = this.drawBehind {
-    val w = size.width
-    val h = size.height
-    val skew = h * 0.55f
-
-    drawRect(
-        brush = Brush.radialGradient(
-            colors = listOf(Color.White.copy(alpha = glowAlpha), Color.Transparent),
-            center = Offset(w * 0.82f, h * 1.02f),
-            radius = w * 0.42f
-        )
-    )
-
-    fun streak(x0: Float, bandW: Float, alpha: Float) {
-        val path = Path().apply {
-            moveTo(x0, 0f)
-            lineTo(x0 + bandW, 0f)
-            lineTo(x0 + bandW - skew, h)
-            lineTo(x0 - skew, h)
-            close()
-        }
-        drawPath(path, Color.White.copy(alpha = alpha))
-    }
-    streak(w * 0.52f, w * 0.105f, streakAlpha)
-    streak(w * 0.52f + w * 0.13f, w * 0.03f, streakAlpha * 0.85f)
-}
-
-// ۳: جرقه‌ی براق دکمه
-fun Modifier.specularGlint(): Modifier = this.drawBehind {
-    drawOval(
-        color = Color.White.copy(alpha = 0.76f),
-        topLeft = Offset(10.dp.toPx(), 5.dp.toPx()),
-        size = Size(16.dp.toPx(), 6.dp.toPx())
-    )
-    drawOval(
-        color = Color.White.copy(alpha = 0.8f),
-        topLeft = Offset(30.dp.toPx(), 6.5.dp.toPx()),
-        size = Size(3.dp.toPx(), 3.dp.toPx())
-    )
-}
 
 @Composable
 private fun BundleItemChip(iconRes: Int, text: String) {

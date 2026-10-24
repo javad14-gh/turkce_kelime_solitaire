@@ -177,6 +177,7 @@ fun StoreDialog(
                             }
                             Spacer(modifier = Modifier.width(8.dp))
 
+                            val adOutline = Color(0x802D5A0E)
                             Box(
                                 modifier = Modifier
                                     .shadow(6.dp, RoundedCornerShape(12.dp))
@@ -186,7 +187,9 @@ fun StoreDialog(
                                             listOf(Color(0xFFA3E635), Color(0xFF65A30D), Color(0xFF4D7C0F))
                                         )
                                     )
-                                    .border(1.dp, Color.White, RoundedCornerShape(12.dp))
+                                    .candyGloss(corner = 12.dp, inset = 2.dp)
+                                    .specularGlint()
+                                    .border(1.dp, adOutline, RoundedCornerShape(12.dp))
                                     .clickable {
                                         onClose()
                                         onWatchAdForCoins()
@@ -201,14 +204,15 @@ fun StoreDialog(
                                         modifier = Modifier.size(18.dp)
                                     )
                                     Spacer(modifier = Modifier.width(4.dp))
-                                    Text(
+                                    OutlinedText(
                                         text = if (isPersian) "+۵۰" else "+50",
-                                        color = Color.White,
+                                        textColor = Color.White,
+                                        outlineColor = adOutline,
+                                        outlineWidth = 5f,
                                         fontSize = 14.sp,
                                         fontWeight = FontWeight.Black,
-                                        fontFamily = nunitoFont,
-                                        maxLines = 1,
-                                        softWrap = false
+                                        shadowColor = adOutline.copy(alpha = 0.6f),
+                                        shadowOffsetY = 2f
                                     )
                                     Spacer(modifier = Modifier.width(3.dp))
                                     CoinIcon(size = 14.dp)
@@ -302,6 +306,7 @@ fun StoreDialog(
                                 }
                                 Spacer(modifier = Modifier.width(8.dp))
 
+                                val removeAdsOutline = Color(0xFF9F1239).darker(0.3f)
                                 Box(
                                     modifier = Modifier
                                         .shadow(6.dp, RoundedCornerShape(12.dp))
@@ -311,17 +316,22 @@ fun StoreDialog(
                                                 listOf(Color(0xFFF43F5E), Color(0xFFE11D48), Color(0xFF9F1239))
                                             )
                                         )
-                                        .border(1.dp, Color.White, RoundedCornerShape(12.dp))
+                                        .candyGloss(corner = 12.dp, inset = 2.dp)
+                                        .specularGlint()
+                                        .border(1.dp, removeAdsOutline, RoundedCornerShape(12.dp))
                                         .clickable { onBuyRemoveAds() }
                                         .padding(horizontal = 12.dp, vertical = 8.dp),
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    Text(
+                                    OutlinedText(
                                         text = if (isPersian) "۳۹,۰۰۰ تومان" else "₺39.99",
-                                        color = Color.White,
+                                        textColor = Color.White,
+                                        outlineColor = removeAdsOutline,
+                                        outlineWidth = 5f,
                                         fontSize = 14.sp,
                                         fontWeight = FontWeight.Black,
-                                        fontFamily = nunitoFont
+                                        shadowColor = removeAdsOutline.copy(alpha = 0.6f),
+                                        shadowOffsetY = 2f
                                     )
                                 }
                             }
@@ -394,12 +404,15 @@ private fun CoinPackRow(
                 }
             }
 
+            val coinPackOutline = gradientColors.last().darker(0.35f)
             Box(
                 modifier = Modifier
                     .shadow(4.dp, RoundedCornerShape(10.dp))
                     .clip(RoundedCornerShape(10.dp))
                     .background(Brush.verticalGradient(gradientColors))
-                    .border(1.dp, Color.White.copy(alpha = 0.8f), RoundedCornerShape(10.dp))
+                    .candyGloss(corner = 10.dp, inset = 2.dp)
+                    .specularGlint()
+                    .border(1.dp, coinPackOutline, RoundedCornerShape(10.dp))
                     .clickable { onBuy() }
                     .padding(horizontal = 14.dp, vertical = 8.dp),
                 contentAlignment = Alignment.Center
@@ -414,12 +427,15 @@ private fun CoinPackRow(
                         modifier = Modifier.size(16.dp)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text(
+                    OutlinedText(
                         text = priceText,
-                        color = Color.White,
+                        textColor = Color.White,
+                        outlineColor = coinPackOutline,
+                        outlineWidth = 5f,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Black,
-                        fontFamily = nunitoFont
+                        shadowColor = coinPackOutline.copy(alpha = 0.6f),
+                        shadowOffsetY = 2f
                     )
                 }
             }

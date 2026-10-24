@@ -91,6 +91,9 @@ import com.turkce.kelimesolitaire.presentation.ui.components.BoosterType
 import com.turkce.kelimesolitaire.presentation.ui.components.HintIcon
 import com.turkce.kelimesolitaire.presentation.ui.components.UndoIcon
 import com.turkce.kelimesolitaire.presentation.ui.components.JokerIcon
+import com.turkce.kelimesolitaire.presentation.ui.components.candyGloss
+import com.turkce.kelimesolitaire.presentation.ui.components.specularGlint
+import com.turkce.kelimesolitaire.presentation.ui.components.darker
 import com.turkce.kelimesolitaire.presentation.ui.theme.GameTableBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.CardBackBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.StockRecycleBg
@@ -1354,22 +1357,26 @@ fun GameScreen(
                                 Spacer(modifier = Modifier.height(20.dp))
 
                                 // 1. Buy Extra Moves 3D Gold Button
+                                val goldShape = RoundedCornerShape(16.dp)
+                                val goldOutline = Color(0xFF78350F)
                                 Box(
                                     modifier = Modifier
                                         .fillMaxWidth(0.85f)
-                                        .heightIn(min = 62.dp)
-                                        .shadow(8.dp, RoundedCornerShape(16.dp))
-                                        .clip(RoundedCornerShape(16.dp))
+                                        .heightIn(min = 60.dp)
+                                        .shadow(8.dp, goldShape)
+                                        .clip(goldShape)
                                         .background(
                                             Brush.verticalGradient(
                                                 listOf(
+                                                    Color(0xFFFBBF24),
                                                     Color(0xFFF59E0B),
-                                                    Color(0xFFD97706),
-                                                    Color(0xFFB45309)
+                                                    Color(0xFFD97706)
                                                 )
                                             )
                                         )
-                                        .border(2.dp, DarkBg, RoundedCornerShape(16.dp))
+                                        .candyGloss(corner = 16.dp, inset = 2.dp)
+                                        .specularGlint(offsetX = 8.dp, offsetY = 4.dp, scale = 0.9f)
+                                        .border(1.dp, goldOutline, goldShape)
                                         .clickable { onBuyExtraMoves() }
                                         .padding(horizontal = 8.dp, vertical = 6.dp),
                                     contentAlignment = Alignment.Center
@@ -1388,31 +1395,36 @@ fun GameScreen(
                                         } else {
                                             "$cost Altın (+$extraMoves Hamle)"
                                         }
-                                        Text(
+                                        OutlinedText(
                                             text = buyLabel,
-                                            color = Color.White,
+                                            textColor = Color.White,
+                                            outlineColor = goldOutline,
+                                            outlineWidth = 10f,
+                                            shadowColor = goldOutline.copy(alpha = 0.6f),
+                                            shadowOffsetY = 3f,
                                             fontSize = 19.sp,
-                                            fontWeight = FontWeight.Black,
-                                            fontFamily = nunitoFont
+                                            fontWeight = FontWeight.Black
                                         )
                                     }
                                 }
                                 Spacer(modifier = Modifier.height(10.dp))
 
+                                val blueShape = RoundedCornerShape(16.dp)
+                                val blueOutline = Color(0xFF0C4A6E)
                                 Box(
                                     modifier = Modifier
                                         .fillMaxWidth(0.85f)
                                         .heightIn(min = 54.dp)
-                                        .shadow(10.dp, RoundedCornerShape(20.dp))
-                                        .clip(RoundedCornerShape(20.dp))
-                                        .background(Color(0xFF0369A1))
-                                        .padding(bottom = 4.dp)
-                                        .clip(RoundedCornerShape(17.dp))
+                                        .shadow(8.dp, blueShape)
+                                        .clip(blueShape)
                                         .background(
                                             Brush.verticalGradient(
                                                 listOf(Color(0xFF38BDF8), Color(0xFF0284C7), Color(0xFF0369A1))
                                             )
                                         )
+                                        .candyGloss(corner = 16.dp, inset = 2.dp)
+                                        .specularGlint(offsetX = 8.dp, offsetY = 4.dp, scale = 0.9f)
+                                        .border(1.dp, blueOutline, blueShape)
                                         .clickable { onWatchAdForMoves() }
                                         .padding(horizontal = 8.dp, vertical = 6.dp),
                                     contentAlignment = Alignment.Center
@@ -1420,29 +1432,31 @@ fun GameScreen(
                                     Row(verticalAlignment = Alignment.CenterVertically) {
                                         com.turkce.kelimesolitaire.presentation.ui.components.AdIcon(size = 26.dp)
                                         Spacer(modifier = Modifier.width(8.dp))
-                                        Text(
+                                        OutlinedText(
                                             text = if (isPersian)
                                                 "ویدیو (+${LocaleHelper.formatNumber(GameViewModel.EXTRA_MOVES_FOR_AD, true)} حرکت)"
                                             else "Video İzle (+${GameViewModel.EXTRA_MOVES_FOR_AD} Hamle)",
-                                            color = Color.White,
+                                            textColor = Color.White,
+                                            outlineColor = blueOutline,
+                                            outlineWidth = 10f,
+                                            shadowColor = blueOutline.copy(alpha = 0.6f),
+                                            shadowOffsetY = 3f,
                                             fontSize = 17.sp,
-                                            fontWeight = FontWeight.Black,
-                                            fontFamily = nunitoFont
+                                            fontWeight = FontWeight.Black
                                         )
                                     }
                                 }
                                 Spacer(modifier = Modifier.height(10.dp))
 
-                                // 2. Give up Button (3D Store structure, RED Exit/GiveUp Button)
+                                // 2. Give up Button (Red Candy Button)
+                                val redShape = RoundedCornerShape(16.dp)
+                                val redOutline = Color(0xFF7F1D1D)
                                 Box(
                                     modifier = Modifier
                                         .fillMaxWidth(0.85f)
                                         .heightIn(min = 54.dp)
-                                        .shadow(10.dp, RoundedCornerShape(20.dp))
-                                        .clip(RoundedCornerShape(20.dp))
-                                        .background(Color(0xFF7F1D1D))
-                                        .padding(bottom = 4.dp)
-                                        .clip(RoundedCornerShape(17.dp))
+                                        .shadow(8.dp, redShape)
+                                        .clip(redShape)
                                         .background(
                                             Brush.verticalGradient(
                                                 colors = listOf(
@@ -1452,16 +1466,22 @@ fun GameScreen(
                                                 )
                                             )
                                         )
+                                        .candyGloss(corner = 16.dp, inset = 2.dp)
+                                        .specularGlint(offsetX = 8.dp, offsetY = 4.dp, scale = 0.9f)
+                                        .border(1.dp, redOutline, redShape)
                                         .clickable { onAcceptDefeat() }
                                         .padding(horizontal = 8.dp, vertical = 6.dp),
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    Text(
+                                    OutlinedText(
                                         text = LocaleHelper.giveUp(isPersian),
-                                        color = Color.White,
+                                        textColor = Color.White,
+                                        outlineColor = redOutline,
+                                        outlineWidth = 10f,
+                                        shadowColor = redOutline.copy(alpha = 0.6f),
+                                        shadowOffsetY = 3f,
                                         fontSize = 18.sp,
-                                        fontWeight = FontWeight.Black,
-                                        fontFamily = nunitoFont
+                                        fontWeight = FontWeight.Black
                                     )
                                 }
                             }
@@ -1588,17 +1608,27 @@ fun GameScreen(
                                     verticalArrangement = Arrangement.spacedBy(12.dp),
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
-                                    // 1. Primary Action: Stay / Continue Playing (3D Store structure, BAA6DD)
+                                    // 1. Primary Action: Stay / Continue Playing (Candy Gloss Button)
+                                    val stayShape = RoundedCornerShape(18.dp)
+                                    val stayOutline = Color(0xFF6B5196)
                                     Box(
                                         modifier = Modifier
                                             .fillMaxWidth(0.72f)
                                             .heightIn(min = 84.dp)
-                                            .shadow(10.dp, RoundedCornerShape(20.dp))
-                                            .clip(RoundedCornerShape(20.dp))
-                                            .background(PopupButtonShadow)
-                                            .padding(bottom = 4.dp)
-                                            .clip(RoundedCornerShape(17.dp))
-                                            .background(PopupButtonBg)
+                                            .shadow(8.dp, stayShape)
+                                            .clip(stayShape)
+                                            .background(
+                                                Brush.verticalGradient(
+                                                    listOf(
+                                                        Color(0xFFBAA6DD),
+                                                        Color(0xFFA58ED0),
+                                                        Color(0xFF8B6CB8)
+                                                    )
+                                                )
+                                            )
+                                            .candyGloss(corner = 18.dp, inset = 2.dp)
+                                            .specularGlint(offsetX = 10.dp, offsetY = 6.dp, scale = 1.1f)
+                                            .border(1.dp, stayOutline, stayShape)
                                             .clickable {
                                                 showExitConfirmDialog = false
                                                 com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playButtonClickSound(
@@ -1617,8 +1647,10 @@ fun GameScreen(
                                                 OutlinedText(
                                                     text = LocaleHelper.exitStayBtn(isPersian),
                                                     textColor = Color.White,
-                                                    outlineColor = Color(0xFF6B5196),
+                                                    outlineColor = stayOutline,
                                                     outlineWidth = 12.5f,
+                                                    shadowColor = stayOutline.copy(alpha = 0.6f),
+                                                    shadowOffsetY = 3f,
                                                     fontSize = 24.sp,
                                                     fontWeight = FontWeight.Black
                                                 )
@@ -1638,8 +1670,10 @@ fun GameScreen(
                                                 OutlinedText(
                                                     text = LocaleHelper.exitStayBtn(isPersian),
                                                     textColor = Color.White,
-                                                    outlineColor = Color(0xFF6B5196),
+                                                    outlineColor = stayOutline,
                                                     outlineWidth = 12.5f,
+                                                    shadowColor = stayOutline.copy(alpha = 0.6f),
+                                                    shadowOffsetY = 3f,
                                                     fontSize = 24.sp,
                                                     fontWeight = FontWeight.Black
                                                 )
@@ -1647,16 +1681,15 @@ fun GameScreen(
                                         }
                                     }
 
-                                    // 2. Secondary Action: Leave to Menu (3D Store structure, RED Exit Button)
+                                    // 2. Secondary Action: Leave to Menu (Red Candy Button)
+                                    val leaveShape = RoundedCornerShape(18.dp)
+                                    val leaveOutline = Color(0xFF7F1D1D)
                                     Box(
                                         modifier = Modifier
                                             .fillMaxWidth(0.72f)
                                             .heightIn(min = 84.dp)
-                                            .shadow(10.dp, RoundedCornerShape(20.dp))
-                                            .clip(RoundedCornerShape(20.dp))
-                                            .background(Color(0xFF7F1D1D))
-                                            .padding(bottom = 4.dp)
-                                            .clip(RoundedCornerShape(17.dp))
+                                            .shadow(8.dp, leaveShape)
+                                            .clip(leaveShape)
                                             .background(
                                                 Brush.verticalGradient(
                                                     colors = listOf(
@@ -1666,6 +1699,9 @@ fun GameScreen(
                                                     )
                                                 )
                                             )
+                                            .candyGloss(corner = 18.dp, inset = 2.dp)
+                                            .specularGlint(offsetX = 10.dp, offsetY = 6.dp, scale = 1.1f)
+                                            .border(1.dp, leaveOutline, leaveShape)
                                             .clickable {
                                                 showExitConfirmDialog = false
                                                 onBackToMenu()
@@ -1891,17 +1927,27 @@ fun GameScreen(
                             verticalArrangement = Arrangement.spacedBy(12.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
+                            val menuBtnShape = RoundedCornerShape(18.dp)
+                            val menuBtnOutline = Color(0xFF6B5196)
+                            val menuBtnBrush = Brush.verticalGradient(
+                                listOf(
+                                    Color(0xFFBAA6DD),
+                                    Color(0xFFA58ED0),
+                                    Color(0xFF8B6CB8)
+                                )
+                            )
+
                             // 1. Theme Button (Opens separate theme details dialog)
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth(0.72f)
                                     .heightIn(min = 84.dp)
-                                    .shadow(10.dp, RoundedCornerShape(20.dp))
-                                    .clip(RoundedCornerShape(20.dp))
-                                    .background(PopupButtonShadow)
-                                    .padding(bottom = 4.dp)
-                                    .clip(RoundedCornerShape(17.dp))
-                                    .background(PopupButtonBg)
+                                    .shadow(8.dp, menuBtnShape)
+                                    .clip(menuBtnShape)
+                                    .background(menuBtnBrush)
+                                    .candyGloss(corner = 18.dp, inset = 2.dp)
+                                    .specularGlint(offsetX = 10.dp, offsetY = 6.dp, scale = 1.1f)
+                                    .border(1.dp, menuBtnOutline, menuBtnShape)
                                     .clickable { showThemeDialog = true }
                                     .padding(2.dp),
                                 contentAlignment = if (isPersian) Alignment.CenterEnd else Alignment.Center
@@ -1915,8 +1961,10 @@ fun GameScreen(
                                         OutlinedText(
                                              text = "رنگ‌بندی بازی",
                                              textColor = Color.White,
-                                             outlineColor = Color(0xFF6B5196),
+                                             outlineColor = menuBtnOutline,
                                              outlineWidth = 12.5f,
+                                             shadowColor = menuBtnOutline.copy(alpha = 0.6f),
+                                             shadowOffsetY = 3f,
                                              fontSize = 25.sp,
                                              fontWeight = FontWeight.Black
                                          )
@@ -1934,8 +1982,10 @@ fun GameScreen(
                                         OutlinedText(
                                              text = "Oyun Teması",
                                              textColor = Color.White,
-                                             outlineColor = Color(0xFF6B5196),
+                                             outlineColor = menuBtnOutline,
                                              outlineWidth = 12.5f,
+                                             shadowColor = menuBtnOutline.copy(alpha = 0.6f),
+                                             shadowOffsetY = 3f,
                                              fontSize = 24.sp,
                                              fontWeight = FontWeight.Black
                                          )
@@ -1948,12 +1998,12 @@ fun GameScreen(
                                 modifier = Modifier
                                     .fillMaxWidth(0.72f)
                                     .heightIn(min = 84.dp)
-                                    .shadow(10.dp, RoundedCornerShape(20.dp))
-                                    .clip(RoundedCornerShape(20.dp))
-                                    .background(PopupButtonShadow)
-                                    .padding(bottom = 4.dp)
-                                    .clip(RoundedCornerShape(17.dp))
-                                    .background(PopupButtonBg)
+                                    .shadow(8.dp, menuBtnShape)
+                                    .clip(menuBtnShape)
+                                    .background(menuBtnBrush)
+                                    .candyGloss(corner = 18.dp, inset = 2.dp)
+                                    .specularGlint(offsetX = 10.dp, offsetY = 6.dp, scale = 1.1f)
+                                    .border(1.dp, menuBtnOutline, menuBtnShape)
                                     .clickable {
                                         showHamburgerMenu = false
                                         onOpenStore()
@@ -1970,8 +2020,10 @@ fun GameScreen(
                                         OutlinedText(
                                              text = LocaleHelper.storeTitle(isPersian),
                                              textColor = Color.White,
-                                             outlineColor = Color(0xFF6B5196),
+                                             outlineColor = menuBtnOutline,
                                              outlineWidth = 12.5f,
+                                             shadowColor = menuBtnOutline.copy(alpha = 0.6f),
+                                             shadowOffsetY = 3f,
                                              fontSize = 27.sp,
                                              fontWeight = FontWeight.Black
                                          )
@@ -1991,8 +2043,10 @@ fun GameScreen(
                                         OutlinedText(
                                              text = LocaleHelper.storeTitle(isPersian),
                                              textColor = Color.White,
-                                             outlineColor = Color(0xFF6B5196),
+                                             outlineColor = menuBtnOutline,
                                              outlineWidth = 12.5f,
+                                             shadowColor = menuBtnOutline.copy(alpha = 0.6f),
+                                             shadowOffsetY = 3f,
                                              fontSize = 27.sp,
                                              fontWeight = FontWeight.Black
                                          )
@@ -2005,12 +2059,12 @@ fun GameScreen(
                                 modifier = Modifier
                                     .fillMaxWidth(0.72f)
                                     .heightIn(min = 84.dp)
-                                    .shadow(10.dp, RoundedCornerShape(20.dp))
-                                    .clip(RoundedCornerShape(20.dp))
-                                    .background(PopupButtonShadow)
-                                    .padding(bottom = 4.dp)
-                                    .clip(RoundedCornerShape(17.dp))
-                                    .background(PopupButtonBg)
+                                    .shadow(8.dp, menuBtnShape)
+                                    .clip(menuBtnShape)
+                                    .background(menuBtnBrush)
+                                    .candyGloss(corner = 18.dp, inset = 2.dp)
+                                    .specularGlint(offsetX = 10.dp, offsetY = 6.dp, scale = 1.1f)
+                                    .border(1.dp, menuBtnOutline, menuBtnShape)
                                     .clickable {
                                         showHamburgerMenu = false
                                         onRestartLevel()
@@ -2027,8 +2081,10 @@ fun GameScreen(
                                         OutlinedText(
                                              text = if (isPersian) "شروع مجدد" else "Tekrar",
                                              textColor = Color.White,
-                                             outlineColor = Color(0xFF6B5196),
+                                             outlineColor = menuBtnOutline,
                                              outlineWidth = 12.5f,
+                                             shadowColor = menuBtnOutline.copy(alpha = 0.6f),
+                                             shadowOffsetY = 3f,
                                              fontSize = 25.sp,
                                              fontWeight = FontWeight.Black
                                          )
@@ -2048,8 +2104,10 @@ fun GameScreen(
                                         OutlinedText(
                                              text = if (isPersian) "شروع مجدد" else "Tekrar",
                                              textColor = Color.White,
-                                             outlineColor = Color(0xFF6B5196),
+                                             outlineColor = menuBtnOutline,
                                              outlineWidth = 12.5f,
+                                             shadowColor = menuBtnOutline.copy(alpha = 0.6f),
+                                             shadowOffsetY = 3f,
                                              fontSize = 25.sp,
                                              fontWeight = FontWeight.Black
                                          )
@@ -2058,15 +2116,14 @@ fun GameScreen(
                             }
 
                             // 4. Exit to Main Menu (3D Store structure, RED Exit Button, 72% width)
+                            val exitBtnShape = RoundedCornerShape(18.dp)
+                            val exitBtnOutline = Color(0xFF7F1D1D)
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth(0.72f)
                                     .heightIn(min = 84.dp)
-                                    .shadow(10.dp, RoundedCornerShape(20.dp))
-                                    .clip(RoundedCornerShape(20.dp))
-                                    .background(Color(0xFF7F1D1D))
-                                    .padding(bottom = 4.dp)
-                                    .clip(RoundedCornerShape(17.dp))
+                                    .shadow(8.dp, exitBtnShape)
+                                    .clip(exitBtnShape)
                                     .background(
                                         Brush.verticalGradient(
                                             colors = listOf(
@@ -2076,6 +2133,9 @@ fun GameScreen(
                                             )
                                         )
                                     )
+                                    .candyGloss(corner = 18.dp, inset = 2.dp)
+                                    .specularGlint(offsetX = 10.dp, offsetY = 6.dp, scale = 1.1f)
+                                    .border(1.dp, exitBtnOutline, exitBtnShape)
                                     .clickable {
                                         showHamburgerMenu = false
                                         onBackToMenu()
@@ -2092,8 +2152,10 @@ fun GameScreen(
                                         OutlinedText(
                                              text = if (isPersian) "منوی اصلی" else "Ana Menü",
                                              textColor = Color.White,
-                                             outlineColor = Color(0xFF7F1D1D),
+                                             outlineColor = exitBtnOutline,
                                              outlineWidth = 12.5f,
+                                             shadowColor = exitBtnOutline.copy(alpha = 0.6f),
+                                             shadowOffsetY = 3f,
                                              fontSize = 25.sp,
                                              fontWeight = FontWeight.Black
                                          )
@@ -2113,8 +2175,10 @@ fun GameScreen(
                                         OutlinedText(
                                              text = if (isPersian) "منوی اصلی" else "Ana Menü",
                                              textColor = Color.White,
-                                             outlineColor = Color(0xFF7F1D1D),
+                                             outlineColor = exitBtnOutline,
                                              outlineWidth = 12.5f,
+                                             shadowColor = exitBtnOutline.copy(alpha = 0.6f),
+                                             shadowOffsetY = 3f,
                                              fontSize = 25.sp,
                                              fontWeight = FontWeight.Black
                                          )

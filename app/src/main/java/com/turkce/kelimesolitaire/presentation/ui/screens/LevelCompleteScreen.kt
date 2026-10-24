@@ -65,6 +65,9 @@ import com.turkce.kelimesolitaire.R
 import com.turkce.kelimesolitaire.presentation.ui.components.AdBannerPlaceholder
 import com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon
 import com.turkce.kelimesolitaire.presentation.ui.components.ConfettiPartyPopper
+import com.turkce.kelimesolitaire.presentation.ui.components.OutlinedText
+import com.turkce.kelimesolitaire.presentation.ui.components.candyGloss
+import com.turkce.kelimesolitaire.presentation.ui.components.specularGlint
 import com.turkce.kelimesolitaire.presentation.ui.components.rememberNunitoFont
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg
 import com.turkce.kelimesolitaire.presentation.util.GameSettingsManager
@@ -555,12 +558,14 @@ fun LevelCompleteScreen(
                         },
                     contentAlignment = Alignment.TopCenter
                 ) {
-                    // 3D Tactile Golden Amber Button
+                    // 3D Candy Gloss Golden Amber Button
+                    val doubleShape = RoundedCornerShape(18.dp)
+                    val doubleOutline = Color(0xFF78350F)
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .shadow(12.dp, RoundedCornerShape(22.dp))
-                            .clip(RoundedCornerShape(22.dp))
+                            .shadow(10.dp, doubleShape)
+                            .clip(doubleShape)
                             .background(
                                 Brush.verticalGradient(
                                     listOf(
@@ -570,22 +575,9 @@ fun LevelCompleteScreen(
                                     )
                                 )
                             )
-                            .border(1.8.dp, Color(0xFFFEF08A), RoundedCornerShape(22.dp))
-                            .padding(3.5.dp)
-                            .clip(RoundedCornerShape(18.5.dp))
-                            .background(Color(0xFF78350F)) // 3D bevel shadow base
-                            .padding(bottom = 5.dp)
-                            .clip(RoundedCornerShape(15.dp))
-                            .background(
-                                Brush.verticalGradient(
-                                    listOf(
-                                        Color(0xFFFEF08A),
-                                        Color(0xFFFBBF24),
-                                        Color(0xFFF59E0B)
-                                    )
-                                )
-                            )
-                            .border(1.dp, Color.White.copy(alpha = 0.6f), RoundedCornerShape(15.dp))
+                            .candyGloss(corner = 18.dp, inset = 2.dp)
+                            .specularGlint(offsetX = 14.dp, offsetY = 6.dp, scale = 1.3f)
+                            .border(1.dp, doubleOutline, doubleShape)
                             .clickable(
                                 enabled = !isActionTriggered,
                                 interactionSource = remember { MutableInteractionSource() },
@@ -597,36 +589,39 @@ fun LevelCompleteScreen(
                                     onDoubleRewardClicked()
                                 }
                             }
-                            .padding(vertical = 10.dp, horizontal = 12.dp),
+                            .padding(vertical = 12.dp, horizontal = 14.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.Center
                         ) {
+                            val text = LocaleHelper.formatNumber(effectiveDoubleBonus, isPersian)
                             if (isPersian) {
-                                Text(
-                                    text = LocaleHelper.formatNumber(effectiveDoubleBonus, isPersian),
-                                    color = Color(0xFF451A03),
-                                    fontSize = 26.sp,
+                                OutlinedText(
+                                    text = text,
+                                    textColor = Color.White,
+                                    outlineColor = doubleOutline,
+                                    outlineWidth = 8f,
+                                    fontSize = 28.sp,
                                     fontWeight = FontWeight.Black,
-                                    fontFamily = nunitoFont,
-                                    maxLines = 1,
-                                    softWrap = false
+                                    shadowColor = doubleOutline.copy(alpha = 0.6f),
+                                    shadowOffsetY = 3f
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 CoinIcon(size = 46.dp)
                             } else {
                                 CoinIcon(size = 46.dp)
                                 Spacer(modifier = Modifier.width(8.dp))
-                                Text(
-                                    text = LocaleHelper.formatNumber(effectiveDoubleBonus, isPersian),
-                                    color = Color(0xFF451A03),
-                                    fontSize = 26.sp,
+                                OutlinedText(
+                                    text = text,
+                                    textColor = Color.White,
+                                    outlineColor = doubleOutline,
+                                    outlineWidth = 8f,
+                                    fontSize = 28.sp,
                                     fontWeight = FontWeight.Black,
-                                    fontFamily = nunitoFont,
-                                    maxLines = 1,
-                                    softWrap = false
+                                    shadowColor = doubleOutline.copy(alpha = 0.6f),
+                                    shadowOffsetY = 3f
                                 )
                             }
                         }
@@ -665,36 +660,26 @@ fun LevelCompleteScreen(
 
                 Spacer(modifier = Modifier.height(18.dp))
 
-                // 2. Normal Reward Button (1X) - Identical dimensions to Double button
+                // 2. Normal Reward Button (1X) - Candy style
+                val normalShape = RoundedCornerShape(18.dp)
+                val normalOutline = Color(0xFF334155)
                 Box(
                     modifier = Modifier
                         .fillMaxWidth(0.50f)
-                        .shadow(12.dp, RoundedCornerShape(22.dp))
-                        .clip(RoundedCornerShape(22.dp))
+                        .shadow(10.dp, normalShape)
+                        .clip(normalShape)
                         .background(
                             Brush.verticalGradient(
                                 listOf(
                                     Color(0xFF64748B),
-                                    Color(0xFF475569)
-                                )
-                            )
-                        )
-                        .border(1.8.dp, Color(0xFF94A3B8).copy(alpha = 0.5f), RoundedCornerShape(22.dp))
-                        .padding(3.5.dp)
-                        .clip(RoundedCornerShape(18.5.dp))
-                        .background(Color(0xFF0F172A)) // 3D dark slate bottom base
-                        .padding(bottom = 5.dp) // Creates 3D bevel
-                        .clip(RoundedCornerShape(15.dp))
-                        .background(
-                            Brush.verticalGradient(
-                                listOf(
                                     Color(0xFF475569),
-                                    Color(0xFF334155),
-                                    Color(0xFF1E293B)
+                                    Color(0xFF334155)
                                 )
                             )
                         )
-                        .border(1.dp, Color(0xFF64748B).copy(alpha = 0.4f), RoundedCornerShape(15.dp))
+                        .candyGloss(corner = 18.dp, inset = 2.dp)
+                        .specularGlint(offsetX = 14.dp, offsetY = 6.dp, scale = 1.3f)
+                        .border(1.dp, normalOutline, normalShape)
                         .clickable(
                             enabled = !isActionTriggered,
                             interactionSource = remember { MutableInteractionSource() },
@@ -707,36 +692,39 @@ fun LevelCompleteScreen(
                                 action()
                             }
                         }
-                        .padding(vertical = 10.dp, horizontal = 12.dp),
+                        .padding(vertical = 12.dp, horizontal = 14.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
                     ) {
+                        val text = LocaleHelper.formatNumber(effectiveBonus, isPersian)
                         if (isPersian) {
-                            Text(
-                                text = LocaleHelper.formatNumber(effectiveBonus, isPersian),
-                                color = Color.White,
-                                fontSize = 26.sp,
+                            OutlinedText(
+                                text = text,
+                                textColor = Color.White,
+                                outlineColor = normalOutline,
+                                outlineWidth = 8f,
+                                fontSize = 28.sp,
                                 fontWeight = FontWeight.Black,
-                                fontFamily = nunitoFont,
-                                maxLines = 1,
-                                softWrap = false
+                                shadowColor = normalOutline.copy(alpha = 0.6f),
+                                shadowOffsetY = 3f
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             CoinIcon(size = 46.dp)
                         } else {
                             CoinIcon(size = 46.dp)
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = LocaleHelper.formatNumber(effectiveBonus, isPersian),
-                                color = Color.White,
-                                fontSize = 26.sp,
+                            OutlinedText(
+                                text = text,
+                                textColor = Color.White,
+                                outlineColor = normalOutline,
+                                outlineWidth = 8f,
+                                fontSize = 28.sp,
                                 fontWeight = FontWeight.Black,
-                                fontFamily = nunitoFont,
-                                maxLines = 1,
-                                softWrap = false
+                                shadowColor = normalOutline.copy(alpha = 0.6f),
+                                shadowOffsetY = 3f
                             )
                         }
                     }
