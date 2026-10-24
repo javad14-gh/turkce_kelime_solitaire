@@ -111,6 +111,7 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.PopupHeaderBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupButtonBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupButtonShadow
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupTrayDepth
+import com.turkce.kelimesolitaire.presentation.viewmodel.GameViewModel
 
 
 private fun findBestFoundationSlot(
@@ -210,6 +211,7 @@ fun GameScreen(
     onDismissTutorial: () -> Unit = {},
     onDismissCategoryCelebration: () -> Unit = {},
     shouldAnimateDeal: Boolean = true,
+    onWatchAdForMoves: () -> Unit = {}
 ) {
     val context = androidx.compose.ui.platform.LocalContext.current
     val isPersian = remember(context) { LocaleHelper.isPersian(context) }
@@ -1378,8 +1380,16 @@ fun GameScreen(
                                     ) {
                                         com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 30.dp)
                                         Spacer(modifier = Modifier.width(8.dp))
+                                        val extraMoves = GameViewModel.EXTRA_MOVES_FOR_COINS
+                                        val cost = GameViewModel.EXTRA_MOVES_COIN_COST
+
+                                        val buyLabel = if (isPersian) {
+                                            "${LocaleHelper.formatNumber(cost, true)} سکه (+${LocaleHelper.formatNumber(extraMoves, true)} حرکت)"
+                                        } else {
+                                            "$cost Altın (+$extraMoves Hamle)"
+                                        }
                                         Text(
-                                            text = if (isPersian) "+۵ حرکت (${LocaleHelper.formatNumber(75, true)} 🪙)" else "+5 Hamle (75 🪙)",
+                                            text = buyLabel,
                                             color = Color.White,
                                             fontSize = 19.sp,
                                             fontWeight = FontWeight.Black,
@@ -1388,6 +1398,39 @@ fun GameScreen(
                                     }
                                 }
 
+                                Spacer(modifier = Modifier.height(10.dp))
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth(0.85f)
+                                        .heightIn(min = 54.dp)
+                                        .shadow(10.dp, RoundedCornerShape(20.dp))
+                                        .clip(RoundedCornerShape(20.dp))
+                                        .background(Color(0xFF0369A1))
+                                        .padding(bottom = 4.dp)
+                                        .clip(RoundedCornerShape(17.dp))
+                                        .background(
+                                            Brush.verticalGradient(
+                                                listOf(Color(0xFF38BDF8), Color(0xFF0284C7), Color(0xFF0369A1))
+                                            )
+                                        )
+                                        .clickable { onWatchAdForMoves() }
+                                        .padding(horizontal = 8.dp, vertical = 6.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        com.turkce.kelimesolitaire.presentation.ui.components.AdIcon(size = 26.dp)
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text(
+                                            text = if (isPersian)
+                                                "ویدیو (+${LocaleHelper.formatNumber(GameViewModel.EXTRA_MOVES_FOR_AD, true)} حرکت)"
+                                            else "Video İzle (+${GameViewModel.EXTRA_MOVES_FOR_AD} Hamle)",
+                                            color = Color.White,
+                                            fontSize = 17.sp,
+                                            fontWeight = FontWeight.Black,
+                                            fontFamily = nunitoFont
+                                        )
+                                    }
+                                }
                                 Spacer(modifier = Modifier.height(10.dp))
 
                                 // 2. Give up Button (3D Store structure, RED Exit/GiveUp Button)

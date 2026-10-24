@@ -109,6 +109,11 @@ data class GameUiState(
 )
 
 class GameViewModel : ViewModel() {
+    companion object {
+        const val EXTRA_MOVES_COIN_COST = 87
+        const val EXTRA_MOVES_FOR_COINS = 7   // هر عددی که می‌خوای
+        const val EXTRA_MOVES_FOR_AD = 7      // هر عددی که می‌خوای
+    }
     private val undoStack = mutableListOf<SavedGameSession>()
     private var isAdvancingLevel = false
     private var levelsSinceLastAd = 0
@@ -134,7 +139,17 @@ class GameViewModel : ViewModel() {
             }
         }
     }
-
+    private fun resumeWithExtraMoves(context: Context, moves: Int) {
+        _uiState.update {
+            it.copy(
+                movesRemaining = moves,
+                showOutofMovesDialog = false,
+                screenState = ScreenState.Gameplay,
+                shouldAnimateDeal = false
+            )
+        }
+        saveActiveSessionToPrefs(context)
+    }
     fun dismissUserMessage() {
         messageDismissJob?.cancel()
         _uiState.update { it.copy(activeMessage = null) }
@@ -731,16 +746,10 @@ class GameViewModel : ViewModel() {
     }
 
     fun purchaseExtraMoves(activity: Activity) {
-        if (_uiState.value.coins >= 75) {
-            _uiState.update {
-                it.copy(
-                    coins = it.coins - 75,
-                    movesRemaining = 5,
-                    showOutofMovesDialog = false
-                )
-            }
+        if (_uiState.value.coins >= EXTRA_MOVES_COIN_COST) {
+            _uiState.update { it.copy(coins = it.coins - EXTRA_MOVES_COIN_COST) }
             saveCoinsToPrefs(activity, _uiState.value.coins)
-            saveActiveSessionToPrefs(activity)
+            resumeWithExtraMoves(activity, EXTRA_MOVES_FOR_COINS)
         } else {
             watchAdForExtraMoves(activity)
         }
@@ -748,13 +757,7 @@ class GameViewModel : ViewModel() {
 
     fun watchAdForExtraMoves(activity: Activity) {
         adManager.showRewarded(activity) {
-            _uiState.update {
-                it.copy(
-                    movesRemaining = 5,
-                    showOutofMovesDialog = false
-                )
-            }
-            saveActiveSessionToPrefs(activity)
+            resumeWithExtraMoves(activity, EXTRA_MOVES_FOR_AD)
         }
     }
 
@@ -1680,6 +1683,7 @@ class GameViewModel : ViewModel() {
         saveCoinsToPrefs(context, _uiState.value.coins)
         saveActiveSessionToPrefs(context)
         onShowToast(if (isPersian) "۵ فرصت اضافه دریافت شد! (-۷۵ 🪙)\u200F" else "5 Ek Hamle alındı! (-75 🪙)")
+        resumeWithExtraMoves(context, EXTRA_MOVES_FOR_COINS)
     }
 
     fun acceptDefeat(context: Context? = null) {

@@ -37,17 +37,18 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.TextSecondary
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.remember
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
+import com.turkce.kelimesolitaire.presentation.viewmodel.GameViewModel
 
 @Composable
 fun GameOverScreen(
+    modifier: Modifier = Modifier,
     levelNumber: Int,
     coins: Int,
     onContinueForCoins: () -> Unit,
     onContinueForAd: () -> Unit,
     onRestartClicked: () -> Unit,
     onMainMenuClicked: () -> Unit,
-    isAdFree: Boolean = false,
-    modifier: Modifier = Modifier
+    isAdFree: Boolean = false
 ) {
     val context = LocalContext.current
     val isPersian = remember(context) { LocaleHelper.isPersian(context) }
@@ -124,7 +125,7 @@ fun GameOverScreen(
                             .padding(bottom = 4.dp)
                             .clip(RoundedCornerShape(12.dp))
                             .background(
-                                if (coins >= 50) {
+                                if (coins >= 75) {
                                     Brush.verticalGradient(
                                         colors = listOf(Color(0xFFFFD700), Color(0xFFF59E0B), Color(0xFFD97706))
                                     )
@@ -138,11 +139,19 @@ fun GameOverScreen(
                             .padding(horizontal = 22.dp, vertical = 11.dp),
                         contentAlignment = Alignment.Center
                     ) {
+                        val extraMoves = GameViewModel.EXTRA_MOVES_FOR_COINS
+                        val cost = GameViewModel.EXTRA_MOVES_COIN_COST
+
+                        val buyLabel = if (isPersian) {
+                            "${LocaleHelper.formatNumber(cost, true)} سکه (+${LocaleHelper.formatNumber(extraMoves, true)} حرکت)"
+                        } else {
+                            "$cost Altın (+$extraMoves Hamle)"
+                        }
                         Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
                             com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 22.dp)
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                text = "${LocaleHelper.formatNumber(75, isPersian)} ${if (isPersian) "سکه" else "Altın"}",
+                                text = buyLabel,
                                 color = if (coins >= 75) Color(0xFF0F172A) else Color(0xFF94A3B8),
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Black,
@@ -181,7 +190,9 @@ fun GameOverScreen(
                             com.turkce.kelimesolitaire.presentation.ui.components.AdIcon(size = 20.dp)
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                text = if (isPersian) "تماشای تبلیغ (+۱۵ فرصت)" else "Reklam İzle (+15 Hamle)",
+                                text = if (isPersian)
+                                    "ویدیو (+${LocaleHelper.formatNumber(GameViewModel.EXTRA_MOVES_FOR_AD, true)} حرکت)"
+                                else "Video İzle (+${GameViewModel.EXTRA_MOVES_FOR_AD} Hamle)",
                                 color = Color.White,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Black,

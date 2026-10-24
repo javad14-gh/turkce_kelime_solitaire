@@ -7,6 +7,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import com.turkce.kelimesolitaire.presentation.viewmodel.GameViewModel
 
 object LocaleHelper {
 
@@ -124,7 +125,8 @@ object LocaleHelper {
         if (isPersian) "فرصت‌ها تمام شد!\u200F" else "Hamleler Bitti!"
 
     fun outOfMovesPrompt(isPersian: Boolean): String =
-        if (isPersian) "آیا می‌خواهید با ۷۵ سکه، ۵ حرکت دیگر دریافت کنید؟\u200F" else "75 Altın harcayarak 5 ek hamle almak ister misiniz?"
+        if (isPersian) "آیا می‌خواهید با ${formatNumber(GameViewModel.EXTRA_MOVES_FOR_COINS,true)} سکه، ${formatNumber(
+            GameViewModel.EXTRA_MOVES_FOR_COINS,true)} حرکت دیگر دریافت کنید؟\u200F" else "${GameViewModel.EXTRA_MOVES_COIN_COST} Altın harcayarak ${GameViewModel.EXTRA_MOVES_FOR_COINS} ek hamle almak ister misiniz?"
 
     fun giveUp(isPersian: Boolean): String =
         if (isPersian) "انصراف" else "Pes Et"
@@ -157,7 +159,7 @@ object LocaleHelper {
         if (isPersian) "فرصت‌های شما در مرحله ${formatNumber(level, true)} به پایان رسید.\u200F" else "Seviye $level içinde hamleniz bitti."
 
     fun continueForCoins(isPersian: Boolean): String =
-        if (isPersian) "ادامه بازی (+۱۵ فرصت)" else "Oyuna Devam Et (+15 Hamle)"
+        if (isPersian) "ادامه بازی (+${formatNumber(GameViewModel.EXTRA_MOVES_FOR_COINS,true)} فرصت)" else "Oyuna Devam Et (+${GameViewModel.EXTRA_MOVES_FOR_COINS} Hamle)"
 
     fun dailyRewardTitle(isPersian: Boolean): String =
         if (isPersian) "جایزه ورود روزانه" else "Günlük Giriş Ödülü"

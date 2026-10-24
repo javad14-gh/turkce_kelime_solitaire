@@ -149,6 +149,7 @@ class MainActivity : ComponentActivity() {
                                         onDismissCategoryCelebration = { viewModel.dismissCategoryCelebration() },
                                         onOpenStore = { viewModel.toggleStoreDialog(true) },
                                         onCardSelected = { cardId -> viewModel.selectCard(cardId) },
+                                        onWatchAdForMoves = { viewModel.watchAdForExtraMoves(this@MainActivity) },
                                         onCardDropped = { cards, slot ->
                                             viewModel.attemptPlaceCards(cards, slot, this@MainActivity)
                                         },
