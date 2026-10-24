@@ -24,8 +24,13 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -34,6 +39,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.unit.Dp
 import com.turkce.kelimesolitaire.R
 import com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon
 import com.turkce.kelimesolitaire.presentation.ui.components.rememberNunitoFont
@@ -45,6 +52,10 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.AccentGold
 import com.turkce.kelimesolitaire.data.billing.MyketBillingConfig
 import com.turkce.kelimesolitaire.presentation.ui.components.OutlinedText
 
+val inner = RoundedCornerShape(19.dp)
+val outer = RoundedCornerShape(24.dp)
+
+fun Color.darker(f: Float = 0.55f) = lerp(this, Color.Black, f)
 @Composable
 fun StoreScreen(
     coins: Int,
@@ -66,7 +77,7 @@ fun StoreScreen(
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(
-                    colors = listOf(Color(0xFF5271ff), Color(0xFF5271ff))
+                    colors = listOf(Color(0xFF00167A), Color(0xFF00167A))
                 )
             )
     ) {
@@ -140,11 +151,33 @@ fun StoreScreen(
                         modifier = Modifier
                             .padding(start = 20.dp)
                             .height(40.dp)
-                            .shadow(5.dp, RoundedCornerShape(topEnd = 18.dp, bottomEnd = 18.dp, topStart = 7.dp, bottomStart = 7.dp))
-                            .clip(RoundedCornerShape(topEnd = 18.dp, bottomEnd = 18.dp, topStart = 7.dp, bottomStart = 7.dp))
+                            .shadow(
+                                5.dp,
+                                RoundedCornerShape(
+                                    topEnd = 18.dp,
+                                    bottomEnd = 18.dp,
+                                    topStart = 7.dp,
+                                    bottomStart = 7.dp
+                                )
+                            )
+                            .clip(
+                                RoundedCornerShape(
+                                    topEnd = 18.dp,
+                                    bottomEnd = 18.dp,
+                                    topStart = 7.dp,
+                                    bottomStart = 7.dp
+                                )
+                            )
                             .background(Color(0xFF6B5196))
                             .padding(bottom = 3.dp)
-                            .clip(RoundedCornerShape(topEnd = 15.dp, bottomEnd = 15.dp, topStart = 5.dp, bottomStart = 5.dp))
+                            .clip(
+                                RoundedCornerShape(
+                                    topEnd = 15.dp,
+                                    bottomEnd = 15.dp,
+                                    topStart = 5.dp,
+                                    bottomStart = 5.dp
+                                )
+                            )
                             .background(
                                 Brush.verticalGradient(
                                     colors = listOf(
@@ -196,12 +229,12 @@ fun StoreScreen(
                                 )
                             )
                         )
-                        .clickable {onClose()},
+                        .clickable { onClose() },
                     contentAlignment = Alignment.Center
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.cancel),
-                        contentDescription = "Settings",
+                        contentDescription = "close",
                         modifier = Modifier.size(34.dp)
                     )
                 }
@@ -232,16 +265,26 @@ fun StoreScreen(
                             .height(115.dp)
                             .shadow(12.dp, RoundedCornerShape(22.dp))
                             .clip(RoundedCornerShape(22.dp))
+                            .background(Color(0xFFF472B6))
+                            .candyGloss(corner = 24.dp, inset = 2.5.dp)
+                            .padding(7.dp)
+                            .clip(inner)
                             .background(
-                                Brush.horizontalGradient(
+                                Brush.verticalGradient(
                                     listOf(Color(0xFF831843), Color(0xFFBE185D), Color(0xFF9D174D))
                                 )
                             )
+                            .glassReflection()
                             .border(
                                 2.dp,
-                                Color(0xFFF472B6),
-                                RoundedCornerShape(22.dp)
-                            )
+                                Brush.verticalGradient(
+                                    listOf(
+                                        Color.White.copy(alpha = 0.9f),
+                                        Color.White.copy(alpha = 0.15f),
+                                        Color.Black.copy(alpha = 0.12f)
+                                    )
+                                ),
+                                inner)
                     ) {
                         Row(
                             modifier = Modifier.fillMaxSize(),
@@ -265,7 +308,8 @@ fun StoreScreen(
                                     color = Color.White,
                                     fontSize = 18.sp,
                                     fontWeight = FontWeight.Black,
-                                    fontFamily = nunitoFont
+                                    fontFamily = nunitoFont,
+                                    textAlign = TextAlign.Center
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
@@ -273,29 +317,40 @@ fun StoreScreen(
                                     color = Color.White.copy(alpha = 0.9f),
                                     fontSize = 12.sp,
                                     lineHeight = 16.sp,
-                                    fontWeight = FontWeight.Bold
+                                    fontWeight = FontWeight.Bold,
+                                    textAlign = TextAlign.Center
                                 )
                             }
 
                             Box(
                                 modifier = Modifier
-                                    .padding(end = 14.dp)
+                                    .padding(16.dp)
                                     .shadow(6.dp, RoundedCornerShape(14.dp))
                                     .clip(RoundedCornerShape(14.dp))
                                     .background(
-                                        Brush.verticalGradient(listOf(Color(0xFFF43F5E), Color(0xFFBE123C)))
+                                        Brush.verticalGradient(
+                                            listOf(
+                                                Color(0xFFF43F5E),
+                                                Color(0xFFBE123C)
+                                            )
+                                        )
                                     )
+                                    .candyGloss(14.dp,2.dp )
+                                    .specularGlint()
                                     .border(1.dp, Color.White, RoundedCornerShape(14.dp))
                                     .clickable { onPurchaseSku(MyketBillingConfig.SKU_REMOVE_ADS) }
                                     .padding(horizontal = 14.dp, vertical = 10.dp),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Text(
+                                OutlinedText(
                                     text = if (isPersian) "۳۹,۰۰۰ تومان" else "₺49.99",
-                                    color = Color.White,
+                                    textColor = Color.White,
+                                    outlineColor = Color(0xFFBE123C).darker(),
+                                    outlineWidth = 6f,
                                     fontSize = 15.sp,
+                                    shadowColor = Color(0xFFBE123C).darker().copy(0.6f),
                                     fontWeight = FontWeight.Black,
-                                    fontFamily = nunitoFont
+                                    //fontFamily = nunitoFont
                                 )
                             }
                         }
@@ -495,7 +550,11 @@ fun StoreScreen(
                                 .clip(RoundedCornerShape(12.dp))
                                 .background(
                                     Brush.verticalGradient(
-                                        listOf(Color(0xFFA3E635), Color(0xFF65A30D), Color(0xFF4D7C0F))
+                                        listOf(
+                                            Color(0xFFA3E635),
+                                            Color(0xFF65A30D),
+                                            Color(0xFF4D7C0F)
+                                        )
                                     )
                                 )
                                 .border(1.dp, Color.White, RoundedCornerShape(12.dp))
@@ -530,14 +589,14 @@ fun StoreScreen(
                 CoinPackRow(
                     amountText = if (isPersian) "۵۰۰" else "500",
                     priceText = if (isPersian) "۱۹,۰۰۰ تومان" else "₺39.99",
-                    gradientColors = listOf(Color(0xFF38BDF8), Color(0xFF0284C7)),
+                    //gradientColors = listOf(Color(0xFF38BDF8), Color(0xFF0284C7)),
                     onBuy = { onPurchaseSku(MyketBillingConfig.SKU_COINS_500) }
                 )
 
                 CoinPackRow(
                     amountText = if (isPersian) "۱۲۰۰" else "1200",
                     priceText = if (isPersian) "۳۹,۰۰۰ تومان" else "₺69.99",
-                    gradientColors = listOf(Color(0xFFF59E0B), Color(0xFFD97706)),
+                    //gradientColors = listOf(Color(0xFFF59E0B), Color(0xFFD97706)),
                     badgeText = if (isPersian) "محبوب" else "POPÜLER",
                     badgeColor = Color(0xFFDC2626),
                     onBuy = { onPurchaseSku(MyketBillingConfig.SKU_COINS_1200) }
@@ -546,7 +605,7 @@ fun StoreScreen(
                 CoinPackRow(
                     amountText = if (isPersian) "۳۰۰۰" else "3000",
                     priceText = if (isPersian) "۷۹,۰۰۰ تومان" else "₺129.99",
-                    gradientColors = listOf(Color(0xFFFFD700), Color(0xFFD97706)),
+                    //gradientColors = listOf(Color(0xFFFFD700), Color(0xFFD97706)),
                     badgeText = if (isPersian) "بهترین ارزش" else "EN İYİ FİYAT",
                     badgeColor = Color(0xFFDC2626),
                     onBuy = { onPurchaseSku(MyketBillingConfig.SKU_COINS_3000) }
@@ -576,6 +635,78 @@ fun StoreScreen(
     }
 }
 
+fun Modifier.candyGloss(
+    corner: Dp,
+    inset: Dp = 3.dp,
+    topAlpha: Float = 0.25f,
+    bottomAlpha: Float = 0.10f,
+    heightFraction: Float = 0.85f
+): Modifier = this.drawBehind {
+    // val i = inset.toPx()
+    val h = size.height * heightFraction
+    val i = (size.height - h) * 0.50f
+    val r = (corner.toPx() - i).coerceAtLeast(0f)
+    drawRoundRect(
+        brush = Brush.verticalGradient(
+            colors = listOf(
+                //Color.White.copy(alpha = bottomAlpha),
+                Color.White.copy(alpha = topAlpha),
+                Color.White.copy(alpha = bottomAlpha)
+            ),
+
+            startY = i,
+            endY = i + h
+        ),
+        topLeft = Offset(i, i),
+        size = Size(size.width - 2 * i, h),
+        cornerRadius = CornerRadius(r, r)
+    )
+}
+// ۱ و ۲: رگه‌های مورب + درخشش نرم، پشت محتوا می‌مونه تا آیکون و متن واضح بمونن
+fun Modifier.glassReflection(
+    streakAlpha: Float = 0.29f,
+    glowAlpha: Float = 0.75f
+): Modifier = this.drawBehind {
+    val w = size.width
+    val h = size.height
+    val skew = h * 0.55f
+
+    drawRect(
+        brush = Brush.radialGradient(
+            colors = listOf(Color.White.copy(alpha = glowAlpha), Color.Transparent),
+            center = Offset(w * 0.82f, h * 1.02f),
+            radius = w * 0.42f
+        )
+    )
+
+    fun streak(x0: Float, bandW: Float, alpha: Float) {
+        val path = Path().apply {
+            moveTo(x0, 0f)
+            lineTo(x0 + bandW, 0f)
+            lineTo(x0 + bandW - skew, h)
+            lineTo(x0 - skew, h)
+            close()
+        }
+        drawPath(path, Color.White.copy(alpha = alpha))
+    }
+    streak(w * 0.52f, w * 0.105f, streakAlpha)
+    streak(w * 0.52f + w * 0.13f, w * 0.03f, streakAlpha * 0.85f)
+}
+
+// ۳: جرقه‌ی براق دکمه
+fun Modifier.specularGlint(): Modifier = this.drawBehind {
+    drawOval(
+        color = Color.White.copy(alpha = 0.76f),
+        topLeft = Offset(10.dp.toPx(), 5.dp.toPx()),
+        size = Size(16.dp.toPx(), 6.dp.toPx())
+    )
+    drawOval(
+        color = Color.White.copy(alpha = 0.8f),
+        topLeft = Offset(30.dp.toPx(), 6.5.dp.toPx()),
+        size = Size(3.dp.toPx(), 3.dp.toPx())
+    )
+}
+
 @Composable
 private fun BundleItemChip(iconRes: Int, text: String) {
     val nunitoFont = rememberNunitoFont()
@@ -590,7 +721,7 @@ private fun BundleItemChip(iconRes: Int, text: String) {
         Spacer(modifier = Modifier.height(2.dp))
         Text(
             text = text,
-            color = Color(0xFF5271ff),
+            color = Color(0xFFffffff),
             fontSize = 12.sp,
             fontWeight = FontWeight.Black,
             fontFamily = nunitoFont,
@@ -617,19 +748,34 @@ private fun ComboPackCard(
     titleColor: Color = Color(0xFF5271ff)
 ) {
     val nunitoFont = rememberNunitoFont()
+    val frameTop = lerp(borderColor, Color.White, 0.35f)
+    val frameBottom = lerp(borderColor, Color.Black, 0.30f)
+    val panelShape = RoundedCornerShape(16.dp)
     Box(
         contentAlignment = Alignment.TopCenter,
         modifier = Modifier.padding(top = if (badge != null) 6.dp else 0.dp)
     ) {
         Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .defaultMinSize(minHeight = 165.dp)
-                .shadow(10.dp, RoundedCornerShape(22.dp))
-                .clip(RoundedCornerShape(22.dp))
-                .background(Brush.verticalGradient(gradientColors))
-                .border(5.dp, borderColor, RoundedCornerShape(22.dp))
-                .padding(horizontal = 14.dp, vertical = 12.dp)
+                .shadow(10.dp, outer, ambientColor = frameBottom, spotColor = frameBottom)
+                .clip(outer)
+                .background(borderColor)
+                .candyGloss(corner = 24.dp, inset = 2.5.dp)   // گلاس روی قاب، پشت پنل
+                .padding(10.dp)                                // قاب کلفت‌تر تا گلاس دیده بشه
+                .clip(inner)
+                .background(Brush.verticalGradient(listOf(Color(0xFFFFF6E6), Color(0xFFEADFC8))))
+                .glassReflection()
+                .border(
+                    2.dp,
+                    Brush.verticalGradient(
+                        listOf(
+                            Color.White.copy(alpha = 0.9f),
+                            Color.White.copy(alpha = 0.15f),
+                            Color.Black.copy(alpha = 0.12f)
+                        )
+                    ),
+                    inner
+                )
         ) {
             Row(
                 modifier = Modifier
@@ -638,10 +784,34 @@ private fun ComboPackCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 // LEFT 2/3 PORTION: 2 Lines of Items Spaced Evenly
-                Column(
+                Box(
                     modifier = Modifier
                         .weight(2.1f)
-                        .padding(vertical = 4.dp),
+                        .padding(start = 8.dp, top = 8.dp, bottom = 8.dp, end = 4.dp)
+                        .clip(panelShape)
+                        .background(
+                            Brush.verticalGradient(
+                                listOf(
+                                    borderColor.copy(alpha = 0.28f),   // بالا کمی پررنگ‌تر
+                                    borderColor.copy(alpha = 0.16f)    // پایین ملایم‌تر
+                                )
+                            )
+                        )
+                        .border(
+                            1.5.dp,
+                            Brush.verticalGradient(
+                                listOf(
+                                    Color.White.copy(alpha = 0.85f),
+                                    borderColor.copy(alpha = 0.25f)
+                                )
+                            ),
+                            panelShape
+                        )
+                        .padding(vertical = 6.dp)
+                ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth(),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -668,15 +838,15 @@ private fun ComboPackCard(
                             BundleItemChip(iconRes = iconRes, text = text)
                         }
                     }
-                }
+                }}
 
                 // Vertical Separator Line
-                Spacer(
-                    modifier = Modifier
-                        .width(1.dp)
-                        .height(115.dp)
-                        .background(Color.White.copy(alpha = 0.15f))
-                )
+//                Spacer(
+//                    modifier = Modifier
+//                        .width(1.dp)
+//                        .height(115.dp)
+//                        .background(Color.White.copy(alpha = 0.15f))
+//                )
 
                 // RIGHT 1/3 PORTION: Package Title ABOVE Price Button (All Centered)
                 Column(
@@ -686,12 +856,16 @@ private fun ComboPackCard(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(
+                    OutlinedText(
                         text = title,
-                        color = titleColor,
+                        textColor =  titleColor,
+                        outlineColor = titleColor.darker(),
+                        shadowColor = titleColor.darker().copy(alpha=0.6f),
+                        shadowOffsetY = 1f,
                         fontSize = 17.sp,
                         fontWeight = FontWeight.Black,
-                        fontFamily = nunitoFont,
+                        outlineWidth = 7f,
+                        //fontFamily = nunitoFont,
                         textAlign = TextAlign.Center
                     )
 
@@ -712,21 +886,34 @@ private fun ComboPackCard(
                                     )
                                 } else {
                                     Brush.verticalGradient(
-                                        listOf(Color(0xFFA3E635), Color(0xFF65A30D), Color(0xFF4D7C0F))
+                                        listOf(
+                                            Color(0xFFA3E635),
+                                            Color(0xFF65A30D),
+                                            Color(0xFF4D7C0F)
+                                        )
                                     )
                                 }
                             )
-                            .border(1.dp, Color.White, RoundedCornerShape(14.dp))
+                            .candyGloss(corner = 14.dp, inset = 2.dp)
+                            .specularGlint()
+                            .border(1.dp, Color(0x802D5A0E), RoundedCornerShape(14.dp))
                             .clickable(enabled = enabled) { onBuy() }
                             .padding(horizontal = 16.dp, vertical = 10.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(
+                        val priceOutline = when {
+                            !enabled -> Color(0x802D5A0E)
+                            isGoldPriceButton -> Color(0xFF7C2D12)
+                            else -> Color(0x802D5A0E)        // سبز تیره
+                        }
+                        OutlinedText(
                             text = buttonText ?: price,
-                            color = if (!enabled || !isGoldPriceButton) Color.White else Color(0xFF0F172A),
+                            textColor = Color.White,
+                            outlineColor = priceOutline,
+                            outlineWidth = 6f,
                             fontSize = 15.sp,
-                            fontWeight = FontWeight.Black,
-                            fontFamily = nunitoFont
+                            shadowColor = priceOutline.copy(alpha = 0.6f),
+                            shadowOffsetY = 3f
                         )
                     }
                 }
@@ -760,12 +947,12 @@ private fun ComboPackCard(
 private fun CoinPackRow(
     amountText: String,
     priceText: String,
-    gradientColors: List<Color>,
     badgeText: String? = null,
     badgeColor: Color = Color(0xFFDC2626),
     onBuy: () -> Unit
 ) {
     val nunitoFont = rememberNunitoFont()
+    val gradientColors = listOf(Color(0xFFF59E0B), Color(0xFFD97706))
     Box(
         contentAlignment = Alignment.TopCenter,
         modifier = Modifier.padding(top = if (badgeText != null) 6.dp else 0.dp)
@@ -774,10 +961,22 @@ private fun CoinPackRow(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(100.dp)
-                .shadow(8.dp, RoundedCornerShape(20.dp))
-                .clip(RoundedCornerShape(20.dp))
-                .background(Color(0xFF1E293B))
-                .border(1.5.dp, Color.White.copy(alpha = 0.2f), RoundedCornerShape(20.dp))
+                .shadow(10.dp, outer)
+                .clip(outer)
+                .background(Color(0xFF91A425))
+                .padding(7.dp)
+                .clip(inner)
+                .background(Color(0xFF9DD913))
+                .border(
+                    2.dp,
+                    Brush.verticalGradient(
+                        listOf(
+                            Color.White.copy(alpha = 0.9f),
+                            Color.White.copy(alpha = 0.15f),
+                            Color.Black.copy(alpha = 0.12f)
+                        )
+                    ),
+                    inner)
         ) {
             Row(
                 modifier = Modifier.fillMaxSize(),
@@ -813,17 +1012,23 @@ private fun CoinPackRow(
                         .shadow(6.dp, RoundedCornerShape(12.dp))
                         .clip(RoundedCornerShape(12.dp))
                         .background(Brush.verticalGradient(gradientColors))
+                        .candyGloss(14.dp,2.dp)
+                        .specularGlint()
                         .border(1.5.dp, Color.White.copy(alpha = 0.8f), RoundedCornerShape(12.dp))
                         .clickable { onBuy() }
                         .padding(horizontal = 20.dp, vertical = 10.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
+                    OutlinedText(
                         text = priceText,
-                        color = Color.White,
+                        textColor = Color.White,
+                        outlineColor = Color(0xFFF59E0B).darker(),
+                        outlineWidth = 6f,
                         fontSize = 19.sp,
                         fontWeight = FontWeight.Black,
-                        fontFamily = nunitoFont
+                        shadowColor = Color(0xFFF59E0B).darker().copy(0.6f),
+                        shadowOffsetY = 3f
+                        //fontFamily = nunitoFont
                     )
                 }
             }

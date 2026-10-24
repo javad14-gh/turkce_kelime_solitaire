@@ -11,8 +11,6 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -21,7 +19,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,14 +32,11 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.shadow
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
@@ -58,7 +52,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.zIndex
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Brush
@@ -67,8 +60,6 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.Shadow
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.LayoutDirection
@@ -100,15 +91,7 @@ import com.turkce.kelimesolitaire.presentation.ui.components.BoosterType
 import com.turkce.kelimesolitaire.presentation.ui.components.HintIcon
 import com.turkce.kelimesolitaire.presentation.ui.components.UndoIcon
 import com.turkce.kelimesolitaire.presentation.ui.components.JokerIcon
-import com.turkce.kelimesolitaire.presentation.ui.theme.AccentGold
 import com.turkce.kelimesolitaire.presentation.ui.theme.GameTableBg
-import com.turkce.kelimesolitaire.presentation.ui.theme.BorderGlass
-import com.turkce.kelimesolitaire.presentation.ui.theme.DarkCard
-import com.turkce.kelimesolitaire.presentation.ui.theme.PrimaryNeon
-import com.turkce.kelimesolitaire.presentation.ui.theme.SecondaryNeon
-import com.turkce.kelimesolitaire.presentation.ui.theme.SuccessGreen
-import com.turkce.kelimesolitaire.presentation.ui.theme.TextPrimary
-import com.turkce.kelimesolitaire.presentation.ui.theme.TextSecondary
 import com.turkce.kelimesolitaire.presentation.ui.theme.CardBackBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.StockRecycleBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.StockRecycleBorder
@@ -117,7 +100,6 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.LevelTitleText
 import com.turkce.kelimesolitaire.presentation.ui.theme.LevelTitleOutline
 import com.turkce.kelimesolitaire.presentation.ui.theme.CoinBoxBorder
 import com.turkce.kelimesolitaire.presentation.ui.theme.CoinTextColor
-import com.turkce.kelimesolitaire.presentation.ui.theme.CoinTextOutline
 import com.turkce.kelimesolitaire.presentation.ui.theme.MovesCardBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.MovesCardBorder
 import com.turkce.kelimesolitaire.presentation.ui.theme.MovesTitleText
@@ -129,8 +111,7 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.PopupHeaderBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupButtonBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupButtonShadow
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupTrayDepth
-import com.turkce.kelimesolitaire.presentation.ui.theme.SoundVibrationBoxBg
-import kotlinx.coroutines.launch
+
 
 private fun findBestFoundationSlot(
     foundationSlots: List<FoundationSlot>,
@@ -180,6 +161,7 @@ private fun findBestTableauColumn(
 @Suppress("UNUSED_PARAMETER")
 @Composable
 fun GameScreen(
+    modifier: Modifier = Modifier,
     levelData: LevelData,
     foundationSlots: List<FoundationSlot>,
     tableauPiles: List<List<SolitaireCard>>,
@@ -228,7 +210,6 @@ fun GameScreen(
     onDismissTutorial: () -> Unit = {},
     onDismissCategoryCelebration: () -> Unit = {},
     shouldAnimateDeal: Boolean = true,
-    modifier: Modifier = Modifier
 ) {
     val context = androidx.compose.ui.platform.LocalContext.current
     val isPersian = remember(context) { LocaleHelper.isPersian(context) }
@@ -264,7 +245,6 @@ fun GameScreen(
     }
 
     val coroutineScope = rememberCoroutineScope()
-    val haptic = LocalHapticFeedback.current
 
     // Bouncy scale animation for Coins HUD bubble
     val coinScale = remember { Animatable(1f) }
@@ -381,7 +361,12 @@ fun GameScreen(
                             .border(
                                 1.5.dp,
                                 CoinBoxBorder,
-                                RoundedCornerShape(topEnd = 14.dp, bottomEnd = 14.dp, topStart = 4.dp, bottomStart = 4.dp)
+                                RoundedCornerShape(
+                                    topEnd = 14.dp,
+                                    bottomEnd = 14.dp,
+                                    topStart = 4.dp,
+                                    bottomStart = 4.dp
+                                )
                             )
                             .padding(start = 22.dp, end = 12.dp)
                     ) {
@@ -435,13 +420,15 @@ fun GameScreen(
                         )
                         .clickable {
                             showHamburgerMenu = true
-                            com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playButtonClickSound(context)
+                            com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playButtonClickSound(
+                                context
+                            )
                         }
                         .padding(2.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    androidx.compose.foundation.Image(
-                        painter = androidx.compose.ui.res.painterResource(id = com.turkce.kelimesolitaire.R.drawable.setting),
+                    Image(
+                        painter = painterResource(id = R.drawable.setting),
                         contentDescription = "Settings",
                         modifier = Modifier.size(26.dp)
                     )
@@ -470,6 +457,8 @@ fun GameScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                val remainingInDeck = stockPile.size +
+                        wastePile.count { it.categoryId != "joker_wildcard" }
                 // Left Column: Moves Card
                 Card(
                     colors = CardDefaults.cardColors(containerColor = MovesCardBg),
@@ -641,7 +630,11 @@ fun GameScreen(
                                 modifier = Modifier
                                     .zIndex(if (isDragged) 100f else 0f)
                                     .then(
-                                        if (isWasteHinted) Modifier.border(2.5.dp, Color(0xFFF1C40F), RoundedCornerShape(12.dp))
+                                        if (isWasteHinted) Modifier.border(
+                                            2.5.dp,
+                                            Color(0xFFF1C40F),
+                                            RoundedCornerShape(12.dp)
+                                        )
                                         else Modifier
                                     )
                             )
@@ -679,7 +672,11 @@ fun GameScreen(
                                         .shadow(elevation = 3.dp, shape = RoundedCornerShape(8.dp))
                                         .clip(RoundedCornerShape(8.dp))
                                         .background(CardBackBg.copy(alpha = 0.75f))
-                                        .border(1.dp, Color.White.copy(alpha = 0.5f), RoundedCornerShape(8.dp))
+                                        .border(
+                                            1.dp,
+                                            Color.White.copy(alpha = 0.5f),
+                                            RoundedCornerShape(8.dp)
+                                        )
                                 )
                             }
                             // Layer 1 (Middle layer if 2 or more cards)
@@ -691,7 +688,11 @@ fun GameScreen(
                                         .shadow(elevation = 2.dp, shape = RoundedCornerShape(8.dp))
                                         .clip(RoundedCornerShape(8.dp))
                                         .background(CardBackBg)
-                                        .border(1.2.dp, Color.White.copy(alpha = 0.7f), RoundedCornerShape(8.dp))
+                                        .border(
+                                            1.2.dp,
+                                            Color.White.copy(alpha = 0.7f),
+                                            RoundedCornerShape(8.dp)
+                                        )
                                 )
                             }
                             // Top Layer (WordCard)
@@ -699,7 +700,11 @@ fun GameScreen(
                                 modifier = Modifier
                                     .size(width = 85.dp, height = 110.dp)
                                     .then(
-                                        if (isStockHinted) Modifier.border(2.5.dp, Color(0xFFF1C40F), RoundedCornerShape(8.dp))
+                                        if (isStockHinted) Modifier.border(
+                                            2.5.dp,
+                                            Color(0xFFF1C40F),
+                                            RoundedCornerShape(8.dp)
+                                        )
                                         else Modifier
                                     )
                             ) {
@@ -724,6 +729,19 @@ fun GameScreen(
                                     onDragCancel = {}
                                 )
                             }
+                            // Remaining count (plain number, no circle)
+
+                            OutlinedText(
+                                text = LocaleHelper.formatNumber(remainingInDeck, isPersian),
+                                textColor = Color.White,
+                                outlineColor = Color(0xFF6B5196),
+                                outlineWidth = 8f,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Black,
+                                modifier = Modifier
+                                    .align(Alignment.BottomEnd)
+                                    .padding(end = 6.dp, bottom = 4.dp)
+                            )
                         }
                     } else {
                         Box(
@@ -739,14 +757,23 @@ fun GameScreen(
                                 .clickable(enabled = !isLevelWon && isDealingFinished && movesRemaining > 0 && !showOutofMovesDialog) { onDrawFromStock() },
                             contentAlignment = Alignment.Center
                         ) {
-                            Text(
-                                text = if (isPersian) "♻️\nبر زدن" else "♻️\nYenile",
-                                color = StockRecycleText,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Black,
-                                fontFamily = nunitoFont,
-                                textAlign = TextAlign.Center
-                            )
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text(
+                                    text = if (isPersian) "♻️\nبر زدن" else "♻️\nYenile",
+                                    color = StockRecycleText,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Black,
+                                    fontFamily = nunitoFont,
+                                    textAlign = TextAlign.Center
+                                )
+                                Text(
+                                    text = LocaleHelper.formatNumber(remainingInDeck, isPersian),
+                                    color = StockRecycleText,
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Black,
+                                    fontFamily = nunitoFont
+                                )
+                            }
                         }
                     }
                 }
@@ -774,7 +801,11 @@ fun GameScreen(
                             .fillMaxHeight()
                             .zIndex(if (isColDragging) 10f else 1f)
                             .then(
-                                if (isColHinted) Modifier.border(2.dp, Color(0xFFF1C40F).copy(alpha = 0.5f), RoundedCornerShape(12.dp))
+                                if (isColHinted) Modifier.border(
+                                    2.dp,
+                                    Color(0xFFF1C40F).copy(alpha = 0.5f),
+                                    RoundedCornerShape(12.dp)
+                                )
                                 else Modifier
                             ),
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -886,14 +917,16 @@ fun GameScreen(
                                         )
                                         .clickable(enabled = isDealingFinished) {
                                             selectedCardId?.let { cardId ->
-                                                val cardFromWaste = wastePile.lastOrNull()?.takeIf { it.id == cardId }
+                                                val cardFromWaste = wastePile.lastOrNull()
+                                                    ?.takeIf { it.id == cardId }
                                                 var cardFromTableau: SolitaireCard? = null
                                                 var sourceColIdx = -1
                                                 var sourceRowIdx = -1
 
                                                 for (cI in 0..3) {
                                                     val cList = tableauPiles[cI]
-                                                    val idx = cList.indexOfFirst { it.id == cardId && it.isFaceUp }
+                                                    val idx =
+                                                        cList.indexOfFirst { it.id == cardId && it.isFaceUp }
                                                     if (idx != -1) {
                                                         cardFromTableau = cList[idx]
                                                         sourceColIdx = cI
@@ -922,7 +955,10 @@ fun GameScreen(
                                                             break
                                                         }
                                                     }
-                                                    val group = sourceList.subList(startIdx, sourceList.size)
+                                                    val group = sourceList.subList(
+                                                        startIdx,
+                                                        sourceList.size
+                                                    )
                                                     onCardStacked(group, colIdx)
                                                 }
                                             }
@@ -1110,7 +1146,10 @@ fun GameScreen(
                                             }
                                         },
                                         modifier = Modifier
-                                            .offset(x = currentDealX, y = currentDealY + compressionYOffset)
+                                            .offset(
+                                                x = currentDealX,
+                                                y = currentDealY + compressionYOffset
+                                            )
                                             .graphicsLayer {
                                                 rotationZ = currentRotation
                                                 scaleX = currentScale
@@ -1126,7 +1165,10 @@ fun GameScreen(
                                                             left = boxBounds.left,
                                                             top = boxBounds.top,
                                                             right = boxBounds.right,
-                                                            bottom = maxOf(boxBounds.bottom, cardBounds.bottom + 50f)
+                                                            bottom = maxOf(
+                                                                boxBounds.bottom,
+                                                                cardBounds.bottom + 50f
+                                                            )
                                                         )
                                                     } else {
                                                         cardBounds
@@ -1134,7 +1176,11 @@ fun GameScreen(
                                                 }
                                             }
                                             .then(
-                                                if (isCardHinted) Modifier.border(2.5.dp, Color(0xFFF1C40F), RoundedCornerShape(12.dp))
+                                                if (isCardHinted) Modifier.border(
+                                                    2.5.dp,
+                                                    Color(0xFFF1C40F),
+                                                    RoundedCornerShape(12.dp)
+                                                )
                                                 else Modifier
                                             )
                                     )
@@ -1314,7 +1360,11 @@ fun GameScreen(
                                         .clip(RoundedCornerShape(16.dp))
                                         .background(
                                             Brush.verticalGradient(
-                                                listOf(Color(0xFFF59E0B), Color(0xFFD97706), Color(0xFFB45309))
+                                                listOf(
+                                                    Color(0xFFF59E0B),
+                                                    Color(0xFFD97706),
+                                                    Color(0xFFB45309)
+                                                )
                                             )
                                         )
                                         .border(2.dp, DarkBg, RoundedCornerShape(16.dp))
@@ -1436,7 +1486,7 @@ fun GameScreen(
                             )
 
                             // Top Right Circular Close Button (cancel.png)
-                            androidx.compose.foundation.Image(
+                            Image(
                                 painter = painterResource(id = R.drawable.cancel),
                                 contentDescription = "Close",
                                 modifier = Modifier
@@ -1508,7 +1558,9 @@ fun GameScreen(
                                             .background(PopupButtonBg)
                                             .clickable {
                                                 showExitConfirmDialog = false
-                                                com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playButtonClickSound(context)
+                                                com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playButtonClickSound(
+                                                    context
+                                                )
                                             }
                                             .padding(2.dp),
                                         contentAlignment = if (isPersian) Alignment.CenterEnd else Alignment.Center
@@ -1528,13 +1580,13 @@ fun GameScreen(
                                                     fontWeight = FontWeight.Black
                                                 )
                                                 Spacer(modifier = Modifier.width(8.dp))
-                                                androidx.compose.foundation.Image(
+                                                Image(
                                                     painter = painterResource(id = R.drawable.play),
                                                     contentDescription = "Stay",
                                                     modifier = Modifier.size(57.dp)
                                                 )
                                             } else {
-                                                androidx.compose.foundation.Image(
+                                                Image(
                                                     painter = painterResource(id = R.drawable.play),
                                                     contentDescription = "Stay",
                                                     modifier = Modifier.size(57.dp)
@@ -1593,7 +1645,7 @@ fun GameScreen(
                                                     fontWeight = FontWeight.Black
                                                 )
                                                 Spacer(modifier = Modifier.width(8.dp))
-                                                androidx.compose.foundation.Image(
+                                                Image(
                                                     painter = painterResource(id = R.drawable.exit),
                                                     contentDescription = "Exit to Menu",
                                                     modifier = Modifier.size(57.dp)
@@ -1730,9 +1782,14 @@ fun GameScreen(
                                     .clickable {
                                         val next = !isSoundEnabled
                                         isSoundEnabled = next
-                                        com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.setSoundEnabled(context, next)
+                                        com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.setSoundEnabled(
+                                            context,
+                                            next
+                                        )
                                         if (next) {
-                                            com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playButtonClickSound(context)
+                                            com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playButtonClickSound(
+                                                context
+                                            )
                                         }
                                     }
                                     .padding(2.dp),
@@ -1760,9 +1817,14 @@ fun GameScreen(
                                     .clickable {
                                         val next = !isHapticEnabled
                                         isHapticEnabled = next
-                                        com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.setHapticEnabled(context, next)
+                                        com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.setHapticEnabled(
+                                            context,
+                                            next
+                                        )
                                         if (next) {
-                                            com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.vibrateLight(context)
+                                            com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.vibrateLight(
+                                                context
+                                            )
                                         }
                                     }
                                     .padding(2.dp),
