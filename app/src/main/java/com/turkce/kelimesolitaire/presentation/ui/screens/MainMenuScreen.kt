@@ -24,10 +24,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -74,27 +70,17 @@ import com.turkce.kelimesolitaire.presentation.ui.components.OutlinedText
 import com.turkce.kelimesolitaire.presentation.ui.components.rememberNunitoFont
 import com.turkce.kelimesolitaire.presentation.ui.components.candyGloss
 import com.turkce.kelimesolitaire.presentation.ui.components.specularGlint
-import com.turkce.kelimesolitaire.presentation.ui.components.darker
 import com.turkce.kelimesolitaire.presentation.util.rememberAppFont
-import com.turkce.kelimesolitaire.presentation.ui.theme.AccentGold
-import com.turkce.kelimesolitaire.presentation.ui.theme.BorderGlass
 import com.turkce.kelimesolitaire.presentation.ui.theme.CoinBoxBorder
-import com.turkce.kelimesolitaire.presentation.ui.theme.CoinTextColor
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.mainBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupBg
-import com.turkce.kelimesolitaire.presentation.ui.theme.PopupBorder
-import com.turkce.kelimesolitaire.presentation.ui.theme.PopupHeaderBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupButtonBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupButtonShadow
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupTrayDepth
-import com.turkce.kelimesolitaire.presentation.ui.theme.SoundVibrationBoxBg
-import com.turkce.kelimesolitaire.presentation.ui.theme.DarkCard
-import com.turkce.kelimesolitaire.presentation.ui.theme.PrimaryNeon
-import com.turkce.kelimesolitaire.presentation.ui.theme.SecondaryNeon
-import com.turkce.kelimesolitaire.presentation.ui.theme.TextPrimary
 import com.turkce.kelimesolitaire.presentation.ui.theme.TextSecondary
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
+import com.turkce.kelimesolitaire.presentation.ui.theme.DarkMain
 
 @Suppress("UNUSED_PARAMETER")
 @Composable
@@ -205,7 +191,7 @@ fun MainMenuScreen(
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier
                                     .padding(start = 18.dp)
-                                    .height(28.dp)
+                                    .height(30.dp)
                                     .border(
                                         1.5.dp,
                                         CoinBoxBorder,
@@ -220,7 +206,7 @@ fun MainMenuScreen(
                             ) {
                                 Text(
                                     text = LocaleHelper.formatNumber(coins, isPersian),
-                                    color = Color(0xFF734A2A),
+                                    color = DarkMain,
                                     fontSize = 17.sp,
                                     fontWeight = FontWeight.Black,
                                     fontFamily = nunitoFont
@@ -230,7 +216,7 @@ fun MainMenuScreen(
                             // 3D Coin Icon on the outside, overlapping on the left
                             Box(
                                 modifier = Modifier
-                                    .size(38.dp)
+                                    .size(40.dp)
                                     .zIndex(2f),
                                 contentAlignment = Alignment.Center
                             ) {
@@ -288,14 +274,14 @@ fun MainMenuScreen(
             ) {
                 Box(
                     contentAlignment = Alignment.TopCenter,
-                    modifier = Modifier.padding(top = 38.dp, bottom = 12.dp)
+                    modifier = Modifier.padding(top = 38.dp, bottom = 10.dp)
                 ) {
                     val buttonShape = RoundedCornerShape(18.dp)
                     val buttonOutline = Color(0x802D5A0E) // سبز تیره دکمه خرید بسته
 
                     Box(
                         modifier = Modifier
-                            .widthIn(min = 230.dp)
+                            .widthIn(min = 200.dp)
                             .shadow(8.dp, buttonShape)
                             .clip(buttonShape)
                             .background(
@@ -317,7 +303,7 @@ fun MainMenuScreen(
                                     onStartGameClicked(lastUnsolvedLevel)
                                 }
                             }
-                            .padding(horizontal = 40.dp, vertical = 14.dp),
+                            .padding(horizontal = 40.dp, vertical = 12.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         OutlinedText(
@@ -325,7 +311,7 @@ fun MainMenuScreen(
                             textColor = Color.White,
                             outlineColor = buttonOutline,
                             outlineWidth = 8f,
-                            fontSize = 34.sp,
+                            fontSize = 32.sp,
                             fontWeight = FontWeight.Black,
                             letterSpacing = 1.2.sp,
                             shadowColor = buttonOutline.copy(alpha = 0.6f),
@@ -345,12 +331,12 @@ fun MainMenuScreen(
                                 .clip(RoundedCornerShape(12.dp))
                                 .background(ribbonColor)
                                 .border(1.5.dp, Color.White, RoundedCornerShape(12.dp))
-                                .padding(horizontal = 26.dp, vertical = 5.dp)
+                                .padding(horizontal = 23.dp, vertical = 3.dp)
                         ) {
                             Text(
                                 text = difficultyText,
                                 color = Color.White,
-                                fontSize = 15.sp,
+                                fontSize = 13.sp,
                                 fontWeight = FontWeight.Black,
                                 fontFamily = nunitoFont,
                                 letterSpacing = 0.5.sp
@@ -364,7 +350,8 @@ fun MainMenuScreen(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxWidth()
-            ) {
+            )
+            {
                 AdBannerPlaceholder(isAdFree = isAdFree)
                 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -376,7 +363,7 @@ fun MainMenuScreen(
                 ) {
                     Text(
                         text = LocaleHelper.privacyPolicy(isPersian),
-                        color = TextSecondary,
+                        color = DarkMain.copy(0.5f),
                         fontSize = 11.sp,
                         textDecoration = TextDecoration.Underline,
                         modifier = Modifier
@@ -388,13 +375,13 @@ fun MainMenuScreen(
                     )
                     Text(
                         text = "•",
-                        color = TextSecondary,
+                        color = DarkMain.copy(0.5f),
                         fontSize = 11.sp,
                         modifier = Modifier.padding(horizontal = 4.dp)
                     )
                     Text(
                         text = if (isPersian) "امنیت داده‌ها" else "Veri Güvenliği",
-                        color = TextSecondary,
+                        color = DarkMain.copy(0.5f),
                         fontSize = 11.sp,
                         textDecoration = TextDecoration.Underline,
                         modifier = Modifier
@@ -748,7 +735,7 @@ fun MainMenuScreen(
                                          OutlinedText(
                                              text = LocaleHelper.privacyPolicy(isPersian),
                                              textColor = Color.White,
-                                             outlineColor = menuBtnOutline,
+                                             outlineColor = DarkMain,
                                              outlineWidth = 12.5f,
                                              shadowColor = menuBtnOutline.copy(alpha = 0.6f),
                                              shadowOffsetY = 3f,
@@ -880,126 +867,6 @@ fun MainMenuScreen(
     }
 }
 
-/**
- * Floating 3D Side Offer Badge for Starter Pack, matching casual game standards (Royal Match, Candy Crush).
- */
-@Composable
-fun StarterPackSideButton(
-    isPersian: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val nunitoFont = rememberNunitoFont()
-    val infiniteTransition = rememberInfiniteTransition(label = "sideOfferPulse")
-
-    // Gentle floating pulse scale
-    val pulseScale by infiniteTransition.animateFloat(
-        initialValue = 0.98f,
-        targetValue = 1.06f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1200, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "pulseScale"
-    )
-
-    Box(
-        modifier = modifier
-            .scale(pulseScale)
-            .shadow(12.dp, RoundedCornerShape(18.dp))
-            .clip(RoundedCornerShape(18.dp))
-            // 3D Outer Gold Rim
-            .background(
-                Brush.verticalGradient(
-                    listOf(Color(0xFFFEF08A), Color(0xFFF59E0B), Color(0xFFB45309))
-                )
-            )
-            .border(1.5.dp, Color(0xFFFEF08A), RoundedCornerShape(18.dp))
-            .padding(2.5.dp)
-            // 3D Bottom Bevel
-            .clip(RoundedCornerShape(16.dp))
-            .background(Color(0xFF4C0519)) // Deep ruby-crimson bevel base
-            .padding(bottom = 3.5.dp)
-            // Button Face: Rich Royal Ruby/Crimson Gradient
-            .clip(RoundedCornerShape(13.dp))
-            .background(
-                Brush.verticalGradient(
-                    listOf(
-                        Color(0xFFFB7185), // Soft rose top highlight
-                        Color(0xFFE11D48), // Vibrant crimson
-                        Color(0xFF881337)  // Deep rich wine base
-                    )
-                )
-            )
-            .clickable { onClick() }
-            .padding(horizontal = 6.dp, vertical = 7.dp)
-            .width(60.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            // Gift icon with discount tag overlay
-            Box(
-                contentAlignment = Alignment.TopEnd,
-                modifier = Modifier.size(42.dp)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.gift),
-                    contentDescription = "Starter Pack Offer",
-                    modifier = Modifier
-                        .size(38.dp)
-                        .align(Alignment.Center)
-                )
-
-                // Discount -70% badge
-                Box(
-                    modifier = Modifier
-                        .offset(x = 6.dp, y = (-4).dp)
-                        .clip(RoundedCornerShape(6.dp))
-                        .background(Color(0xFFDC2626))
-                        .border(1.dp, Color.White, RoundedCornerShape(6.dp))
-                        .padding(horizontal = 3.5.dp, vertical = 0.5.dp)
-                ) {
-                    Text(
-                        text = if (isPersian) "٪۷۰" else "-70%",
-                        color = Color.White,
-                        fontSize = 8.5.sp,
-                        fontWeight = FontWeight.Black,
-                        fontFamily = nunitoFont
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(3.dp))
-
-            // Mini Gold Banner label at bottom
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(6.dp))
-                    .background(
-                        Brush.horizontalGradient(
-                            listOf(Color(0xFFFBBF24), Color(0xFFF59E0B))
-                        )
-                    )
-                    .border(0.8.dp, Color.White.copy(alpha = 0.8f), RoundedCornerShape(6.dp))
-                    .padding(horizontal = 4.dp, vertical = 1.dp)
-            ) {
-                Text(
-                    text = if (isPersian) "بسته ویژه" else "ÖZEL",
-                    color = Color(0xFF451A03),
-                    fontSize = 9.sp,
-                    fontWeight = FontWeight.Black,
-                    fontFamily = nunitoFont,
-                    textAlign = TextAlign.Center,
-                    maxLines = 1
-                )
-            }
-        }
-    }
-}
-
 @Composable
 private fun DailyReward7DayProgressBar(
     state: DailyRewardState,
@@ -1051,31 +918,35 @@ private fun DailyReward7DayProgressBar(
         contentAlignment = Alignment.Center
     ) {
         // 3D Plump Daily Reward Box (با رنگ پس‌زمینه دکمه‌های توی منو)
+
+        val outerShape = RoundedCornerShape(24.dp)
+        val innerShape = RoundedCornerShape(19.dp)
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .shadow(10.dp, RoundedCornerShape(18.dp))
-                .clip(RoundedCornerShape(18.dp))
-                .background(Color(0xFF6B5196))
-                .padding(bottom = 4.dp)
-                .clip(RoundedCornerShape(15.dp))
+                .shadow(10.dp, outerShape)
+                .clip(outerShape)
                 .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            Color(0xFFD4C7EE),
-                            Color(0xFFBAA6DD),
-                            Color(0xFFA58ED0)
-                        )
-                    )
+                    if (hasUnclaimedReward) Color(0xFFFFB800).copy(alpha = 0.6f + glowAlpha * 0.4f)
+                    else DarkMain
                 )
-                .then(
-                    if (hasUnclaimedReward) {
-                        Modifier.border(
-                            1.8.dp,
-                            Color(0xFFFFD700).copy(alpha = glowAlpha),
-                            RoundedCornerShape(15.dp)
+                .candyGloss(corner = 24.dp, inset = 2.5.dp)
+                .padding(8.dp)
+                .clip(innerShape)
+                .background(
+                    Brush.verticalGradient(listOf(Color(0xFFFFF6E6), Color(0xFFEADFC8)))
+                )
+                //.glassReflection()
+                .border(
+                    2.dp,
+                    Brush.verticalGradient(
+                        listOf(
+                            Color.White.copy(alpha = 0.9f),
+                            Color.White.copy(alpha = 0.15f),
+                            Color.Black.copy(alpha = 0.12f)
                         )
-                    } else Modifier
+                    ),
+                    innerShape
                 )
                 .clickable { onClick() }
         ) {
@@ -1102,7 +973,7 @@ private fun DailyReward7DayProgressBar(
                             Image(
                                 painter = painterResource(id = R.drawable.chest),
                                 contentDescription = "Day 7 Chest",
-                                modifier = Modifier.size(38.dp),
+                                modifier = Modifier.size(46.dp),
                                 alpha = if (isClaimed) 0.55f else 1f
                             )
                             if (isClaimed) {
@@ -1124,18 +995,18 @@ private fun DailyReward7DayProgressBar(
                         } else {
                             Box(
                                 modifier = Modifier
-                                    .size(24.dp)
+                                    .size(20.dp)
                                     .then(if (isReady) Modifier.scale(pulseScale) else Modifier)
                                     .clip(CircleShape)
                                     .background(
                                         if (isReady)
                                             Brush.verticalGradient(listOf(Color(0xFFFFE066), Color(0xFFF59E0B)))
                                         else
-                                            Brush.verticalGradient(listOf(Color(0xFF7E65A8), Color(0xFF5A4184)))
+                                            Brush.verticalGradient(listOf(Color(0xFFFFF6E6), Color(0xFFEADFC8)))
                                     )
                                     .border(
-                                        width = if (isReady) 1.5.dp else 1.dp,
-                                        color = if (isReady) Color.White else Color.White.copy(alpha = 0.5f),
+                                        width = if (isReady) 1.5.dp else 2.dp,
+                                        color = if (isReady) Color.White else DarkMain,
                                         shape = CircleShape
                                     ),
                                 contentAlignment = Alignment.Center
@@ -1151,7 +1022,7 @@ private fun DailyReward7DayProgressBar(
                                 } else {
                                     Text(
                                         text = LocaleHelper.formatNumber(day, isPersian),
-                                        color = Color.White,
+                                        color = DarkMain,
                                         fontSize = 11.sp,
                                         fontWeight = FontWeight.Bold,
                                         fontFamily = appFont
@@ -1167,6 +1038,7 @@ private fun DailyReward7DayProgressBar(
                         Box(
                             modifier = Modifier
                                 .weight(1f)
+                                .padding(horizontal = 4.dp)
                                 .height(3.dp)
                                 .clip(RoundedCornerShape(1.5.dp))
                                 .background(
@@ -1176,7 +1048,7 @@ private fun DailyReward7DayProgressBar(
                                         )
                                     else
                                         Brush.horizontalGradient(
-                                            listOf(Color(0xFF8F76BE), Color(0xFF7A60A8))
+                                            listOf(DarkMain, DarkMain.copy(0.8f))
                                         )
                                 )
                         )

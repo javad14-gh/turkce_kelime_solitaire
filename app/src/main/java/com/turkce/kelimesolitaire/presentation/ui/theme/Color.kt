@@ -110,6 +110,7 @@ val maincolor4: Color get() = GameThemeManager.currentTheme.c4
 
 // --- ۱. پس‌زمینه‌های اصلی بازی ---
 val mainBg = Color(0xFFFFF6E6)
+val DarkMain = Color(0xFF734A2A)
 val DarkBg = Color(0xFF5271ff)            // پس‌زمینه اصلی بازی (هماهنگ با هدر پاپ‌آپ‌ها)
 val GameTableBg: Color get() = maincolor1       // رنگ پس‌زمینه میز بازی (کاملاً یکدست و ساده)
 val GameTableBgTop: Color get() = GameTableBg          // جهت سازگاری
