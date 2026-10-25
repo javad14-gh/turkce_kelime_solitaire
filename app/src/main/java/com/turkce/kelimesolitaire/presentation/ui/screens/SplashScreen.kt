@@ -15,16 +15,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -43,15 +36,9 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.turkce.kelimesolitaire.R
-import com.turkce.kelimesolitaire.presentation.ui.components.LogoProgressBar
 import com.turkce.kelimesolitaire.presentation.ui.components.rememberNunitoFont
-import com.turkce.kelimesolitaire.presentation.ui.theme.AccentGold
-import com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -103,66 +90,21 @@ fun SplashScreen(
     LaunchedEffect(Unit) {
         // --- STAGE 1: Studio Logo Cinematic Intro ---
         launch {
-            studioLogoAlpha.animateTo(
-                targetValue = 1f,
-                animationSpec = tween(durationMillis = 650, easing = FastOutSlowInEasing)
-            )
+            studioLogoAlpha.animateTo(1f, tween(650, easing = FastOutSlowInEasing))
         }
         launch {
             studioEntranceScale.animateTo(
-                targetValue = 1.05f,
-                animationSpec = tween(durationMillis = 700, easing = CubicBezierEasing(0.2f, 0.9f, 0.3f, 1.15f))
+                1.05f,
+                tween(700, easing = CubicBezierEasing(0.2f, 0.9f, 0.3f, 1.15f))
             )
-            studioEntranceScale.animateTo(
-                targetValue = 1.0f,
-                animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)
-            )
+            studioEntranceScale.animateTo(1.0f, tween(300, easing = FastOutSlowInEasing))
         }
 
-        // Shimmer sweep across studio logo
         delay(400)
-        studioShimmerProgress.animateTo(
-            targetValue = 1f,
-            animationSpec = tween(durationMillis = 850, easing = LinearEasing)
-        )
-
-        // Hold studio emblem for a moment
+        studioShimmerProgress.animateTo(1f, tween(850, easing = LinearEasing))
         delay(350)
 
-        // Fade out studio logo
-        studioLogoAlpha.animateTo(
-            targetValue = 0f,
-            animationSpec = tween(durationMillis = 350, easing = FastOutSlowInEasing)
-        )
-
-        // --- STAGE 2: Game Loading Bar ("پاسور کلمات" filling with color) ---
-        gameLoadingAlpha.animateTo(
-            targetValue = 1f,
-            animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing)
-        )
-
-        // Progressive ramp: 0% -> 42% -> 85% -> 100%
-        gameProgress.animateTo(
-            targetValue = 0.42f,
-            animationSpec = tween(durationMillis = 420, easing = FastOutSlowInEasing)
-        )
-        gameProgress.animateTo(
-            targetValue = 0.85f,
-            animationSpec = tween(durationMillis = 550, easing = LinearOutSlowInEasing)
-        )
-        gameProgress.animateTo(
-            targetValue = 1.0f,
-            animationSpec = tween(durationMillis = 320, easing = FastOutSlowInEasing)
-        )
-
-        // Short celebratory hold when fully loaded
-        delay(250)
-
-        // --- STAGE 3: Seamless Fade Out to Main Menu ---
-        screenAlpha.animateTo(
-            targetValue = 0f,
-            animationSpec = tween(durationMillis = 400, easing = FastOutSlowInEasing)
-        )
+        studioLogoAlpha.animateTo(0f, tween(350, easing = FastOutSlowInEasing))
         onSplashFinished()
     }
 
@@ -239,53 +181,6 @@ fun SplashScreen(
                                 )
                             }
                         }
-                )
-            }
-        }
-
-        // --- Layer 2: Game Loading Bar ("پاسور کلمات") ---
-        if (gameLoadingAlpha.value > 0.01f) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .alpha(gameLoadingAlpha.value)
-                    .padding(horizontal = 24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                // Game Title Logo Progress Bar with Left-To-Right Fill
-                LogoProgressBar(
-                    progress = gameProgress.value,
-                    modifier = Modifier
-                        .fillMaxWidth(0.88f)
-                        .heightIn(max = 95.dp),
-                    isPersian = isPersian,
-                    showGlow = true
-                )
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                // Percentage indicator
-                val percent = (gameProgress.value * 100).toInt().coerceIn(0, 100)
-                Text(
-                    text = "${LocaleHelper.formatNumber(percent, isPersian)}%",
-                    color = AccentGold,
-                    fontSize = 18.sp,
-                    fontFamily = nunitoFont,
-                    fontWeight = FontWeight.Black,
-                    letterSpacing = 0.5.sp
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                // Status text
-                Text(
-                    text = if (isPersian) "در حال آماده‌سازی بازی..." else "Oyuna hazırlanıyor...",
-                    color = Color.White.copy(alpha = 0.65f),
-                    fontSize = 13.5.sp,
-                    fontFamily = nunitoFont,
-                    fontWeight = FontWeight.Medium,
-                    textAlign = TextAlign.Center
                 )
             }
         }

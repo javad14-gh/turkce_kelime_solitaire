@@ -37,6 +37,7 @@ import android.util.Log
 
 sealed interface ScreenState {
     object Splash : ScreenState
+    object InitialLoading : ScreenState
     object MainMenu : ScreenState
     object Loading : ScreenState
     object Gameplay : ScreenState
@@ -176,11 +177,13 @@ class GameViewModel : ViewModel() {
     }
 
     fun onSplashFinished() {
-        _uiState.update { 
-            it.copy(
-                screenState = ScreenState.MainMenu,
-                showDailyRewardDialog = false
-            ) 
+        if (_uiState.value.screenState != ScreenState.Splash) return
+        _uiState.update {
+            it.copy(screenState = ScreenState.InitialLoading, showDailyRewardDialog = false)
+        }
+        viewModelScope.launch {
+            delay(1200L)   // کمی بیشتر از انیمیشن نوار (۱٫۰۵ ثانیه)
+            _uiState.update { it.copy(screenState = ScreenState.MainMenu) }
         }
     }
 

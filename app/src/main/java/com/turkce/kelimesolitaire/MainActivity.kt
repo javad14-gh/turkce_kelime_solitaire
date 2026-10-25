@@ -39,6 +39,7 @@ import com.turkce.kelimesolitaire.presentation.viewmodel.ScreenState
 import android.content.Intent
 import com.turkce.kelimesolitaire.data.billing.InAppBillingManager
 import com.turkce.kelimesolitaire.data.billing.MyketBillingConfig
+import kotlinx.coroutines.delay
 
 class MainActivity : ComponentActivity() {
 
@@ -70,10 +71,15 @@ class MainActivity : ComponentActivity() {
                         label = "screenCrossfade"
                     ) { currentScreenState ->
                         when (currentScreenState) {
+                            is ScreenState.InitialLoading -> {
+                                LevelLoadingScreen(levelNumber = 0)
+                            }
                             is ScreenState.Splash -> {
-                                SplashScreen(
-                                    onSplashFinished = { viewModel.onSplashFinished() }
-                                )
+                                LevelLoadingScreen(levelNumber = 0)
+                                LaunchedEffect(Unit) {
+                                    delay(1200L)              // کمی بیشتر از انیمیشن نوار (۱٫۰۵ ثانیه)
+                                    viewModel.onSplashFinished()
+                                }
                             }
                             is ScreenState.Loading -> {
                                 LevelLoadingScreen(
