@@ -77,6 +77,7 @@ import com.turkce.kelimesolitaire.presentation.util.rememberAppFont
 import com.turkce.kelimesolitaire.presentation.ui.theme.AccentGold
 import com.turkce.kelimesolitaire.presentation.ui.theme.BorderGlass
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg
+import com.turkce.kelimesolitaire.presentation.ui.theme.mainBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupBorder
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupHeaderBg
@@ -165,7 +166,7 @@ fun MainMenuScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(DarkBg)
+            .background(mainBg)
             .padding(16.dp),
         contentAlignment = Alignment.Center
     ) {

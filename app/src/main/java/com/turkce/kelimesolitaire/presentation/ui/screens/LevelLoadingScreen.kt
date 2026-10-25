@@ -8,26 +8,21 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
@@ -44,7 +39,6 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.foundation.layout.heightIn
-import com.turkce.kelimesolitaire.presentation.ui.components.LogoProgressBar
 import com.turkce.kelimesolitaire.presentation.ui.components.OutlinedText
 import com.turkce.kelimesolitaire.presentation.ui.components.rememberNunitoFont
 import com.turkce.kelimesolitaire.presentation.ui.theme.AccentGold
@@ -52,6 +46,16 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.CardBackGradientBottom
 import com.turkce.kelimesolitaire.presentation.ui.theme.CardBackGradientTop
 import com.turkce.kelimesolitaire.presentation.ui.theme.maincolor4
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.res.painterResource
+import com.turkce.kelimesolitaire.R
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.ui.draw.clip
+import com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg
+import com.turkce.kelimesolitaire.presentation.ui.theme.mainBg
+
 
 @Composable
 fun LevelLoadingScreen(
@@ -126,33 +130,9 @@ fun LevelLoadingScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(
-                Brush.radialGradient(
-                    colors = listOf(
-                        Color(0xFF5B11B8), // Royal purple center glow
-                        Color(0xFF260058)  // Deep rich purple border
-                    )
-                )
-            ),
+            .background(mainBg),
         contentAlignment = Alignment.Center
     ) {
-        // Ambient golden-purple atmospheric glow behind card
-        Box(
-            modifier = Modifier
-                .size(340.dp)
-                .scale(cardScale)
-                .background(
-                    Brush.radialGradient(
-                        colors = listOf(
-                            maincolor4.copy(alpha = 0.28f),
-                            Color(0x228B5CF6),
-                            Color.Transparent
-                        )
-                    ),
-                    shape = CircleShape
-                )
-        )
-
         // Center card container
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -160,41 +140,14 @@ fun LevelLoadingScreen(
             modifier = Modifier.padding(horizontal = 24.dp)
         ) {
             // 3D Playing Card Icon
-            Box(
+            Image(
+                painter = painterResource(id = R.drawable.app_logo),
+                contentDescription = "App Logo",
                 modifier = Modifier
-                    .size(width = 76.dp, height = 104.dp)
+                    .size(360.dp)
                     .rotate(cardRotation)
                     .scale(cardScale)
-                    .shadow(20.dp, RoundedCornerShape(14.dp), ambientColor = maincolor4.copy(alpha = 0.4f))
-                    .clip(RoundedCornerShape(14.dp))
-                    .background(
-                        Brush.linearGradient(
-                            colors = listOf(Color(0xFFFFFFFF), Color(0xFFF3E8FF))
-                        )
-                    )
-                    .border(2.5.dp, maincolor4, RoundedCornerShape(14.dp))
-                    .padding(5.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                // Card Inner Pattern
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(
-                            Brush.verticalGradient(
-                                colors = listOf(CardBackGradientTop, CardBackGradientBottom)
-                            )
-                        )
-                        .border(1.dp, maincolor4.copy(alpha = 0.5f), RoundedCornerShape(10.dp)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "👑",
-                        fontSize = 32.sp
-                    )
-                }
-            }
+            )
 
             Spacer(modifier = Modifier.height(28.dp))
 
@@ -204,46 +157,65 @@ fun LevelLoadingScreen(
                 textColor = Color.White,
                 outlineColor = Color(0xFF1E0048),
                 outlineWidth = 6f,
-                fontSize = 28.sp,
+                fontSize = 36.sp,
                 fontWeight = FontWeight.Black,
                 letterSpacing = 1.sp
             )
 
-            Spacer(modifier = Modifier.height(10.dp))
 
-            // Subtitle text (Soft lilac for high legibility)
-            Text(
-                text = subtitle,
-                color = Color(0xFFD4C7EE),
-                fontSize = 15.sp,
-                fontFamily = nunitoFont,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
-            )
+            Spacer(modifier = Modifier.height(35.dp))
 
-            Spacer(modifier = Modifier.height(26.dp))
-            
-            // Stylized Game Logo Progress Bar with Glowing Frontier Beam
-            LogoProgressBar(
-                progress = progressFraction,
+            // Chunky 3D progress bar (button-style: gold rim + bottom bevel + glossy fill)
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth(0.85f)
-                    .heightIn(max = 80.dp),
-                isPersian = isPersian,
-                showGlow = true
-            )
+                    .fillMaxWidth(0.75f)
+                    .shadow(8.dp, RoundedCornerShape(20.dp))
+                    .clip(RoundedCornerShape(20.dp))
+                    // Outer gold rim
+                    .background(Color(0xFFFFD21F))
+                    .padding(3.5.dp)
+                    .clip(RoundedCornerShape(17.dp))
+                    // Bottom bevel base (3D thickness)
+                    .background(Color(0xFF06813E))
+                    //.padding(bottom = 4.dp)
+                    .clip(RoundedCornerShape(14.dp))
+                    // Dark track
+                    .background(Color(0xFF06813E))
+                    .height(15.dp)
+            ) {
+                // Fill
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(progressFraction)
+                        .fillMaxHeight()
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(Color(0xFF00BF37))
+                ) {
+                    // Glossy highlight on top half
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight(0.45f)
+                            .padding(horizontal = 6.dp, vertical = 2.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(Color.White.copy(alpha = 0.30f))
+                    )
+                }
 
-            Spacer(modifier = Modifier.height(14.dp))
+                // Percentage inside the bar
+                val percentInBar = (progressFraction * 100).toInt().coerceIn(0, 100)
+                OutlinedText(
+                    text = "${LocaleHelper.formatNumber(percentInBar, isPersian)}%",
+                    modifier = Modifier.align(Alignment.Center),
+                    textColor = Color.White,
+                    outlineColor = Color(0xFF14532D),
+                    outlineWidth = 4f,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Black,
+                    shadowOffsetY = 1f
+                )
+            }
 
-            // Percentage Counter
-            val percent = (progressFraction * 100).toInt().coerceIn(0, 100)
-            Text(
-                text = "${LocaleHelper.formatNumber(percent, isPersian)}%",
-                color = AccentGold,
-                fontSize = 17.sp,
-                fontFamily = nunitoFont,
-                fontWeight = FontWeight.Black
-            )
         }
     }
 }
