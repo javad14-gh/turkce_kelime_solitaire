@@ -70,6 +70,7 @@ import com.turkce.kelimesolitaire.presentation.ui.components.candyGloss
 import com.turkce.kelimesolitaire.presentation.ui.components.specularGlint
 import com.turkce.kelimesolitaire.presentation.ui.components.rememberNunitoFont
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg
+import com.turkce.kelimesolitaire.presentation.ui.theme.mainBg
 import com.turkce.kelimesolitaire.presentation.util.GameSettingsManager
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 import kotlinx.coroutines.delay
@@ -511,7 +512,7 @@ fun LevelCompleteScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(DarkBg)
+            .background(mainBg)
             .padding(16.dp),
         contentAlignment = Alignment.Center
     ) {

@@ -155,8 +155,8 @@ fun LevelLoadingScreen(
             OutlinedText(
                 text = title,
                 textColor = Color.White,
-                outlineColor = Color(0xFF1E0048),
-                outlineWidth = 6f,
+                outlineColor = Color(0xFF734A2A),
+                outlineWidth = 8f,
                 fontSize = 36.sp,
                 fontWeight = FontWeight.Black,
                 letterSpacing = 1.sp

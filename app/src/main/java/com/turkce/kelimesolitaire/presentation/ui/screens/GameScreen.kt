@@ -406,38 +406,19 @@ fun GameScreen(
                 )
 
                 // Right: Settings Icon - 3D Button like Sound & Vibration
-                Box(
+                Image(
+                    painter = painterResource(id = R.drawable.setting),
+                    contentDescription = "Settings",
                     modifier = Modifier
-                        .size(42.dp)
-                        .shadow(6.dp, RoundedCornerShape(13.dp))
-                        .clip(RoundedCornerShape(13.dp))
-                        .background(Color(0xFF6B5196))
-                        .padding(bottom = 3.dp)
-                        .clip(RoundedCornerShape(11.dp))
-                        .background(
-                            Brush.verticalGradient(
-                                colors = listOf(
-                                    Color(0xFFD4C7EE),
-                                    Color(0xFFBAA6DD),
-                                    Color(0xFFA58ED0)
-                                )
-                            )
-                        )
-                        .clickable {
+                        .size(40.dp)
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ) {
                             showHamburgerMenu = true
-                            com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playButtonClickSound(
-                                context
-                            )
+                            com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playButtonClickSound(context)
                         }
-                        .padding(2.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.setting),
-                        contentDescription = "Settings",
-                        modifier = Modifier.size(26.dp)
-                    )
-                }
+                )
             }
 
             Spacer(modifier = Modifier.height(4.dp))

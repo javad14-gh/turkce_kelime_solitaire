@@ -32,6 +32,7 @@ import com.turkce.kelimesolitaire.presentation.ui.components.MessageType
 import com.turkce.kelimesolitaire.presentation.ui.components.RestartLevelDialog
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg
+import com.turkce.kelimesolitaire.presentation.ui.theme.mainBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.SecondaryNeon
 import com.turkce.kelimesolitaire.presentation.ui.theme.TurkceKelimeSolitaireTheme
 import com.turkce.kelimesolitaire.presentation.viewmodel.GameViewModel
@@ -40,6 +41,11 @@ import android.content.Intent
 import com.turkce.kelimesolitaire.data.billing.InAppBillingManager
 import com.turkce.kelimesolitaire.data.billing.MyketBillingConfig
 import kotlinx.coroutines.delay
+import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.core.view.WindowCompat
+import com.turkce.kelimesolitaire.presentation.ui.theme.GameTableBg
 
 class MainActivity : ComponentActivity() {
 
@@ -56,14 +62,29 @@ class MainActivity : ComponentActivity() {
                 viewModel.restorePurchases(this)
             }
         }
-
         setContent {
             TurkceKelimeSolitaireTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    color = mainBg
                 ) {
                     val state by viewModel.uiState.collectAsState()
+                    val barColor = when (state.screenState) {
+                        is ScreenState.Gameplay -> GameTableBg
+                        is ScreenState.Store -> Color(0xFF00167A)
+                        is ScreenState.Splash -> Color.Black
+                        else -> mainBg
+                    }
+                    val darkBackground = state.screenState is ScreenState.Store ||
+                            state.screenState is ScreenState.Splash
+
+                    SideEffect {
+                        window.statusBarColor = barColor.toArgb()
+                        window.navigationBarColor = barColor.toArgb()
+                        val controller = WindowCompat.getInsetsController(window, window.decorView)
+                        controller.isAppearanceLightStatusBars = !darkBackground
+                        controller.isAppearanceLightNavigationBars = !darkBackground
+                    }
 
                     Crossfade(
                         targetState = state.screenState,
@@ -71,15 +92,11 @@ class MainActivity : ComponentActivity() {
                         label = "screenCrossfade"
                     ) { currentScreenState ->
                         when (currentScreenState) {
+                            is ScreenState.Splash -> {
+                                SplashScreen(onSplashFinished = { viewModel.onSplashFinished() })
+                            }
                             is ScreenState.InitialLoading -> {
                                 LevelLoadingScreen(levelNumber = 0)
-                            }
-                            is ScreenState.Splash -> {
-                                LevelLoadingScreen(levelNumber = 0)
-                                LaunchedEffect(Unit) {
-                                    delay(1200L)              // کمی بیشتر از انیمیشن نوار (۱٫۰۵ ثانیه)
-                                    viewModel.onSplashFinished()
-                                }
                             }
                             is ScreenState.Loading -> {
                                 LevelLoadingScreen(

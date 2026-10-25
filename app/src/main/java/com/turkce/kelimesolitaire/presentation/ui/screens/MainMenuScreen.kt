@@ -2,6 +2,7 @@ package com.turkce.kelimesolitaire.presentation.ui.screens
 
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -59,6 +60,7 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.ui.draw.scale
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.widthIn
@@ -76,6 +78,8 @@ import com.turkce.kelimesolitaire.presentation.ui.components.darker
 import com.turkce.kelimesolitaire.presentation.util.rememberAppFont
 import com.turkce.kelimesolitaire.presentation.ui.theme.AccentGold
 import com.turkce.kelimesolitaire.presentation.ui.theme.BorderGlass
+import com.turkce.kelimesolitaire.presentation.ui.theme.CoinBoxBorder
+import com.turkce.kelimesolitaire.presentation.ui.theme.CoinTextColor
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.mainBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupBg
@@ -189,85 +193,65 @@ fun MainMenuScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // 1. Coins Display: 3D Coin on the outside, box extending to the right (like menu buttons)
+                        val coinScale = remember { Animatable(1f) }
                         Box(
                             modifier = Modifier
+                                .scale(coinScale.value)
                                 .clickable { onOpenStore() },
                             contentAlignment = Alignment.CenterStart
                         ) {
-                            // 3D Pill extending rightward from behind the coin (height 40dp matching settings button)
-                            Box(
+                            // Box border extending rightward from behind the coin (transparent background)
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier
-                                    .padding(start = 20.dp)
-                                    .height(40.dp)
-                                    .shadow(5.dp, RoundedCornerShape(topEnd = 18.dp, bottomEnd = 18.dp, topStart = 7.dp, bottomStart = 7.dp))
-                                    .clip(RoundedCornerShape(topEnd = 18.dp, bottomEnd = 18.dp, topStart = 7.dp, bottomStart = 7.dp))
-                                    .background(Color(0xFF6B5196))
-                                    .padding(bottom = 3.dp)
-                                    .clip(RoundedCornerShape(topEnd = 15.dp, bottomEnd = 15.dp, topStart = 5.dp, bottomStart = 5.dp))
-                                    .background(
-                                        Brush.verticalGradient(
-                                            colors = listOf(
-                                                Color(0xFFD4C7EE),
-                                                Color(0xFFBAA6DD),
-                                                Color(0xFFA58ED0)
-                                            )
+                                    .padding(start = 18.dp)
+                                    .height(28.dp)
+                                    .border(
+                                        1.5.dp,
+                                        CoinBoxBorder,
+                                        RoundedCornerShape(
+                                            topEnd = 14.dp,
+                                            bottomEnd = 14.dp,
+                                            topStart = 4.dp,
+                                            bottomStart = 4.dp
                                         )
                                     )
-                                    .padding(start = 36.dp, end = 20.dp),
-                                contentAlignment = Alignment.Center
+                                    .padding(start = 22.dp, end = 12.dp)
                             ) {
-                                OutlinedText(
+                                Text(
                                     text = LocaleHelper.formatNumber(coins, isPersian),
-                                    textColor = Color.White,
-                                    outlineColor = Color(0xFF6B5196),
-                                    outlineWidth = 8f,
-                                    fontSize = 18.sp,
-                                    fontWeight = FontWeight.Black
+                                    color = Color(0xFF734A2A),
+                                    fontSize = 17.sp,
+                                    fontWeight = FontWeight.Black,
+                                    fontFamily = nunitoFont
                                 )
                             }
 
                             // 3D Coin Icon on the outside, overlapping on the left
                             Box(
                                 modifier = Modifier
-                                    .size(54.dp)
+                                    .size(38.dp)
                                     .zIndex(2f),
                                 contentAlignment = Alignment.Center
                             ) {
-                                com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 54.dp)
+                                com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 38.dp)
                             }
                         }
 
                         // 2. Settings Menu Icon (Right) - 3D Button like Sound & Vibration (size 40dp, gear 34dp)
-                        Box(
+                        Image(
+                            painter = painterResource(id = R.drawable.setting),
+                            contentDescription = "Settings",
                             modifier = Modifier
                                 .size(40.dp)
-                                .shadow(5.dp, RoundedCornerShape(12.dp))
-                                .clip(RoundedCornerShape(12.dp))
-                                .background(Color(0xFF6B5196))
-                                .padding(bottom = 3.dp)
-                                .clip(RoundedCornerShape(10.dp))
-                                .background(
-                                    Brush.verticalGradient(
-                                        colors = listOf(
-                                            Color(0xFFD4C7EE),
-                                            Color(0xFFBAA6DD),
-                                            Color(0xFFA58ED0)
-                                        )
-                                    )
-                                )
-                                .clickable {
+                                .clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = null
+                                ) {
                                     showSettingsMenu = true
                                     com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playButtonClickSound(context)
-                                },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.setting),
-                                contentDescription = "Settings",
-                                modifier = Modifier.size(34.dp)
-                            )
-                        }
+                                }
+                        )
                     }
                 }
 
@@ -287,37 +271,14 @@ fun MainMenuScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                if (isPersian) {
-                    Image(
-                        painter = painterResource(id = R.drawable.title_logo),
-                        contentDescription = "پاسور کلمات",
-                        modifier = Modifier
-                            .fillMaxWidth(0.88f)
-                            .heightIn(max = 95.dp),
-                        contentScale = ContentScale.Fit
-                    )
-                } else {
-                    OutlinedText(
-                        text = "TÜRKÇE KELİME",
-                        textColor = SecondaryNeon,
-                        outlineColor = Color(0xFF0F172A),
-                        outlineWidth = 6f,
-                        fontSize = 38.sp,
-                        fontWeight = FontWeight.Black,
-                        letterSpacing = 1.5.sp,
-                        textAlign = TextAlign.Center
-                    )
-                    OutlinedText(
-                        text = "SOLİTAİRE",
-                        textColor = PrimaryNeon,
-                        outlineColor = Color(0xFF0F172A),
-                        outlineWidth = 6f,
-                        fontSize = 40.sp,
-                        fontWeight = FontWeight.Black,
-                        letterSpacing = 1.sp,
-                        textAlign = TextAlign.Center
-                    )
-                }
+                Image(
+                    painter = painterResource(id = R.drawable.app_logo),
+                    contentDescription = "App Logo",
+                    modifier = Modifier
+                        .fillMaxWidth(0.8f)
+                        .aspectRatio(1f),
+                    contentScale = ContentScale.Fit
+                )
             }
 
             // 3D Juicy Play Button with Difficulty Ribbon Banner

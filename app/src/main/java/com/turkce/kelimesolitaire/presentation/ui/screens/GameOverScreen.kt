@@ -46,6 +46,7 @@ import com.turkce.kelimesolitaire.presentation.ui.components.candyGloss
 import com.turkce.kelimesolitaire.presentation.ui.components.specularGlint
 import com.turkce.kelimesolitaire.presentation.ui.components.rememberNunitoFont
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg
+import com.turkce.kelimesolitaire.presentation.ui.theme.mainBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupButtonBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupButtonShadow
@@ -89,7 +90,7 @@ fun GameOverScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(DarkBg)
+            .background(mainBg)
             .padding(16.dp)
     ) {
         Column(

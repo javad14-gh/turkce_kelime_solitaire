@@ -37,16 +37,6 @@ fun TurkceKelimeSolitaireTheme(
     content: @Composable () -> Unit
 ) {
     val colorScheme = DarkColorScheme
-    val view = LocalView.current
-    if (!view.isInEditMode) {
-        SideEffect {
-            val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.background.toArgb()
-            window.navigationBarColor = colorScheme.background.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
-        }
-    }
-
     val context = LocalContext.current
     val isPersian = remember(context) { LocaleHelper.isPersian(context) }
     val appFont = rememberAppFont()
