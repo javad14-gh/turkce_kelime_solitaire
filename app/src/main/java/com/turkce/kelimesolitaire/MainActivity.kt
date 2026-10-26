@@ -166,7 +166,6 @@ class MainActivity : ComponentActivity() {
                                         freeHintCount = state.freeHintCount,
                                         freeJokerCount = state.freeJokerCount,
                                         activeTutorial = state.activeTutorial,
-                                        level1TutorialStep = state.level1TutorialStep,
                                         shouldAnimateDeal = state.shouldAnimateDeal,
                                         onDismissTutorial = { viewModel.dismissTutorial(this@MainActivity) },
                                         onDismissCategoryCelebration = { viewModel.dismissCategoryCelebration() },
@@ -205,7 +204,11 @@ class MainActivity : ComponentActivity() {
                                         },
                                         onAcceptDefeat = {
                                             viewModel.acceptDefeat(this@MainActivity)
+                                        },
+                                        onClaimThemeReward = { amount ->
+                                            viewModel.claimThemeReward(this@MainActivity, amount)
                                         }
+
                                     )
                                 } ?: LevelLoadingScreen(
                                     levelNumber = state.levelNumber

@@ -20,6 +20,7 @@ object GameSettingsManager {
     private const val KEY_STARTER_PACK_LAST_POPUP_TIME = "key_starter_pack_last_popup_time"
     private const val KEY_STARTER_PACK_LAST_POPUP_LEVEL = "key_starter_pack_last_popup_level"
 
+    private const val KEY_THEME_INTRO_SHOWN = "key_theme_intro_shown"
     private val audioExecutor = Executors.newSingleThreadExecutor()
 
     private fun getPrefs(context: Context): SharedPreferences {
@@ -81,6 +82,20 @@ object GameSettingsManager {
             .putLong(KEY_STARTER_PACK_LAST_POPUP_TIME, System.currentTimeMillis())
             .putInt(KEY_STARTER_PACK_LAST_POPUP_LEVEL, currentLevel)
             .apply()
+    }
+
+    // --- Theme Intro Popup ---
+
+    const val THEME_INTRO_LEVEL = 6
+    const val THEME_REWARD_COINS = 30
+
+    fun shouldShowThemeIntro(context: Context, levelNumber: Int): Boolean {
+        if (levelNumber < THEME_INTRO_LEVEL) return false
+        return !getPrefs(context).getBoolean(KEY_THEME_INTRO_SHOWN, false)
+    }
+
+    fun markThemeIntroShown(context: Context) {
+        getPrefs(context).edit().putBoolean(KEY_THEME_INTRO_SHOWN, true).apply()
     }
 
     // --- Sound Settings ---

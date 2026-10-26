@@ -115,6 +115,18 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.PopupButtonBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupButtonShadow
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupTrayDepth
 import com.turkce.kelimesolitaire.presentation.viewmodel.GameViewModel
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import com.turkce.kelimesolitaire.presentation.ui.components.ThemeIntroSheet
+import com.turkce.kelimesolitaire.presentation.util.GameSettingsManager
+import com.turkce.kelimesolitaire.presentation.viewmodel.TutorialType
+import com.turkce.kelimesolitaire.presentation.ui.components.TutorialAction
+import com.turkce.kelimesolitaire.presentation.ui.components.TutorialBubble
+import com.turkce.kelimesolitaire.presentation.ui.components.TutorialSpotlightOverlay
+import com.turkce.kelimesolitaire.presentation.ui.components.computeLevel1Hint
 
 
 private fun findBestFoundationSlot(
@@ -210,11 +222,11 @@ fun GameScreen(
     freeHintCount: Int = if (hasFreeHint) 1 else 0,
     freeJokerCount: Int = if (hasFreeJoker) 1 else 0,
     activeTutorial: com.turkce.kelimesolitaire.presentation.viewmodel.TutorialType? = null,
-    level1TutorialStep: Int = 0,
     onDismissTutorial: () -> Unit = {},
     onDismissCategoryCelebration: () -> Unit = {},
     shouldAnimateDeal: Boolean = true,
-    onWatchAdForMoves: () -> Unit = {}
+    onWatchAdForMoves: () -> Unit = {},
+    onClaimThemeReward: (Int) -> Unit = {}
 ) {
     val context = androidx.compose.ui.platform.LocalContext.current
     val isPersian = remember(context) { LocaleHelper.isPersian(context) }
@@ -232,6 +244,7 @@ fun GameScreen(
         }
         prevMoves = movesRemaining
     }
+
 
     val movesScale by animateFloatAsState(
         targetValue = if (triggerFlash) 1.25f else 1f,
@@ -330,6 +343,27 @@ fun GameScreen(
         }
     }
 
+    val cardBounds = remember { mutableStateMapOf<String, Rect>() }
+    val isTutorialMode = activeTutorial == TutorialType.LEVEL_1_GUIDE
+    val tutorialHint = if (isTutorialMode && isDealingFinished && !isLevelWon && !showOutofMovesDialog) {
+        computeLevel1Hint(foundationSlots, tableauPiles, wastePile, stockPile)
+    } else null
+
+    // Theme intro: shown once, after the deal animation, from level 6 onward
+    var showThemeIntro by remember { mutableStateOf(false) }
+    LaunchedEffect(isDealingFinished, levelData.levelNumber) {
+        if (isDealingFinished &&
+            activeTutorial == null &&
+            !showOutofMovesDialog &&
+            !isLevelWon &&
+            GameSettingsManager.shouldShowThemeIntro(context, levelData.levelNumber)
+        ) {
+            delay(600L)
+            showThemeIntro = true
+            GameSettingsManager.markThemeIntroShown(context)
+        }
+    }
+
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -424,9 +458,9 @@ fun GameScreen(
             Spacer(modifier = Modifier.height(4.dp))
 
             // LEVEL 1 INTERACTIVE TUTORIAL BANNER
-            if (activeTutorial == com.turkce.kelimesolitaire.presentation.viewmodel.TutorialType.LEVEL_1_GUIDE) {
-                com.turkce.kelimesolitaire.presentation.ui.components.Level1InteractiveBanner(
-                    step = level1TutorialStep,
+            if (isTutorialMode) {
+                TutorialBubble(
+                    message = tutorialHint?.message,
                     isPersian = isPersian,
                     fontFamily = nunitoFont,
                     onSkip = onDismissTutorial
@@ -492,9 +526,8 @@ fun GameScreen(
                     if (topWaste != null) {
                         key(topWaste.id) {
                             val isDragged = draggedCards.any { it.id == topWaste.id }
-                            val isWasteTutorialHinted = (levelData.levelNumber == 1 && level1TutorialStep == 0 && topWaste.isCategory) ||
-                                    (levelData.levelNumber == 1 && level1TutorialStep == 1 && !topWaste.isCategory && foundationSlots.any { it.activeCategory != null && it.activeCategory.id == topWaste.categoryId })
-                            val isWasteHinted = hintedCardId == topWaste.id || isWasteTutorialHinted
+
+                            val isWasteHinted = hintedCardId == topWaste.id
                             WordCard(
                                 card = topWaste,
                                 isSelected = selectedCardId == topWaste.id || isDragged,
@@ -503,7 +536,7 @@ fun GameScreen(
                                 isHinted = isWasteHinted,
                                 isDragged = isDragged,
                                 dragOffsetProvider = { dragOffset },
-                                isInteractionEnabled = !isLevelWon && isDealingFinished && movesRemaining > 0 && !showOutofMovesDialog && !isAnimatingReturn && (draggedCards.isEmpty() || isDragged),
+                                isInteractionEnabled = !isLevelWon && isDealingFinished && (!isTutorialMode || tutorialHint?.cardId == topWaste.id) && movesRemaining > 0 && !showOutofMovesDialog && !isAnimatingReturn && (draggedCards.isEmpty() || isDragged) && !showThemeIntro,
                                 onTap = {},
                                 onDragStart = {
                                     draggedCards = listOf(topWaste)
@@ -615,6 +648,10 @@ fun GameScreen(
                                 },
                                 modifier = Modifier
                                     .zIndex(if (isDragged) 100f else 0f)
+                                    .onGloballyPositioned { c ->
+                                        val b = c.boundsInRoot()
+                                        if (cardBounds[topWaste.id] != b) cardBounds[topWaste.id] = b
+                                    }
                                     .then(
                                         if (isWasteHinted) Modifier.border(
                                             2.5.dp,
@@ -641,12 +678,16 @@ fun GameScreen(
                     }
 
                     // Stock card slot
-                    val isStockHinted = hintedCardId == "stock_pile" || (levelData.levelNumber == 1 && level1TutorialStep == 2)
+                    val isStockHinted = hintedCardId == "stock_pile"
                     if (stockPile.isNotEmpty()) {
                         Box(
                             modifier = Modifier
                                 .size(width = 85.dp, height = 110.dp)
-                                .clickable(enabled = !isLevelWon && isDealingFinished && movesRemaining > 0 && !showOutofMovesDialog) { onDrawFromStock() },
+                                .clickable(enabled = !isLevelWon && isDealingFinished && movesRemaining > 0 && !showOutofMovesDialog && !showThemeIntro && (!isTutorialMode || tutorialHint?.action == TutorialAction.TAP_STOCK)) { onDrawFromStock() }
+                                .onGloballyPositioned { c ->
+                                    val b = c.boundsInRoot()
+                                    if (cardBounds["stock_pile"] != b) cardBounds["stock_pile"] = b
+                                },
                             contentAlignment = Alignment.TopStart
                         ) {
                             // Layer 2 (Bottom layer for thick deck appearance if 3 or more cards)
@@ -740,7 +781,11 @@ fun GameScreen(
                                     color = if (isStockHinted) Color(0xFFF1C40F) else StockRecycleBorder,
                                     shape = RoundedCornerShape(8.dp)
                                 )
-                                .clickable(enabled = !isLevelWon && isDealingFinished && movesRemaining > 0 && !showOutofMovesDialog) { onDrawFromStock() },
+                                .clickable(enabled = !isLevelWon && isDealingFinished && movesRemaining > 0 && !showOutofMovesDialog && !showThemeIntro && (!isTutorialMode || tutorialHint?.action == TutorialAction.TAP_STOCK)) { onDrawFromStock() }
+                            .onGloballyPositioned { c ->
+                            val b = c.boundsInRoot()
+                            if (cardBounds["stock_pile"] != b) cardBounds["stock_pile"] = b
+                        },
                             contentAlignment = Alignment.Center
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -803,9 +848,7 @@ fun GameScreen(
                             levelData.targetWords.count { it.categoryId == slot.activeCategory.id }
                         } else 0
 
-                        val isSlotTutorialHinted = (levelData.levelNumber == 1 && level1TutorialStep == 0 && slot.activeCategory == null && colIdx == 0) ||
-                                (levelData.levelNumber == 1 && level1TutorialStep == 1 && slot.activeCategory != null && slot.matchedWords.size < totalWordsForSlot)
-                        val isSlotHinted = hintedTargetId == "slot_${slot.id}" || isSlotTutorialHinted
+                        val isSlotHinted = hintedTargetId == "slot_${slot.id}"
 
                         CategoryDropZone(
                             slot = slot,
@@ -977,9 +1020,7 @@ fun GameScreen(
                                     val isDragged = draggedCards.any { it.id == card.id }
                                     val dragGroupIdx = if (isDragged) draggedCards.indexOfFirst { it.id == card.id } else -1
                                     val compressionYOffset = if (dragGroupIdx > 0) (- (dragGroupIdx * 18f * compressionFraction)).dp else 0.dp
-                                    val isCardTutorialHinted = (levelData.levelNumber == 1 && level1TutorialStep == 0 && card.isFaceUp && card.isCategory) ||
-                                            (levelData.levelNumber == 1 && level1TutorialStep == 1 && card.isFaceUp && !card.isCategory && foundationSlots.any { it.activeCategory != null && it.activeCategory.id == card.categoryId })
-                                    val isCardHinted = hintedCardId == card.id || isCardTutorialHinted
+                                    val isCardHinted = hintedCardId == card.id
                                     
                                     WordCard(
                                         card = card,
@@ -990,7 +1031,7 @@ fun GameScreen(
                                         isDragged = isDragged,
                                         dragZIndex = if (dragGroupIdx >= 0) dragGroupIdx.toFloat() else 0f,
                                         dragOffsetProvider = { dragOffset },
-                                        isInteractionEnabled = !isLevelWon && isDealingFinished && movesRemaining > 0 && !showOutofMovesDialog && !isAnimatingReturn && (draggedCards.isEmpty() || isDragged),
+                                        isInteractionEnabled = !isLevelWon && isDealingFinished && (!isTutorialMode || tutorialHint?.cardId == card.id) && movesRemaining > 0 && !showOutofMovesDialog && !isAnimatingReturn && (draggedCards.isEmpty() || isDragged) && !showThemeIntro,
                                         onTap = {},
                                         onDragStart = {
                                             val targetCatId = card.categoryId
@@ -1160,6 +1201,10 @@ fun GameScreen(
                                                         cardBounds
                                                     }
                                                 }
+                                            }
+                                            .onGloballyPositioned { c ->
+                                                val b = c.boundsInRoot()
+                                                if (cardBounds[card.id] != b) cardBounds[card.id] = b
                                             }
                                             .then(
                                                 if (isCardHinted) Modifier.border(
@@ -2272,6 +2317,40 @@ fun GameScreen(
                     }
                 }
             }
+        }
+        // THEME INTRO BOTTOM SHEET (no dark scrim, board stays visible)
+        AnimatedVisibility(
+            visible = showThemeIntro,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .zIndex(400f),
+            enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
+            exit = slideOutVertically(targetOffsetY = { it }) + fadeOut()
+        ) {
+            ThemeIntroSheet(
+                rewardCoins = GameSettingsManager.THEME_REWARD_COINS,
+                onDismiss = { showThemeIntro = false },
+                onConfirm = {
+                    showThemeIntro = false
+                    onClaimThemeReward(GameSettingsManager.THEME_REWARD_COINS)
+                }
+            )
+        }
+
+        // TUTORIAL SPOTLIGHT + FINGER
+        if (isTutorialMode && !showHamburgerMenu && !showExitConfirmDialog) {
+            val srcBounds = tutorialHint?.let {
+                if (it.action == TutorialAction.TAP_STOCK) cardBounds["stock_pile"]
+                else it.cardId?.let { id -> cardBounds[id] }
+            }
+            val dstBounds = tutorialHint?.slotId?.let { dropZoneBounds[it.toString()] }
+            TutorialSpotlightOverlay(
+                hint = tutorialHint,
+                sourceBounds = srcBounds,
+                targetBounds = dstBounds,
+                isDragging = draggedCards.isNotEmpty(),
+                modifier = Modifier.zIndex(300f)
+            )
         }
 
         // 5. FLOATING COIN FEEDBACK OVERLAYS

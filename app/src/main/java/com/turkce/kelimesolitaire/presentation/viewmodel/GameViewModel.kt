@@ -104,7 +104,7 @@ data class GameUiState(
     val hasFreeHint: Boolean = false,
     val hasFreeJoker: Boolean = false,
     val activeTutorial: TutorialType? = null,
-    val level1TutorialStep: Int = 0,
+
     val shouldAnimateDeal: Boolean = true,
     val activeMessage: InGameMessage? = null
 )
@@ -235,8 +235,9 @@ class GameViewModel : ViewModel() {
         } else {
             emptySet()
         }
+        val isPersianLang = LocaleHelper.isPersian(context)
         val generated = withContext(Dispatchers.Default) {
-            levelGenerator.generateLevel(db, levelNum, lastCategoryIds)
+            levelGenerator.generateLevel(db, levelNum, lastCategoryIds, isPersianLang)
         }
         val allWords = generated.targetWords
 
@@ -250,8 +251,7 @@ class GameViewModel : ViewModel() {
         val baseMoves = allWords.size + generated.targetCategories.size + generated.initialStock.size
         val bufferRatio = 0.20
         val bufferMoves = maxOf(2, (baseMoves * bufferRatio).toInt())
-        val calculatedMoves = baseMoves + bufferMoves
-
+        val calculatedMoves = if (levelNum == 1) 25 else baseMoves + bufferMoves
         val prefs = context.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)
 
         val isUndoUnlocked = levelNum >= 2
@@ -337,7 +337,6 @@ class GameViewModel : ViewModel() {
                 hasFreeJoker = freeJokerCount > 0,
                 isStarterPackPurchased = isStarterPackPurchased,
                 activeTutorial = activeTutorial,
-                level1TutorialStep = 0
             )
         }
         isAdvancingLevel = false
@@ -475,11 +474,6 @@ class GameViewModel : ViewModel() {
             val (newTableaus, newWaste) = removeCardsFromSource(cards)
             val newTotalMatched = _uiState.value.totalMatchedWordsCount + newlyMatchedWordsCount
 
-            val nextTutStep = if (_uiState.value.levelNumber == 1 && _uiState.value.activeTutorial == TutorialType.LEVEL_1_GUIDE) {
-                if (cards.any { it.isCategory }) 1 else 2
-            } else {
-                _uiState.value.level1TutorialStep
-            }
 
             pushToUndoStack()
             _uiState.update {
@@ -492,7 +486,6 @@ class GameViewModel : ViewModel() {
                     totalMatchedWordsCount = newTotalMatched,
                     movesRemaining = maxOf(0, it.movesRemaining - 1),
                     selectedCardId = null,
-                    level1TutorialStep = nextTutStep
                 )
             }
             saveCoinsToPrefs(context, _uiState.value.coins)
@@ -542,6 +535,15 @@ class GameViewModel : ViewModel() {
         if (cards.isEmpty()) return false
         if (_uiState.value.movesRemaining <= 0 || _uiState.value.showOutofMovesDialog) {
             checkMovesRemaining()
+            return false
+        }
+        if (_uiState.value.activeTutorial == TutorialType.LEVEL_1_GUIDE) {
+            val isPersian = LocaleHelper.isPersian(context)
+            showUserMessage(
+                if (isPersian) "در آموزش فقط کارتی را که نشان داده شده حرکت بده 👆\u200F"
+                else "Eğitimde sadece gösterilen kartı hareket ettir 👆",
+                MessageType.INFO
+            )
             return false
         }
         val tableaus = _uiState.value.tableauPiles.map { it.toMutableList() }
@@ -999,6 +1001,17 @@ class GameViewModel : ViewModel() {
         saveCoinsToPrefs(context, newCoins)
     }
 
+    fun claimThemeReward(context: Context, amount: Int) {
+        if (amount <= 0) return
+        addCoins(context, amount)
+        val isPersian = LocaleHelper.isPersian(context)
+        showUserMessage(
+            if (isPersian) "+${LocaleHelper.formatNumber(amount, true)} سکه هدیه گرفتی! 🎨"
+            else "+$amount Altın hediye kazandın! 🎨",
+            MessageType.SUCCESS
+        )
+    }
+
     fun purchaseProduct(activity: Activity, sku: String) {
         InAppBillingManager.getInstance().startPurchase(
             activity = activity,
@@ -1281,7 +1294,9 @@ class GameViewModel : ViewModel() {
                         hasFreeHint = freeHintCount > 0,
                         hasFreeJoker = freeJokerCount > 0,
                         isStarterPackPurchased = isStarterPackPurchased,
-                        activeTutorial = null
+                        activeTutorial = if (session.levelNumber == 1 &&
+                            !prefs.getBoolean("tutorial_lvl1_completed", false)
+                        ) TutorialType.LEVEL_1_GUIDE else null
                     )
                 }
             }

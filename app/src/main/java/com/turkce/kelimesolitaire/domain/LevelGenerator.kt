@@ -12,8 +12,10 @@ class LevelGenerator {
     fun generateLevel(
         database: WordDatabase,
         levelNumber: Int,
-        lastUsedCategoryIds: Set<String> = emptySet()
+        lastUsedCategoryIds: Set<String> = emptySet(),
+        isPersian: Boolean = false
     ): LevelData {
+        if (levelNumber == 1) return buildTutorialLevel(isPersian)
         val allCategories = database.categories
         val allWords = database.words
 
@@ -225,6 +227,47 @@ class LevelGenerator {
         )
     }
 
+
+    /** Fixed hand-made level 1: 3 categories x 3 words, 12 cards. */
+    private fun buildTutorialLevel(isPersian: Boolean): LevelData {
+        val catNames = if (isPersian) listOf("میوه", "رنگ", "حیوان")
+        else listOf("Meyve", "Renk", "Hayvan")
+        val wordNames = if (isPersian) listOf(
+            listOf("سیب", "موز", "انار"),
+            listOf("قرمز", "آبی", "سبز"),
+            listOf("شیر", "اسب", "گربه")
+        ) else listOf(
+            listOf("Elma", "Muz", "Kiraz"),
+            listOf("Kırmızı", "Mavi", "Yeşil"),
+            listOf("Aslan", "At", "Kedi")
+        )
+        val cats = catNames.mapIndexed { i, n -> Category("tut_cat_$i", n, "Kolay") }
+        val words = wordNames.mapIndexed { ci, list ->
+            list.mapIndexed { wi, t -> Word("tut_w_${ci}_$wi", "tut_cat_$ci", t, "Kolay") }
+        }
+
+        fun cat(i: Int, up: Boolean) =
+            SolitaireCard("cat_${cats[i].id}", cats[i].name, cats[i].id, true, up, category = cats[i])
+        fun word(c: Int, w: Int, up: Boolean) =
+            SolitaireCard("word_${words[c][w].id}", words[c][w].wordText, cats[c].id, false, up, word = words[c][w])
+
+        val tableau = listOf(
+            listOf(word(0, 0, false), cat(0, true)),                       // ▮ سیب, ↑ دسته میوه
+            listOf(word(1, 1, false), word(0, 1, false), cat(1, true)),    // ▮ آبی, ▮ موز, ↑ دسته رنگ
+            listOf(cat(2, false), word(1, 0, true)),                       // ▮ دسته حیوان, ↑ قرمز
+            listOf(word(2, 0, true))                                       // ↑ شیر
+        )
+        val stock = listOf(word(0, 2, false), word(1, 2, false), word(2, 1, false), word(2, 2, false))
+
+        return LevelData(
+            levelNumber = 1,
+            difficulty = "Kolay",
+            targetCategories = cats,
+            targetWords = words.flatten(),
+            initialTableau = tableau,
+            initialStock = stock
+        )
+    }
 
     /**
      * Solvability check simulation engine using DFS Backtracking.
