@@ -458,14 +458,7 @@ fun GameScreen(
             Spacer(modifier = Modifier.height(4.dp))
 
             // LEVEL 1 INTERACTIVE TUTORIAL BANNER
-            if (isTutorialMode) {
-                TutorialBubble(
-                    message = tutorialHint?.message,
-                    isPersian = isPersian,
-                    fontFamily = nunitoFont,
-                    onSkip = onDismissTutorial
-                )
-            }
+
 
             // 2. HUD & PILES ROW (Moves, Progress Bar, and Stock/Waste piles)
             Row(
@@ -2349,6 +2342,9 @@ fun GameScreen(
                 sourceBounds = srcBounds,
                 targetBounds = dstBounds,
                 isDragging = draggedCards.isNotEmpty(),
+                isPersian = isPersian,
+                fontFamily = nunitoFont,
+                onSkip = onDismissTutorial,
                 modifier = Modifier.zIndex(300f)
             )
         }

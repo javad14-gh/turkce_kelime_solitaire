@@ -208,6 +208,9 @@ fun TutorialSpotlightOverlay(
     sourceBounds: Rect?,
     targetBounds: Rect?,
     isDragging: Boolean,
+    isPersian: Boolean,
+    fontFamily: FontFamily,
+    onSkip: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var origin by remember { mutableStateOf(Offset.Zero) }
@@ -307,6 +310,20 @@ fun TutorialSpotlightOverlay(
                             }
                     )
                 }
+            }
+            // Instruction bubble: drawn above the dim layer, in the empty area below the columns
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 190.dp)   // پایین‌تر از ستون‌ها؛ در صورت نیاز تنظیم کن
+                    .padding(horizontal = 8.dp)
+            ) {
+                TutorialBubble(
+                    message = hint?.message,
+                    isPersian = isPersian,
+                    fontFamily = fontFamily,
+                    onSkip = onSkip
+                )
             }
         }
     }
