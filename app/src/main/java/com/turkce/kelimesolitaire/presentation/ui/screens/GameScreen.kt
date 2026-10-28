@@ -100,8 +100,6 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.StockRecycleBorder
 import com.turkce.kelimesolitaire.presentation.ui.theme.StockRecycleText
 import com.turkce.kelimesolitaire.presentation.ui.theme.LevelTitleText
 import com.turkce.kelimesolitaire.presentation.ui.theme.LevelTitleOutline
-import com.turkce.kelimesolitaire.presentation.ui.theme.CoinBoxBorder
-import com.turkce.kelimesolitaire.presentation.ui.theme.CoinTextColor
 import com.turkce.kelimesolitaire.presentation.ui.theme.MovesCardBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.MovesCardBorder
 import com.turkce.kelimesolitaire.presentation.ui.theme.MovesTitleText
@@ -127,7 +125,6 @@ import com.turkce.kelimesolitaire.presentation.ui.components.ThemeIntroSheet
 import com.turkce.kelimesolitaire.presentation.util.GameSettingsManager
 import com.turkce.kelimesolitaire.presentation.viewmodel.TutorialType
 import com.turkce.kelimesolitaire.presentation.ui.components.TutorialAction
-import com.turkce.kelimesolitaire.presentation.ui.components.TutorialBubble
 import com.turkce.kelimesolitaire.presentation.ui.components.TutorialSpotlightOverlay
 import com.turkce.kelimesolitaire.presentation.ui.components.computeLevel1Hint
 import com.turkce.kelimesolitaire.presentation.ui.components.SquareMenuButton
@@ -273,20 +270,6 @@ fun GameScreen(
 
     val coroutineScope = rememberCoroutineScope()
 
-    // Bouncy scale animation for Coins HUD bubble
-    val coinScale = remember { Animatable(1f) }
-    LaunchedEffect(coins) {
-        if (coins > 0) { // Animate on coin changes
-            coinScale.animateTo(
-                targetValue = 1.25f,
-                animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioMediumBouncy,
-                    stiffness = Spring.StiffnessLow
-                )
-            )
-            coinScale.animateTo(1f, animationSpec = tween(durationMillis = 150))
-        }
-    }
 
     val isReplay = remember(levelData.levelNumber, completedLevels) {
         completedLevels.contains(levelData.levelNumber)
@@ -411,40 +394,42 @@ fun GameScreen(
         ) {
 
             // 1. TOP HEADER ROW (Menu, Level Title, Coins)
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 6.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Left: Coins Status Box (With border, no background)
-                CoinCounter(
-                    coins,
-                    isPersian,
-                    onClick = {onOpenStore()}
-                )
-                // Center: Level Title
-                OutlinedText(
-                    text = LocaleHelper.levelTitle(levelData.levelNumber, isPersian),
-                    textColor = LevelTitleText,
-                    outlineColor = LevelTitleOutline,
-                    outlineWidth = 10f,
-                    fontSize = 26.sp,
-                    fontWeight = FontWeight.Black
-                )
+            CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 6.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Left: Coins Status Box (With border, no background)
+                    CoinCounter(
+                        coins,
+                        isPersian,
+                        onClick = { onOpenStore() }
+                    )
+                    // Center: Level Title
+                    OutlinedText(
+                        text = LocaleHelper.levelTitle(levelData.levelNumber, isPersian),
+                        textColor = LevelTitleText,
+                        outlineColor = LevelTitleOutline,
+                        outlineWidth = 10f,
+                        fontSize = 26.sp,
+                        fontWeight = FontWeight.Black
+                    )
 
-                // Right: Settings Icon - 3D Button like Sound & Vibration
-                TopBarIconButton(
-                    iconRes = R.drawable.setting,
-                    contentDescription = "Settings",
-                    onClick = {
+                    // Right: Settings Icon - 3D Button like Sound & Vibration
+                    TopBarIconButton(
+                        iconRes = R.drawable.setting,
+                        contentDescription = "Settings",
+                        onClick = {
                             showHamburgerMenu = true
                             com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playButtonClickSound(
                                 context
                             )
                         }
-                )
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(4.dp))

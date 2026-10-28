@@ -23,14 +23,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -39,17 +36,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.unit.Dp
 import com.turkce.kelimesolitaire.R
 import com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon
 import com.turkce.kelimesolitaire.presentation.ui.components.rememberNunitoFont
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.remember
-import androidx.compose.ui.zIndex
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 import com.turkce.kelimesolitaire.presentation.ui.theme.AccentGold
-import com.turkce.kelimesolitaire.presentation.ui.components.CandyButton
 import com.turkce.kelimesolitaire.presentation.ui.components.candyGloss
 import com.turkce.kelimesolitaire.presentation.ui.components.specularGlint
 import com.turkce.kelimesolitaire.presentation.ui.components.glassReflection
@@ -95,93 +90,27 @@ fun StoreScreen(
             // ==========================================
             // 1. HEADER BAR (Coins Left, Cancel Right)
             // ==========================================
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp, start = 8.dp, end = 8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // 1. Coins Display: 3D Coin on the outside, box extending to the right (like menu buttons)
-                CoinCounter(
-                    coins,
-                    isPersian,
-                )
-//                Box(
-//                    modifier = Modifier,
-//                    contentAlignment = Alignment.CenterStart
-//                ) {
-//                    // 3D Pill extending rightward from behind the coin (height 40dp matching settings button)
-//                    Box(
-//                        modifier = Modifier
-//                            .padding(start = 20.dp)
-//                            .height(40.dp)
-//                            .shadow(
-//                                5.dp,
-//                                RoundedCornerShape(
-//                                    topEnd = 18.dp,
-//                                    bottomEnd = 18.dp,
-//                                    topStart = 7.dp,
-//                                    bottomStart = 7.dp
-//                                )
-//                            )
-//                            .clip(
-//                                RoundedCornerShape(
-//                                    topEnd = 18.dp,
-//                                    bottomEnd = 18.dp,
-//                                    topStart = 7.dp,
-//                                    bottomStart = 7.dp
-//                                )
-//                            )
-//                            .background(Color(0xFF6B5196))
-//                            .padding(bottom = 3.dp)
-//                            .clip(
-//                                RoundedCornerShape(
-//                                    topEnd = 15.dp,
-//                                    bottomEnd = 15.dp,
-//                                    topStart = 5.dp,
-//                                    bottomStart = 5.dp
-//                                )
-//                            )
-//                            .background(
-//                                Brush.verticalGradient(
-//                                    colors = listOf(
-//                                        Color(0xFFD4C7EE),
-//                                        Color(0xFFBAA6DD),
-//                                        Color(0xFFA58ED0)
-//                                    )
-//                                )
-//                            )
-//                            .padding(start = 36.dp, end = 20.dp),
-//                        contentAlignment = Alignment.Center
-//                    ) {
-//                        OutlinedText(
-//                            text = LocaleHelper.formatNumber(coins, isPersian),
-//                            textColor = Color.White,
-//                            outlineColor = Color(0xFF6B5196),
-//                            outlineWidth = 8f,
-//                            fontSize = 18.sp,
-//                            fontWeight = FontWeight.Black
-//                        )
-//                    }
-//
-//                    // 3D Coin Icon on the outside, overlapping on the left
-//                    Box(
-//                        modifier = Modifier
-//                            .size(54.dp)
-//                            .zIndex(2f),
-//                        contentAlignment = Alignment.Center
-//                    ) {
-//                        com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 54.dp)
-//                    }
-//                }
+            CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp, start = 8.dp, end = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // 1. Coins Display: 3D Coin on the outside, box extending to the right (like menu buttons)
+                    CoinCounter(
+                        coins,
+                        isPersian,
+                    )
 
-                // 2. Settings Menu Icon (Right) - 3D Button like Sound & Vibration (size 40dp, gear 34dp)
-                TopBarIconButton(
-                    iconRes = R.drawable.cancel,
-                    contentDescription = "Cancel",
-                    onClose
-                )
+                    // 2. Settings Menu Icon (Right) - 3D Button like Sound & Vibration (size 40dp, gear 34dp)
+                    TopBarIconButton(
+                        iconRes = R.drawable.cancel,
+                        contentDescription = "Cancel",
+                        onClose
+                    )
+                }
             }
 
 

@@ -1,6 +1,9 @@
 package com.turkce.kelimesolitaire.presentation.ui.components
 
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.border
 import androidx.compose.foundation.Image
 import com.turkce.kelimesolitaire.R
@@ -14,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,9 +41,21 @@ fun CoinCounter(
     onClick: (() -> Unit)? = null
 ) {
     val coinScale = remember { Animatable(1f) }
+    LaunchedEffect(coins) {
+        if (coins > 0) { // Animate on coin changes
+            coinScale.animateTo(
+                targetValue = 1.25f,
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                    stiffness = Spring.StiffnessLow
+                )
+            )
+            coinScale.animateTo(1f, animationSpec = tween(durationMillis = 150))
+        }
+    }
     val nunitoFont = rememberNunitoFont()
     Box(
-        modifier = Modifier
+        modifier = modifier
             .scale(coinScale.value)
             .clickable(enabled = onClick != null) {
                 onClick?.invoke() // اجرا کردن کلیک ورودی
@@ -97,7 +113,7 @@ fun TopBarIconButton(
     Image(
         painter = painterResource(id = iconRes),
         contentDescription = contentDescription,
-        modifier = Modifier
+        modifier = modifier
             .size(size)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },

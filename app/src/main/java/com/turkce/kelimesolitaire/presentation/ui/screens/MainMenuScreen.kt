@@ -2,7 +2,6 @@ package com.turkce.kelimesolitaire.presentation.ui.screens
 
 import android.content.Intent
 import android.net.Uri
-import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -204,7 +203,6 @@ fun MainMenuScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        val coinScale = remember { Animatable(1f) }
                         CoinCounter(
                             coins = coins,
                             isPersian,

@@ -153,8 +153,6 @@ val SoundVibrationBoxBg: Color get() = PopupButtonBg
 val LevelTitleText = Color(0xFFFFFFFF)            // رنگ نوشته مرحله (مثلاً مرحله ۱)
 val LevelTitleOutline: Color get() = maincolor2         // رنگ خط دور نوشته مرحله (قابل تنظیم به هر رنگ دلخواه)
 val CoinBoxBorder: Color get() = maincolor4             // رنگ خط دور باکس سکه (هماهنگ با رنگ تاکیدی/طلایی)
-val CoinTextColor: Color get() = maincolor2             // رنگ عدد سکه‌ها در بالای صفحه
-val CoinTextOutline = Color.Transparent           // رنگ خط دور عدد سکه‌ها (اختیاری)
 
 // --- باکس تعداد حرکات باقی‌مانده (Moves Left Card) ---
 val MovesCardBg: Color get() = maincolor2          // رنگ زمینه باکس حرکات (کاملاً مستقل از بقیه بخش‌های بازی)
