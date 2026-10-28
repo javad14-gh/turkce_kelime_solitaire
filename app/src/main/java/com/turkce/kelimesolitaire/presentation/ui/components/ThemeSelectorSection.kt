@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.sp
 import com.turkce.kelimesolitaire.presentation.ui.theme.GameThemeManager
 import com.turkce.kelimesolitaire.presentation.ui.theme.ThemePreset
 import com.turkce.kelimesolitaire.presentation.util.GameSettingsManager
+import com.turkce.kelimesolitaire.presentation.ui.theme.PopupTitleOutline
 
 @Composable
 fun ThemeSelectorSection(
@@ -129,7 +130,7 @@ fun ThemeSelectorSection(
                                     Icon(
                                         imageVector = Icons.Default.Check,
                                         contentDescription = "Selected",
-                                        tint = Color(0xFF190D69),
+                                        tint = PopupTitleOutline,
                                         modifier = Modifier.size(17.dp)
                                     )
                                 }

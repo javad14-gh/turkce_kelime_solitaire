@@ -22,6 +22,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.size
+import com.turkce.kelimesolitaire.presentation.ui.theme.MenuBtnTop
+import com.turkce.kelimesolitaire.presentation.ui.theme.MenuBtnMid
+import com.turkce.kelimesolitaire.presentation.ui.theme.MenuBtnBottom
+import com.turkce.kelimesolitaire.presentation.ui.theme.MenuBtnOutline
 
 fun Color.darker(f: Float = 0.55f): Color = lerp(this, Color.Black, f)
 
@@ -128,6 +133,33 @@ fun CandyButton(
             .border(1.dp, outlineColor, shape)
             .clickable(enabled = enabled, onClick = onClick)
             .padding(contentPadding),
+        contentAlignment = Alignment.Center
+    ) {
+        content()
+    }
+}
+/** Square toggle button (sound / vibration) in the same candy style as the menu buttons. */
+@Composable
+fun SquareMenuButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    size: Dp = 84.dp,
+    content: @Composable () -> Unit
+) {
+    val shape = RoundedCornerShape(18.dp)
+    Box(
+        modifier = modifier
+            .size(size)
+            .shadow(8.dp, shape)
+            .clip(shape)
+            .background(
+                Brush.verticalGradient(listOf(MenuBtnTop, MenuBtnMid, MenuBtnBottom))
+            )
+            .candyGloss(corner = 18.dp, inset = 2.dp)
+            .specularGlint(offsetX = 8.dp, offsetY = 5.dp, scale = 0.9f)
+            .border(1.dp, MenuBtnOutline, shape)
+            .clickable(onClick = onClick)
+            .padding(2.dp),
         contentAlignment = Alignment.Center
     ) {
         content()

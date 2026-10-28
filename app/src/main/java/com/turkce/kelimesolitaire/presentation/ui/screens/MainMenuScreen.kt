@@ -81,6 +81,18 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.PopupTrayDepth
 import com.turkce.kelimesolitaire.presentation.ui.theme.TextSecondary
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkMain
+import com.turkce.kelimesolitaire.presentation.ui.theme.MenuBtnTop
+import com.turkce.kelimesolitaire.presentation.ui.theme.MenuBtnMid
+import com.turkce.kelimesolitaire.presentation.ui.theme.MenuBtnBottom
+import com.turkce.kelimesolitaire.presentation.ui.theme.MenuBtnOutline
+import com.turkce.kelimesolitaire.presentation.ui.theme.PopupFrameBase
+import com.turkce.kelimesolitaire.presentation.ui.theme.PopupTitleOutline
+import com.turkce.kelimesolitaire.presentation.ui.components.SquareMenuButton
+import com.turkce.kelimesolitaire.presentation.ui.theme.PopupFrameGradient
+import com.turkce.kelimesolitaire.presentation.util.GameSettingsManager
+import com.turkce.kelimesolitaire.presentation.ui.components.CoinCounter
+import com.turkce.kelimesolitaire.presentation.ui.components.TopBarIconButton
+
 
 @Suppress("UNUSED_PARAMETER")
 @Composable
@@ -119,13 +131,14 @@ fun MainMenuScreen(
     }
 
     // Starter pack eligibility: only after level 3 is completed and not yet purchased
-    val isEligibleForStarterPack = remember(isStarterPackPurchased, lastUnsolvedLevel, completedLevels) {
-        com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.isStarterPackEligible(
-            isStarterPackPurchased,
-            lastUnsolvedLevel,
-            completedLevels
-        )
-    }
+    val isEligibleForStarterPack =
+        remember(isStarterPackPurchased, lastUnsolvedLevel, completedLevels) {
+            com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.isStarterPackEligible(
+                isStarterPackPurchased,
+                lastUnsolvedLevel,
+                completedLevels
+            )
+        }
 
     // Automatic Starter Pack popup: first time after completing level 3, or on periodic schedule
     androidx.compose.runtime.LaunchedEffect(isEligibleForStarterPack) {
@@ -146,8 +159,20 @@ fun MainMenuScreen(
 
     var showSettingsMenu by remember { androidx.compose.runtime.mutableStateOf(false) }
     var showThemeDialog by remember { androidx.compose.runtime.mutableStateOf(false) }
-    var isSoundEnabled by remember { androidx.compose.runtime.mutableStateOf(com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.isSoundEnabled(context)) }
-    var isHapticEnabled by remember { androidx.compose.runtime.mutableStateOf(com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.isHapticEnabled(context)) }
+    var isSoundEnabled by remember {
+        androidx.compose.runtime.mutableStateOf(
+            com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.isSoundEnabled(
+                context
+            )
+        )
+    }
+    var isHapticEnabled by remember {
+        androidx.compose.runtime.mutableStateOf(
+            com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.isHapticEnabled(
+                context
+            )
+        )
+    }
 
     val dailyRewardState = remember(hasUnclaimedDailyReward) {
         DailyRewardManager.getDailyRewardState(context)
@@ -165,7 +190,7 @@ fun MainMenuScreen(
             verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            
+
             // Top Section: Top Bar HUD (Coins Left, Settings Right) + 7-Day Daily Reward Progress Bar Centered
             Column(
                 modifier = Modifier.fillMaxWidth(),
@@ -180,64 +205,26 @@ fun MainMenuScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         val coinScale = remember { Animatable(1f) }
-                        Box(
-                            modifier = Modifier
-                                .scale(coinScale.value)
-                                .clickable { onOpenStore() },
-                            contentAlignment = Alignment.CenterStart
-                        ) {
-                            // Box border extending rightward from behind the coin (transparent background)
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier
-                                    .padding(start = 18.dp)
-                                    .height(30.dp)
-                                    .border(
-                                        1.5.dp,
-                                        CoinBoxBorder,
-                                        RoundedCornerShape(
-                                            topEnd = 14.dp,
-                                            bottomEnd = 14.dp,
-                                            topStart = 4.dp,
-                                            bottomStart = 4.dp
-                                        )
-                                    )
-                                    .padding(start = 22.dp, end = 12.dp)
-                            ) {
-                                Text(
-                                    text = LocaleHelper.formatNumber(coins, isPersian),
-                                    color = DarkMain,
-                                    fontSize = 17.sp,
-                                    fontWeight = FontWeight.Black,
-                                    fontFamily = nunitoFont
+                        CoinCounter(
+                            coins = coins,
+                            isPersian,
+                            onClick = {onOpenStore()}
+                        )
+
+                        // 2. Settings Menu Icon (Right) - 3D Button like Sound & Vibration (size 40dp, gear 34dp)
+                        TopBarIconButton(
+                            iconRes = R.drawable.setting,
+                            contentDescription = "Settings",
+                            onClick = {
+                                showSettingsMenu = true
+                                com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playButtonClickSound(
+                                    context
                                 )
                             }
 
-                            // 3D Coin Icon on the outside, overlapping on the left
-                            Box(
-                                modifier = Modifier
-                                    .size(40.dp)
-                                    .zIndex(2f),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon(size = 38.dp)
-                            }
-                        }
-
-                        // 2. Settings Menu Icon (Right) - 3D Button like Sound & Vibration (size 40dp, gear 34dp)
-                        Image(
-                            painter = painterResource(id = R.drawable.setting),
-                            contentDescription = "Settings",
-                            modifier = Modifier
-                                .size(40.dp)
-                                .clickable(
-                                    interactionSource = remember { MutableInteractionSource() },
-                                    indication = null
-                                ) {
-                                    showSettingsMenu = true
-                                    com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playButtonClickSound(context)
-                                }
                         )
+
+
                     }
                 }
 
@@ -299,7 +286,9 @@ fun MainMenuScreen(
                             .clickable(enabled = !isPlayClicked) {
                                 if (!isPlayClicked) {
                                     isPlayClicked = true
-                                    com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playButtonClickSound(context)
+                                    com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playButtonClickSound(
+                                        context
+                                    )
                                     onStartGameClicked(lastUnsolvedLevel)
                                 }
                             }
@@ -322,7 +311,8 @@ fun MainMenuScreen(
                     // Overlapping Difficulty Ribbon Banner (Shown ONLY for Zor and CokZor levels, enlarged size)
                     if (difficulty == "Zor" || difficulty == "CokZor") {
                         val difficultyText = LocaleHelper.difficulty(difficulty, isPersian)
-                        val ribbonColor = if (difficulty == "CokZor") Color(0xFFDC2626) else Color(0xFFEA580C)
+                        val ribbonColor =
+                            if (difficulty == "CokZor") Color(0xFFDC2626) else Color(0xFFEA580C)
 
                         Box(
                             modifier = Modifier
@@ -353,7 +343,7 @@ fun MainMenuScreen(
             )
             {
                 AdBannerPlaceholder(isAdFree = isAdFree)
-                
+
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Row(
@@ -368,7 +358,10 @@ fun MainMenuScreen(
                         textDecoration = TextDecoration.Underline,
                         modifier = Modifier
                             .clickable {
-                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(context.getString(com.turkce.kelimesolitaire.R.string.privacy_policy_url)))
+                                val intent = Intent(
+                                    Intent.ACTION_VIEW,
+                                    Uri.parse(context.getString(com.turkce.kelimesolitaire.R.string.privacy_policy_url))
+                                )
                                 context.startActivity(intent)
                             }
                             .padding(8.dp)
@@ -386,7 +379,10 @@ fun MainMenuScreen(
                         textDecoration = TextDecoration.Underline,
                         modifier = Modifier
                             .clickable {
-                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(context.getString(com.turkce.kelimesolitaire.R.string.data_safety_url)))
+                                val intent = Intent(
+                                    Intent.ACTION_VIEW,
+                                    Uri.parse(context.getString(com.turkce.kelimesolitaire.R.string.data_safety_url))
+                                )
                                 context.startActivity(intent)
                             }
                             .padding(8.dp)
@@ -414,18 +410,11 @@ fun MainMenuScreen(
                         .width(330.dp)
                         .shadow(24.dp, RoundedCornerShape(32.dp))
                         .clip(RoundedCornerShape(32.dp))
-                        .background(Color(0xFF26005A))
+                        .background(PopupFrameBase)
                         .padding(bottom = 7.dp)
                         .clip(RoundedCornerShape(30.dp))
                         .background(
-                            Brush.verticalGradient(
-                                colors = listOf(
-                                    Color(0xFF8B35FA),
-                                    Color(0xFF6414CE),
-                                    DarkBg,
-                                    Color(0xFF380084)
-                                )
-                            )
+                            Brush.verticalGradient(PopupFrameGradient)
                         )
                         .clickable(enabled = false) {}
                 ) {
@@ -444,7 +433,7 @@ fun MainMenuScreen(
                             OutlinedText(
                                 text = LocaleHelper.settingsTitle(isPersian),
                                 textColor = Color.White,
-                                outlineColor = Color(0xFF190D69),
+                                outlineColor = PopupTitleOutline,
                                 outlineWidth = 12.5f,
                                 fontSize = 32.sp,
                                 fontWeight = FontWeight.Black,
@@ -488,270 +477,260 @@ fun MainMenuScreen(
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                            // 1. Sound Speaker Toggle (Square 84dp x 84dp 3D Button)
-                            Box(
-                                modifier = Modifier
-                                    .size(84.dp)
-                                    .shadow(10.dp, RoundedCornerShape(20.dp))
-                                    .clip(RoundedCornerShape(20.dp))
-                                    .background(PopupButtonShadow)
-                                    .padding(bottom = 4.dp)
-                                    .clip(RoundedCornerShape(17.dp))
-                                    .background(PopupButtonBg)
-                                    .clickable {
-                                        val next = !isSoundEnabled
-                                        isSoundEnabled = next
-                                        com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.setSoundEnabled(context, next)
-                                        if (next) {
-                                            com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playButtonClickSound(context)
+                                    // 1. Sound Speaker Toggle (Square 84dp x 84dp 3D Button)
+                                    // 1. Sound
+                                    SquareMenuButton(
+                                        onClick = {
+                                            val next = !isSoundEnabled
+                                            isSoundEnabled = next
+                                            GameSettingsManager.setSoundEnabled(context, next)
+                                            if (next) GameSettingsManager.playButtonClickSound(
+                                                context
+                                            )
                                         }
+                                    ) {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.sound),
+                                            contentDescription = "Sound",
+                                            modifier = Modifier.size(60.dp),
+                                            colorFilter = if (!isSoundEnabled) ColorFilter.colorMatrix(
+                                                ColorMatrix().apply { setToSaturation(0f) }) else null,
+                                            alpha = if (isSoundEnabled) 1f else 0.4f
+                                        )
                                     }
-                                    .padding(2.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Image(
-                                    painter = painterResource(id = R.drawable.sound),
-                                    contentDescription = "Sound",
-                                    modifier = Modifier.size(60.dp),
-                                    colorFilter = if (!isSoundEnabled) ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) }) else null,
-                                    alpha = if (isSoundEnabled) 1f else 0.4f
-                                )
-                            }
 
-                            // 2. Haptic Vibration Toggle (Square 84dp x 84dp 3D Button)
-                            Box(
-                                modifier = Modifier
-                                    .size(84.dp)
-                                    .shadow(10.dp, RoundedCornerShape(20.dp))
-                                    .clip(RoundedCornerShape(20.dp))
-                                    .background(PopupButtonShadow)
-                                    .padding(bottom = 4.dp)
-                                    .clip(RoundedCornerShape(17.dp))
-                                    .background(PopupButtonBg)
-                                    .clickable {
-                                        val next = !isHapticEnabled
-                                        isHapticEnabled = next
-                                        com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.setHapticEnabled(context, next)
-                                        if (next) {
-                                            com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.vibrateLight(context)
+// 2. Haptic
+                                    SquareMenuButton(
+                                        onClick = {
+                                            val next = !isHapticEnabled
+                                            isHapticEnabled = next
+                                            GameSettingsManager.setHapticEnabled(context, next)
+                                            if (next) GameSettingsManager.vibrateLight(context)
+                                        }
+                                    ) {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.vibrate),
+                                            contentDescription = "Vibration",
+                                            modifier = Modifier.size(60.dp),
+                                            colorFilter = if (!isHapticEnabled) ColorFilter.colorMatrix(
+                                                ColorMatrix().apply { setToSaturation(0f) }) else null,
+                                            alpha = if (isHapticEnabled) 1f else 0.4f
+                                        )
+                                    }
+                                }
+
+                                Spacer(modifier = Modifier.height(12.dp))
+
+                                // Action Buttons Column (All buttons 65% width of popup, +30% taller height, border DarkBg, 2dp internal padding, 60dp icons)
+                                Column(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    val menuBtnShape = RoundedCornerShape(18.dp)
+                                    val menuBtnOutline = MenuBtnOutline
+                                    val menuBtnBrush = Brush.verticalGradient(listOf(MenuBtnTop, MenuBtnMid, MenuBtnBottom))
+
+                                    // 1. Theme Button (Opens separate theme details dialog)
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth(0.72f)
+                                            .heightIn(min = 84.dp)
+                                            .shadow(8.dp, menuBtnShape)
+                                            .clip(menuBtnShape)
+                                            .background(menuBtnBrush)
+                                            .candyGloss(corner = 18.dp, inset = 2.dp)
+                                            .specularGlint(
+                                                offsetX = 10.dp,
+                                                offsetY = 6.dp,
+                                                scale = 1.1f
+                                            )
+                                            .border(1.dp, menuBtnOutline, menuBtnShape)
+                                            .clickable { showThemeDialog = true }
+                                            .padding(2.dp),
+                                        contentAlignment = if (isPersian) Alignment.CenterEnd else Alignment.Center
+                                    ) {
+                                        Row(
+                                            modifier = if (isPersian) Modifier.padding(end = 6.dp) else Modifier,
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = if (isPersian) Arrangement.End else Arrangement.Center
+                                        ) {
+                                            if (isPersian) {
+                                                OutlinedText(
+                                                    text = "رنگ‌بندی بازی",
+                                                    textColor = Color.White,
+                                                    outlineColor = menuBtnOutline,
+                                                    outlineWidth = 12.5f,
+                                                    shadowColor = menuBtnOutline.copy(alpha = 0.6f),
+                                                    shadowOffsetY = 3f,
+                                                    fontSize = 25.sp,
+                                                    fontWeight = FontWeight.Black
+                                                )
+                                                Spacer(modifier = Modifier.width(8.dp))
+                                                Text(
+                                                    text = "🎨",
+                                                    fontSize = 45.sp
+                                                )
+                                            } else {
+                                                Text(
+                                                    text = "🎨",
+                                                    fontSize = 45.sp
+                                                )
+                                                Spacer(modifier = Modifier.width(8.dp))
+                                                OutlinedText(
+                                                    text = "Oyun Teması",
+                                                    textColor = Color.White,
+                                                    outlineColor = menuBtnOutline,
+                                                    outlineWidth = 12.5f,
+                                                    shadowColor = menuBtnOutline.copy(alpha = 0.6f),
+                                                    shadowOffsetY = 3f,
+                                                    fontSize = 24.sp,
+                                                    fontWeight = FontWeight.Black
+                                                )
+                                            }
                                         }
                                     }
-                                    .padding(2.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Image(
-                                    painter = painterResource(id = R.drawable.vibrate),
-                                    contentDescription = "Vibration",
-                                    modifier = Modifier.size(60.dp),
-                                    colorFilter = if (!isHapticEnabled) ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) }) else null,
-                                    alpha = if (isHapticEnabled) 1f else 0.4f
-                                )
+
+                                    // 2. Open Store Pill (BAA6DD, 57dp icon, 72% width)
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth(0.72f)
+                                            .heightIn(min = 84.dp)
+                                            .shadow(8.dp, menuBtnShape)
+                                            .clip(menuBtnShape)
+                                            .background(menuBtnBrush)
+                                            .candyGloss(corner = 18.dp, inset = 2.dp)
+                                            .specularGlint(
+                                                offsetX = 10.dp,
+                                                offsetY = 6.dp,
+                                                scale = 1.1f
+                                            )
+                                            .border(1.dp, menuBtnOutline, menuBtnShape)
+                                            .clickable {
+                                                showSettingsMenu = false
+                                                onOpenStore()
+                                            }
+                                            .padding(2.dp),
+                                        contentAlignment = if (isPersian) Alignment.CenterEnd else Alignment.Center
+                                    ) {
+                                        Row(
+                                            modifier = if (isPersian) Modifier.padding(end = 6.dp) else Modifier,
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = if (isPersian) Arrangement.End else Arrangement.Center
+                                        ) {
+                                            if (isPersian) {
+                                                OutlinedText(
+                                                    text = LocaleHelper.storeTitle(isPersian),
+                                                    textColor = Color.White,
+                                                    outlineColor = menuBtnOutline,
+                                                    outlineWidth = 12.5f,
+                                                    shadowColor = menuBtnOutline.copy(alpha = 0.6f),
+                                                    shadowOffsetY = 3f,
+                                                    fontSize = 27.sp,
+                                                    fontWeight = FontWeight.Black
+                                                )
+                                                Spacer(modifier = Modifier.width(8.dp))
+                                                Image(
+                                                    painter = painterResource(id = R.drawable.buy),
+                                                    contentDescription = "Store",
+                                                    modifier = Modifier.size(57.dp)
+                                                )
+                                            } else {
+                                                Image(
+                                                    painter = painterResource(id = R.drawable.buy),
+                                                    contentDescription = "Store",
+                                                    modifier = Modifier.size(57.dp)
+                                                )
+                                                Spacer(modifier = Modifier.width(8.dp))
+                                                OutlinedText(
+                                                    text = LocaleHelper.storeTitle(isPersian),
+                                                    textColor = Color.White,
+                                                    outlineColor = menuBtnOutline,
+                                                    outlineWidth = 12.5f,
+                                                    shadowColor = menuBtnOutline.copy(alpha = 0.6f),
+                                                    shadowOffsetY = 3f,
+                                                    fontSize = 27.sp,
+                                                    fontWeight = FontWeight.Black
+                                                )
+                                            }
+                                        }
+                                    }
+
+                                    // 3. Privacy Policy Pill (BAA6DD, 57dp icon, 72% width)
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth(0.72f)
+                                            .heightIn(min = 84.dp)
+                                            .shadow(8.dp, menuBtnShape)
+                                            .clip(menuBtnShape)
+                                            .background(menuBtnBrush)
+                                            .candyGloss(corner = 18.dp, inset = 2.dp)
+                                            .specularGlint(
+                                                offsetX = 10.dp,
+                                                offsetY = 6.dp,
+                                                scale = 1.1f
+                                            )
+                                            .border(1.dp, menuBtnOutline, menuBtnShape)
+                                            .clickable {
+                                                showSettingsMenu = false
+                                                val intent = Intent(
+                                                    Intent.ACTION_VIEW,
+                                                    Uri.parse(context.getString(com.turkce.kelimesolitaire.R.string.privacy_policy_url))
+                                                )
+                                                context.startActivity(intent)
+                                            }
+                                            .padding(2.dp),
+                                        contentAlignment = if (isPersian) Alignment.CenterEnd else Alignment.Center
+                                    ) {
+                                        Row(
+                                            modifier = if (isPersian) Modifier.padding(end = 6.dp) else Modifier,
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = if (isPersian) Arrangement.End else Arrangement.Center
+                                        ) {
+                                            if (isPersian) {
+                                                OutlinedText(
+                                                    text = LocaleHelper.privacyPolicy(isPersian),
+                                                    textColor = Color.White,
+                                                    outlineColor = menuBtnOutline,
+                                                    outlineWidth = 12.5f,
+                                                    shadowColor = menuBtnOutline.copy(alpha = 0.6f),
+                                                    shadowOffsetY = 3f,
+                                                    fontSize = 24.sp,
+                                                    fontWeight = FontWeight.Black
+                                                )
+                                                Spacer(modifier = Modifier.width(8.dp))
+                                                Image(
+                                                    painter = painterResource(id = R.drawable.shield),
+                                                    contentDescription = "Privacy Policy",
+                                                    modifier = Modifier.size(57.dp)
+                                                )
+                                            } else {
+                                                Image(
+                                                    painter = painterResource(id = R.drawable.shield),
+                                                    contentDescription = "Privacy Policy",
+                                                    modifier = Modifier.size(57.dp)
+                                                )
+                                                Spacer(modifier = Modifier.width(8.dp))
+                                                OutlinedText(
+                                                    text = LocaleHelper.privacyPolicy(isPersian),
+                                                    textColor = Color.White,
+                                                    outlineColor = DarkMain,
+                                                    outlineWidth = 12.5f,
+                                                    shadowColor = menuBtnOutline.copy(alpha = 0.6f),
+                                                    shadowOffsetY = 3f,
+                                                    fontSize = 24.sp,
+                                                    fontWeight = FontWeight.Black
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
-
-                        Spacer(modifier = Modifier.height(12.dp))
-
-                         // Action Buttons Column (All buttons 65% width of popup, +30% taller height, border DarkBg, 2dp internal padding, 60dp icons)
-                         Column(
-                             modifier = Modifier.fillMaxWidth(),
-                             verticalArrangement = Arrangement.spacedBy(12.dp),
-                             horizontalAlignment = Alignment.CenterHorizontally
-                         ) {
-                             val menuBtnShape = RoundedCornerShape(18.dp)
-                             val menuBtnOutline = Color(0xFF6B5196)
-                             val menuBtnBrush = Brush.verticalGradient(
-                                 listOf(
-                                     Color(0xFFBAA6DD),
-                                     Color(0xFFA58ED0),
-                                     Color(0xFF8B6CB8)
-                                 )
-                             )
-
-                             // 1. Theme Button (Opens separate theme details dialog)
-                             Box(
-                                 modifier = Modifier
-                                     .fillMaxWidth(0.72f)
-                                     .heightIn(min = 84.dp)
-                                     .shadow(8.dp, menuBtnShape)
-                                     .clip(menuBtnShape)
-                                     .background(menuBtnBrush)
-                                     .candyGloss(corner = 18.dp, inset = 2.dp)
-                                     .specularGlint(offsetX = 10.dp, offsetY = 6.dp, scale = 1.1f)
-                                     .border(1.dp, menuBtnOutline, menuBtnShape)
-                                     .clickable { showThemeDialog = true }
-                                     .padding(2.dp),
-                                 contentAlignment = if (isPersian) Alignment.CenterEnd else Alignment.Center
-                             ) {
-                                 Row(
-                                     modifier = if (isPersian) Modifier.padding(end = 6.dp) else Modifier,
-                                     verticalAlignment = Alignment.CenterVertically,
-                                     horizontalArrangement = if (isPersian) Arrangement.End else Arrangement.Center
-                                 ) {
-                                     if (isPersian) {
-                                         OutlinedText(
-                                             text = "رنگ‌بندی بازی",
-                                             textColor = Color.White,
-                                             outlineColor = menuBtnOutline,
-                                             outlineWidth = 12.5f,
-                                             shadowColor = menuBtnOutline.copy(alpha = 0.6f),
-                                             shadowOffsetY = 3f,
-                                             fontSize = 25.sp,
-                                             fontWeight = FontWeight.Black
-                                         )
-                                         Spacer(modifier = Modifier.width(8.dp))
-                                         Text(
-                                             text = "🎨",
-                                             fontSize = 45.sp
-                                         )
-                                     } else {
-                                         Text(
-                                             text = "🎨",
-                                             fontSize = 45.sp
-                                         )
-                                         Spacer(modifier = Modifier.width(8.dp))
-                                         OutlinedText(
-                                             text = "Oyun Teması",
-                                             textColor = Color.White,
-                                             outlineColor = menuBtnOutline,
-                                             outlineWidth = 12.5f,
-                                             shadowColor = menuBtnOutline.copy(alpha = 0.6f),
-                                             shadowOffsetY = 3f,
-                                             fontSize = 24.sp,
-                                             fontWeight = FontWeight.Black
-                                         )
-                                     }
-                                 }
-                             }
-
-                             // 2. Open Store Pill (BAA6DD, 57dp icon, 72% width)
-                             Box(
-                                 modifier = Modifier
-                                     .fillMaxWidth(0.72f)
-                                     .heightIn(min = 84.dp)
-                                     .shadow(8.dp, menuBtnShape)
-                                     .clip(menuBtnShape)
-                                     .background(menuBtnBrush)
-                                     .candyGloss(corner = 18.dp, inset = 2.dp)
-                                     .specularGlint(offsetX = 10.dp, offsetY = 6.dp, scale = 1.1f)
-                                     .border(1.dp, menuBtnOutline, menuBtnShape)
-                                     .clickable {
-                                         showSettingsMenu = false
-                                         onOpenStore()
-                                     }
-                                     .padding(2.dp),
-                                 contentAlignment = if (isPersian) Alignment.CenterEnd else Alignment.Center
-                             ) {
-                                 Row(
-                                     modifier = if (isPersian) Modifier.padding(end = 6.dp) else Modifier,
-                                     verticalAlignment = Alignment.CenterVertically,
-                                     horizontalArrangement = if (isPersian) Arrangement.End else Arrangement.Center
-                                 ) {
-                                     if (isPersian) {
-                                         OutlinedText(
-                                             text = LocaleHelper.storeTitle(isPersian),
-                                             textColor = Color.White,
-                                             outlineColor = menuBtnOutline,
-                                             outlineWidth = 12.5f,
-                                             shadowColor = menuBtnOutline.copy(alpha = 0.6f),
-                                             shadowOffsetY = 3f,
-                                             fontSize = 27.sp,
-                                             fontWeight = FontWeight.Black
-                                         )
-                                         Spacer(modifier = Modifier.width(8.dp))
-                                         Image(
-                                             painter = painterResource(id = R.drawable.buy),
-                                             contentDescription = "Store",
-                                             modifier = Modifier.size(57.dp)
-                                         )
-                                     } else {
-                                         Image(
-                                             painter = painterResource(id = R.drawable.buy),
-                                             contentDescription = "Store",
-                                             modifier = Modifier.size(57.dp)
-                                         )
-                                         Spacer(modifier = Modifier.width(8.dp))
-                                         OutlinedText(
-                                             text = LocaleHelper.storeTitle(isPersian),
-                                             textColor = Color.White,
-                                             outlineColor = menuBtnOutline,
-                                             outlineWidth = 12.5f,
-                                             shadowColor = menuBtnOutline.copy(alpha = 0.6f),
-                                             shadowOffsetY = 3f,
-                                             fontSize = 27.sp,
-                                             fontWeight = FontWeight.Black
-                                         )
-                                     }
-                                 }
-                             }
-
-                             // 3. Privacy Policy Pill (BAA6DD, 57dp icon, 72% width)
-                             Box(
-                                 modifier = Modifier
-                                     .fillMaxWidth(0.72f)
-                                     .heightIn(min = 84.dp)
-                                     .shadow(8.dp, menuBtnShape)
-                                     .clip(menuBtnShape)
-                                     .background(menuBtnBrush)
-                                     .candyGloss(corner = 18.dp, inset = 2.dp)
-                                     .specularGlint(offsetX = 10.dp, offsetY = 6.dp, scale = 1.1f)
-                                     .border(1.dp, menuBtnOutline, menuBtnShape)
-                                     .clickable {
-                                         showSettingsMenu = false
-                                         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(context.getString(com.turkce.kelimesolitaire.R.string.privacy_policy_url)))
-                                         context.startActivity(intent)
-                                     }
-                                     .padding(2.dp),
-                                 contentAlignment = if (isPersian) Alignment.CenterEnd else Alignment.Center
-                             ) {
-                                 Row(
-                                     modifier = if (isPersian) Modifier.padding(end = 6.dp) else Modifier,
-                                     verticalAlignment = Alignment.CenterVertically,
-                                     horizontalArrangement = if (isPersian) Arrangement.End else Arrangement.Center
-                                 ) {
-                                     if (isPersian) {
-                                         OutlinedText(
-                                             text = LocaleHelper.privacyPolicy(isPersian),
-                                             textColor = Color.White,
-                                             outlineColor = menuBtnOutline,
-                                             outlineWidth = 12.5f,
-                                             shadowColor = menuBtnOutline.copy(alpha = 0.6f),
-                                             shadowOffsetY = 3f,
-                                             fontSize = 24.sp,
-                                             fontWeight = FontWeight.Black
-                                         )
-                                         Spacer(modifier = Modifier.width(8.dp))
-                                         Image(
-                                             painter = painterResource(id = R.drawable.shield),
-                                             contentDescription = "Privacy Policy",
-                                             modifier = Modifier.size(57.dp)
-                                         )
-                                     } else {
-                                         Image(
-                                             painter = painterResource(id = R.drawable.shield),
-                                             contentDescription = "Privacy Policy",
-                                             modifier = Modifier.size(57.dp)
-                                         )
-                                         Spacer(modifier = Modifier.width(8.dp))
-                                         OutlinedText(
-                                             text = LocaleHelper.privacyPolicy(isPersian),
-                                             textColor = Color.White,
-                                             outlineColor = DarkMain,
-                                             outlineWidth = 12.5f,
-                                             shadowColor = menuBtnOutline.copy(alpha = 0.6f),
-                                             shadowOffsetY = 3f,
-                                             fontSize = 24.sp,
-                                             fontWeight = FontWeight.Black
-                                         )
-                                     }
-                                 }
-                             }
-                         }
-                     }
-                 }
-             }
-         }
-     }
- }
+                    }
+                }
+            }
+        }
 
         // SEPARATE THEME SELECTION MODAL DIALOG
         if (showThemeDialog) {
@@ -772,18 +751,11 @@ fun MainMenuScreen(
                         .width(330.dp)
                         .shadow(24.dp, RoundedCornerShape(32.dp))
                         .clip(RoundedCornerShape(32.dp))
-                        .background(Color(0xFF26005A))
+                        .background(PopupFrameBase)
                         .padding(bottom = 7.dp)
                         .clip(RoundedCornerShape(30.dp))
                         .background(
-                            Brush.verticalGradient(
-                                colors = listOf(
-                                    Color(0xFF8B35FA),
-                                    Color(0xFF6414CE),
-                                    DarkBg,
-                                    Color(0xFF380084)
-                                )
-                            )
+                            Brush.verticalGradient(PopupFrameGradient)
                         )
                         .clickable(enabled = false) {}
                 ) {
@@ -802,7 +774,7 @@ fun MainMenuScreen(
                             OutlinedText(
                                 text = if (isPersian) "انتخاب رنگ‌بندی بازی" else "Tema Seçimi",
                                 textColor = Color.White,
-                                outlineColor = Color(0xFF190D69),
+                                outlineColor = PopupTitleOutline,
                                 outlineWidth = 12.5f,
                                 fontSize = if (isPersian) 24.sp else 28.sp,
                                 fontWeight = FontWeight.Black,
@@ -1000,9 +972,19 @@ private fun DailyReward7DayProgressBar(
                                     .clip(CircleShape)
                                     .background(
                                         if (isReady)
-                                            Brush.verticalGradient(listOf(Color(0xFFFFE066), Color(0xFFF59E0B)))
+                                            Brush.verticalGradient(
+                                                listOf(
+                                                    Color(0xFFFFE066),
+                                                    Color(0xFFF59E0B)
+                                                )
+                                            )
                                         else
-                                            Brush.verticalGradient(listOf(Color(0xFFFFF6E6), Color(0xFFEADFC8)))
+                                            Brush.verticalGradient(
+                                                listOf(
+                                                    Color(0xFFFFF6E6),
+                                                    Color(0xFFEADFC8)
+                                                )
+                                            )
                                     )
                                     .border(
                                         width = if (isReady) 1.5.dp else 2.dp,
@@ -1034,7 +1016,8 @@ private fun DailyReward7DayProgressBar(
 
                     // Connecting Line to next node
                     if (day < 7) {
-                        val isLineActive = day < claimedThisWeek || (day == claimedThisWeek && todayReadyDay == day + 1)
+                        val isLineActive =
+                            day < claimedThisWeek || (day == claimedThisWeek && todayReadyDay == day + 1)
                         Box(
                             modifier = Modifier
                                 .weight(1f)

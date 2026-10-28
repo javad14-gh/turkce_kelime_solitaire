@@ -40,9 +40,12 @@ import com.turkce.kelimesolitaire.R
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupButtonBg
+import com.turkce.kelimesolitaire.presentation.ui.theme.PopupFrameGradient
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupTextPrimary
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupTextSecondary
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupTrayDepth
+import com.turkce.kelimesolitaire.presentation.ui.theme.PopupTitleOutline
+import com.turkce.kelimesolitaire.presentation.ui.theme.PopupFrameBase
 import com.turkce.kelimesolitaire.presentation.util.GameSettingsManager
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 import com.turkce.kelimesolitaire.presentation.util.rememberAppFont
@@ -92,18 +95,11 @@ fun RestartLevelDialog(
                     .fillMaxWidth()
                     .shadow(24.dp, RoundedCornerShape(32.dp))
                     .clip(RoundedCornerShape(32.dp))
-                    .background(Color(0xFF26005A))
+                    .background(PopupFrameBase)
                     .padding(bottom = 7.dp)
                     .clip(RoundedCornerShape(30.dp))
                     .background(
-                        Brush.verticalGradient(
-                            listOf(
-                                Color(0xFF8B35FA),
-                                Color(0xFF6414CE),
-                                DarkBg,
-                                Color(0xFF380084)
-                            )
-                        )
+                        Brush.verticalGradient(PopupFrameGradient)
                     )
                     .clickable(
                         indication = null,
@@ -125,7 +121,7 @@ fun RestartLevelDialog(
                         OutlinedText(
                             text = LocaleHelper.restartDialogTitle(isPersian),
                             textColor = Color.White,
-                            outlineColor = Color(0xFF190D69),
+                            outlineColor = PopupTitleOutline,
                             outlineWidth = 12.5f,
                             fontSize = if (isPersian) 26.sp else 21.sp,
                             fontWeight = FontWeight.Black,

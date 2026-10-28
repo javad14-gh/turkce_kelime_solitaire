@@ -55,6 +55,13 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.PopupTrayDepth
 import com.turkce.kelimesolitaire.presentation.util.GameSettingsManager
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 import com.turkce.kelimesolitaire.presentation.viewmodel.GameViewModel
+import com.turkce.kelimesolitaire.presentation.ui.theme.MenuBtnTop
+import com.turkce.kelimesolitaire.presentation.ui.theme.MenuBtnMid
+import com.turkce.kelimesolitaire.presentation.ui.theme.MenuBtnBottom
+import com.turkce.kelimesolitaire.presentation.ui.theme.MenuBtnOutline
+import com.turkce.kelimesolitaire.presentation.ui.theme.PopupFrameGradient
+import com.turkce.kelimesolitaire.presentation.ui.theme.PopupFrameBase
+import com.turkce.kelimesolitaire.presentation.ui.theme.PopupTitleOutline
 
 @Composable
 fun GameOverScreen(
@@ -109,7 +116,7 @@ fun GameOverScreen(
                 OutlinedText(
                     text = LocaleHelper.defeatTitle(isPersian),
                     textColor = Color.White,
-                    outlineColor = Color(0xFF190D69),
+                    outlineColor = MenuBtnOutline,
                     outlineWidth = 12.5f,
                     fontSize = 34.sp,
                     fontWeight = FontWeight.Black,
@@ -120,7 +127,7 @@ fun GameOverScreen(
 
                 Text(
                     text = LocaleHelper.defeatSubtitle(levelNumber, isPersian),
-                    color = Color.White.copy(alpha = 0.85f),
+                    color = MenuBtnMid.copy(alpha = 0.85f),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     fontFamily = nunitoFont,
@@ -137,18 +144,11 @@ fun GameOverScreen(
                         .fillMaxWidth()
                         .shadow(24.dp, RoundedCornerShape(32.dp))
                         .clip(RoundedCornerShape(32.dp))
-                        .background(Color(0xFF26005A))
+                        .background(PopupFrameBase)
                         .padding(bottom = 7.dp)
                         .clip(RoundedCornerShape(30.dp))
                         .background(
-                            Brush.verticalGradient(
-                                listOf(
-                                    Color(0xFF8B35FA),
-                                    Color(0xFF6414CE),
-                                    DarkBg,
-                                    Color(0xFF380084)
-                                )
-                            )
+                            Brush.verticalGradient(PopupFrameGradient)
                         )
                 ) {
                     Column(
@@ -165,7 +165,7 @@ fun GameOverScreen(
                             OutlinedText(
                                 text = if (isPersian) "ادامه بازی" else "Oyuna Devam Et",
                                 textColor = Color.White,
-                                outlineColor = Color(0xFF190D69),
+                                outlineColor = PopupTitleOutline,
                                 outlineWidth = 12.5f,
                                 fontSize = 28.sp,
                                 fontWeight = FontWeight.Black,
@@ -292,8 +292,8 @@ fun GameOverScreen(
                 // ---- Retry (popup style) ----
                 GameOverButton(
                     modifier = Modifier.fillMaxWidth(0.72f),
-                    baseColor = PopupButtonShadow,
-                    face = Brush.verticalGradient(listOf(PopupButtonBg, PopupButtonBg)),
+                    baseColor = MenuBtnOutline,
+                    face = Brush.verticalGradient(listOf(MenuBtnTop, MenuBtnMid, MenuBtnBottom)),
                     minHeight = 68.dp,
                     onClick = {
                         GameSettingsManager.playButtonClickSound(context)
@@ -313,7 +313,7 @@ fun GameOverScreen(
                             OutlinedText(
                                 text = LocaleHelper.retry(isPersian),
                                 textColor = Color.White,
-                                outlineColor = Color(0xFF6B5196),
+                                outlineColor = MenuBtnOutline,
                                 outlineWidth = 12.5f,
                                 fontSize = 22.sp,
                                 fontWeight = FontWeight.Black

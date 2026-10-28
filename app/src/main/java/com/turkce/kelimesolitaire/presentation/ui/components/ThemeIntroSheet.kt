@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupTextSecondary
+import com.turkce.kelimesolitaire.presentation.ui.theme.PopupTitleOutline
 import com.turkce.kelimesolitaire.presentation.util.GameSettingsManager
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 
@@ -100,7 +101,7 @@ fun ThemeIntroSheet(
             OutlinedText(
                 text = if (isPersian) "رنگ بازی رو انتخاب کن! 🎨" else "Oyun Rengini Seç! 🎨",
                 textColor = Color.White,
-                outlineColor = Color(0xFF190D69),
+                outlineColor = PopupTitleOutline,
                 outlineWidth = 10f,
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Black,

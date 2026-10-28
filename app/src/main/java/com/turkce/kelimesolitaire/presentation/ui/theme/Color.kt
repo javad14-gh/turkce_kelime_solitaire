@@ -116,18 +116,39 @@ val GameTableBg: Color get() = maincolor1       // رنگ پس‌زمینه می
 val GameTableBgTop: Color get() = GameTableBg          // جهت سازگاری
 val GameTableBgBottom: Color get() = GameTableBg       // جهت سازگاری
 
-// --- پاپ‌آپ‌ها و دیالوگ‌های بازی ---
-val PopupBg = Color(0xFFEBEEFF)            // پس‌زمینه پاپ‌آپ‌ها
-val PopupBorder: Color get() = DarkBg      // کادر دور پاپ‌آپ‌ها (هم‌رنگ پس‌زمینه اصلی)
-val PopupHeaderBg: Color get() = DarkBg    // رنگ هدر پاپ‌آپ‌ها (هم‌رنگ پس‌زمینه اصلی)
-val SoundVibrationBoxBg: Color get() = Color(0xFFD6DDFF) // زمینه باکس صدا و ویبره (هماهنگ با دکمه‌ها)
-val PopupButtonBg = Color(0xFFD6DDFF)       // رنگ دکمه‌های داخل پاپ‌آپ‌ها
-val PopupButtonShadow = Color(0xFF8B9EE6)   // لبه سه‌بعدی و سایه دکمه‌های پاپ‌آپ
-val PopupTrayBorder = Color(0xFFB4C2F8)     // کادر داخلی پاپ‌آپ
-val PopupTrayDepth = Color(0xFF98A9EE)      // لبه سه‌بعدی سینی پاپ‌آپ
-val PopupTextPrimary = Color(0xFF1E293B)    // رنگ متن اصلی تیره و خوانا روی پس‌زمینه روشن
-val PopupTextSecondary = Color(0xFF475569)  // رنگ متن ثانویه داخل پاپ‌آپ
+// --- پاپ‌آپ‌ها و دیالوگ‌ها ---
 
+// سینی داخلی (روشن)
+val PopupBg = mainBg                                   // 0xFFFFF6E6 پس‌زمینه‌ی سینی
+val PopupTrayDepth = Color(0xFFD9BE9A)                 // لبه‌ی سه‌بعدی پایین سینی (کرم تیره)
+val PopupTrayBorder = Color(0xFFE8D3B4)                // کادر داخلی سینی
+
+// قاب بیرونی (تیره)
+val PopupFrameBase = Color(0xFF3F2410)                 // لبه‌ی تیره‌ی پایین قاب (عمق)
+val PopupFrameGradient = listOf(                       // گرادیانت قاب، از بالا به پایین
+    Color(0xFFA9774C),                                 // هایلایت بالا
+    DarkMain,                                          // 0xFF734A2A رنگ اصلی
+    Color(0xFF5E3A20),                                 // میانه‌ی تیره‌تر
+    Color(0xFF4A2C16)                                  // پایین
+)
+val PopupBorder: Color get() = DarkMain                // کادر دور پاپ‌آپ
+val PopupHeaderBg: Color get() = DarkMain              // هدر
+val PopupTitleOutline = Color(0xFF3F2410)              // خط دور عنوان روی قاب
+
+// دکمه‌های منو (عریض) و مربعی (صدا/ویبره): یک پالت مشترک
+val MenuBtnTop = Color(0xFFD9A066)                     // بالای گرادیانت
+val MenuBtnMid = Color(0xFFC2803F)                     // میانه
+val MenuBtnBottom = Color(0xFF9C5F2A)                  // پایین
+val MenuBtnOutline = Color(0xFF5E3A20)                 // حاشیه و خط دور متن دکمه
+
+// متن‌ها روی سینی روشن
+val PopupTextPrimary = Color(0xFF3B2412)               // متن اصلی (تیره، خوانا)
+val PopupTextSecondary = Color(0xFF6B4A33)             // متن ثانویه
+
+// برای سازگاری با کد قبلی (کپسول «سکه موجود» و ...)
+val PopupButtonBg = Color(0xFFF0DDBF)                  // کپسول روشن روی سینی
+val PopupButtonShadow = MenuBtnOutline
+val SoundVibrationBoxBg: Color get() = PopupButtonBg
 // --- هدر بالای صفحه بازی (سکه و عنوان مرحله) ---
 val LevelTitleText = Color(0xFFFFFFFF)            // رنگ نوشته مرحله (مثلاً مرحله ۱)
 val LevelTitleOutline: Color get() = maincolor2         // رنگ خط دور نوشته مرحله (قابل تنظیم به هر رنگ دلخواه)
