@@ -85,8 +85,6 @@ data class GameUiState(
     val completedCategoryName: String? = null,
     val shatteringJokerId: String? = null,
     val isAdFree: Boolean = false,
-    val showStoreDialog: Boolean = false,
-    val showDailyRewardDialog: Boolean = false,
     val dailyRewardState: DailyRewardState? = null,
     val dailyRewardHasUnclaimed: Boolean = false,
     val restartCountInLevel: Int = 0,
@@ -180,7 +178,7 @@ class GameViewModel : ViewModel() {
     fun onSplashFinished() {
         if (_uiState.value.screenState != ScreenState.Splash) return
         _uiState.update {
-            it.copy(screenState = ScreenState.InitialLoading, showDailyRewardDialog = false)
+            it.copy(screenState = ScreenState.InitialLoading)
         }
         viewModelScope.launch {
             delay(1200L)   // کمی بیشتر از انیمیشن نوار (۱٫۰۵ ثانیه)
@@ -941,25 +939,10 @@ class GameViewModel : ViewModel() {
                 isStarterPackPurchased = isStarterPackPurchased,
                 dailyRewardState = dailyReward,
                 dailyRewardHasUnclaimed = dailyReward.isReadyToClaimToday,
-                showDailyRewardDialog = false
             ) 
         }
     }
 
-    fun openDailyRewardDialog(context: Context) {
-        val dailyReward = DailyRewardManager.getDailyRewardState(context)
-        _uiState.update {
-            it.copy(
-                dailyRewardState = dailyReward,
-                dailyRewardHasUnclaimed = dailyReward.isReadyToClaimToday,
-                showDailyRewardDialog = true
-            )
-        }
-    }
-
-    fun dismissDailyRewardDialog() {
-        _uiState.update { it.copy(showDailyRewardDialog = false) }
-    }
 
     fun claimDailyReward(activity: Activity, doubleReward: Boolean, onShowToast: (String) -> Unit = {}) {
         val isPersian = LocaleHelper.isPersian(activity)
@@ -1004,9 +987,6 @@ class GameViewModel : ViewModel() {
         if (show) openStore() else closeStore()
     }
 
-    fun toggleDailyRewardDialog(show: Boolean) {
-        _uiState.update { it.copy(showDailyRewardDialog = show) }
-    }
 
     fun addCoins(context: Context, amount: Int) {
         val newCoins = _uiState.value.coins + amount
@@ -1240,15 +1220,6 @@ class GameViewModel : ViewModel() {
         }
     }
 
-    fun buyCoinPack(context: Context, amount: Int) {
-        addCoins(context, amount)
-    }
-
-    fun buyRemoveAds(context: Context) {
-        val prefs = context.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)
-        prefs.edit().putBoolean("is_ad_free", true).apply()
-        _uiState.update { it.copy(isAdFree = true) }
-    }
 
     private fun saveCoinsToPrefs(context: Context, newCoins: Int) {
         val prefs = context.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)

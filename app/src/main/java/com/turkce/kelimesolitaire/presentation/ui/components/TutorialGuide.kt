@@ -384,7 +384,7 @@ fun TutorialSpotlightOverlay(
                             )
                         }
                         drawRoundRect(
-                            color = Color(0xFFFFD700),
+                            color = Color(0xFFE5B731),
                             topLeft = tl,
                             size = sz,
                             cornerRadius = corner,
@@ -394,7 +394,7 @@ fun TutorialSpotlightOverlay(
                 }
 
                 if (!isDragging) {
-                    val handSize = 56.dp
+                    val handSize = 40.dp
                     val handPx = with(density) { handSize.toPx() }
                     val e = FastOutSlowInEasing.transform(raw)
                     val from = src.center

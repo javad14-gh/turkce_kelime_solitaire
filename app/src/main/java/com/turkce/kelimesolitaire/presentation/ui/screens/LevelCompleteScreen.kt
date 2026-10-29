@@ -689,8 +689,7 @@ fun LevelCompleteScreen(
                             if (!isActionTriggered) {
                                 isActionTriggered = true
                                 GameSettingsManager.playButtonClickSound(context)
-                                val action = if (onNormalRewardClicked != {}) onNormalRewardClicked else onMainMenuClicked
-                                action()
+                                val action = onNormalRewardClicked() 
                             }
                         }
                         .padding(vertical = 12.dp, horizontal = 14.dp),

@@ -110,15 +110,6 @@ object LocaleHelper {
     fun freeCoinsRewardText(isPersian: Boolean): String =
         if (isPersian) "+۵۰ سکه" else "+50 Altın"
 
-    // Coin Packs
-    fun pack1Title(isPersian: Boolean): String = if (isPersian) "کیسه سکه" else "Kese Dolusu"
-    fun pack1Price(isPersian: Boolean): String = if (isPersian) "۱۹,۰۰۰ تومان" else "₺19.99"
-
-    fun pack2Title(isPersian: Boolean): String = if (isPersian) "صندوقچه سکه" else "Sandık Dolusu"
-    fun pack2Price(isPersian: Boolean): String = if (isPersian) "۴۹,۰۰۰ تومان" else "₺49.99"
-
-    fun pack3Title(isPersian: Boolean): String = if (isPersian) "گنجینه سکه" else "Hazine Dolusu"
-    fun pack3Price(isPersian: Boolean): String = if (isPersian) "۹۹,۰۰۰ تومان" else "₺99.99"
 
     // Gameplay Dialogs
     fun outOfMovesTitle(isPersian: Boolean): String =
@@ -131,14 +122,8 @@ object LocaleHelper {
     fun giveUp(isPersian: Boolean): String =
         if (isPersian) "انصراف" else "Pes Et"
 
-    fun getMoreMoves(isPersian: Boolean): String =
-        if (isPersian) "+۵ حرکت بگیر" else "+5 Hamle Al"
-
     fun categoryCompleted(isPersian: Boolean): String =
         if (isPersian) "دسته تکمیل شد!\u200F" else "Kategori Tamamlandı!"
-
-    fun nextLevel(isPersian: Boolean): String =
-        if (isPersian) "مرحله بعدی" else "Sonraki Seviye"
 
     fun retry(isPersian: Boolean): String =
         if (isPersian) "تلاش مجدد" else "Tekrar Oyna"
