@@ -116,9 +116,8 @@ object LocaleHelper {
         if (isPersian) "فرصت‌ها تمام شد!\u200F" else "Hamleler Bitti!"
 
     fun outOfMovesPrompt(isPersian: Boolean): String =
-        if (isPersian) "آیا می‌خواهید با ${formatNumber(GameViewModel.EXTRA_MOVES_FOR_COINS,true)} سکه، ${formatNumber(
-            GameViewModel.EXTRA_MOVES_FOR_COINS,true)} حرکت دیگر دریافت کنید؟\u200F" else "${GameViewModel.EXTRA_MOVES_COIN_COST} Altın harcayarak ${GameViewModel.EXTRA_MOVES_FOR_COINS} ek hamle almak ister misiniz?"
-
+        if (isPersian) "آیا می‌خواهید با ${formatNumber(GameViewModel.EXTRA_MOVES_COIN_COST, true)} سکه، ${formatNumber(GameViewModel.EXTRA_MOVES_FOR_COINS, true)} حرکت دیگر دریافت کنید؟\u200F"
+        else "${GameViewModel.EXTRA_MOVES_COIN_COST} Altın harcayarak ${GameViewModel.EXTRA_MOVES_FOR_COINS} ek hamle almak ister misiniz?"
     fun giveUp(isPersian: Boolean): String =
         if (isPersian) "انصراف" else "Pes Et"
 

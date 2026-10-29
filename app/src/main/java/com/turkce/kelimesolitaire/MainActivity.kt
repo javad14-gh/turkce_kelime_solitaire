@@ -198,9 +198,7 @@ class MainActivity : ComponentActivity() {
                                             }
                                         },
                                         onBuyExtraMoves = {
-                                            viewModel.buyExtraMoves(this@MainActivity) { msg ->
-                                                viewModel.showUserMessage(msg, MessageType.WARNING)
-                                            }
+                                            viewModel.purchaseExtraMoves(this@MainActivity)
                                         },
                                         onAcceptDefeat = {
                                             viewModel.acceptDefeat(this@MainActivity)

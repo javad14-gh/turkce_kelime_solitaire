@@ -193,9 +193,15 @@ class InAppBillingManager private constructor() {
                             onError("خطا در دریافت درگاه پرداخت مارکت.")
                         }
                     }
-                } else if (responseCode == 7) { // BILLING_RESPONSE_RESULT_ITEM_ALREADY_OWNED
-                    withContext(Dispatchers.Main) {
-                        onSuccess(sku)
+                } else if (responseCode == 7) {
+                    if (isSkuConsumable(sku)) {
+                        // Stale unconsumed purchase: clear it, ask the user to buy again
+                        consumeOwnedSku(service, activity, sku)
+                        withContext(Dispatchers.Main) {
+                            onError("خرید قبلی پاک شد. لطفاً دوباره تلاش کنید.")
+                        }
+                    } else {
+                        withContext(Dispatchers.Main) { onSuccess(sku) }
                     }
                 } else {
                     withContext(Dispatchers.Main) {
@@ -239,10 +245,12 @@ class InAppBillingManager private constructor() {
             val token = json.optString("purchaseToken")
 
             // Verify signature if signature is present
-            if (!dataSignature.isNullOrEmpty() && activePublicKey.isNotBlank()) {
-                val isValid = Security.verifyPurchase(activePublicKey, purchaseData, dataSignature)
-                if (!isValid) {
-                    Log.w(TAG, "Purchase signature verification failed, but checking purchase state")
+            if (activePublicKey.isNotBlank()) {
+                val valid = !dataSignature.isNullOrEmpty() &&
+                        Security.verifyPurchase(activePublicKey, purchaseData, dataSignature)
+                if (!valid) {
+                    onError("خرید نامعتبر است.")
+                    return true
                 }
             }
 
@@ -296,6 +304,21 @@ class InAppBillingManager private constructor() {
             } catch (e: Throwable) {
                 Log.e(TAG, "Error querying purchases: ${e.message}")
             }
+        }
+    }
+
+    private fun consumeOwnedSku(service: InAppBillingProxy, ctx: Context, sku: String) {
+        try {
+            val bundle = service.getPurchases(3, ctx.packageName, "inapp", null)
+            if (bundle.getInt("RESPONSE_CODE", -1) != 0) return
+            val items = bundle.getStringArrayList("INAPP_PURCHASE_ITEM_LIST") ?: return
+            val datas = bundle.getStringArrayList("INAPP_PURCHASE_DATA_LIST") ?: return
+            val idx = items.indexOf(sku)
+            if (idx == -1) return
+            val token = JSONObject(datas[idx]).optString("purchaseToken")
+            if (token.isNotEmpty()) service.consumePurchase(3, ctx.packageName, token)
+        } catch (e: Throwable) {
+            Log.e(TAG, "consumeOwnedSku failed: ${e.message}")
         }
     }
 

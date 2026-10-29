@@ -767,7 +767,12 @@ class GameViewModel : ViewModel() {
             saveCoinsToPrefs(activity, _uiState.value.coins)
             resumeWithExtraMoves(activity, EXTRA_MOVES_FOR_COINS)
         } else {
-            watchAdForExtraMoves(activity)
+            val isPersian = LocaleHelper.isPersian(activity)
+            showUserMessage(
+                if (isPersian) "سکه کافی نیست! می‌توانی با تماشای ویدیو ادامه بدهی.\u200F"
+                else "Yetersiz altın! Video izleyerek devam edebilirsiniz.",
+                MessageType.WARNING
+            )
         }
     }
 
@@ -1673,26 +1678,6 @@ class GameViewModel : ViewModel() {
         }
 
         return null
-    }
-
-    fun buyExtraMoves(context: Context, onShowToast: (String) -> Unit) {
-        val isPersian = LocaleHelper.isPersian(context)
-        val state = _uiState.value
-        if (state.coins < 75) {
-            onShowToast(if (isPersian) "سکه ناکافی! (۷۵ 🪙 نیاز است)\u200F" else "Yetersiz altın! (75 🪙 gerekli)")
-            return
-        }
-        _uiState.update {
-            it.copy(
-                movesRemaining = 5,
-                coins = maxOf(0, it.coins - 75),
-                showOutofMovesDialog = false
-            )
-        }
-        saveCoinsToPrefs(context, _uiState.value.coins)
-        saveActiveSessionToPrefs(context)
-        onShowToast(if (isPersian) "۵ فرصت اضافه دریافت شد! (-۷۵ 🪙)\u200F" else "5 Ek Hamle alındı! (-75 🪙)")
-        resumeWithExtraMoves(context, EXTRA_MOVES_FOR_COINS)
     }
 
     fun acceptDefeat(context: Context? = null) {
