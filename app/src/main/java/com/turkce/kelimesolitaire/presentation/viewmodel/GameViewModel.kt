@@ -48,6 +48,7 @@ sealed interface ScreenState {
 
 enum class TutorialType {
     LEVEL_1_GUIDE,
+    LEVEL_2_GUIDE,
     UNDO_UNLOCK,
     HINT_UNLOCK,
     JOKER_UNLOCK
@@ -251,10 +252,14 @@ class GameViewModel : ViewModel() {
         val baseMoves = allWords.size + generated.targetCategories.size + generated.initialStock.size
         val bufferRatio = 0.20
         val bufferMoves = maxOf(2, (baseMoves * bufferRatio).toInt())
-        val calculatedMoves = if (levelNum == 1) 25 else baseMoves + bufferMoves
+        val calculatedMoves = when (levelNum) {
+            1 -> 25
+            2 -> 40
+            else -> baseMoves + bufferMoves
+        }
         val prefs = context.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)
 
-        val isUndoUnlocked = levelNum >= 2
+        val isUndoUnlocked = levelNum >= 4
         val isHintUnlocked = levelNum >= 8
         val isJokerUnlocked = levelNum >= 10
 
@@ -269,9 +274,13 @@ class GameViewModel : ViewModel() {
         if (levelNum == 1 && !prefs.getBoolean("tutorial_lvl1_completed", false)) {
             activeTutorial = TutorialType.LEVEL_1_GUIDE
         }
+        // Check Level 2 interactive guide
+        if (levelNum == 2 && !prefs.getBoolean("tutorial_lvl2_completed", false)) {
+            activeTutorial = TutorialType.LEVEL_2_GUIDE
+        }
 
         // Check Undo tutorial (Level 2)
-        if (levelNum >= 2 && !prefs.getBoolean("tutorial_undo_seen", false)) {
+        if (levelNum >= 4 && !prefs.getBoolean("tutorial_undo_seen", false)) {
             activeTutorial = TutorialType.UNDO_UNLOCK
             freeUndoCount = maxOf(freeUndoCount, 1)
             prefs.edit()
@@ -343,10 +352,11 @@ class GameViewModel : ViewModel() {
     }
 
     fun dismissTutorial(context: Context) {
-        val currentTut = _uiState.value.activeTutorial
-        if (currentTut == TutorialType.LEVEL_1_GUIDE) {
-            val prefs = context.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)
-            prefs.edit().putBoolean("tutorial_lvl1_completed", true).apply()
+        val prefs = context.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)
+        when (_uiState.value.activeTutorial) {
+            TutorialType.LEVEL_1_GUIDE -> prefs.edit().putBoolean("tutorial_lvl1_completed", true).apply()
+            TutorialType.LEVEL_2_GUIDE -> prefs.edit().putBoolean("tutorial_lvl2_completed", true).apply()
+            else -> {}
         }
         _uiState.update { it.copy(activeTutorial = null) }
     }
@@ -727,6 +737,9 @@ class GameViewModel : ViewModel() {
         val prefs = context.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)
         if (currentLvl == 1) {
             prefs.edit().putBoolean("tutorial_lvl1_completed", true).apply()
+        }
+        if (currentLvl == 2) {
+            prefs.edit().putBoolean("tutorial_lvl2_completed", true).apply()
         }
         if (currentLvl >= 5) {
             levelsSinceLastAd++
@@ -1257,7 +1270,7 @@ class GameViewModel : ViewModel() {
         if (session != null && session.movesRemaining > 0) {
             undoStack.clear()
             val prefs = activity.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)
-            val isUndoUnlocked = session.levelNumber >= 2
+            val isUndoUnlocked = session.levelNumber >= 4
             val isHintUnlocked = session.levelNumber >= 8
             val isJokerUnlocked = session.levelNumber >= 10
             val freeUndoCount = prefs.getInt("free_undo_count", if (prefs.getBoolean("has_free_undo", false)) 1 else 0)
@@ -1294,9 +1307,14 @@ class GameViewModel : ViewModel() {
                         hasFreeHint = freeHintCount > 0,
                         hasFreeJoker = freeJokerCount > 0,
                         isStarterPackPurchased = isStarterPackPurchased,
-                        activeTutorial = if (session.levelNumber == 1 &&
-                            !prefs.getBoolean("tutorial_lvl1_completed", false)
-                        ) TutorialType.LEVEL_1_GUIDE else null
+                        activeTutorial = when {
+                            session.levelNumber == 1 && !prefs.getBoolean("tutorial_lvl1_completed", false) ->
+                                TutorialType.LEVEL_1_GUIDE
+                            session.levelNumber == 2 && !prefs.getBoolean("tutorial_lvl2_completed", false) &&
+                                    session.levelData.targetCategories.firstOrNull()?.id?.startsWith("tut2_") == true ->
+                                TutorialType.LEVEL_2_GUIDE
+                            else -> null
+                        }
                     )
                 }
             }
@@ -1376,7 +1394,7 @@ class GameViewModel : ViewModel() {
     fun undoLastMove(context: Context, onShowToast: (String) -> Unit) {
         val isPersian = LocaleHelper.isPersian(context)
         if (!_uiState.value.isUndoUnlocked) {
-            onShowToast(if (isPersian) "قابلیت بازگشت در مرحله ۲ باز می‌شود!\u200F" else "Geri Al özelliği 2. seviyede açılır!")
+            onShowToast(if (isPersian) "قابلیت بازگشت در مرحله ۴ باز می‌شود!\u200F" else "Geri Al özelliği 4. seviyede açılır!")
             return
         }
         if (_uiState.value.movesRemaining <= 0 || _uiState.value.showOutofMovesDialog) {

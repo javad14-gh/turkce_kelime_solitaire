@@ -133,6 +133,7 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.PopupTextPrimary
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupTitleOutline
 import com.turkce.kelimesolitaire.presentation.ui.components.CoinCounter
 import com.turkce.kelimesolitaire.presentation.ui.components.TopBarIconButton
+import com.turkce.kelimesolitaire.presentation.ui.components.computeLevel2Hint
 
 
 private fun findBestFoundationSlot(
@@ -360,11 +361,31 @@ fun GameScreen(
     }
 
     val cardBounds = remember { mutableStateMapOf<String, Rect>() }
-    val isTutorialMode = activeTutorial == TutorialType.LEVEL_1_GUIDE
+    val isTutorialMode = activeTutorial == TutorialType.LEVEL_1_GUIDE ||
+            activeTutorial == TutorialType.LEVEL_2_GUIDE
     val tutorialHint =
         if (isTutorialMode && isDealingFinished && !isLevelWon && !showOutofMovesDialog) {
-            computeLevel1Hint(foundationSlots, tableauPiles, wastePile, stockPile)
+            if (activeTutorial == TutorialType.LEVEL_1_GUIDE)
+                computeLevel1Hint(foundationSlots, tableauPiles, wastePile, stockPile)
+            else
+                computeLevel2Hint(foundationSlots, tableauPiles, wastePile, stockPile)
         } else null
+    val wrongMoveText = if (isPersian) "فقط کارت نشان‌داده‌شده را همان‌جایی که نشان داده شده بگذار 👆"
+    else "Sadece gösterilen kartı gösterilen yere koy 👆"
+
+    val guardedCardDropped: (List<SolitaireCard>, FoundationSlot) -> Boolean = { cards, slot ->
+        if (isTutorialMode && tutorialHint?.action == TutorialAction.DRAG_TO_COLUMN) {
+            onShowMessage(wrongMoveText, MessageType.INFO)
+            false
+        } else onCardDropped(cards, slot)
+    }
+
+    val guardedCardStacked: (List<SolitaireCard>, Int) -> Boolean = { cards, col ->
+        if (isTutorialMode && tutorialHint != null && tutorialHint.columnIdx != col) {
+            onShowMessage(wrongMoveText, MessageType.INFO)
+            false
+        } else onCardStacked(cards, col)
+    }
 
     // Theme intro: shown once, after the deal animation, from level 6 onward
     var showThemeIntro by remember { mutableStateOf(false) }
@@ -538,7 +559,7 @@ fun GameScreen(
                                             testPoints
                                         )
                                         if (matchedSlot != null) {
-                                            val success = onCardDropped(finalGroup, matchedSlot)
+                                            val success = guardedCardDropped(finalGroup, matchedSlot)
                                             if (success) {
                                                 draggedCards = emptyList()
                                                 if (isHapticEnabled) {
@@ -599,7 +620,7 @@ fun GameScreen(
                                                 findBestTableauColumn(tableauBounds, testPoints)
                                             if (matchedColIdx != -1) {
                                                 val success =
-                                                    onCardStacked(finalGroup, matchedColIdx)
+                                                    guardedCardStacked(finalGroup, matchedColIdx)
                                                 if (success) {
                                                     draggedCards = emptyList()
                                                     if (isHapticEnabled) {
@@ -903,7 +924,7 @@ fun GameScreen(
 
                                     val targetCard = cardFromTableau
                                     if (cardFromWaste != null) {
-                                        onCardDropped(listOf(cardFromWaste), slot)
+                                        guardedCardDropped(listOf(cardFromWaste), slot)
                                     } else if (targetCard != null && sourceColIdx != -1) {
                                         val sourceList = tableauPiles[sourceColIdx]
                                         val targetCatId = targetCard.categoryId
@@ -922,7 +943,7 @@ fun GameScreen(
                                             }
                                         }
                                         val group = sourceList.subList(startIdx, sourceList.size)
-                                        onCardDropped(group, slot)
+                                        guardedCardDropped(group, slot)
                                     }
                                 }
                             },
@@ -993,7 +1014,7 @@ fun GameScreen(
 
                                                 val targetCard = cardFromTableau
                                                 if (cardFromWaste != null) {
-                                                    onCardStacked(listOf(cardFromWaste), colIdx)
+                                                    guardedCardStacked(listOf(cardFromWaste), colIdx)
                                                 } else if (targetCard != null && sourceColIdx != -1) {
                                                     val sourceList = tableauPiles[sourceColIdx]
                                                     val targetCatId = targetCard.categoryId
@@ -1015,7 +1036,7 @@ fun GameScreen(
                                                         startIdx,
                                                         sourceList.size
                                                     )
-                                                    onCardStacked(group, colIdx)
+                                                    guardedCardStacked(group, colIdx)
                                                 }
                                             }
                                         }
@@ -1147,7 +1168,7 @@ fun GameScreen(
                                                 )
                                                 if (matchedSlot != null) {
                                                     val success =
-                                                        onCardDropped(finalGroup, matchedSlot)
+                                                        guardedCardDropped(finalGroup, matchedSlot)
                                                     if (success) {
                                                         draggedCards = emptyList()
                                                         if (isHapticEnabled) {
@@ -1210,7 +1231,7 @@ fun GameScreen(
                                                     )
                                                     if (matchedColIdx != -1) {
                                                         val success =
-                                                            onCardStacked(finalGroup, matchedColIdx)
+                                                            guardedCardStacked(finalGroup, matchedColIdx)
                                                         if (success) {
                                                             draggedCards = emptyList()
                                                             if (isHapticEnabled) {
@@ -1370,7 +1391,7 @@ fun GameScreen(
                     Booster3DButton(
                         type = BoosterType.UNDO,
                         isUnlocked = isUndoUnlocked,
-                        lockText = if (isPersian) "🔒 مرحله ۲" else "🔒 2. Lvl",
+                        lockText = if (isPersian) "🔒 مرحله ۴" else "🔒 4. Lvl",
                         hasFree = hasFreeUndo,
                         freeCount = freeUndoCount,
                         coinCost = 50,
@@ -1380,7 +1401,7 @@ fun GameScreen(
                         onClick = {
                             if (!isUndoUnlocked) {
                                 onShowMessage(
-                                    if (isPersian) "قابلیت بازگشت در مرحله ۲ باز می‌شود! 🔒" else "Geri Al özelliği 2. seviyede açılır! 🔒",
+                                    if (isPersian) "قابلیت بازگشت در مرحله ۴ باز می‌شود! 🔒" else "Geri Al özelliği 4. seviyede açılır! 🔒",
                                     MessageType.WARNING
                                 )
                             } else {
@@ -2435,17 +2456,21 @@ fun GameScreen(
                 if (it.action == TutorialAction.TAP_STOCK) cardBounds["stock_pile"]
                 else it.cardId?.let { id -> cardBounds[id] }
             }
-            val dstBounds = tutorialHint?.slotId?.let { dropZoneBounds[it.toString()] }
-            TutorialSpotlightOverlay(
-                hint = tutorialHint,
-                sourceBounds = srcBounds,
-                targetBounds = dstBounds,
-                isDragging = draggedCards.isNotEmpty(),
-                isPersian = isPersian,
-                fontFamily = nunitoFont,
-                onSkip = onDismissTutorial,
-                modifier = Modifier.zIndex(300f)
-            )
+            val dstBounds = tutorialHint?.let { h ->
+                when {
+                    h.slotId != null -> dropZoneBounds[h.slotId.toString()]
+                    h.columnIdx != null -> {
+                        val last = tableauPiles[h.columnIdx].lastOrNull()
+                        if (last != null) cardBounds[last.id]
+                        else tableauBounds[h.columnIdx]?.let { b ->
+                            val w = with(density) { 85.dp.toPx() }
+                            val hgt = with(density) { 110.dp.toPx() }
+                            Rect(b.center.x - w / 2, b.top, b.center.x + w / 2, b.top + hgt)
+                        }
+                    }
+                    else -> null
+                }
+            }
         }
 
         // 5. FLOATING COIN FEEDBACK OVERLAYS
@@ -2507,7 +2532,7 @@ fun GameScreen(
         }
 
         // 6. BOOSTER UNLOCK SPOTLIGHT MODAL
-        if (activeTutorial != null && activeTutorial != com.turkce.kelimesolitaire.presentation.viewmodel.TutorialType.LEVEL_1_GUIDE) {
+        if (activeTutorial != null && !isTutorialMode && isDealingFinished) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -2517,6 +2542,11 @@ fun GameScreen(
                     tutorialType = activeTutorial,
                     isPersian = isPersian,
                     fontFamily = nunitoFont,
+                    giftCount = when (activeTutorial) {
+                        TutorialType.UNDO_UNLOCK -> freeUndoCount
+                        TutorialType.HINT_UNLOCK -> freeHintCount
+                        else -> freeJokerCount
+                    }.coerceAtLeast(1),
                     onDismiss = onDismissTutorial
                 )
             }

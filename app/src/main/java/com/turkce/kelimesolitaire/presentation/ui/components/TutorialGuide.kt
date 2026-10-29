@@ -65,14 +65,18 @@ import kotlin.math.roundToInt
 // Tutorial logic (stateless: derived from the current board)
 // ---------------------------------------------------------------------
 
-enum class TutorialAction { DRAG_TO_SLOT, TAP_STOCK }
-enum class TutorialMessage { DRAG_CATEGORY, DRAG_WORD, TAP_STOCK }
+enum class TutorialAction { DRAG_TO_SLOT, DRAG_TO_COLUMN, TAP_STOCK }
+enum class TutorialMessage {
+    DRAG_CATEGORY, DRAG_WORD, TAP_STOCK,
+    STACK_ON_SAME, USE_EMPTY_COLUMN, STOCK_TO_COLUMN, CATEGORY_ON_COLUMN
+}
 
 data class TutorialHint(
     val action: TutorialAction,
     val cardId: String?,
     val slotId: Int?,
-    val message: TutorialMessage
+    val message: TutorialMessage,
+    val columnIdx: Int? = null
 )
 
 /** Returns the single next correct move for the fixed level 1, or null if nothing is left. */
@@ -118,6 +122,102 @@ fun computeLevel1Hint(
     return null
 }
 
+/** Next correct move for the fixed level 2. Priority order = teaching order. */
+fun computeLevel2Hint(
+    slots: List<FoundationSlot>,
+    tableau: List<List<SolitaireCard>>,
+    waste: List<SolitaireCard>,
+    stock: List<SolitaireCard>
+): TutorialHint? {
+    fun activeSlotFor(card: SolitaireCard) =
+        slots.firstOrNull { it.activeCategory?.id == card.categoryId }
+    val emptySlot = slots.firstOrNull { it.activeCategory == null }
+    val wasteTop = waste.lastOrNull()
+
+    // Start index of the face-up same-category run at the bottom of a column
+    fun runStart(col: List<SolitaireCard>): Int {
+        var s = col.size - 1
+        while (s > 0 && col[s - 1].isFaceUp && col[s - 1].categoryId == col.last().categoryId) s--
+        return s
+    }
+    fun coversFaceDown(col: List<SolitaireCard>): Boolean {
+        val s = runStart(col)
+        return s > 0 && !col[s - 1].isFaceUp
+    }
+    fun targetColumnFor(card: SolitaireCard, exceptCol: Int): Int? =
+        tableau.indices.firstOrNull { i ->
+            val b = tableau[i].lastOrNull()
+            i != exceptCol && b != null && b.isFaceUp && !b.isCategory && b.categoryId == card.categoryId
+        }
+
+    // 1) Waste word -> active slot
+    if (wasteTop != null && !wasteTop.isCategory) {
+        activeSlotFor(wasteTop)?.let {
+            return TutorialHint(TutorialAction.DRAG_TO_SLOT, wasteTop.id, it.id, TutorialMessage.DRAG_WORD)
+        }
+    }
+
+    // 2) Column-bottom word (or group) -> active slot
+    for (col in tableau) {
+        val b = col.lastOrNull() ?: continue
+        if (b.isFaceUp && !b.isCategory) {
+            activeSlotFor(b)?.let {
+                return TutorialHint(TutorialAction.DRAG_TO_SLOT, b.id, it.id, TutorialMessage.DRAG_WORD)
+            }
+        }
+    }
+
+    // 3) Stack onto a same-category card to free the face-down card underneath
+    for ((i, col) in tableau.withIndex()) {
+        val b = col.lastOrNull() ?: continue
+        if (b.isFaceUp && !b.isCategory && coversFaceDown(col)) {
+            targetColumnFor(b, i)?.let {
+                return TutorialHint(TutorialAction.DRAG_TO_COLUMN, b.id, null, TutorialMessage.STACK_ON_SAME, it)
+            }
+        }
+    }
+
+    // 4) Category card at a column bottom -> empty slot
+    if (emptySlot != null) {
+        for (col in tableau) {
+            val b = col.lastOrNull() ?: continue
+            if (b.isFaceUp && b.isCategory) {
+                return TutorialHint(TutorialAction.DRAG_TO_SLOT, b.id, emptySlot.id, TutorialMessage.DRAG_CATEGORY)
+            }
+        }
+    }
+
+    // 5) Card covering a face-down card + an empty column exists -> use the empty column
+    val emptyCol = tableau.indexOfFirst { it.isEmpty() }
+    if (emptyCol != -1) {
+        for (col in tableau) {
+            val b = col.lastOrNull() ?: continue
+            if (b.isFaceUp && !b.isCategory && coversFaceDown(col)) {
+                return TutorialHint(TutorialAction.DRAG_TO_COLUMN, b.id, null, TutorialMessage.USE_EMPTY_COLUMN, emptyCol)
+            }
+        }
+    }
+
+    // 6) Waste card (word or category) -> same-category column
+    if (wasteTop != null) {
+        targetColumnFor(wasteTop, -1)?.let {
+            val msg = if (wasteTop.isCategory) TutorialMessage.CATEGORY_ON_COLUMN
+            else TutorialMessage.STOCK_TO_COLUMN
+            return TutorialHint(TutorialAction.DRAG_TO_COLUMN, wasteTop.id, null, msg, it)
+        }
+    }
+
+    // 7) Waste category -> empty slot
+    if (wasteTop != null && wasteTop.isCategory && emptySlot != null) {
+        return TutorialHint(TutorialAction.DRAG_TO_SLOT, wasteTop.id, emptySlot.id, TutorialMessage.DRAG_CATEGORY)
+    }
+
+    // 8) Draw from stock
+    if (stock.isNotEmpty() || waste.isNotEmpty()) {
+        return TutorialHint(TutorialAction.TAP_STOCK, null, null, TutorialMessage.TAP_STOCK)
+    }
+    return null
+}
 // ---------------------------------------------------------------------
 // Instruction bubble (sits where the old banner was)
 // ---------------------------------------------------------------------
@@ -139,6 +239,18 @@ fun TutorialBubble(
         TutorialMessage.TAP_STOCK ->
             if (isPersian) "🃏 حرکتی نداری؟ روی دسته کارت بزن. حرکت‌ها محدودند، با دقت بچین!"
             else "🃏 Hamle yok mu? Desteye dokun. Hamleler sınırlı, dikkatli oyna!"
+        TutorialMessage.STACK_ON_SAME ->
+            if (isPersian) "🔄 کارت را روی کارت هم‌دسته در ستون دیگر بگذار تا کارت برگشته‌ی زیرش باز شود"
+            else "🔄 Kartı başka sütundaki aynı kategorili kartın üstüne koy, altındaki kapalı kart açılsın"
+        TutorialMessage.USE_EMPTY_COLUMN ->
+            if (isPersian) "📥 ستون خالی داری! کارت را روی آن بگذار تا کارت زیرش باز شود"
+            else "📥 Boş sütun var! Kartı oraya koy, altındaki kart açılsın"
+        TutorialMessage.STOCK_TO_COLUMN ->
+            if (isPersian) "🃏 کارتی که از دسته کشیدی را هم می‌شود روی ستون هم‌دسته‌اش گذاشت"
+            else "🃏 Desteden çektiğin kartı da aynı kategorili sütuna koyabilirsin"
+        TutorialMessage.CATEGORY_ON_COLUMN ->
+            if (isPersian) "👑 کارت دسته را هم می‌شود روی ستون گذاشت، ولی دیگر هیچ کارتی روی آن نمی‌نشیند"
+            else "👑 Kategori kartı da sütuna konabilir, ama üstüne artık kart konamaz"
         null ->
             if (isPersian) "👏 آفرین!" else "👏 Aferin!"
     }
@@ -287,7 +399,7 @@ fun TutorialSpotlightOverlay(
                     val e = FastOutSlowInEasing.transform(raw)
                     val from = src.center
                     val to = dst?.center ?: from
-                    val isDrag = hint.action == TutorialAction.DRAG_TO_SLOT
+                    val isDrag = hint.action != TutorialAction.TAP_STOCK
                     val pos = if (isDrag) {
                         Offset(from.x + (to.x - from.x) * e, from.y + (to.y - from.y) * e)
                     } else from

@@ -16,6 +16,7 @@ class LevelGenerator {
         isPersian: Boolean = false
     ): LevelData {
         if (levelNumber == 1) return buildTutorialLevel(isPersian)
+        if (levelNumber == 2) return buildTutorialLevel2(isPersian)
         val allCategories = database.categories
         val allWords = database.words
 
@@ -261,6 +262,54 @@ class LevelGenerator {
 
         return LevelData(
             levelNumber = 1,
+            difficulty = "Kolay",
+            targetCategories = cats,
+            targetWords = words.flatten(),
+            initialTableau = tableau,
+            initialStock = stock
+        )
+    }
+
+    /** Fixed hand-made level 2: teaches stacking, empty column, stock-to-column. */
+    private fun buildTutorialLevel2(isPersian: Boolean): LevelData {
+        val catNames = if (isPersian) listOf("میوه", "رنگ", "حیوان")
+        else listOf("Meyve", "Renk", "Hayvan")
+        val wordNames = if (isPersian) listOf(
+            listOf("سیب", "موز", "انار"),
+            listOf("قرمز", "آبی", "سبز"),
+            listOf("شیر", "اسب", "گربه")
+        ) else listOf(
+            listOf("Elma", "Muz", "Kiraz"),
+            listOf("Kırmızı", "Mavi", "Yeşil"),
+            listOf("Aslan", "At", "Kedi")
+        )
+        val cats = catNames.mapIndexed { i, n -> Category("tut2_cat_$i", n, "Kolay") }
+        val words = wordNames.mapIndexed { ci, list ->
+            list.mapIndexed { wi, t -> Word("tut2_w_${ci}_$wi", "tut2_cat_$ci", t, "Kolay") }
+        }
+
+        fun cat(i: Int, up: Boolean) =
+            SolitaireCard("cat_${cats[i].id}", cats[i].name, cats[i].id, true, up, category = cats[i])
+        fun word(c: Int, w: Int, up: Boolean) =
+            SolitaireCard("word_${words[c][w].id}", words[c][w].wordText, cats[c].id, false, up, word = words[c][w])
+
+        // cats: 0 = میوه, 1 = رنگ, 2 = حیوان
+        val tableau = listOf(
+            listOf(cat(1, false), word(0, 0, true)),     // ▮ دسته‌ی رنگ, ↑ سیب
+            listOf(word(0, 1, true)),                    // ↑ موز
+            listOf(word(1, 0, false), word(2, 0, true)), // ▮ قرمز, ↑ شیر
+            listOf(word(1, 1, false), cat(0, true))      // ▮ آبی, ↑ دسته‌ی میوه
+        )
+        val stock = listOf(
+            word(2, 1, false),  // اسب
+            word(0, 2, false),  // انار
+            word(1, 2, false),  // سبز
+            word(2, 2, false),  // گربه
+            cat(2, false)       // دسته‌ی حیوان
+        )
+
+        return LevelData(
+            levelNumber = 2,
             difficulty = "Kolay",
             targetCategories = cats,
             targetWords = words.flatten(),
