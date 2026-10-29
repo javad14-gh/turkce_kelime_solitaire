@@ -728,7 +728,7 @@ fun GameScreen(
                         Box(
                             modifier = Modifier
                                 .size(width = 85.dp, height = 110.dp)
-                                .clickable(enabled = !isLevelWon && isDealingFinished && movesRemaining > 0 && !showOutofMovesDialog && !showThemeIntro && (!isTutorialMode || tutorialHint?.action == TutorialAction.TAP_STOCK)) { onDrawFromStock() }
+                                .clickable(enabled = !isLevelWon && isDealingFinished && movesRemaining > 0 && !showOutofMovesDialog && !showThemeIntro && ((!isTutorialMode || tutorialHint == null || tutorialHint.action == TutorialAction.TAP_STOCK))) { onDrawFromStock() }
                                 .onGloballyPositioned { c ->
                                     val b = c.boundsInRoot()
                                     if (cardBounds["stock_pile"] != b) cardBounds["stock_pile"] = b
@@ -1099,7 +1099,7 @@ fun GameScreen(
                                         isDragged = isDragged,
                                         dragZIndex = if (dragGroupIdx >= 0) dragGroupIdx.toFloat() else 0f,
                                         dragOffsetProvider = { dragOffset },
-                                        isInteractionEnabled = !isLevelWon && isDealingFinished && (!isTutorialMode || tutorialHint?.cardId == card.id) && movesRemaining > 0 && !showOutofMovesDialog && !isAnimatingReturn && (draggedCards.isEmpty() || isDragged) && !showThemeIntro,
+                                        isInteractionEnabled = !isLevelWon && isDealingFinished && ((!isTutorialMode || tutorialHint == null || tutorialHint.cardId == card.id)) && movesRemaining > 0 && !showOutofMovesDialog && !isAnimatingReturn && (draggedCards.isEmpty() || isDragged) && !showThemeIntro,
                                         onTap = {},
                                         onDragStart = {
                                             val targetCatId = card.categoryId
@@ -2471,6 +2471,16 @@ fun GameScreen(
                     else -> null
                 }
             }
+            TutorialSpotlightOverlay(
+                hint = tutorialHint,
+                sourceBounds = srcBounds,
+                targetBounds = dstBounds,
+                isDragging = draggedCards.isNotEmpty(),
+                isPersian = isPersian,
+                fontFamily = nunitoFont,
+                onSkip = onDismissTutorial,
+                modifier = Modifier.zIndex(300f)
+            )
         }
 
         // 5. FLOATING COIN FEEDBACK OVERLAYS
