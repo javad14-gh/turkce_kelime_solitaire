@@ -21,6 +21,8 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -28,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -80,6 +83,39 @@ fun CategoryDropZone(
     val activeCategory = slot.activeCategory
     val matchedWords = slot.matchedWords
     val isCompleted = matchedWords.size == totalWords && totalWords > 0
+    // Feedback triggers: pulse + sparkles on each new matched word, sticker on completion
+    var sparkleTrigger by remember { mutableIntStateOf(0) }
+    var stickerTrigger by remember { mutableIntStateOf(0) }
+    val slotPulse = remember { Animatable(1f) }
+    var lastCount by remember { mutableIntStateOf(matchedWords.size) }
+
+    var comboTrigger by remember { mutableIntStateOf(0) }
+    var lastCategoryId by remember { mutableStateOf(slot.activeCategory?.id) }
+
+// 1) New matched word(s) -> pulse + sparkles (+ combo when 2 or more arrive at once)
+    LaunchedEffect(matchedWords.size) {
+        val added = matchedWords.size - lastCount
+        if (added > 0) {
+            sparkleTrigger++
+            if (added >= 2 && !isCompleted) comboTrigger++
+            slotPulse.snapTo(1f)
+            slotPulse.animateTo(1.12f, tween(110, easing = FastOutSlowInEasing))
+            slotPulse.animateTo(1f, tween(160, easing = FastOutSlowInEasing))
+        }
+        lastCount = matchedWords.size
+    }
+
+// 2) Category card placed -> pulse + sparkles
+    LaunchedEffect(slot.activeCategory?.id) {
+        val id = slot.activeCategory?.id
+        if (id != null && id != lastCategoryId) {
+            sparkleTrigger++
+            slotPulse.snapTo(1f)
+            slotPulse.animateTo(1.12f, tween(110, easing = FastOutSlowInEasing))
+            slotPulse.animateTo(1f, tween(160, easing = FastOutSlowInEasing))
+        }
+        lastCategoryId = id
+    }
 
     val scaleFactor by animateFloatAsState(targetValue = if (isHighlighted) 1.05f else 1.0f)
 
@@ -95,49 +131,34 @@ fun CategoryDropZone(
     // Smooth, gentle fade-out & shrink when category is completed
     val cardAlpha = remember { Animatable(1f) }
     val cardScale = remember { Animatable(1f) }
-    val badgeAlpha = remember { Animatable(0f) }
-    val badgeScale = remember { Animatable(0.7f) }
+
 
     LaunchedEffect(isCompleted) {
         if (isCompleted) {
-            // Step 1: Pop completion badge in and pulse card gently
-            launch {
-                badgeAlpha.animateTo(1f, tween(300, easing = FastOutSlowInEasing))
-            }
-            launch {
-                badgeScale.animateTo(1.08f, tween(300, easing = FastOutSlowInEasing))
-                badgeScale.animateTo(1.0f, tween(150, easing = FastOutSlowInEasing))
-            }
+            stickerTrigger++
+            sparkleTrigger++   // با تکمیل دسته، جرقه‌ی دوم هم می‌آید
+            // Step 1: pulse card gently
             launch {
                 cardScale.animateTo(1.04f, tween(250, easing = FastOutSlowInEasing))
                 cardScale.animateTo(1.0f, tween(200, easing = FastOutSlowInEasing))
             }
 
-            // Step 2: Keep clearly visible and celebrated for 900ms
+            // Step 2: keep clearly visible for 900ms
             delay(900)
 
-            // Step 3: Gentle, slow dissolve of completed category card & badge
-            launch {
-                cardAlpha.animateTo(0f, tween(1100, easing = FastOutSlowInEasing))
-            }
-            launch {
-                cardScale.animateTo(0.92f, tween(1100, easing = FastOutSlowInEasing))
-            }
-            launch {
-                badgeAlpha.animateTo(0f, tween(1000, easing = FastOutSlowInEasing))
-            }
+            // Step 3: gentle dissolve
+            launch { cardAlpha.animateTo(0f, tween(1100, easing = FastOutSlowInEasing)) }
+            launch { cardScale.animateTo(0.92f, tween(1100, easing = FastOutSlowInEasing)) }
         } else {
             cardAlpha.snapTo(1f)
             cardScale.snapTo(1f)
-            badgeAlpha.snapTo(0f)
-            badgeScale.snapTo(0.7f)
         }
     }
 
     Box(
         modifier = modifier
             .size(width = 85.dp, height = 110.dp) // Playing card vertical proportions
-            .scale(scaleFactor)
+            .scale(scaleFactor * slotPulse.value)
             .onGloballyPositioned { coordinates ->
                 onBoundsPositioned(slot, coordinates.boundsInRoot())
             },
@@ -334,50 +355,29 @@ fun CategoryDropZone(
                 }
             }
         }
-
-        // --- 3. CATEGORY COMPLETED CELEBRATION BADGE (Below slot with slight overlap, NO category name) ---
-        if (badgeAlpha.value > 0.01f) {
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .offset(y = 12.dp)
-                    .zIndex(20f)
-                    .graphicsLayer {
-                        alpha = badgeAlpha.value
-                        scaleX = badgeScale.value
-                        scaleY = badgeScale.value
-                    }
-                    .shadow(8.dp, RoundedCornerShape(12.dp))
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(
-                        Brush.horizontalGradient(
-                            listOf(Color(0xFFFFB800), Color(0xFFF59E0B), Color(0xFFD97706))
-                        )
-                    )
-                    .border(1.5.dp, Color.White, RoundedCornerShape(12.dp))
-                    .padding(horizontal = 8.dp, vertical = 3.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = "👑",
-                        fontSize = 10.sp
-                    )
-                    Spacer(modifier = Modifier.width(3.dp))
-                    Text(
-                        text = LocaleHelper.categoryCompleted(isPersian),
-                        color = Color.White,
-                        fontSize = 9.sp,
-                        fontWeight = FontWeight.Black,
-                        fontFamily = nunitoFont,
-                        textAlign = TextAlign.Center,
-                        maxLines = 1
-                    )
-                }
-            }
-        }
+// --- 3. FEEDBACK LAYERS ---
+        SparkleBurst(
+            trigger = sparkleTrigger,
+            count = if (isCompleted) 14 else 6,
+            maxDistanceDp = if (isCompleted) 70f else 46f,
+            modifier = Modifier.zIndex(20f)
+        )
+        CompletionSticker(
+            trigger = stickerTrigger,
+            isPersian = isPersian,
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .offset(y = (-30).dp)
+                .zIndex(30f)
+        )
+        CompletionSticker(
+            trigger = comboTrigger,
+            isPersian = isPersian,
+            isCombo = true,
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .offset(y = (-30).dp)
+                .zIndex(31f)
+        )
     }
 }

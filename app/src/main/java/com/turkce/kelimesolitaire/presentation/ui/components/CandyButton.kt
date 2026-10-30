@@ -37,8 +37,8 @@ fun Modifier.candyGloss(
     bottomAlpha: Float = 0.10f,
     heightFraction: Float = 0.85f
 ): Modifier = this.drawBehind {
-    val h = size.height * heightFraction
-    val i = (size.height - h) * 0.50f
+    val i = inset.toPx()
+    val h = size.height - 2 * i
     val r = (corner.toPx() - i).coerceAtLeast(0f)
     drawRoundRect(
         brush = Brush.verticalGradient(
@@ -47,7 +47,7 @@ fun Modifier.candyGloss(
                 Color.White.copy(alpha = bottomAlpha)
             ),
             startY = i,
-            endY = i + h
+            endY = size.height - i,
         ),
         topLeft = Offset(i, i),
         size = Size(size.width - 2 * i, h),

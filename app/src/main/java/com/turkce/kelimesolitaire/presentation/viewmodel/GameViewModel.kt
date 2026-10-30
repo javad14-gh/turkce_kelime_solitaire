@@ -508,6 +508,7 @@ class GameViewModel : ViewModel() {
                 val totalForCategory = _uiState.value.levelData?.targetWords?.count { it.categoryId == targetCategory.id } ?: 4
                 val requiredCount = if (totalForCategory > 0) totalForCategory else 4
                 if (tempMatchedWords.isNotEmpty() && tempMatchedWords.size >= requiredCount) {
+                    com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.vibrateSuccess(context)
                     _uiState.update { it.copy(completedCategoryName = targetCategory.name) }
                     viewModelScope.launch {
                         delay(2200)

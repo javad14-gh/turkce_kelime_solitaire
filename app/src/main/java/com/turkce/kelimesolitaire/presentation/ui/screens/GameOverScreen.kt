@@ -45,11 +45,9 @@ import com.turkce.kelimesolitaire.presentation.ui.components.TvIcon
 import com.turkce.kelimesolitaire.presentation.ui.components.candyGloss
 import com.turkce.kelimesolitaire.presentation.ui.components.specularGlint
 import com.turkce.kelimesolitaire.presentation.ui.components.rememberNunitoFont
-import com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.mainBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupButtonBg
-import com.turkce.kelimesolitaire.presentation.ui.theme.PopupButtonShadow
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupTextPrimary
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupTrayDepth
 import com.turkce.kelimesolitaire.presentation.util.GameSettingsManager
@@ -62,6 +60,7 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.MenuBtnOutline
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupFrameGradient
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupFrameBase
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupTitleOutline
+import com.turkce.kelimesolitaire.presentation.ui.components.IconLabelRow
 
 @Composable
 fun GameOverScreen(
@@ -395,28 +394,5 @@ private fun GameOverButton(
         contentAlignment = Alignment.Center
     ) {
         content()
-    }
-}
-
-/** Icon + label, order flipped for Persian (same pattern as the settings menu). */
-@Composable
-private fun IconLabelRow(
-    isPersian: Boolean,
-    icon: @Composable () -> Unit,
-    label: @Composable () -> Unit
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-    ) {
-        if (isPersian) {
-            label()
-            Spacer(modifier = Modifier.width(8.dp))
-            icon()
-        } else {
-            icon()
-            Spacer(modifier = Modifier.width(8.dp))
-            label()
-        }
     }
 }

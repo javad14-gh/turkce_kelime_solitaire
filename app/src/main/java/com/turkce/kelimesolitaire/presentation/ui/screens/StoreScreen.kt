@@ -54,6 +54,7 @@ import com.turkce.kelimesolitaire.data.billing.MyketBillingConfig
 import com.turkce.kelimesolitaire.presentation.ui.components.CoinCounter
 import com.turkce.kelimesolitaire.presentation.ui.theme.mainBg
 import com.turkce.kelimesolitaire.presentation.ui.components.TopBarIconButton
+import com.turkce.kelimesolitaire.presentation.ui.theme.DarkMain
 
 val inner = RoundedCornerShape(19.dp)
 val outer = RoundedCornerShape(24.dp)
@@ -139,16 +140,16 @@ fun StoreScreen(
                             .height(115.dp)
                             .shadow(12.dp, RoundedCornerShape(22.dp))
                             .clip(RoundedCornerShape(22.dp))
-                            .background(Color(0xFFF472B6))
+                            .background(Color(0xFF9440DD))
                             .candyGloss(corner = 24.dp, inset = 2.5.dp)
                             .padding(7.dp)
                             .clip(inner)
                             .background(
                                 Brush.verticalGradient(
-                                    listOf(Color(0xFF831843), Color(0xFFBE185D), Color(0xFF9D174D))
+                                    listOf(Color(0xFFD6DDFF),Color(0xFFD6DDFF))
                                 )
                             )
-                            .glassReflection()
+                            //.glassReflection()
                             .border(
                                 2.dp,
                                 Brush.verticalGradient(
@@ -241,8 +242,8 @@ fun StoreScreen(
                         badgeColor = Color(0xFFDC2626),
                         price = if (isPersian) "۹۹,۰۰۰ تومان" else "₺99.99",
                         gradientColors = listOf(Color(0xFFD6DDFF),Color(0xFFD6DDFF)),
-                        borderColor = Color(0xFFFF1FA9),
-                        titleColor = Color(0xFFFF1FA9),
+                        borderColor = Color(0xFFFFA51F),
+                        titleColor = Color(0xFFFFA51F),
                         isGoldPriceButton = false,
                         row1Items = if (isPersian) listOf(
                             R.drawable.coins to "۲۰۰۰",
@@ -272,9 +273,9 @@ fun StoreScreen(
                     badge = if (isPersian) "پرقدرت‌ترین" else "EFSANE FIRSAT",
                     badgeColor = Color(0xFFD97706),
                     price = if (isPersian) "۱۴۹,۰۰۰ تومان" else "₺149.99",
-                    gradientColors = listOf(Color(0xFFD6DDFF),Color(0xFFD6DDFF)),
-                    borderColor = Color(0xFFFF751F),
-                    titleColor = Color(0xFFFF751F),
+                    gradientColors = listOf(Color(0xFFFFF6E6),Color(0xFFEADFC8)),
+                    borderColor = Color(0xFF99E17A),
+                    titleColor = Color(0xFF99E17A),
                     row1Items = if (isPersian) listOf(
                         R.drawable.coins to "۴۰۰۰",
                         R.drawable.hint to "۴×"
@@ -300,8 +301,8 @@ fun StoreScreen(
                     badge = if (isPersian) "پرفروش" else "ÇOK SATAN",
                     price = if (isPersian) "۸۹,۰۰۰ تومان" else "₺89.99",
                     gradientColors = listOf(Color(0xFFD6DDFF),Color(0xFFD6DDFF)),
-                    borderColor = Color(0xFF6B1FAD),
-                    titleColor = Color(0xFF6B1FAD),
+                    borderColor = Color(0xFFFFD21F),
+                    titleColor = Color(0xFFFFD21F),
                     row1Items = if (isPersian) listOf(
                         R.drawable.coins to "۱۰۰۰",
                         R.drawable.hint to "۲×"
@@ -327,8 +328,8 @@ fun StoreScreen(
                     badge = if (isPersian) "به‌صرفه" else "FIRSAT",
                     price = if (isPersian) "۴۹,۰۰۰ تومان" else "₺49.99",
                     gradientColors = listOf(Color(0xFFD6DDFF),Color(0xFFD6DDFF)),
-                    borderColor = Color(0xFFCC0000),
-                    titleColor = Color(0xFFCC0000),
+                    borderColor = Color(0xFFFF66C4),
+                    titleColor = Color(0xFFFF66C4),
                     row1Items = if (isPersian) listOf(
                         R.drawable.coins to "۵۰۰",
                         R.drawable.hint to "۱×"
@@ -373,12 +374,9 @@ fun StoreScreen(
                         .height(105.dp)
                         .shadow(10.dp, RoundedCornerShape(20.dp))
                         .clip(RoundedCornerShape(20.dp))
-                        .background(
-                            Brush.horizontalGradient(
-                                listOf(Color(0xFF1D4ED8), Color(0xFF2563EB), Color(0xFF3B82F6))
-                            )
+                        .background(Color(0xFFCC0000)
                         )
-                        .border(1.5.dp, Color(0xFF93C5FD), RoundedCornerShape(20.dp))
+                        .border(1.5.dp, Color(0xFFCC0000), RoundedCornerShape(20.dp))
                         .padding(14.dp)
                 ) {
                     Row(
@@ -564,14 +562,14 @@ private fun ComboPackCard(
     ) {
         Box(
             modifier = Modifier
-                .shadow(10.dp, outer, ambientColor = frameBottom, spotColor = frameBottom)
+                .shadow(10.dp, outer)
                 .clip(outer)
                 .background(borderColor)
-                .candyGloss(corner = 24.dp, inset = 2.5.dp)   // گلاس روی قاب، پشت پنل
-                .padding(10.dp)                                // قاب کلفت‌تر تا گلاس دیده بشه
+                .candyGloss(corner = 24.dp, inset = 4.5.dp)   // گلاس روی قاب، پشت پنل
+                .padding(8.dp)                                // قاب کلفت‌تر تا گلاس دیده بشه
                 .clip(inner)
                 .background(Brush.verticalGradient(listOf(Color(0xFFFFF6E6), Color(0xFFEADFC8))))
-                .glassReflection()
+                //.glassReflection()
                 .border(
                     2.dp,
                     Brush.verticalGradient(
@@ -770,10 +768,10 @@ private fun CoinPackRow(
                 .height(100.dp)
                 .shadow(10.dp, outer)
                 .clip(outer)
-                .background(Color(0xFF91A425))
+                .background(Color(0xFF99DAFF))
                 .padding(7.dp)
                 .clip(inner)
-                .background(Color(0xFF9DD913))
+                .background(Color(0xFF99DAFF).copy(alpha = 0.12f))
                 .border(
                     2.dp,
                     Brush.verticalGradient(
