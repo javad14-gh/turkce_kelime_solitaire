@@ -13,10 +13,9 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.zIndex
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.Box
@@ -241,14 +240,14 @@ fun WordCard(
                     cardSize = coordinates.size
                 }
             }
-            .offset {
+            .absoluteOffset {
                 IntOffset(
                     shakeX.value.roundToInt(),
                     0
                 )
             }
             // 2. Apply drag offset here (BEFORE gesture detection and clicks so the hit area moves with the card!)
-            .offset {
+            .absoluteOffset {
                 if (isDragged) {
                     val offset = dragOffsetProvider()
                     IntOffset(

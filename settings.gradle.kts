@@ -8,10 +8,9 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
+        maven { url = uri("https://maven.tapsell.ir") }
         google()
         mavenCentral()
-        maven { url = java.net.URI.create("https://maven.tapsell.ir") }
-        maven { url = java.net.URI.create("https://repo.tapsell.ir/content/repositories/releases/") }
     }
 }
 

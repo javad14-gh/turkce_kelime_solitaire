@@ -30,10 +30,11 @@ class AdManager private constructor() {
 
         // Tapsell IDs (For Cafe Bazaar / Persian build)
         const val TAPSELL_APP_KEY = "jqfpqlgflojgicbkqnidhnmppgppjeoqedirholtnaffhkclhoaffepsaphecmrtmhtjnl"
-        const val TAPSELL_BANNER_ZONE_ID = "6ab2ee0ee237e15c69fba7fd"
-        const val TAPSELL_INTERSTITIAL_ZONE_ID = "6ab2ede6e237e15c69fba7fc"
-        const val TAPSELL_REWARDED_ZONE_ID = "6ab2edf6f9c3d5797ba49a96"
-
+        const val TAPSELL_BANNER_ZONE_ID = "6afe0d4c728e2256843b0c63"
+        //const val TAPSELL_BANNER_ZONE_ID = "e3d5999c-5990-4e31-8ce9-642ce040a7f4"
+        const val TAPSELL_INTERSTITIAL_ZONE_ID = "6afe11686cbc4169d6c38528"
+        const val TAPSELL_REWARDED_ZONE_ID = "6afe11116cbc4169d6c38527"
+        //const val TAPSELL_REWARDED_ZONE_ID = "1d710cc7-5e96-46ac-a3e9-8463300333e6"
         @Volatile
         private var instance: AdManager? = null
 

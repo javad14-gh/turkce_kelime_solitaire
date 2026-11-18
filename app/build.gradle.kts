@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace = "com.turkce.kelimesolitaire"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.turkce.kelimesolitaire"
         minSdk = 26
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 2
         versionName = "1.1.0"
 
@@ -21,6 +21,7 @@ android {
         }
 
         manifestPlaceholders["TapsellMediationAppKey"] = "jqfpqlgflojgicbkqnidhnmppgppjeoqedirholtnaffhkclhoaffepsaphecmrtmhtjnl"
+        //manifestPlaceholders["TapsellMediationAppKey"] = "76798342-99a7-4a5f-bf5a-60a088d5dcfb"
         manifestPlaceholders["TapsellMediationAdmobAdapterSignature"] = "ca-app-pub-3940256099942544~3347511713"
     }
 
@@ -73,12 +74,6 @@ android {
     }
 }
 
-configurations.all {
-    resolutionStrategy {
-        force("androidx.work:work-runtime:2.9.1")
-        force("androidx.work:work-runtime-ktx:2.9.1")
-    }
-}
 
 dependencies {
     implementation("androidx.core:core-ktx:1.12.0")
@@ -102,9 +97,9 @@ dependencies {
     implementation("com.google.android.gms:play-services-ads:22.6.0")
 
     // Tapsell Mediation SDK (for Persian / Bazaar market)
-    implementation("ir.tapsell:tapsell:1.3.0")
-    implementation("ir.tapsell.mediation.adapter:legacy:1.3.0")
-    implementation("ir.tapsell.mediation.adapter:admob:1.3.0")
+    implementation("ir.tapsell:tapsell:1.4.0-alpha04")
+    implementation("ir.tapsell.mediation.adapter:legacy:1.4.0-alpha04")
+    implementation("ir.tapsell.mediation.adapter:admob:1.4.0-alpha04")
 
     // Test dependencies
     testImplementation("junit:junit:4.13.2")

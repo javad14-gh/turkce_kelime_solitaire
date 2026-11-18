@@ -23,6 +23,10 @@
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-3940256099942544~3347511713"/>
 
+        <meta-data
+            android:name="ir.tapsell.sdk.APP_KEY"
+            android:value="${TapsellMediationAppKey}" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

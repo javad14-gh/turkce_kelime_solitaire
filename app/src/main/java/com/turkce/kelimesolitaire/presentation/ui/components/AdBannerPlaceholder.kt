@@ -3,18 +3,14 @@ package com.turkce.kelimesolitaire.presentation.ui.components
 import android.app.Activity
 import android.util.Log
 import android.widget.FrameLayout
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -22,8 +18,6 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 import com.turkce.kelimesolitaire.ads.AdManager
-import com.turkce.kelimesolitaire.presentation.ui.theme.BorderGlass
-import com.turkce.kelimesolitaire.presentation.ui.theme.DarkCard
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 import ir.tapsell.mediation.Tapsell
 import ir.tapsell.mediation.ad.AdStateListener
@@ -47,10 +41,7 @@ fun AdBannerPlaceholder(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(60.dp)
-            .clip(RoundedCornerShape(8.dp))
-            .background(DarkCard)
-            .border(1.dp, BorderGlass, RoundedCornerShape(8.dp)),
+            .heightIn(min = 50.dp),
         contentAlignment = Alignment.Center
     ) {
         if (!isPersian) {

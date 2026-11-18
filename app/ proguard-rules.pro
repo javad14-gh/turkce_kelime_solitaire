@@ -1,0 +1,3 @@
+-keep class ir.tapsell.** { *; }
+-dontwarn ir.tapsell.**
+-keep class androidx.work.** { *; }
