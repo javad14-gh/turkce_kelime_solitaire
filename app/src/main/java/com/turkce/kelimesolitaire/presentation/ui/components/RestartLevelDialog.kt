@@ -13,6 +13,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,12 +35,13 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.PopupTextSecondary
 import com.turkce.kelimesolitaire.presentation.util.GameSettingsManager
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 import com.turkce.kelimesolitaire.presentation.util.rememberAppFont
+import kotlinx.coroutines.delay
 
 @Composable
 fun RestartLevelDialog(
     coins: Int,
     cost: Int = 15,
-    isFree: Boolean = false,
+    isFirstFree: Boolean = false,
     onFreeRestart: () -> Unit = {},
     onRestartWithCoins: () -> Unit,
     onRestartWithAd: () -> Unit,
@@ -46,6 +51,16 @@ fun RestartLevelDialog(
     val isPersian = remember(context) { LocaleHelper.isPersian(context) }
     val appFont = rememberAppFont()
     val canAfford = coins >= cost
+    var remainingMs by remember { mutableStateOf(GameSettingsManager.getFreeRestartRemainingMs(context)) }
+    LaunchedEffect(Unit) {
+        while (remainingMs > 0) {
+            delay(1000)
+            remainingMs = GameSettingsManager.getFreeRestartRemainingMs(context)
+        }
+    }
+    val isFree = isFirstFree || remainingMs <= 0
+
+
 
     val green = listOf(Color(0xFFA3E635), Color(0xFF65A30D), Color(0xFF4D7C0F))
     val greenOutline = Color(0x802D5A0E)
@@ -68,8 +83,13 @@ fun RestartLevelDialog(
         Spacer(modifier = Modifier.height(10.dp))
 
         Text(
-            text = if (isFree) LocaleHelper.restartFreePrompt(isPersian)
-            else LocaleHelper.restartDialogPrompt(isPersian),
+            //text = if (isFree) LocaleHelper.restartFreePrompt(isPersian)
+            //else LocaleHelper.restartDialogPrompt(isPersian),
+            text = when {
+                isFirstFree -> LocaleHelper.restartFreePrompt(isPersian)
+                isFree -> LocaleHelper.restartHourlyPrompt(isPersian)
+                else -> LocaleHelper.restartDialogPrompt(isPersian)
+            },
             color = PopupTextSecondary,
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,
@@ -141,6 +161,14 @@ fun RestartLevelDialog(
 
             val coinLabel = if (isPersian) "پرداخت ${LocaleHelper.formatNumber(cost, true)} سکه"
             else "$cost Altın Öde"
+            Text(
+                text = LocaleHelper.restartNextFreeIn(formatMmSs(remainingMs), isPersian),
+                color = PopupTextSecondary,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = appFont
+            )
+            Spacer(modifier = Modifier.height(10.dp))
             CandyButton(
                 onClick = {
                     GameSettingsManager.playButtonClickSound(context)
@@ -181,4 +209,8 @@ fun RestartLevelDialog(
             }
         }
     }
+}
+private fun formatMmSs(ms: Long): String {
+    val total = ((ms + 999) / 1000).toInt()
+    return String.format(java.util.Locale.US, "%02d:%02d", total / 60, total % 60)
 }

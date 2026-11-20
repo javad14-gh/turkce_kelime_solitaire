@@ -177,7 +177,8 @@ class LevelGenerator {
                     targetCategories = currentSelectedCats,
                     targetWords = targetWords,
                     initialTableau = tableaus,
-                    initialStock = stock
+                    initialStock = stock,
+                    isFallback = true
                 )
             }
 
@@ -565,7 +566,7 @@ class LevelGenerator {
         // 5. Draw from stock
         if (stock.isNotEmpty()) {
             val nextStock = stock.toMutableList()
-            val drawn = nextStock.removeAt(nextStock.size - 1)
+            val drawn = nextStock.removeAt(0)
             val nextWaste = waste.toMutableList()
             nextWaste.add(drawn.copy(isFaceUp = true))
             if (solveDfs(tableaus, nextStock, nextWaste, activeSlots, completedCategories, matchedCount, visited, totalWordsToMatch, categoryWordCounts)) {
@@ -575,7 +576,7 @@ class LevelGenerator {
 
         // 6. Recycle waste back to stock
         if (stock.isEmpty() && waste.isNotEmpty()) {
-            val nextStock = waste.reversed().map { it.copy(isFaceUp = false) }
+            val nextStock = waste.map { it.copy(isFaceUp = false) }
             if (solveDfs(tableaus, nextStock, emptyList(), activeSlots, completedCategories, matchedCount, visited, totalWordsToMatch, categoryWordCounts)) {
                 return true
             }

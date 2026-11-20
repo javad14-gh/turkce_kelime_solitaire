@@ -33,6 +33,7 @@ import com.turkce.kelimesolitaire.presentation.ui.components.MessageType
 import com.turkce.kelimesolitaire.data.billing.InAppBillingManager
 import com.turkce.kelimesolitaire.data.billing.MyketBillingConfig
 import android.util.Log
+import com.turkce.kelimesolitaire.presentation.util.GameSettingsManager
 
 sealed interface ScreenState {
     object Splash : ScreenState
@@ -168,6 +169,8 @@ class GameViewModel : ViewModel() {
         messageDismissJob?.cancel()
         _uiState.update { it.copy(activeMessage = null) }
     }
+    private fun logAd(source: String) =
+        Analytics.log("ad_rewarded", mapOf("source" to source, "level" to _uiState.value.levelNumber))
 
     fun initDatabase(context: Context) {
         viewModelScope.launch {
@@ -370,7 +373,9 @@ class GameViewModel : ViewModel() {
             "level" to levelNum,
             "difficulty" to generated.difficulty,
             "moves" to calculatedMoves,
-            "restarts" to _uiState.value.restartCountInLevel
+            "restarts" to _uiState.value.restartCountInLevel,
+            "resumed" to false,
+            "fallback" to generated.isFallback
         ))
         isAdvancingLevel = false
     }
@@ -741,7 +746,15 @@ class GameViewModel : ViewModel() {
     }
 
     private fun checkMovesRemaining() {
-        if (_uiState.value.movesRemaining <= 0 && _uiState.value.totalMatchedWordsCount < _uiState.value.totalWordsToMatch) {
+        val s = _uiState.value
+        if (s.movesRemaining <= 0 && s.totalMatchedWordsCount < s.totalWordsToMatch) {
+            if (!s.showOutofMovesDialog) {
+                Analytics.log("out_of_moves", mapOf(
+                    "level" to s.levelNumber,
+                    "matched" to s.totalMatchedWordsCount,
+                    "total" to s.totalWordsToMatch
+                ))
+            }
             _uiState.update { it.copy(showOutofMovesDialog = true) }
         }
     }
@@ -793,6 +806,8 @@ class GameViewModel : ViewModel() {
         if (_uiState.value.coins >= EXTRA_MOVES_COIN_COST) {
             _uiState.update { it.copy(coins = it.coins - EXTRA_MOVES_COIN_COST) }
             saveCoinsToPrefs(activity, _uiState.value.coins)
+            // purchaseExtraMoves
+            Analytics.log("out_of_moves_choice", mapOf("choice" to "coins", "level" to _uiState.value.levelNumber))
             resumeWithExtraMoves(activity, EXTRA_MOVES_FOR_COINS)
         } else {
             val isPersian = LocaleHelper.isPersian(activity)
@@ -807,6 +822,8 @@ class GameViewModel : ViewModel() {
     fun watchAdForExtraMoves(activity: Activity) {
         adManager.showRewarded(activity) {
             resumeWithExtraMoves(activity, EXTRA_MOVES_FOR_AD)
+            Analytics.log("out_of_moves_choice", mapOf("choice" to "ad", "level" to _uiState.value.levelNumber))
+            logAd("extra_moves")
         }
     }
 
@@ -825,11 +842,18 @@ class GameViewModel : ViewModel() {
     }
 
     fun confirmFreeRestart(activity: Activity) {
+        val isFirstFree = _uiState.value.restartCountInLevel == 0
+        val type: String
+        if (isFirstFree) {
+            type = "free_first"                      // per-level free restart, does not touch the hourly timer
+        } else {
+            if (GameSettingsManager.getFreeRestartRemainingMs(activity) > 0) return   // guard
+            GameSettingsManager.markFreeRestartUsed(activity)
+            type = "free_hourly"
+        }
+        Analytics.log("restart", mapOf("type" to type, "level" to _uiState.value.levelNumber))
         _uiState.update {
-            it.copy(
-                showRestartDialog = false,
-                restartCountInLevel = it.restartCountInLevel + 1
-            )
+            it.copy(showRestartDialog = false, restartCountInLevel = it.restartCountInLevel + 1)
         }
         restartLevel(activity)
     }
@@ -850,6 +874,7 @@ class GameViewModel : ViewModel() {
                 restartCountInLevel = it.restartCountInLevel + 1
             )
         }
+        Analytics.log("restart", mapOf("type" to "coins", "level" to _uiState.value.levelNumber))
         saveCoinsToPrefs(activity, _uiState.value.coins)
         restartLevel(activity)
     }
@@ -862,6 +887,8 @@ class GameViewModel : ViewModel() {
                     restartCountInLevel = it.restartCountInLevel + 1
                 )
             }
+            Analytics.log("restart", mapOf("type" to "ad", "level" to _uiState.value.levelNumber))
+            logAd("restart")
             restartLevel(activity)
         }
     }
@@ -909,6 +936,7 @@ class GameViewModel : ViewModel() {
             val msg = if (isPersian) "+${LocaleHelper.formatNumber(rewardAmount, true)} سکه رایگان دریافت شد! ✨" else "+$rewardAmount Altın kazanıldı! ✨"
             showUserMessage(msg, MessageType.SUCCESS)
         }
+        logAd("store_coins")
     }
 
     fun doubleLevelRewardWithAd(activity: Activity) {
@@ -928,6 +956,7 @@ class GameViewModel : ViewModel() {
                     isLevelRewardDoubled = true
                 )
             }
+            logAd("double_reward")
             saveCoinsToPrefs(activity, _uiState.value.coins)
             returnToMainMenu(activity)
         }
@@ -983,6 +1012,7 @@ class GameViewModel : ViewModel() {
         if (doubleReward) {
             adManager.showRewarded(activity) { _ ->
                 executeDailyClaim(activity, doubleReward = true, isPersian = isPersian, onShowToast = onShowToast)
+                logAd("daily_double")
             }
         } else {
             executeDailyClaim(activity, doubleReward = false, isPersian = isPersian, onShowToast = onShowToast)
@@ -1059,6 +1089,11 @@ class GameViewModel : ViewModel() {
         context: Context,
         onShowMessage: (String, MessageType) -> Unit = { msg, type -> showUserMessage(msg, type) }
     ) {
+        Analytics.log("purchase", mapOf(
+            "sku" to sku,
+            "price_toman" to (MyketBillingConfig.ALL_PRODUCTS.find { it.sku == sku }?.priceTomans ?: 0),
+            "level" to _uiState.value.levelNumber
+        ))
         val prefs = context.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)
         val isPersian = LocaleHelper.isPersian(context)
 
@@ -1322,6 +1357,13 @@ class GameViewModel : ViewModel() {
                         }
                     )
                 }
+                levelStartMs = System.currentTimeMillis()
+                Analytics.log("level_start", mapOf(
+                    "level" to session.levelNumber,
+                    "difficulty" to session.levelData.difficulty,
+                    "moves" to session.movesRemaining,
+                    "resumed" to true
+                ))
             }
         } else {
             clearActiveSessionFromPrefs(activity, levelNum)
@@ -1437,6 +1479,7 @@ class GameViewModel : ViewModel() {
                 shakingCardId = null
             )
         }
+        Analytics.log("booster_use", mapOf("type" to "undo", "free" to isFree, "level" to prevSession.levelNumber))
         if (isFree) {
             val prefs = context.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)
             prefs.edit()
@@ -1484,6 +1527,7 @@ class GameViewModel : ViewModel() {
                     hasFreeHint = newHintCount > 0
                 )
             }
+            Analytics.log("booster_use", mapOf("type" to "hint", "free" to isFree, "level" to _uiState.value.levelNumber))
             if (isFree) {
                 val prefs = context.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)
                 prefs.edit()
@@ -1553,6 +1597,7 @@ class GameViewModel : ViewModel() {
                 hasFreeJoker = newJokerCount > 0
             )
         }
+        Analytics.log("booster_use", mapOf("type" to "joker", "free" to isFree, "level" to _uiState.value.levelNumber))
 
         if (isFree) {
             val prefs = context.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)
@@ -1711,6 +1756,7 @@ class GameViewModel : ViewModel() {
 
     fun acceptDefeat(context: Context? = null) {
         logLevelEnd("fail")
+        Analytics.log("out_of_moves_choice", mapOf("choice" to "giveup", "level" to _uiState.value.levelNumber))
         if (context != null) {
             clearActiveSessionFromPrefs(context, _uiState.value.levelNumber)
         }

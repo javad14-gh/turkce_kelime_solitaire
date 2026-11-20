@@ -109,7 +109,12 @@ object LocaleHelper {
 
     fun freeCoinsRewardText(isPersian: Boolean): String =
         if (isPersian) "+۵۰ سکه" else "+50 Altın"
+    fun restartHourlyPrompt(isPersian: Boolean): String =
+        if (isPersian) "ریست رایگان ساعتی‌ات آماده‌ست! بعد از استفاده باید یک ساعت صبر کنی یا سکه بدی یا ویدیو ببینی."
+        else "Saatlik ücretsiz yeniden başlatma hakkın hazır! Kullandıktan sonra 1 saat beklemen veya altın/video kullanman gerekir."
 
+    fun restartNextFreeIn(time: String, isPersian: Boolean): String =
+        if (isPersian) "ریست رایگان بعدی: ${formatNumber(time, true)}" else "Sonraki ücretsiz hak: $time"
 
     // Gameplay Dialogs
     fun outOfMovesTitle(isPersian: Boolean): String =
@@ -149,7 +154,7 @@ object LocaleHelper {
         if (isPersian) "جایزه ورود روزانه" else "Günlük Giriş Ödülü"
 
     fun dailyRewardSubtitle(cycle: Int, day: Int, isPersian: Boolean): String =
-        if (isPersian) "دوره ${formatNumber(cycle, true)} • روز ${formatNumber(day, true)} از ۳۰" else "Döngü $cycle • $day / 30. Gün"
+        if (isPersian) "دوره ${formatNumber(cycle, true)} • روز ${formatNumber(day, true)} از ۷" else "Döngü $cycle • $day / 7. Gün"
 
     fun claim(isPersian: Boolean): String =
         if (isPersian) "دریافت هدیه" else "Ödülü Al"

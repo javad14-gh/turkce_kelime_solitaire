@@ -346,7 +346,7 @@ class MainActivity : ComponentActivity() {
                                 RestartLevelDialog(
                                     coins = state.coins,
                                     cost = 15,
-                                    isFree = state.restartCountInLevel == 0,
+                                    isFirstFree = state.restartCountInLevel == 0,
                                     onFreeRestart = { viewModel.confirmFreeRestart(this@MainActivity) },
                                     onRestartWithCoins = {
                                         viewModel.confirmRestartWithCoins(this@MainActivity) { msg ->

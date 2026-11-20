@@ -337,4 +337,23 @@ object GameSettingsManager {
     fun setSelectedTheme(context: Context, themeId: String) {
         getPrefs(context).edit().putString(KEY_SELECTED_THEME, themeId).apply()
     }
+    private const val KEY_LAST_FREE_RESTART_TIME = "key_last_free_restart_time"
+    const val FREE_RESTART_INTERVAL_MS = 60L * 60L * 1000L
+
+    fun getFreeRestartRemainingMs(context: Context): Long {
+        val last = getPrefs(context).getLong(KEY_LAST_FREE_RESTART_TIME, 0L)
+        if (last == 0L) return 0L
+        val elapsed = System.currentTimeMillis() - last
+        if (elapsed < 0) {                       // clock moved back: restart the wait from now
+            markFreeRestartUsed(context)
+            return FREE_RESTART_INTERVAL_MS
+        }
+        return (FREE_RESTART_INTERVAL_MS - elapsed).coerceAtLeast(0L)
+    }
+
+    fun markFreeRestartUsed(context: Context) {
+        getPrefs(context).edit()
+            .putLong(KEY_LAST_FREE_RESTART_TIME, System.currentTimeMillis())
+            .apply()
+    }
 }

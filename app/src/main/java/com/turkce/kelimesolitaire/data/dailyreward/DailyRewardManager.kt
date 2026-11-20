@@ -2,9 +2,9 @@ package com.turkce.kelimesolitaire.data.dailyreward
 
 import android.content.Context
 import android.content.SharedPreferences
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import com.turkce.kelimesolitaire.analytics.Analytics
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 
 enum class RewardChestType {
     NONE,
@@ -46,6 +46,8 @@ object DailyRewardManager {
     private const val KEY_CLAIMED_COUNT = "daily_reward_claimed_count"
     private const val KEY_CYCLE = "daily_reward_cycle"
 
+    const val CYCLE_LENGTH = 7
+
     val TIERS: List<DailyRewardTier> = listOf(
         // Week 1
         DailyRewardTier(1, 50),
@@ -54,71 +56,49 @@ object DailyRewardManager {
         DailyRewardTier(4, 125),
         DailyRewardTier(5, 150),
         DailyRewardTier(6, 175),
-        DailyRewardTier(7, 350, RewardChestType.BRONZE),
-
-        // Week 2
-        DailyRewardTier(8, 200),
-        DailyRewardTier(9, 225),
-        DailyRewardTier(10, 250),
-        DailyRewardTier(11, 275),
-        DailyRewardTier(12, 300),
-        DailyRewardTier(13, 325),
-        DailyRewardTier(14, 600, RewardChestType.SILVER),
-
-        // Week 3
-        DailyRewardTier(15, 350),
-        DailyRewardTier(16, 375),
-        DailyRewardTier(17, 400),
-        DailyRewardTier(18, 425),
-        DailyRewardTier(19, 450),
-        DailyRewardTier(20, 475),
-        DailyRewardTier(21, 900, RewardChestType.GOLD),
-
-        // Week 4 & Grand Finale
-        DailyRewardTier(22, 500),
-        DailyRewardTier(23, 500),
-        DailyRewardTier(24, 550),
-        DailyRewardTier(25, 550),
-        DailyRewardTier(26, 600),
-        DailyRewardTier(27, 600),
-        DailyRewardTier(28, 1000, RewardChestType.RUBY),
-        DailyRewardTier(29, 750),
-        DailyRewardTier(30, 2000, RewardChestType.DIAMOND)
+        DailyRewardTier(7, 350, RewardChestType.BRONZE)
     )
 
-    private fun getPrefs(context: Context): SharedPreferences {
-        return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-    }
+    private fun getPrefs(context: Context): SharedPreferences =
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
-    private fun getTodayDateString(): String {
-        return SimpleDateFormat("yyyy-MM-dd", Locale.US).format(Date())
-    }
+    private data class Resolved(val count: Int, val cycle: Int, val claimedToday: Boolean)
 
-    fun getDailyRewardState(context: Context): DailyRewardState {
-        val prefs = getPrefs(context)
-        val lastClaimDate = prefs.getString(KEY_LAST_CLAIM_DATE, "") ?: ""
-        var claimedCount = prefs.getInt(KEY_CLAIMED_COUNT, 0)
+    /** Applies the streak rule. Does not write anything. */
+    private fun resolve(prefs: SharedPreferences, today: LocalDate): Resolved {
+        val lastDate = runCatching {
+            LocalDate.parse(prefs.getString(KEY_LAST_CLAIM_DATE, "").orEmpty())
+        }.getOrNull()
+        // Old installs may hold a count up to 30: clamp to the new cycle length
+        var count = prefs.getInt(KEY_CLAIMED_COUNT, 0).coerceAtMost(CYCLE_LENGTH)
         var cycle = prefs.getInt(KEY_CYCLE, 1)
 
-        val todayDate = getTodayDateString()
-        val isClaimedToday = (lastClaimDate == todayDate)
+        val claimedToday = lastDate != null && !lastDate.isBefore(today)
 
-        // If today is a new day and previous cycle completed 30 days, reset count for new cycle
-        if (!isClaimedToday && claimedCount >= 30) {
-            claimedCount = 0
-            cycle += 1
-            prefs.edit()
-                .putInt(KEY_CLAIMED_COUNT, 0)
-                .putInt(KEY_CYCLE, cycle)
-                .apply()
+        if (!claimedToday) {
+            if (count >= CYCLE_LENGTH) {
+                count = 0          // finished a full week
+                cycle += 1
+            } else if (lastDate != null && ChronoUnit.DAYS.between(lastDate, today) > 1) {
+                count = 0          // missed at least one day: streak broken
+            }
         }
+        return Resolved(count, cycle, claimedToday)
+    }
+    fun getDailyRewardState(context: Context): DailyRewardState {
+        val prefs = getPrefs(context)
+        val r = resolve(prefs, LocalDate.now())
 
-        val isReadyToClaim = !isClaimedToday
-        val targetClaimDay = if (isReadyToClaim) (claimedCount + 1).coerceIn(1, 30) else claimedCount.coerceIn(1, 30)
+        // Persist the normalization (streak reset / new cycle)
+        prefs.edit().putInt(KEY_CLAIMED_COUNT, r.count).putInt(KEY_CYCLE, r.cycle).apply()
+
+        val isReadyToClaim = !r.claimedToday
+        val targetClaimDay =
+            if (isReadyToClaim) (r.count + 1).coerceIn(1, CYCLE_LENGTH) else r.count.coerceIn(1, CYCLE_LENGTH)
 
         val items = TIERS.map { tier ->
             val status = when {
-                tier.dayNumber <= claimedCount -> DailyRewardClaimStatus.CLAIMED
+                tier.dayNumber <= r.count -> DailyRewardClaimStatus.CLAIMED
                 isReadyToClaim && tier.dayNumber == targetClaimDay -> DailyRewardClaimStatus.READY_TO_CLAIM
                 else -> DailyRewardClaimStatus.LOCKED
             }
@@ -127,8 +107,8 @@ object DailyRewardManager {
 
         return DailyRewardState(
             currentClaimDay = targetClaimDay,
-            claimedDaysCount = claimedCount,
-            cycle = cycle,
+            claimedDaysCount = r.count,
+            cycle = r.cycle,
             isReadyToClaimToday = isReadyToClaim,
             items = items
         )
@@ -136,32 +116,28 @@ object DailyRewardManager {
 
     fun claimDailyReward(context: Context, doubleReward: Boolean): Int {
         val prefs = getPrefs(context)
-        val todayDate = getTodayDateString()
-        val lastClaimDate = prefs.getString(KEY_LAST_CLAIM_DATE, "") ?: ""
+        val today = LocalDate.now()
+        val r = resolve(prefs, today)
+        if (r.claimedToday) return 0
 
-        if (lastClaimDate == todayDate) {
-            return 0 // Already claimed today
-        }
+        val rawCount = prefs.getInt(KEY_CLAIMED_COUNT, 0).coerceAtMost(CYCLE_LENGTH)
+        val streakBroken = rawCount in 1 until CYCLE_LENGTH && r.count == 0
 
-        var claimedCount = prefs.getInt(KEY_CLAIMED_COUNT, 0)
-        var cycle = prefs.getInt(KEY_CYCLE, 1)
+        val claimDay = (r.count + 1).coerceIn(1, CYCLE_LENGTH)
+        val tier = TIERS.find { it.dayNumber == claimDay } ?: TIERS[0]
+        val awarded = tier.coins * (if (doubleReward) 2 else 1)
 
-        if (claimedCount >= 30) {
-            claimedCount = 0
-            cycle += 1
-        }
-
-        val claimDayIndex = (claimedCount + 1).coerceIn(1, 30)
-        val tier = TIERS.find { it.dayNumber == claimDayIndex } ?: TIERS[0]
-        val awardedCoins = tier.coins * (if (doubleReward) 2 else 1)
-
-        val newClaimedCount = claimDayIndex
         prefs.edit()
-            .putString(KEY_LAST_CLAIM_DATE, todayDate)
-            .putInt(KEY_CLAIMED_COUNT, newClaimedCount)
-            .putInt(KEY_CYCLE, cycle)
+            .putString(KEY_LAST_CLAIM_DATE, today.toString())   // ISO yyyy-MM-dd, same as the old format
+            .putInt(KEY_CLAIMED_COUNT, claimDay)
+            .putInt(KEY_CYCLE, r.cycle)
             .apply()
 
-        return awardedCoins
+        Analytics.log("daily_claim", mapOf(
+            "day" to claimDay,
+            "double" to doubleReward,
+            "streak_broken" to streakBroken
+        ))
+        return awarded
     }
 }

@@ -49,7 +49,8 @@ data class LevelData(
     val targetCategories: List<Category>,
     val targetWords: List<Word>,
     val initialTableau: List<List<SolitaireCard>>,
-    val initialStock: List<SolitaireCard>
+    val initialStock: List<SolitaireCard>,
+    val isFallback: Boolean = false
 )
 
 @Serializable

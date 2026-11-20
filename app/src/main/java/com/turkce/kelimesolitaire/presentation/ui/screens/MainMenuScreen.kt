@@ -429,13 +429,7 @@ private fun DailyReward7DayProgressBar(
     val appFont = rememberAppFont()
 
     // Calculate week streak status (1..7)
-    val claimedThisWeek = remember(state.claimedDaysCount, state.isReadyToClaimToday) {
-        if (!state.isReadyToClaimToday && state.claimedDaysCount > 0 && state.claimedDaysCount % 7 == 0) {
-            7
-        } else {
-            state.claimedDaysCount % 7
-        }
-    }
+    val claimedThisWeek = state.claimedDaysCount
     val todayReadyDay = remember(claimedThisWeek, state.isReadyToClaimToday) {
         if (state.isReadyToClaimToday) (claimedThisWeek + 1).coerceIn(1, 7) else 0
     }
