@@ -2,10 +2,10 @@ package com.turkce.kelimesolitaire.presentation.viewmodel
 
 import android.app.Activity
 import android.content.Context
+import com.turkce.kelimesolitaire.analytics.Analytics
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.turkce.kelimesolitaire.ads.AdManager
-import com.turkce.kelimesolitaire.data.model.Category
 import com.turkce.kelimesolitaire.data.model.FoundationSlot
 import com.turkce.kelimesolitaire.data.model.LevelData
 import com.turkce.kelimesolitaire.data.model.SolitaireCard
@@ -16,7 +16,6 @@ import com.turkce.kelimesolitaire.domain.LevelGenerator
 import com.turkce.kelimesolitaire.data.model.SavedGameSession
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.decodeFromString
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -108,6 +107,7 @@ data class GameUiState(
     val activeMessage: InGameMessage? = null
 )
 
+
 class GameViewModel : ViewModel() {
     companion object {
         const val EXTRA_MOVES_COIN_COST = 87
@@ -122,6 +122,20 @@ class GameViewModel : ViewModel() {
 
     private val _uiState = MutableStateFlow(GameUiState())
     val uiState: StateFlow<GameUiState> = _uiState.asStateFlow()
+    private var levelStartMs = 0L
+
+    private fun logLevelEnd(result: String) {
+        val s = _uiState.value
+        Analytics.log("level_end", mapOf(
+            "level" to s.levelNumber,
+            "difficulty" to (s.levelData?.difficulty ?: ""),
+            "result" to result,
+            "moves_left" to s.movesRemaining,
+            "errors" to s.errorsInLevel,
+            "restarts" to s.restartCountInLevel,
+            "duration_sec" to ((System.currentTimeMillis() - levelStartMs) / 1000)
+        ))
+    }
 
     private val wordRepository = WordRepository()
     private val levelGenerator = LevelGenerator()
@@ -250,10 +264,14 @@ class GameViewModel : ViewModel() {
         val baseMoves = allWords.size + generated.targetCategories.size + generated.initialStock.size
         val bufferRatio = 0.20
         val bufferMoves = maxOf(2, (baseMoves * bufferRatio).toInt())
+        val extraStockPass = when (generated.difficulty) {
+            "Zor", "CokZor" -> generated.initialStock.size + 1   // یک دور کامل مخزن + یک recycle
+            else -> 0
+        }
         val calculatedMoves = when (levelNum) {
             1 -> 25
             2 -> 40
-            else -> baseMoves + bufferMoves
+            else -> baseMoves + bufferMoves + extraStockPass
         }
         val prefs = context.getSharedPreferences("kelime_solitaire_prefs", Context.MODE_PRIVATE)
 
@@ -345,7 +363,15 @@ class GameViewModel : ViewModel() {
                 isStarterPackPurchased = isStarterPackPurchased,
                 activeTutorial = activeTutorial,
             )
+
         }
+        levelStartMs = System.currentTimeMillis()
+        Analytics.log("level_start", mapOf(
+            "level" to levelNum,
+            "difficulty" to generated.difficulty,
+            "moves" to calculatedMoves,
+            "restarts" to _uiState.value.restartCountInLevel
+        ))
         isAdvancingLevel = false
     }
 
@@ -721,6 +747,7 @@ class GameViewModel : ViewModel() {
     }
 
     private fun triggerLevelComplete(context: Context) {
+        logLevelEnd("win")
         val currentLvl = _uiState.value.levelNumber
         val isReplay = _uiState.value.completedLevels.contains(currentLvl)
         val bonus = if (isReplay) 10 else when (_uiState.value.levelData?.difficulty) {
@@ -857,6 +884,7 @@ class GameViewModel : ViewModel() {
     }
 
     fun returnToMainMenu(context: Context? = null) {
+        if (_uiState.value.screenState == ScreenState.Gameplay) logLevelEnd("quit")
         if (context != null && _uiState.value.movesRemaining <= 0) {
             clearActiveSessionFromPrefs(context, _uiState.value.levelNumber)
         }
@@ -1682,6 +1710,7 @@ class GameViewModel : ViewModel() {
     }
 
     fun acceptDefeat(context: Context? = null) {
+        logLevelEnd("fail")
         if (context != null) {
             clearActiveSessionFromPrefs(context, _uiState.value.levelNumber)
         }

@@ -31,8 +31,8 @@ class LevelGenerator {
         val baseCategories = when (difficultyLevel) {
             "Kolay" -> 5
             "Orta" -> 6
-            "Zor" -> 8
-            else -> 9 // CokZor
+            "Zor" -> 7
+            else -> 8 // CokZor
         }
         val numCategories = minOf(10, baseCategories + scaleFactor)
 
@@ -44,10 +44,10 @@ class LevelGenerator {
         }
 
         val steppedCounts = when (difficultyLevel) {
-            "Kolay" -> listOf(2, 3, 4, 5)
-            "Orta" -> listOf(3, 4, 5, 6)
-            "Zor" -> listOf(4, 5, 6, 7)
-            else -> listOf(5, 6, 7, 8) // CokZor
+            "Kolay" -> listOf(1, 2, 3, 4)
+            "Orta" -> listOf(2, 3, 4, 5)
+            "Zor" -> listOf(3, 4, 5, 6)
+            else -> listOf(4, 5, 6, 7) // CokZor
         }
 
         val allowedDifficulties = when (difficultyLevel) {
