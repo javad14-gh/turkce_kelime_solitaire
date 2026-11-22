@@ -23,6 +23,8 @@ import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.size
+import com.turkce.kelimesolitaire.presentation.ui.screens.outer
+import com.turkce.kelimesolitaire.presentation.ui.theme.DarkMain
 import com.turkce.kelimesolitaire.presentation.ui.theme.MenuBtnTop
 import com.turkce.kelimesolitaire.presentation.ui.theme.MenuBtnMid
 import com.turkce.kelimesolitaire.presentation.ui.theme.MenuBtnBottom
@@ -32,7 +34,7 @@ fun Color.darker(f: Float = 0.55f): Color = lerp(this, Color.Black, f)
 
 fun Modifier.candyGloss(
     corner: Dp,
-    inset: Dp = 2.dp,
+    inset: Dp = 20.dp,
     topAlpha: Float = 0.25f,
     bottomAlpha: Float = 0.10f,
     heightFraction: Float = 0.85f
@@ -146,18 +148,21 @@ fun SquareMenuButton(
     size: Dp = 84.dp,
     content: @Composable () -> Unit
 ) {
-    val shape = RoundedCornerShape(18.dp)
+    val shape = RoundedCornerShape(24.dp)
     Box(
         modifier = modifier
             .size(size)
-            .shadow(8.dp, shape)
+            .shadow(10.dp, shape)
             .clip(shape)
+            .background(DarkMain)
+            .candyGloss(corner = 24.dp, inset = 5.dp)
+            .padding(8.dp)
+            .clip(RoundedCornerShape(19.dp))
             .background(
-                Brush.verticalGradient(listOf(MenuBtnTop, MenuBtnMid, MenuBtnBottom))
+                Brush.verticalGradient(listOf(Color(0xFFFFF6E6), Color(0xFFEADFC8)))
             )
-            .candyGloss(corner = 18.dp, inset = 2.dp)
-            .specularGlint(offsetX = 8.dp, offsetY = 5.dp, scale = 0.9f)
-            .border(1.dp, MenuBtnOutline, shape)
+            //.specularGlint(offsetX = 8.dp, offsetY = 5.dp, scale = 0.9f)
+            //.border(1.dp, MenuBtnOutline, shape)
             .clickable(onClick = onClick)
             .padding(2.dp),
         contentAlignment = Alignment.Center

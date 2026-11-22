@@ -31,6 +31,7 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.MenuBtnBottom
 import com.turkce.kelimesolitaire.presentation.ui.theme.MenuBtnMid
 import com.turkce.kelimesolitaire.presentation.ui.theme.MenuBtnOutline
 import com.turkce.kelimesolitaire.presentation.ui.theme.MenuBtnTop
+import com.turkce.kelimesolitaire.presentation.ui.theme.DarkMain
 
 // Red "exit / give up" style shared by all popups
 val MenuRedBrush: Brush = Brush.verticalGradient(
@@ -90,23 +91,29 @@ fun MenuWideButton(
     modifier: Modifier = Modifier,
     face: Brush = Brush.verticalGradient(listOf(MenuBtnTop, MenuBtnMid, MenuBtnBottom)),
     outline: Color = MenuBtnOutline,
-    fontSize: TextUnit = 24.sp,
+    fontSize: TextUnit = 22.sp,
     icon: @Composable () -> Unit
 ) {
-    val shape = RoundedCornerShape(18.dp)
+    val outerShape = RoundedCornerShape(24.dp)
+    val innerShape = RoundedCornerShape(19.dp)
     Box(
         modifier = modifier
-            .fillMaxWidth(0.72f)
+            .fillMaxWidth(0.82f)
             .heightIn(min = 84.dp)
-            .shadow(8.dp, shape)
-            .clip(shape)
-            .background(face)
-            .candyGloss(corner = 18.dp, inset = 2.dp)
-            .specularGlint(offsetX = 10.dp, offsetY = 6.dp, scale = 1.1f)
-            .border(1.dp, outline, shape)
+            .shadow(10.dp, outerShape)
+            .clip(outerShape)
+            .background(DarkMain)
+            .candyGloss(corner = 24.dp, inset = 5.dp)
+            .padding(8.dp)
+            .clip(innerShape)
+            .background(
+                Brush.verticalGradient(listOf(Color(0xFFFFF6E6), Color(0xFFEADFC8)))
+            )
+            //.specularGlint(offsetX = 10.dp, offsetY = 6.dp, scale = 1.1f)
+            //.border(1.dp, outline, shape)
             .clickable(onClick = onClick)
             .padding(2.dp),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.CenterEnd
     ) {
         IconLabelRow(
             isPersian = isPersian,
@@ -133,6 +140,6 @@ fun MenuIcon(res: Int, description: String) {
     Image(
         painter = painterResource(id = res),
         contentDescription = description,
-        modifier = Modifier.size(57.dp)
+        modifier = Modifier.size(50.dp)
     )
 }

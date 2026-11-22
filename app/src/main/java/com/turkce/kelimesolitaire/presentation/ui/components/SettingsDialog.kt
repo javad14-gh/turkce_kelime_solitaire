@@ -93,7 +93,7 @@ fun SettingsDialog(
                 text = if (isPersian) "رنگ‌بندی بازی" else "Oyun Teması",
                 isPersian = isPersian,
                 onClick = onOpenTheme,
-                icon = { Text(text = "🎨", fontSize = 45.sp) }
+                icon = { MenuIcon(R.drawable.colorpalette, "ColorPlatte") }
             )
 
             MenuWideButton(

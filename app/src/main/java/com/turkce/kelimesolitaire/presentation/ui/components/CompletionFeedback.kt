@@ -41,16 +41,17 @@ fun SparkleBurst(
     modifier: Modifier = Modifier
 ) {
     val progress = remember { Animatable(1f) }
+    val burstCount = remember(trigger) { count }
     val angles = remember(trigger) {
-        val rng = Random(trigger * 31 + count)
+        val rng = Random(trigger * 31 + burstCount)
         val base = rng.nextFloat() * 2f * PI.toFloat()
-        List(count) { i ->
-            base + i * (2f * PI.toFloat() / count) + rng.nextFloat() * 0.5f
+        List(burstCount) { i ->
+            base + i * (2f * PI.toFloat() / burstCount) + rng.nextFloat() * 0.5f
         }
     }
     val sizes = remember(trigger) {
-        val rng = Random(trigger * 17 + count)
-        List(count) { 0.7f + rng.nextFloat() * 0.8f }
+        val rng = Random(trigger * 17 + burstCount)
+        List(burstCount) { 0.7f + rng.nextFloat() * 0.8f }
     }
 
     LaunchedEffect(trigger) {
@@ -69,7 +70,7 @@ fun SparkleBurst(
         val alpha = (1f - p).coerceIn(0f, 1f)
         val scale = if (p < 0.2f) p / 0.2f else 1f - (p - 0.2f) * 0.5f
 
-        for (i in 0 until count) {
+        for (i in 0 until minOf(burstCount, angles.size, sizes.size)) {
             val dist = maxDist * p
             val pos = Offset(
                 center.x + cos(angles[i]) * dist,

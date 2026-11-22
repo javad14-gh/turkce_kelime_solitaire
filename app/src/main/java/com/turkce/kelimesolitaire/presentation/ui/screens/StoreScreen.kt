@@ -553,8 +553,8 @@ private fun ComboPackCard(
     titleColor: Color = Color(0xFF5271ff)
 ) {
     val nunitoFont = rememberNunitoFont()
-    val frameTop = lerp(borderColor, Color.White, 0.35f)
-    val frameBottom = lerp(borderColor, Color.Black, 0.30f)
+//    val frameTop = lerp(borderColor, Color.White, 0.35f)
+//    val frameBottom = lerp(borderColor, Color.Black, 0.30f)
     val panelShape = RoundedCornerShape(16.dp)
     Box(
         contentAlignment = Alignment.TopCenter,

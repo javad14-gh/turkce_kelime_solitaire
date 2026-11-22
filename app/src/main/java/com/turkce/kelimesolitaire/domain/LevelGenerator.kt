@@ -5,6 +5,7 @@ import com.turkce.kelimesolitaire.data.model.LevelData
 import com.turkce.kelimesolitaire.data.model.SolitaireCard
 import com.turkce.kelimesolitaire.data.model.Word
 import com.turkce.kelimesolitaire.data.model.WordDatabase
+import kotlinx.serialization.internal.throwMissingFieldException
 import kotlin.random.Random
 
 class LevelGenerator {
@@ -43,12 +44,23 @@ class LevelGenerator {
             else -> 6 // CokZor
         }
 
-        val steppedCounts = when (difficultyLevel) {
-            "Kolay" -> listOf(1, 2, 3, 4)
-            "Orta" -> listOf(2, 3, 4, 5)
-            "Zor" -> listOf(3, 4, 5, 6)
-            else -> listOf(4, 5, 6, 7) // CokZor
+        val steppedCounts = if (levelNumber <= 50) {
+            when (difficultyLevel) {
+                "Kolay" -> listOf(1, 2, 3, 4)
+                "Orta" -> listOf(2, 3, 4, 5)
+                "Zor" -> listOf(3, 4, 5, 6)
+                else -> listOf(4, 5, 6, 7)
+            }
+        } else {
+            when (difficultyLevel) {
+                "Kolay" -> listOf(2, 3, 4, 5)
+                "Orta" -> listOf(3, 4, 5, 6)
+                "Zor" -> listOf(4, 5, 6, 7)
+                else -> listOf(5, 6, 7, 8)
+            }
         }
+
+
 
         val allowedDifficulties = when (difficultyLevel) {
             "Kolay" -> listOf("Kolay")

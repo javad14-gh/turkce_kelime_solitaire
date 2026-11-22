@@ -415,7 +415,7 @@ fun GameScreen(
                         text = LocaleHelper.levelTitle(levelData.levelNumber, isPersian),
                         textColor = LevelTitleText,
                         outlineColor = LevelTitleOutline,
-                        outlineWidth = 10f,
+                        outlineWidth = 15f,
                         fontSize = 26.sp,
                         fontWeight = FontWeight.Black
                     )

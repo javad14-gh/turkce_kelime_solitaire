@@ -338,7 +338,7 @@ object GameSettingsManager {
         getPrefs(context).edit().putString(KEY_SELECTED_THEME, themeId).apply()
     }
     private const val KEY_LAST_FREE_RESTART_TIME = "key_last_free_restart_time"
-    const val FREE_RESTART_INTERVAL_MS = 60L * 60L * 1000L
+    const val FREE_RESTART_INTERVAL_MS = 5L * 60L * 60L * 1000L
 
     fun getFreeRestartRemainingMs(context: Context): Long {
         val last = getPrefs(context).getLong(KEY_LAST_FREE_RESTART_TIME, 0L)

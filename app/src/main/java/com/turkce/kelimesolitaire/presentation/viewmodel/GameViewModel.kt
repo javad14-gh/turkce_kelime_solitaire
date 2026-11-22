@@ -215,8 +215,7 @@ class GameViewModel : ViewModel() {
         undoStack.clear() // Clear undo history on fresh start
         clearActiveSessionFromPrefs(activity, currentLvl)
         
-        val shouldShowAd = !_uiState.value.isAdFree && 
-                           isAdvancingLevel && 
+        val shouldShowAd = !_uiState.value.isAdFree &&
                            currentLvl > 5 && 
                            levelsSinceLastAd >= AD_INTERVAL_LEVELS
 

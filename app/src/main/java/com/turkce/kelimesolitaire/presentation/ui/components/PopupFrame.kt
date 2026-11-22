@@ -3,6 +3,7 @@ package com.turkce.kelimesolitaire.presentation.ui.components
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -35,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.turkce.kelimesolitaire.R
+import com.turkce.kelimesolitaire.presentation.ui.theme.DarkMain
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupFrameBase
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupFrameGradient
@@ -51,7 +53,7 @@ fun PopupFrame(
     modifier: Modifier = Modifier,
     onDismiss: (() -> Unit)? = null,
     titleSize: TextUnit = 26.sp,
-    maxWidth: Dp = 330.dp,
+    maxWidth: Dp = 350.dp,
     trayMaxHeight: Dp = 500.dp,
     content: @Composable ColumnScope.() -> Unit
 ) {
@@ -68,17 +70,91 @@ fun PopupFrame(
             ) { onDismiss?.invoke() },
         contentAlignment = Alignment.Center
     ) {
+//        Box(
+//            modifier = Modifier
+//                .widthIn(max = maxWidth)
+//                .fillMaxWidth()
+//                .padding(horizontal = 16.dp)
+//                .shadow(24.dp, RoundedCornerShape(32.dp))
+//                .clip(RoundedCornerShape(32.dp))
+//                .background(PopupFrameBase)
+//                .padding(bottom = 7.dp)
+//                .clip(RoundedCornerShape(30.dp))
+//                .background(Brush.verticalGradient(PopupFrameGradient))
+//                // swallow taps inside the frame so they don't hit the scrim
+//                .clickable(
+//                    indication = null,
+//                    interactionSource = remember { MutableInteractionSource() }
+//                ) {}
+//        ) {
+//            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+//                // Header
+//                Box(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .height(72.dp)
+//                        .padding(horizontal = 14.dp),
+//                    contentAlignment = Alignment.Center
+//                ) {
+//                    OutlinedText(
+//                        text = title,
+//                        textColor = Color.White,
+//                        outlineColor = PopupTitleOutline,
+//                        outlineWidth = 12.5f,
+//                        fontSize = titleSize,
+//                        fontWeight = FontWeight.Black,
+//                        textAlign = TextAlign.Center,
+//                        modifier = Modifier.padding(horizontal = if (onDismiss != null) 42.dp else 0.dp)
+//                    )
+//                    if (onDismiss != null) {
+//                        Image(
+//                            painter = painterResource(id = R.drawable.cancel),
+//                            contentDescription = "Close",
+//                            modifier = Modifier
+//                                .align(Alignment.CenterEnd)
+//                                .size(38.dp)
+//                                .clickable { onDismiss() }
+//                        )
+//                    }
+//                }
+//
+//                // Light tray
+//                Box(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(start = 10.dp, end = 10.dp, bottom = 12.dp)
+//                        .shadow(10.dp, RoundedCornerShape(22.dp))
+//                        .clip(RoundedCornerShape(22.dp))
+//                        .background(PopupTrayDepth)
+//                        .padding(bottom = 5.dp)
+//                        .clip(RoundedCornerShape(20.dp))
+//                        .background(PopupBg)
+//                ) {
+//                    Column(
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .heightIn(max = trayMaxHeight)
+//                            .verticalScroll(rememberScrollState())
+//                            .padding(vertical = 16.dp, horizontal = 12.dp),
+//                        horizontalAlignment = Alignment.CenterHorizontally,
+//                        content = content
+//                    )
+//                }
+//            }
+//        }
+        val outerShape = RoundedCornerShape(24.dp)
         Box(
             modifier = Modifier
                 .widthIn(max = maxWidth)
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
-                .shadow(24.dp, RoundedCornerShape(32.dp))
-                .clip(RoundedCornerShape(32.dp))
-                .background(PopupFrameBase)
-                .padding(bottom = 7.dp)
-                .clip(RoundedCornerShape(30.dp))
-                .background(Brush.verticalGradient(PopupFrameGradient))
+                .shadow(10.dp, outerShape)
+                .clip(outerShape)
+                .background(DarkMain)
+                //.candyGloss(corner = 26.dp, inset = 8.5.dp)
+//                .padding(all = 15.dp)
+//                .clip(RoundedCornerShape(19.dp))
+//                .background(Brush.verticalGradient(listOf(Color(0xFFFFF6E6), Color(0xFFEADFC8))))
                 // swallow taps inside the frame so they don't hit the scrim
                 .clickable(
                     indication = null,
@@ -91,14 +167,14 @@ fun PopupFrame(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(72.dp)
-                        .padding(horizontal = 14.dp),
+                        .padding(horizontal = 8.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     OutlinedText(
                         text = title,
                         textColor = Color.White,
                         outlineColor = PopupTitleOutline,
-                        outlineWidth = 12.5f,
+                        outlineWidth = 15f,
                         fontSize = titleSize,
                         fontWeight = FontWeight.Black,
                         textAlign = TextAlign.Center,
@@ -117,16 +193,23 @@ fun PopupFrame(
                 }
 
                 // Light tray
+//                Box(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(start = 10.dp, end = 10.dp, bottom = 12.dp)
+//                        .shadow(10.dp, RoundedCornerShape(22.dp))
+//                        .clip(RoundedCornerShape(22.dp))
+//                        .background(PopupTrayDepth)
+//                        .padding(bottom = 5.dp)
+//                        .clip(RoundedCornerShape(20.dp))
+//                        .background(PopupBg)
+//                ) {
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 10.dp, end = 10.dp, bottom = 12.dp)
-                        .shadow(10.dp, RoundedCornerShape(22.dp))
-                        .clip(RoundedCornerShape(22.dp))
-                        .background(PopupTrayDepth)
-                        .padding(bottom = 5.dp)
-                        .clip(RoundedCornerShape(20.dp))
-                        .background(PopupBg)
+                        .padding(all = 15.dp)
+                        .clip(RoundedCornerShape(19.dp))
+                        .background(Brush.verticalGradient(listOf(Color(0xFFFFF6E6), Color(0xFFEADFC8))))
+
                 ) {
                     Column(
                         modifier = Modifier
@@ -138,6 +221,7 @@ fun PopupFrame(
                         content = content
                     )
                 }
+                        //}
             }
         }
     }

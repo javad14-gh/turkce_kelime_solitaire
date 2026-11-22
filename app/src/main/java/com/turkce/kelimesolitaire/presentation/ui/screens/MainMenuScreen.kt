@@ -239,25 +239,44 @@ fun MainMenuScreen(
                     modifier = Modifier.padding(top = 38.dp, bottom = 10.dp)
                 ) {
                     val buttonShape = RoundedCornerShape(18.dp)
-                    val buttonOutline = Color(0x802D5A0E) // سبز تیره دکمه خرید بسته
+                    val buttonOutline = when (difficulty) {
+                        "Zor" -> Color(0xFFBD4900)
+                        "CokZor" -> Color(0xFFC50000)
+                        else -> Color(0xFF518F00)
+                    }
 
                     Box(
                         modifier = Modifier
                             .widthIn(min = 200.dp)
-                            .shadow(8.dp, buttonShape)
-                            .clip(buttonShape)
+                            .shadow(10.dp, outer)
+                            .background(buttonOutline)
+                            .candyGloss(24.dp, 5.dp)
+                            .padding(8.dp)
+                            .clip(inner)
                             .background(
-                                Brush.verticalGradient(
-                                    listOf(
-                                        Color(0xFFA3E635),
-                                        Color(0xFF65A30D),
-                                        Color(0xFF4D7C0F)
+                                when (difficulty) {
+                                    "Zor" -> Brush.verticalGradient(
+                                        listOf(
+                                            Color(0xFFFF914D),
+                                            Color(0xFFFF6505)
+                                        )
                                     )
-                                )
+
+                                    "CokZor" -> Brush.verticalGradient(
+                                        listOf(
+                                            Color(0xFFFF1D1D),
+                                            Color(0xFFF00000)
+                                        )
+                                    )
+
+                                    else -> Brush.verticalGradient(
+                                        listOf(
+                                            Color(0xFF95FF0A),
+                                            Color(0xFF74CC00)
+                                        )
+                                    )
+                                }
                             )
-                            .candyGloss(corner = 18.dp, inset = 2.dp)
-                            .specularGlint(offsetX = 14.dp, offsetY = 6.dp, scale = 1.3f)
-                            .border(1.dp, buttonOutline, buttonShape)
                             .clickable(enabled = !isPlayClicked) {
                                 if (!isPlayClicked) {
                                     isPlayClicked = true
@@ -287,7 +306,7 @@ fun MainMenuScreen(
                     if (difficulty == "Zor" || difficulty == "CokZor") {
                         val difficultyText = LocaleHelper.difficulty(difficulty, isPersian)
                         val ribbonColor =
-                            if (difficulty == "CokZor") Color(0xFFDC2626) else Color(0xFFEA580C)
+                            if (difficulty == "CokZor") Color(0xFFF00000) else Color(0xFFFF6505)
 
                         Box(
                             modifier = Modifier
@@ -480,18 +499,6 @@ private fun DailyReward7DayProgressBar(
                 .clip(innerShape)
                 .background(
                     Brush.verticalGradient(listOf(Color(0xFFFFF6E6), Color(0xFFEADFC8)))
-                )
-                //.glassReflection()
-                .border(
-                    2.dp,
-                    Brush.verticalGradient(
-                        listOf(
-                            Color.White.copy(alpha = 0.9f),
-                            Color.White.copy(alpha = 0.15f),
-                            Color.Black.copy(alpha = 0.12f)
-                        )
-                    ),
-                    innerShape
                 )
                 .clickable { onClick() }
         ) {
