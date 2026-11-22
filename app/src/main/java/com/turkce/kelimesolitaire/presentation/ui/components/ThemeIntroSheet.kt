@@ -145,8 +145,7 @@ fun ThemeIntroSheet(
                         onConfirm()
                     },
                     modifier = Modifier
-                        .scale(btnScale)
-                        .fillMaxWidth(0.85f),
+                        .scale(btnScale),
                     corner = 16.dp
                 ) {
                     val outline = Color(0x802D5A0E)

@@ -1,10 +1,13 @@
 package com.turkce.kelimesolitaire.presentation.ui.components
 
+import android.hardware.camera2.params.Face
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -23,6 +26,7 @@ import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import com.turkce.kelimesolitaire.presentation.ui.screens.outer
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkMain
 import com.turkce.kelimesolitaire.presentation.ui.theme.MenuBtnTop
@@ -111,30 +115,30 @@ fun Modifier.specularGlint(
 fun CandyButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    gradient: List<Color> = listOf(Color(0xFFA3E635), Color(0xFF65A30D), Color(0xFF4D7C0F)),
-    outlineColor: Color = Color(0x802D5A0E),
-    corner: Dp = 14.dp,
-    elevation: Dp = 6.dp,
+    back: Color = DarkMain,
+    face: Brush = Brush.verticalGradient(listOf(Color(0xFFFFF6E6), Color(0xFFEADFC8))),
+    outlineColor: Color = MenuBtnOutline,
+    corner: Dp = 24.dp,
+    elevation: Dp = 10.dp,
     enabled: Boolean = true,
-    contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
     content: @Composable () -> Unit
 ) {
     val shape = RoundedCornerShape(corner)
     Box(
         modifier = modifier
             .alpha(if (enabled) 1f else 0.6f)
+            .widthIn(max = 280.dp)
+            .fillMaxWidth(0.82f)
+            .heightIn(min = 74.dp)
             .shadow(elevation, shape)
             .clip(shape)
-            .background(Brush.verticalGradient(gradient))
-            .candyGloss(corner = corner, inset = 2.dp)
-            .specularGlint(
-                offsetX = if (corner > 16.dp) 14.dp else 10.dp,
-                offsetY = if (corner > 16.dp) 6.dp else 5.dp,
-                scale = if (corner > 16.dp) 1.25f else 1f
-            )
-            .border(1.dp, outlineColor, shape)
+            .background(back)
+            .candyGloss(corner = corner, inset = 5.dp)
+            .padding(8.dp)
+            .clip(RoundedCornerShape(19.dp))
+            .background(face)
             .clickable(enabled = enabled, onClick = onClick)
-            .padding(contentPadding),
+            .padding(2.dp),
         contentAlignment = Alignment.Center
     ) {
         content()
@@ -161,8 +165,6 @@ fun SquareMenuButton(
             .background(
                 Brush.verticalGradient(listOf(Color(0xFFFFF6E6), Color(0xFFEADFC8)))
             )
-            //.specularGlint(offsetX = 8.dp, offsetY = 5.dp, scale = 0.9f)
-            //.border(1.dp, MenuBtnOutline, shape)
             .clickable(onClick = onClick)
             .padding(2.dp),
         contentAlignment = Alignment.Center

@@ -1,7 +1,6 @@
 package com.turkce.kelimesolitaire.presentation.ui.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -13,6 +12,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,19 +24,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.turkce.kelimesolitaire.presentation.ui.theme.MenuBtnBottom
-import com.turkce.kelimesolitaire.presentation.ui.theme.MenuBtnMid
 import com.turkce.kelimesolitaire.presentation.ui.theme.MenuBtnOutline
-import com.turkce.kelimesolitaire.presentation.ui.theme.MenuBtnTop
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkMain
 
 // Red "exit / give up" style shared by all popups
 val MenuRedBrush: Brush = Brush.verticalGradient(
-    listOf(Color(0xFFF87171), Color(0xFFDC2626), Color(0xFFB91C1C))
+    listOf( Color(0xFFF87171), Color(0xFFDC2626))
 )
+val MenuRedBack: Color = Color(0xFFB91C1C)
 val MenuRedOutline = Color(0xFF7F1D1D)
 
 /** Icon + label; order flipped for Persian. */
@@ -89,7 +88,9 @@ fun MenuWideButton(
     isPersian: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    face: Brush = Brush.verticalGradient(listOf(MenuBtnTop, MenuBtnMid, MenuBtnBottom)),
+    back: Color = DarkMain,
+    face: Brush = Brush.verticalGradient(listOf(Color(0xFFFFF6E6), Color(0xFFEADFC8))),
+    maxWidth: Dp = 280.dp,
     outline: Color = MenuBtnOutline,
     fontSize: TextUnit = 22.sp,
     icon: @Composable () -> Unit
@@ -98,19 +99,16 @@ fun MenuWideButton(
     val innerShape = RoundedCornerShape(19.dp)
     Box(
         modifier = modifier
+            .widthIn(max = maxWidth)
             .fillMaxWidth(0.82f)
             .heightIn(min = 84.dp)
             .shadow(10.dp, outerShape)
             .clip(outerShape)
-            .background(DarkMain)
+            .background(back)
             .candyGloss(corner = 24.dp, inset = 5.dp)
             .padding(8.dp)
             .clip(innerShape)
-            .background(
-                Brush.verticalGradient(listOf(Color(0xFFFFF6E6), Color(0xFFEADFC8)))
-            )
-            //.specularGlint(offsetX = 10.dp, offsetY = 6.dp, scale = 1.1f)
-            //.border(1.dp, outline, shape)
+            .background(face)
             .clickable(onClick = onClick)
             .padding(2.dp),
         contentAlignment = Alignment.CenterEnd

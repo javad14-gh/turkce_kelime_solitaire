@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -17,6 +18,7 @@ import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import com.turkce.kelimesolitaire.R
 import com.turkce.kelimesolitaire.presentation.util.GameSettingsManager
@@ -46,7 +48,9 @@ fun SettingsDialog(
         trayMaxHeight = 490.dp
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(0.72f),
+            modifier = Modifier
+                .widthIn(max = 255.dp)
+                .fillMaxWidth(0.72f),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -126,6 +130,7 @@ fun SettingsDialog(
                     text = LocaleHelper.mainMenu(isPersian),
                     isPersian = isPersian,
                     onClick = onMainMenu,
+                    back = MenuRedBack,
                     face = MenuRedBrush,
                     outline = MenuRedOutline,
                     icon = { MenuIcon(R.drawable.exit, "Main Menu") }

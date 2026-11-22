@@ -167,7 +167,7 @@ fun BoosterUnlockDialog(
                 GameSettingsManager.playButtonClickSound(context)
                 onDismiss()
             },
-            modifier = Modifier.fillMaxWidth(0.85f),
+            modifier = Modifier,
             corner = 16.dp
         ) {
             PopupButtonLabel(

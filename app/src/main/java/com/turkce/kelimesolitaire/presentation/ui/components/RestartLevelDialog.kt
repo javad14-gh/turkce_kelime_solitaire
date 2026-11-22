@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -62,11 +63,14 @@ fun RestartLevelDialog(
 
 
 
-    val green = listOf(Color(0xFFA3E635), Color(0xFF65A30D), Color(0xFF4D7C0F))
+    val greenFace = Brush.verticalGradient(listOf(Color(0xFFA3E635), Color(0xFF65A30D)))
+    val greenback = Color(0xFF4D7C0F)
     val greenOutline = Color(0x802D5A0E)
-    val blue = listOf(Color(0xFF38BDF8), Color(0xFF0284C7))
+    val blueFace = Brush.verticalGradient(listOf(Color(0xFF38BDF8), Color(0xFF0284C7)))
+    val blueBack = Color(0xFF0284C7).darker(0.5f)
     val blueOutline = Color(0xFF0284C7).darker(0.35f)
-    val grey = listOf(Color(0xFF94A3B8), Color(0xFF64748B), Color(0xFF475569))
+    val greyFace = Brush.verticalGradient(listOf(Color(0xFF94A3B8), Color(0xFF64748B)))
+    val greyBack = Color(0xFF475569)
     val greyOutline = Color(0xFF475569).darker(0.35f)
 
     PopupFrame(
@@ -106,8 +110,9 @@ fun RestartLevelDialog(
                     GameSettingsManager.playButtonClickSound(context)
                     onFreeRestart()
                 },
-                modifier = Modifier.fillMaxWidth(),
-                gradient = green,
+                modifier = Modifier,
+                face = greenFace,
+                back = greenback,
                 outlineColor = greenOutline
             ) {
                 IconLabelRow(
@@ -130,8 +135,9 @@ fun RestartLevelDialog(
                     GameSettingsManager.playButtonClickSound(context)
                     onDismiss()
                 },
-                modifier = Modifier.fillMaxWidth(),
-                gradient = blue,
+                modifier = Modifier,
+                face = blueFace,
+                back = blueBack,
                 outlineColor = blueOutline
             ) {
                 PopupButtonLabel(LocaleHelper.continueBtn(isPersian), blueOutline)
@@ -174,8 +180,9 @@ fun RestartLevelDialog(
                     GameSettingsManager.playButtonClickSound(context)
                     onRestartWithCoins()   // اگر سکه کم باشد ViewModel خودش پیام می‌دهد
                 },
-                modifier = Modifier.fillMaxWidth(),
-                gradient = if (canAfford) green else grey,
+                modifier = Modifier,
+                face = if (canAfford) greenFace else greyFace,
+                back = if (canAfford) greenback else greyBack,
                 outlineColor = if (canAfford) greenOutline else greyOutline
             ) {
                 IconLabelRow(
@@ -192,8 +199,9 @@ fun RestartLevelDialog(
                     GameSettingsManager.playButtonClickSound(context)
                     onRestartWithAd()
                 },
-                modifier = Modifier.fillMaxWidth(),
-                gradient = blue,
+                modifier = Modifier,
+                face = blueFace,
+                back = blueBack,
                 outlineColor = blueOutline
             ) {
                 IconLabelRow(

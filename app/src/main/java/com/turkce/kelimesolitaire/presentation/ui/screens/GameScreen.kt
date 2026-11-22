@@ -1397,8 +1397,9 @@ fun GameScreen(
 
                 CandyButton(
                     onClick = onBuyExtraMoves,
-                    modifier = Modifier.fillMaxWidth(0.92f),
-                    gradient = listOf(Color(0xFFFBBF24), Color(0xFFF59E0B), Color(0xFFD97706)),
+                    modifier = Modifier,
+                    face = Brush.verticalGradient(listOf(Color(0xFFFBBF24), Color(0xFFF59E0B))),
+                    back = Color(0xFFD97706),
                     outlineColor = goldOutline,
                     corner = 16.dp
                 ) {
@@ -1421,8 +1422,9 @@ fun GameScreen(
 
                 CandyButton(
                     onClick = onWatchAdForMoves,
-                    modifier = Modifier.fillMaxWidth(0.92f),
-                    gradient = listOf(Color(0xFF38BDF8), Color(0xFF0284C7), Color(0xFF0369A1)),
+                    modifier = Modifier,
+                    face = Brush.verticalGradient(listOf(Color(0xFF38BDF8), Color(0xFF0284C7))),
+                    back = Color(0xFF0369A1),
                     outlineColor = blueOutline,
                     corner = 16.dp
                 ) {
@@ -1445,8 +1447,9 @@ fun GameScreen(
 
                 CandyButton(
                     onClick = onAcceptDefeat,
-                    modifier = Modifier.fillMaxWidth(0.92f),
-                    gradient = listOf(Color(0xFFF87171), Color(0xFFDC2626), Color(0xFFB91C1C)),
+                    modifier = Modifier,
+                    face = Brush.verticalGradient(listOf(Color(0xFFF87171), Color(0xFFDC2626))),
+                    back = Color(0xFFB91C1C),
                     outlineColor = MenuRedOutline,
                     corner = 16.dp
                 ) {
