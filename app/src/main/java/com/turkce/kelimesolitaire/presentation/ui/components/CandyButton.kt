@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.ui.unit.min
 import com.turkce.kelimesolitaire.presentation.ui.screens.outer
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkMain
 import com.turkce.kelimesolitaire.presentation.ui.theme.MenuBtnTop
@@ -111,6 +113,38 @@ fun Modifier.specularGlint(
 /**
  * Standard Candy Gloss 3D Action Button matching the store pack buttons.
  */
+//@Composable
+//fun CandyButton(
+//    onClick: () -> Unit,
+//    modifier: Modifier = Modifier,
+//    back: Color = DarkMain,
+//    face: Brush = Brush.verticalGradient(listOf(Color(0xFFFFF6E6), Color(0xFFEADFC8))),
+//    outlineColor: Color = MenuBtnOutline,
+//    corner: Dp = 24.dp,
+//    elevation: Dp = 10.dp,
+//    enabled: Boolean = true,
+//    content: @Composable () -> Unit
+//) {
+//    val shape = RoundedCornerShape(corner)
+//    Box(
+//        modifier = modifier
+//            .alpha(if (enabled) 1f else 0.6f)
+//            .widthIn(max = 280.dp)
+//            .fillMaxWidth(0.82f)
+//            .shadow(elevation, shape)
+//            .clip(shape)
+//            .background(back)
+//            .candyGloss(corner = corner, inset = 5.dp)
+//            .padding(8.dp)
+//            .clip(RoundedCornerShape(19.dp))
+//            .background(face)
+//            .clickable(enabled = enabled, onClick = onClick)
+//            .padding(2.dp),
+//        contentAlignment = Alignment.Center
+//    ) {
+//        content()
+//    }
+//}
 @Composable
 fun CandyButton(
     onClick: () -> Unit,
@@ -119,23 +153,22 @@ fun CandyButton(
     face: Brush = Brush.verticalGradient(listOf(Color(0xFFFFF6E6), Color(0xFFEADFC8))),
     outlineColor: Color = MenuBtnOutline,
     corner: Dp = 24.dp,
+    frame: Dp = 8.dp,              // ضخامت قاب
     elevation: Dp = 10.dp,
     enabled: Boolean = true,
     content: @Composable () -> Unit
 ) {
     val shape = RoundedCornerShape(corner)
+    val innerShape = RoundedCornerShape((corner - frame).coerceAtLeast(0.dp))
     Box(
         modifier = modifier
             .alpha(if (enabled) 1f else 0.6f)
-            .widthIn(max = 280.dp)
-            .fillMaxWidth(0.82f)
-            .heightIn(min = 74.dp)
             .shadow(elevation, shape)
             .clip(shape)
             .background(back)
-            .candyGloss(corner = corner, inset = 5.dp)
-            .padding(8.dp)
-            .clip(RoundedCornerShape(19.dp))
+            .candyGloss(corner = corner, inset = frame * 0.6f)
+            .padding(frame)
+            .clip(innerShape)
             .background(face)
             .clickable(enabled = enabled, onClick = onClick)
             .padding(2.dp),

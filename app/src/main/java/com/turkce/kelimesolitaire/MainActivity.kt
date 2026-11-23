@@ -45,6 +45,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
+import com.turkce.kelimesolitaire.presentation.ui.theme.DarkMain
 
 class MainActivity : ComponentActivity() {
 
@@ -80,7 +81,6 @@ class MainActivity : ComponentActivity() {
 
                         val barColor = when (state.screenState) {
                             is ScreenState.Gameplay -> GameTableBg
-                            is ScreenState.Store -> Color(0xFF00167A)
                             is ScreenState.Splash -> Color.Black
                             else -> mainBg
                         }

@@ -117,6 +117,7 @@ import com.turkce.kelimesolitaire.presentation.ui.components.MenuRedOutline
 import com.turkce.kelimesolitaire.presentation.ui.components.SettingsDialog
 import com.turkce.kelimesolitaire.presentation.ui.components.ThemeDialog
 import com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon
+import com.turkce.kelimesolitaire.presentation.ui.components.MenuRedBack
 import com.turkce.kelimesolitaire.presentation.ui.components.TvIcon
 
 
@@ -1502,6 +1503,7 @@ fun GameScreen(
                         onBackToMenu()
                     },
                     face = MenuRedBrush,
+                    back = MenuRedBack,
                     outline = MenuRedOutline,
                     icon = { MenuIcon(R.drawable.exit, "Exit to Menu") }
                 )
