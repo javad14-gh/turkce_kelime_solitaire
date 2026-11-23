@@ -96,7 +96,8 @@ fun MenuWideButton(
     maxWidth: Dp = 280.dp,
     outline: Color = MenuBtnOutline,
     fontSize: TextUnit = 22.sp,
-    icon: @Composable () -> Unit
+    icon: @Composable () -> Unit,
+    contentAlignment: Alignment = Alignment.CenterEnd
 ) {
     val outerShape = RoundedCornerShape(24.dp)
     val innerShape = RoundedCornerShape(19.dp)
@@ -114,7 +115,7 @@ fun MenuWideButton(
             .background(face)
             .clickable(onClick = onClick)
             .padding(2.dp),
-        contentAlignment = Alignment.CenterEnd
+        contentAlignment = contentAlignment
     ) {
         IconLabelRow(
             isPersian = isPersian,

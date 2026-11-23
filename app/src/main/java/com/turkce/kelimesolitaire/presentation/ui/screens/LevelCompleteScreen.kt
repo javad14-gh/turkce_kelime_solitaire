@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -63,6 +64,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.res.ResourcesCompat
 import com.turkce.kelimesolitaire.R
 import com.turkce.kelimesolitaire.presentation.ui.components.AdBannerPlaceholder
+import com.turkce.kelimesolitaire.presentation.ui.components.CandyButton
 import com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon
 import com.turkce.kelimesolitaire.presentation.ui.components.ConfettiPartyPopper
 import com.turkce.kelimesolitaire.presentation.ui.components.MenuIcon
@@ -192,11 +194,21 @@ fun FestiveBuntingAndStar(
         // Draw Strings over flags
         val leftString = Path().apply {
             moveTo(leftStringStart.x, leftStringStart.y)
-            quadraticBezierTo(leftStringControl.x, leftStringControl.y, leftStringEnd.x, leftStringEnd.y)
+            quadraticBezierTo(
+                leftStringControl.x,
+                leftStringControl.y,
+                leftStringEnd.x,
+                leftStringEnd.y
+            )
         }
         val rightString = Path().apply {
             moveTo(rightStringStart.x, rightStringStart.y)
-            quadraticBezierTo(rightStringControl.x, rightStringControl.y, rightStringEnd.x, rightStringEnd.y)
+            quadraticBezierTo(
+                rightStringControl.x,
+                rightStringControl.y,
+                rightStringEnd.x,
+                rightStringEnd.y
+            )
         }
         val stringStroke = Stroke(width = 2.5.dp.toPx())
         val stringColor = Color(0xFF78350F)
@@ -552,7 +564,7 @@ fun LevelCompleteScreen(
                 // 1. Double Reward Button (2X) with Shaking Animation & Video Icon Badge on Edge
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth(0.50f)
+                        .fillMaxWidth(0.5f)
                         .graphicsLayer {
                             rotationZ = shakeRotation
                             translationX = shakeOffsetX
@@ -562,11 +574,8 @@ fun LevelCompleteScreen(
                     contentAlignment = Alignment.TopCenter
                 ) {
                     // 3D Candy Gloss Golden Amber Button
-                    val doubleShape = RoundedCornerShape(18.dp)
-                    val doubleOutline = Color(0xFF78350F)
-                    MenuWideButton(
-                        text = LocaleHelper.formatNumber(effectiveDoubleBonus, isPersian),
-                        isPersian = isPersian,
+                    val packColorX2 = Color(0xFF0094E9)
+                    CandyButton(
                         onClick = {
                             if (!isActionTriggered) {
                                 isActionTriggered = true
@@ -574,73 +583,46 @@ fun LevelCompleteScreen(
                                 onDoubleRewardClicked()
                             }
                         },
-                        icon = { MenuIcon(R.drawable.coin, "coin") }
-                    )
-//                    Box(
-//                        modifier = Modifier
-//                            .fillMaxWidth()
-//                            .shadow(10.dp, doubleShape)
-//                            .clip(doubleShape)
-//                            .background(
-//                                Brush.verticalGradient(
-//                                    listOf(
-//                                        Color(0xFFFDE047),
-//                                        Color(0xFFF59E0B),
-//                                        Color(0xFFD97706)
-//                                    )
-//                                )
-//                            )
-//                            .candyGloss(corner = 18.dp, inset = 2.dp)
-//                            .specularGlint(offsetX = 14.dp, offsetY = 6.dp, scale = 1.3f)
-//                            .border(1.dp, doubleOutline, doubleShape)
-//                            .clickable(
-//                                enabled = !isActionTriggered,
-//                                interactionSource = remember { MutableInteractionSource() },
-//                                indication = null
-//                            ) {
-//                                if (!isActionTriggered) {
-//                                    isActionTriggered = true
-//                                    GameSettingsManager.playButtonClickSound(context)
-//                                    onDoubleRewardClicked()
-//                                }
-//                            }
-//                            .padding(vertical = 12.dp, horizontal = 14.dp),
-//                        contentAlignment = Alignment.Center
-//                    ) {
-//                        Row(
-//                            verticalAlignment = Alignment.CenterVertically,
-//                            horizontalArrangement = Arrangement.Center
-//                        ) {
-//                            val text = LocaleHelper.formatNumber(effectiveDoubleBonus, isPersian)
-//                            if (isPersian) {
-//                                OutlinedText(
-//                                    text = text,
-//                                    textColor = Color.White,
-//                                    outlineColor = doubleOutline,
-//                                    outlineWidth = 8f,
-//                                    fontSize = 28.sp,
-//                                    fontWeight = FontWeight.Black,
-//                                    shadowColor = doubleOutline.copy(alpha = 0.6f),
-//                                    shadowOffsetY = 3f
-//                                )
-//                                Spacer(modifier = Modifier.width(8.dp))
-//                                CoinIcon(size = 46.dp)
-//                            } else {
-//                                CoinIcon(size = 46.dp)
-//                                Spacer(modifier = Modifier.width(8.dp))
-//                                OutlinedText(
-//                                    text = text,
-//                                    textColor = Color.White,
-//                                    outlineColor = doubleOutline,
-//                                    outlineWidth = 8f,
-//                                    fontSize = 28.sp,
-//                                    fontWeight = FontWeight.Black,
-//                                    shadowColor = doubleOutline.copy(alpha = 0.6f),
-//                                    shadowOffsetY = 3f
-//                                )
-//                            }
-//                        }
-//                    }
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(min = 80.dp),
+                        face = Brush.verticalGradient(
+                                    listOf(Color(0xFF99DAFF), Color(0xFF42BAFF))
+                        ),
+                        back = packColorX2,
+                        outlineColor = packColorX2,
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        )
+                        {
+                            val text = LocaleHelper.formatNumber(effectiveDoubleBonus, isPersian)
+                            if (isPersian) {
+                                OutlinedText(
+                                    text = text,
+                                    textColor = Color.White,
+                                    outlineColor = packColorX2,
+                                    outlineWidth = 8f,
+                                    fontSize = 28.sp,
+                                    fontWeight = FontWeight.Black,
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                CoinIcon(size = 46.dp)
+                            } else {
+                                CoinIcon(size = 46.dp)
+                                Spacer(modifier = Modifier.width(8.dp))
+                                OutlinedText(
+                                    text = text,
+                                    textColor = Color.White,
+                                    outlineColor = packColorX2,
+                                    outlineWidth = 8f,
+                                    fontSize = 28.sp,
+                                    fontWeight = FontWeight.Black,
+                                )
+                            }
+                        }
+                    }
 
                     // Video Ad Icon Badge overlapping on the edge (Enlarged)
                     Box(
@@ -676,55 +658,38 @@ fun LevelCompleteScreen(
                 Spacer(modifier = Modifier.height(18.dp))
 
                 // 2. Normal Reward Button (1X) - Candy style
-
-                val normalShape = RoundedCornerShape(18.dp)
-                val normalOutline = Color(0xFF334155)
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(0.50f)
-                        .shadow(10.dp, normalShape)
-                        .clip(normalShape)
-                        .background(
-                            Brush.verticalGradient(
-                                listOf(
-                                    Color(0xFF64748B),
-                                    Color(0xFF475569),
-                                    Color(0xFF334155)
-                                )
-                            )
-                        )
-                        .candyGloss(corner = 18.dp, inset = 2.dp)
-                        .specularGlint(offsetX = 14.dp, offsetY = 6.dp, scale = 1.3f)
-                        .border(1.dp, normalOutline, normalShape)
-                        .clickable(
-                            enabled = !isActionTriggered,
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null
-                        ) {
-                            if (!isActionTriggered) {
-                                isActionTriggered = true
-                                GameSettingsManager.playButtonClickSound(context)
-                                val action = onNormalRewardClicked()
-                            }
+                val packColor = Color(0xFF518F00)
+                CandyButton(
+                    onClick = {
+                        if (!isActionTriggered) {
+                            isActionTriggered = true
+                            GameSettingsManager.playButtonClickSound(context)
+                            val action = onNormalRewardClicked()
                         }
-                        .padding(vertical = 12.dp, horizontal = 14.dp),
-                    contentAlignment = Alignment.Center
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth(0.5f)
+                        .heightIn(min = 80.dp),
+                    face = Brush.verticalGradient(
+                        listOf(Color(0xFF95FF0A), Color(0xFF61AA00))
+                    ),
+                    back = packColor,
+                    outlineColor = packColor,
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
-                    ) {
+                    )
+                    {
                         val text = LocaleHelper.formatNumber(effectiveBonus, isPersian)
                         if (isPersian) {
                             OutlinedText(
                                 text = text,
                                 textColor = Color.White,
-                                outlineColor = normalOutline,
+                                outlineColor = packColor,
                                 outlineWidth = 8f,
                                 fontSize = 28.sp,
                                 fontWeight = FontWeight.Black,
-                                shadowColor = normalOutline.copy(alpha = 0.6f),
-                                shadowOffsetY = 3f
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             CoinIcon(size = 46.dp)
@@ -734,18 +699,15 @@ fun LevelCompleteScreen(
                             OutlinedText(
                                 text = text,
                                 textColor = Color.White,
-                                outlineColor = normalOutline,
+                                outlineColor = packColor,
                                 outlineWidth = 8f,
                                 fontSize = 28.sp,
                                 fontWeight = FontWeight.Black,
-                                shadowColor = normalOutline.copy(alpha = 0.6f),
-                                shadowOffsetY = 3f
                             )
                         }
                     }
                 }
             }
-
             // Ad Banner Footer
             AdBannerPlaceholder(isAdFree = isAdFree)
         }
