@@ -81,7 +81,7 @@ object LocaleHelper {
         if (isPersian) "فروشگاه و جوایز" else "MAĞAZA & ÖDÜLLER"
 
     fun removeAdsTitle(isPersian: Boolean): String =
-        if (isPersian) "حذف تبلیغات" else "REKLAMLARI KALDIR"
+        if (isPersian) "حذف دائمی تبلیغات" else "REKLAMLARI KALDIR"
 
     fun removeAdsDesc(isPersian: Boolean): String =
         if (isPersian) "حذف دائمی تمام تبلیغات درون بازی!\u200F" else "Tüm zorunlu ve geçiş reklamlarını sonsuza dek kaldır!"
@@ -118,10 +118,10 @@ object LocaleHelper {
 
     // Gameplay Dialogs
     fun outOfMovesTitle(isPersian: Boolean): String =
-        if (isPersian) "فرصت‌ها تمام شد!\u200F" else "Hamleler Bitti!"
+        if (isPersian) "فرصتی دوباره!\u200F" else "Hamleler Bitti!"
 
     fun outOfMovesPrompt(isPersian: Boolean): String =
-        if (isPersian) "آیا می‌خواهید با ${formatNumber(GameViewModel.EXTRA_MOVES_COIN_COST, true)} سکه، ${formatNumber(GameViewModel.EXTRA_MOVES_FOR_COINS, true)} حرکت دیگر دریافت کنید؟\u200F"
+        if (isPersian) "${formatNumber(GameViewModel.EXTRA_MOVES_FOR_COINS,true)} حرکت اضافه با دیدن ویدیو یا پرداخت سکه "
         else "${GameViewModel.EXTRA_MOVES_COIN_COST} Altın harcayarak ${GameViewModel.EXTRA_MOVES_FOR_COINS} ek hamle almak ister misiniz?"
     fun giveUp(isPersian: Boolean): String =
         if (isPersian) "انصراف" else "Pes Et"
@@ -191,10 +191,10 @@ object LocaleHelper {
         else "Her seviyede ilk yeniden başlatma ücretsizdir. Sonrakiler için altın ödemeniz veya video izlemeniz gerekir."
 
     fun restartFreeBtn(isPersian: Boolean): String =
-        if (isPersian) "شروع مجدد (رایگان)" else "Yeniden Başlat (Ücretsiz)"
+        if (isPersian) "شروع مجدد" else "Yeniden Başlat"
 
     fun continueBtn(isPersian: Boolean): String =
-        if (isPersian) "ادامه بازی" else "Oyuna Devam Et"
+        if (isPersian) "برگشت به بازی" else "Oyuna Devam Et"
     fun restartDialogPrompt(isPersian: Boolean): String =
         if (isPersian) "شروع مجدد اول رایگان بود! برای شروع دوباره این مرحله یکی از روش‌های زیر را انتخاب کنید:" else "İlk yeniden başlatma ücretsizdi! Bu seviyeyi tekrar başlatmak için bir yöntem seçin:"
 

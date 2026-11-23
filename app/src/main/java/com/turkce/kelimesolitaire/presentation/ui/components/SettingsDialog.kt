@@ -132,7 +132,7 @@ fun SettingsDialog(
                     onClick = onMainMenu,
                     back = MenuRedBack,
                     face = MenuRedBrush,
-                    outline = MenuRedOutline,
+                    outline = MenuRedBack,
                     icon = { MenuIcon(R.drawable.exit, "Main Menu") }
                 )
             }

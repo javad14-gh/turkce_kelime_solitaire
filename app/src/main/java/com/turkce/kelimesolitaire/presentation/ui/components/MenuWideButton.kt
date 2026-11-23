@@ -33,9 +33,12 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.DarkMain
 
 // Red "exit / give up" style shared by all popups
 val MenuRedBrush: Brush = Brush.verticalGradient(
-    listOf( Color(0xFFF87171), Color(0xFFDC2626))
+    listOf(
+        Color(0xFFFF4D4D),
+        Color(0xFFF30000)
+    )
 )
-val MenuRedBack: Color = Color(0xFFB91C1C)
+val MenuRedBack: Color = Color(0xFFC50000)
 val MenuRedOutline = Color(0xFF7F1D1D)
 
 /** Icon + label; order flipped for Persian. */

@@ -55,6 +55,7 @@ import com.turkce.kelimesolitaire.presentation.ui.components.CoinCounter
 import com.turkce.kelimesolitaire.presentation.ui.theme.mainBg
 import com.turkce.kelimesolitaire.presentation.ui.components.TopBarIconButton
 import com.turkce.kelimesolitaire.presentation.ui.components.CandyButton
+import com.turkce.kelimesolitaire.presentation.ui.theme.DarkMain
 
 val inner = RoundedCornerShape(19.dp)
 val outer = RoundedCornerShape(24.dp)
@@ -107,9 +108,7 @@ fun StoreScreen(
 
                     // 2. Settings Menu Icon (Right) - 3D Button like Sound & Vibration (size 40dp, gear 34dp)
                     TopBarIconButton(
-                        iconRes = R.drawable.cancel,
-                        contentDescription = "Cancel",
-                        onClose
+                        iconRes = R.drawable.cancel, contentDescription = "Cancel", onClose
                     )
                 }
             }
@@ -137,97 +136,93 @@ fun StoreScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(115.dp)
-                            .shadow(12.dp, RoundedCornerShape(22.dp))
-                            .clip(RoundedCornerShape(22.dp))
-                            .background(Color(0xFF9440DD))
-                            .candyGloss(corner = 24.dp, inset = 2.5.dp)
-                            .padding(7.dp)
+                            .shadow(10.dp, outer)
+                            .clip(outer)
+                            .background(Color(0xFF6B1FAD))
+                            .candyGloss(corner = 24.dp, inset = 8.dp)
+                            .padding(12.dp)
                             .clip(inner)
                             .background(
                                 Brush.verticalGradient(
-                                    listOf(Color(0xFFD6DDFF), Color(0xFFD6DDFF))
+                                    listOf(Color(0xFFFFF6E6), Color(0xFFEADFC8))
                                 )
-                            )
-                            //.glassReflection()
-                            .border(
-                                2.dp,
-                                Brush.verticalGradient(
-                                    listOf(
-                                        Color.White.copy(alpha = 0.9f),
-                                        Color.White.copy(alpha = 0.15f),
-                                        Color.Black.copy(alpha = 0.12f)
-                                    )
-                                ),
-                                inner
                             )
                     ) {
                         Row(
                             modifier = Modifier.fillMaxSize(),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.no_ads),
-                                contentDescription = "No Ads",
+                            Box(
                                 modifier = Modifier
-                                    .size(110.dp)
-                                    .offset(x = (-6).dp)
-                            )
-
+                                    .weight(1f)
+                                    .padding(start = 8.dp, top = 8.dp, bottom = 8.dp, end = 4.dp)
+                                    .clip(RoundedCornerShape(16.dp))
+                                    .padding(vertical = 6.dp)
+                            ) {
+                                Column(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.no_ads),
+                                        contentDescription = "No Ads",
+                                        modifier = Modifier
+                                            .size(72.dp)
+                                            .padding(4.dp)
+                                    )
+                                }
+                            }
                             Column(
                                 modifier = Modifier
                                     .weight(1f)
-                                    .padding(vertical = 12.dp, horizontal = 4.dp)
+                                    .padding(vertical = 12.dp)
                             ) {
-                                Text(
+                                OutlinedText(
                                     text = LocaleHelper.removeAdsTitle(isPersian),
-                                    color = Color.White,
-                                    fontSize = 18.sp,
+                                    textColor = Color(0xFFb67de8),
+                                    outlineColor = Color(0xFF6B1FAD),
+                                    shadowOffsetY = 1f,
+                                    fontSize = 17.sp,
                                     fontWeight = FontWeight.Black,
-                                    fontFamily = nunitoFont,
-                                    textAlign = TextAlign.Center
-                                )
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(
-                                    text = LocaleHelper.removeAdsDesc(isPersian),
-                                    color = Color.White.copy(alpha = 0.9f),
-                                    fontSize = 12.sp,
-                                    lineHeight = 16.sp,
-                                    fontWeight = FontWeight.Bold,
+                                    outlineWidth = 7f,
                                     textAlign = TextAlign.Center
                                 )
                             }
 
-                            Box(
+                            Column(
                                 modifier = Modifier
-                                    .padding(16.dp)
-                                    .shadow(6.dp, RoundedCornerShape(14.dp))
-                                    .clip(RoundedCornerShape(14.dp))
-                                    .background(
-                                        Brush.verticalGradient(
-                                            listOf(
-                                                Color(0xFFF43F5E),
-                                                Color(0xFFBE123C)
-                                            )
-                                        )
-                                    )
-                                    .candyGloss(14.dp, 2.dp)
-                                    .specularGlint()
-                                    .border(1.dp, Color.White, RoundedCornerShape(14.dp))
-                                    .clickable { onPurchaseSku(MyketBillingConfig.SKU_REMOVE_ADS) }
-                                    .padding(horizontal = 14.dp, vertical = 10.dp),
-                                contentAlignment = Alignment.Center
+                                    .weight(1.1f)
+                                    .padding(vertical = 12.dp),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                OutlinedText(
-                                    text = if (isPersian) "۳۹,۰۰۰ تومان" else "₺49.99",
-                                    textColor = Color.White,
-                                    outlineColor = Color(0xFFBE123C).darker(),
-                                    outlineWidth = 6f,
-                                    fontSize = 15.sp,
-                                    shadowColor = Color(0xFFBE123C).darker().copy(0.6f),
-                                    fontWeight = FontWeight.Black,
-                                    //fontFamily = nunitoFont
-                                )
+                                CandyButton(
+                                    onClick = { onPurchaseSku(MyketBillingConfig.SKU_REMOVE_ADS) },
+                                    modifier = Modifier
+                                        .widthIn(max = 280.dp)
+                                        .fillMaxWidth(0.82f)
+                                        .heightIn(min = 50.dp),
+                                    corner = 14.dp,
+                                    frame = 4.dp,
+                                    elevation = 6.dp,
+                                    face = Brush.verticalGradient(
+                                        listOf(
+                                            Color(0xFFb67de8), Color(0xFF8C33DB)
+                                        )
+                                    ),
+                                    back = Color(0xFF9440DD),
+                                ) {
+                                    OutlinedText(
+                                        text = if (isPersian) "۳۹,۰۰۰ تومان" else "₺49.99",
+                                        textColor = Color.White,
+                                        outlineColor = Color(0xFF9440DD).darker(),
+                                        outlineWidth = 6f,
+                                        fontSize = 15.sp,
+                                        shadowColor = Color(0xFF9440DD).darker().copy(0.6f),
+                                        fontWeight = FontWeight.Black,
+                                    )
+                                }
                             }
                         }
                     }
@@ -240,20 +235,16 @@ fun StoreScreen(
                     ComboPackCard(
                         title = if (isPersian) "بسته شروع" else "BAŞLANGIÇ PAKETİ",
                         badge = if (isPersian) "پیشنهاد ویژه" else "ÖZEL FIRSAT",
-                        badgeColor = Color(0xFFDC2626),
                         price = if (isPersian) "۹۹,۰۰۰ تومان" else "₺99.99",
-                        gradientColors = listOf(Color(0xFFD6DDFF), Color(0xFFD6DDFF)),
                         packColor = Color(0xFFC84D00),
-                        lightColor = Color(0xFFFF8337),
+                        lightColor = Color(0xFFFF9F63),
                         btnFace = Brush.verticalGradient(
-                            listOf(Color(0xFFFF8337), Color(0xFFFF6200))
+                            listOf(Color(0xFFFF9F63), Color(0xFFF35D00))
                         ),
                         row1Items = if (isPersian) listOf(
-                            R.drawable.coins to "۲۰۰۰",
-                            R.drawable.no_ads to "بدون تبلیغ"
+                            R.drawable.coins to "۲۰۰۰", R.drawable.no_ads to "بدون تبلیغ"
                         ) else listOf(
-                            R.drawable.coins to "2000",
-                            R.drawable.no_ads to "Reklam Yok"
+                            R.drawable.coins to "2000", R.drawable.no_ads to "Reklam Yok"
                         ),
                         row2Items = if (isPersian) listOf(
                             R.drawable.hint to "۳×",
@@ -264,8 +255,7 @@ fun StoreScreen(
                             R.drawable.undo to "3x",
                             R.drawable.joker to "3x"
                         ),
-                        onBuy = { onPurchaseSku(MyketBillingConfig.SKU_STARTER_PACK) }
-                    )
+                        onBuy = { onPurchaseSku(MyketBillingConfig.SKU_STARTER_PACK) })
                 }
 
                 // ------------------------------------------
@@ -274,27 +264,21 @@ fun StoreScreen(
                 ComboPackCard(
                     title = if (isPersian) "بسته مگا" else "MEGA PAKET",
                     badge = if (isPersian) "پرقدرت‌ترین" else "EFSANE FIRSAT",
-                    badgeColor = Color(0xFFD97706),
                     price = if (isPersian) "۱۴۹,۰۰۰ تومان" else "₺149.99",
-                    gradientColors = listOf(Color(0xFFFFF6E6), Color(0xFFEADFC8)),
                     packColor = Color(0xFF005D3E),
-                    lightColor = Color(0xFF00A26C),
+                    lightColor = Color(0xFF00BC7D),
                     btnFace = Brush.verticalGradient(
-                        listOf(Color(0xFF00A26C), Color(0xFF008055))
+                        listOf(Color(0xFF00BC7D), Color(0xFF008055))
                     ),
                     row1Items = if (isPersian) listOf(
-                        R.drawable.coins to "۴۰۰۰",
-                        R.drawable.hint to "۴×"
+                        R.drawable.coins to "۴۰۰۰", R.drawable.hint to "۴×"
                     ) else listOf(
-                        R.drawable.coins to "4000",
-                        R.drawable.hint to "4x"
+                        R.drawable.coins to "4000", R.drawable.hint to "4x"
                     ),
                     row2Items = if (isPersian) listOf(
-                        R.drawable.undo to "۴×",
-                        R.drawable.joker to "۴×"
+                        R.drawable.undo to "۴×", R.drawable.joker to "۴×"
                     ) else listOf(
-                        R.drawable.undo to "4x",
-                        R.drawable.joker to "4x"
+                        R.drawable.undo to "4x", R.drawable.joker to "4x"
                     ),
                     onBuy = { onPurchaseSku(MyketBillingConfig.SKU_BUNDLE_MEGA) },
                 )
@@ -306,25 +290,20 @@ fun StoreScreen(
                     title = if (isPersian) "بسته ویژه" else "SÜPER PAKET",
                     badge = if (isPersian) "پرفروش" else "ÇOK SATAN",
                     price = if (isPersian) "۸۹,۰۰۰ تومان" else "₺89.99",
-                    gradientColors = listOf(Color(0xFFD6DDFF), Color(0xFFD6DDFF)),
                     packColor = Color(0xFF7B6300),
                     lightColor = Color(0xFFD5AB00),
                     btnFace = Brush.verticalGradient(
                         listOf(Color(0xFFD5AB00), Color(0xFFA08000))
                     ),
                     row1Items = if (isPersian) listOf(
-                        R.drawable.coins to "۱۰۰۰",
-                        R.drawable.hint to "۲×"
+                        R.drawable.coins to "۱۰۰۰", R.drawable.hint to "۲×"
                     ) else listOf(
-                        R.drawable.coins to "1000",
-                        R.drawable.hint to "2x"
+                        R.drawable.coins to "1000", R.drawable.hint to "2x"
                     ),
                     row2Items = if (isPersian) listOf(
-                        R.drawable.undo to "۲×",
-                        R.drawable.joker to "۲×"
+                        R.drawable.undo to "۲×", R.drawable.joker to "۲×"
                     ) else listOf(
-                        R.drawable.undo to "2x",
-                        R.drawable.joker to "2x"
+                        R.drawable.undo to "2x", R.drawable.joker to "2x"
                     ),
                     onBuy = { onPurchaseSku(MyketBillingConfig.SKU_BUNDLE_SPECIAL) },
                 )
@@ -336,137 +315,123 @@ fun StoreScreen(
                     title = if (isPersian) "بسته اقتصادی" else "AVANTAJ PAKETİ",
                     badge = if (isPersian) "به‌صرفه" else "FIRSAT",
                     price = if (isPersian) "۴۹,۰۰۰ تومان" else "₺49.99",
-                    gradientColors = listOf(Color(0xFFD6DDFF), Color(0xFFD6DDFF)),
-                    packColor = Color(0xFFAA007A),
-                    lightColor = Color(0xFFF300AE),
+                    packColor = Color(0xFFAF007D),
+                    lightColor = Color(0xFFFF42C9),
                     btnFace = Brush.verticalGradient(
-                        listOf(Color(0xFFF300AE), Color(0xFFC80090))
+                        listOf(Color(0xFFFF42C9), Color(0xFFD20096))
                     ),
                     row1Items = if (isPersian) listOf(
-                        R.drawable.coins to "۵۰۰",
-                        R.drawable.hint to "۱×"
+                        R.drawable.coins to "۵۰۰", R.drawable.hint to "۱×"
                     ) else listOf(
-                        R.drawable.coins to "500",
-                        R.drawable.hint to "1x"
+                        R.drawable.coins to "500", R.drawable.hint to "1x"
                     ),
                     row2Items = if (isPersian) listOf(
-                        R.drawable.undo to "۱×",
-                        R.drawable.joker to "۱×"
+                        R.drawable.undo to "۱×", R.drawable.joker to "۱×"
                     ) else listOf(
-                        R.drawable.undo to "1x",
-                        R.drawable.joker to "1x"
+                        R.drawable.undo to "1x", R.drawable.joker to "1x"
                     ),
                     onBuy = { onPurchaseSku(MyketBillingConfig.SKU_BUNDLE_ECONOMY) },
                 )
 
                 // ------------------------------------------
-                // COIN BANNERS SECTION HEADER (CUSTOM COIN ICON)
-                // ------------------------------------------
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(top = 8.dp)
-                ) {
-                    CoinIcon(size = 28.dp)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = LocaleHelper.coinPacksTitle(isPersian),
-                        color = AccentGold,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Black,
-                        fontFamily = nunitoFont
-                    )
-                }
-
-                // ------------------------------------------
                 // 1st Coin Banner: FREE COINS (PLAY ICON INSIDE BUTTON)
                 // ------------------------------------------
+                val freeCoinPackColor = Color(0xFFAE0000)
+
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(105.dp)
-                        .shadow(10.dp, RoundedCornerShape(20.dp))
-                        .clip(RoundedCornerShape(20.dp))
+                        .shadow(10.dp, outer)
+                        .clip(outer)
+                        .background(freeCoinPackColor)
+                        .candyGloss(corner = 24.dp, inset = 8.dp)   // گلاس روی قاب، پشت پنل
+                        .padding(12.dp)                                // قاب کلفت‌تر تا گلاس دیده بشه
+                        .clip(inner)
                         .background(
-                            Color(0xFFCC0000)
+                            Brush.verticalGradient(
+                                listOf(Color(0xFFFFF6E6), Color(0xFFEADFC8))
+                            )
                         )
-                        .border(1.5.dp, Color(0xFFCC0000), RoundedCornerShape(20.dp))
-                        .padding(14.dp)
                 ) {
                     Row(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                            //.defaultMinSize(minHeight = 140.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row(
-                            modifier = Modifier.weight(1f),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.tv),
-                                contentDescription = "TV Ad",
-                                modifier = Modifier.size(44.dp)
-                            )
-                            Spacer(modifier = Modifier.width(10.dp))
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = LocaleHelper.freeCoinsTitle(isPersian),
-                                    color = Color.White,
-                                    fontSize = 17.sp,
-                                    fontWeight = FontWeight.Black,
-                                    fontFamily = nunitoFont,
-                                    maxLines = 1
-                                )
-                                Text(
-                                    text = LocaleHelper.freeCoinsDesc(isPersian),
-                                    color = Color(0xFFDBEAFE),
-                                    fontSize = 11.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    lineHeight = 15.sp,
-                                    maxLines = 2
-                                )
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.width(10.dp))
-
                         Box(
                             modifier = Modifier
-                                .shadow(6.dp, RoundedCornerShape(14.dp))
-                                .clip(RoundedCornerShape(14.dp))
-                                .background(
-                                    Brush.verticalGradient(
-                                        listOf(
-                                            Color(0xFFA3E635),
-                                            Color(0xFF65A30D),
-                                            Color(0xFF4D7C0F)
-                                        )
-                                    )
-                                )
-                                .candyGloss(corner = 14.dp, inset = 2.dp)
-                                .specularGlint()
-                                .border(1.dp, Color(0x802D5A0E), RoundedCornerShape(14.dp))
-                                .clickable { onWatchAdForCoins() }
-                                .padding(horizontal = 14.dp, vertical = 10.dp),
-                            contentAlignment = Alignment.Center
+                                .weight(2.1f)
+                                .padding(start = 8.dp, top = 8.dp, bottom = 8.dp, end = 4.dp)
+                                .clip(RoundedCornerShape(16.dp))
+                                .padding(vertical = 6.dp)
                         ) {
-                            val btnOutline = Color(0x802D5A0E)
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Image(
-                                    painter = painterResource(id = R.drawable.play),
-                                    contentDescription = "Watch Ad",
-                                    modifier = Modifier.size(20.dp)
-                                )
-                                Spacer(modifier = Modifier.width(6.dp))
-                                OutlinedText(
-                                    text = if (isPersian) "+۵۰" else "+50",
-                                    textColor = Color.White,
-                                    outlineColor = btnOutline,
-                                    outlineWidth = 6f,
-                                    fontSize = 15.sp,
-                                    fontWeight = FontWeight.Black,
-                                    shadowColor = btnOutline.copy(alpha = 0.6f),
-                                    shadowOffsetY = 3f
-                                )
+                            Column(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.Start
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.padding(4.dp)
+                                ) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.coins),
+                                        contentDescription = "Coins Stack",
+                                        modifier = Modifier.size(72.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(10.dp))
+                                    Column {
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            OutlinedText(
+                                                text = if (isPersian) "۵۰" else "50",
+                                                textColor = Color(0xFFFF1616),
+                                                outlineColor = freeCoinPackColor,
+                                                fontSize = 24.sp,
+                                                fontWeight = FontWeight.Black,
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        Column(
+                            modifier = Modifier
+                                .weight(1.1f)
+                                .padding(vertical = 4.dp),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            CandyButton(
+                                onClick = { onWatchAdForCoins() },
+                                modifier = Modifier
+                                    .widthIn(max = 280.dp)
+                                    .fillMaxWidth(0.82f)
+                                    .heightIn(min = 50.dp),
+                                corner = 14.dp,
+                                frame = 4.dp,
+                                elevation = 6.dp,
+                                face = Brush.verticalGradient(
+                                    listOf(Color(0xFFFF1616), Color(0xFFC80000))
+                                ),
+                                back = freeCoinPackColor,
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.play),
+                                        contentDescription = "Watch Ad",
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    OutlinedText(
+                                        text = if (isPersian) "رایگان" else "Bedava",
+                                        textColor = Color.White,
+                                        outlineColor = freeCoinPackColor.darker(0.5f),
+                                        outlineWidth = 6f,
+                                        fontSize = 15.sp,
+                                        shadowColor = freeCoinPackColor.copy(alpha = 0.6f),
+                                        shadowOffsetY = 3f
+                                    )
+                                }
                             }
                         }
                     }
@@ -503,11 +468,10 @@ fun StoreScreen(
                         .clip(RoundedCornerShape(12.dp))
                         .clickable { onRestorePurchases() }
                         .padding(horizontal = 16.dp, vertical = 8.dp),
-                    contentAlignment = Alignment.Center
-                ) {
+                    contentAlignment = Alignment.Center) {
                     Text(
                         text = if (isPersian) "🔄 بازیابی خریدهای قبلی" else "🔄 Satın Alımları Geri Yükle",
-                        color = Color.White.copy(alpha = 0.75f),
+                        color = DarkMain,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.SemiBold,
                         fontFamily = nunitoFont
@@ -523,7 +487,6 @@ fun StoreScreen(
 
 @Composable
 private fun BundleItemChip(iconRes: Int, text: String, textColor: Color, outColor: Color) {
-    val nunitoFont = rememberNunitoFont()
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -547,9 +510,8 @@ private fun BundleItemChip(iconRes: Int, text: String, textColor: Color, outColo
 private fun ComboPackCard(
     title: String,
     badge: String? = null,
-    badgeColor: Color = Color(0xFFDC2626),
+    badgeColor: Color = Color(0xFFC80000),
     price: String,
-    gradientColors: List<Color>,
     packColor: Color,
     lightColor: Color,
     btnFace: Brush,
@@ -568,7 +530,7 @@ private fun ComboPackCard(
                 .shadow(10.dp, outer)
                 .clip(outer)
                 .background(packColor)
-                .candyGloss(corner = 24.dp, inset = 6.5.dp)   // گلاس روی قاب، پشت پنل
+                .candyGloss(corner = 24.dp, inset = 8.dp)   // گلاس روی قاب، پشت پنل
                 .padding(12.dp)                                // قاب کلفت‌تر تا گلاس دیده بشه
                 .clip(inner)
                 .background(
@@ -592,8 +554,7 @@ private fun ComboPackCard(
                         .padding(vertical = 6.dp)
                 ) {
                     Column(
-                        modifier = Modifier
-                            .fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth(),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
@@ -623,7 +584,8 @@ private fun ComboPackCard(
                         ) {
                             row2Items.forEach { (iconRes, text) ->
                                 BundleItemChip(
-                                    iconRes = iconRes, text = text,
+                                    iconRes = iconRes,
+                                    text = text,
                                     textColor = lightColor,
                                     outColor = packColor
                                 )
@@ -664,16 +626,14 @@ private fun ComboPackCard(
                         elevation = 6.dp,
                         face = btnFace,
                         back = packColor,
-                        outlineColor = Color(0xFF4D7C0F).darker(0.8f),
                     ) {
-                        val priceOutline = Color(0x802D5A0E)        // سبز تیره
                         OutlinedText(
                             text = price,
                             textColor = Color.White,
                             outlineColor = packColor.darker(0.5f),
                             outlineWidth = 6f,
                             fontSize = 15.sp,
-                            shadowColor = priceOutline.copy(alpha = 0.6f),
+                            shadowColor = packColor.copy(alpha = 0.6f),
                             shadowOffsetY = 3f
                         )
                     }
@@ -691,13 +651,16 @@ private fun ComboPackCard(
                     .background(badgeColor)
                     .border(1.5.dp, Color.White, RoundedCornerShape(10.dp))
                     .padding(horizontal = 12.dp, vertical = 4.dp)
+                    .fillMaxWidth(0.2f),
+                contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = badge,
                     color = Color.White,
-                    fontSize = 11.sp,
+                    fontSize = 13.sp,
                     fontWeight = FontWeight.Black,
-                    fontFamily = nunitoFont
+                    fontFamily = nunitoFont,
+                    textAlign = TextAlign.Center
                 )
             }
         }
@@ -709,7 +672,7 @@ private fun CoinPackRow(
     amountText: String,
     priceText: String,
     badgeText: String? = null,
-    badgeColor: Color = Color(0xFFDC2626),
+    badgeColor: Color = Color(0xFFC80000),
     onBuy: () -> Unit,
 ) {
 
@@ -725,7 +688,7 @@ private fun CoinPackRow(
                 .shadow(10.dp, outer)
                 .clip(outer)
                 .background(packColor)
-                .candyGloss(corner = 24.dp, inset = 6.5.dp)   // گلاس روی قاب، پشت پنل
+                .candyGloss(corner = 24.dp, inset = 8.dp)   // گلاس روی قاب، پشت پنل
                 .padding(11.dp)
                 .clip(inner)
                 .background(
@@ -741,20 +704,19 @@ private fun CoinPackRow(
             ) {
                 Box(
                     modifier = Modifier
-                        .weight(1.1f)
+                        .weight(2.1f)
                         .padding(start = 8.dp, top = 8.dp, bottom = 8.dp, end = 4.dp)
                         .clip(RoundedCornerShape(16.dp))
                         .padding(vertical = 6.dp)
                 ) {
                     Column(
-                        modifier = Modifier
-                            .fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth(),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.Start
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding( 4.dp)
+                            modifier = Modifier.padding(4.dp)
                         ) {
                             Image(
                                 painter = painterResource(id = R.drawable.coins),
@@ -790,15 +752,13 @@ private fun CoinPackRow(
                         modifier = Modifier
                             .widthIn(max = 280.dp)
                             .fillMaxWidth(0.82f)
-                            .heightIn(min = 50.dp)
-                            .padding(10.dp),
+                            .heightIn(min = 50.dp),
                         corner = 14.dp,
                         frame = 4.dp,
                         elevation = 6.dp,
-                        face =
-                            Brush.verticalGradient(
-                                listOf(Color(0xFF99DAFF), Color(0xFF42BAFF))
-                            ),
+                        face = Brush.verticalGradient(
+                            listOf(Color(0xFF99DAFF), Color(0xFF42BAFF))
+                        ),
                         back = packColor,
                         outlineColor = packColor,
                     ) {
@@ -807,11 +767,8 @@ private fun CoinPackRow(
                             textColor = Color.White,
                             outlineColor = packColor,
                             outlineWidth = 6f,
-                            fontSize = 19.sp,
+                            fontSize = 15.sp,
                             fontWeight = FontWeight.Black,
-                            //shadowColor = Color(0xFFF59E0B).darker().copy(0.6f),
-                            //shadowOffsetY = 3f
-                            //fontFamily = nunitoFont
                         )
                     }
                 }
@@ -829,14 +786,16 @@ private fun CoinPackRow(
                     .background(badgeColor)
                     .border(1.5.dp, Color.White, RoundedCornerShape(10.dp))
                     .padding(horizontal = 12.dp, vertical = 4.dp)
+                    .fillMaxWidth(0.2f),
+                contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = badgeText,
                     color = Color.White,
-                    fontSize = 11.sp,
+                    fontSize = 13.sp,
                     fontWeight = FontWeight.Black,
-
-                    )
+                    textAlign = TextAlign.Center
+                )
             }
         }
     }

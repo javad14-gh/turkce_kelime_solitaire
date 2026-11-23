@@ -119,6 +119,8 @@ import com.turkce.kelimesolitaire.presentation.ui.components.ThemeDialog
 import com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon
 import com.turkce.kelimesolitaire.presentation.ui.components.MenuRedBack
 import com.turkce.kelimesolitaire.presentation.ui.components.TvIcon
+import com.turkce.kelimesolitaire.presentation.ui.theme.DarkMain
+import com.turkce.kelimesolitaire.presentation.ui.theme.PopupTextSecondary
 
 
 private fun findBestFoundationSlot(
@@ -1377,8 +1379,6 @@ fun GameScreen(
         if (showOutofMovesDialog) {
             val extraMoves = GameViewModel.EXTRA_MOVES_FOR_COINS
             val cost = GameViewModel.EXTRA_MOVES_COIN_COST
-            val goldOutline = Color(0xFF78350F)
-            val blueOutline = Color(0xFF0C4A6E)
 
             PopupFrame(
                 title = LocaleHelper.outOfMovesTitle(isPersian),
@@ -1386,7 +1386,7 @@ fun GameScreen(
             ) {
                 Text(
                     text = LocaleHelper.outOfMovesPrompt(isPersian),
-                    color = PopupTextPrimary,
+                    color = PopupTextSecondary,
                     fontSize = 17.sp,
                     fontWeight = FontWeight.Bold,
                     fontFamily = nunitoFont,
@@ -1395,67 +1395,33 @@ fun GameScreen(
                 )
 
                 Spacer(modifier = Modifier.height(20.dp))
-
-                CandyButton(
+                MenuWideButton(
+                  text =   if (isPersian)
+                      "${LocaleHelper.formatNumber(cost, true)} سکه"
+                  else "$cost Altın (+$extraMoves Hamle)",
+                    isPersian = isPersian,
                     onClick = onBuyExtraMoves,
-                    modifier = Modifier,
-                    face = Brush.verticalGradient(listOf(Color(0xFFFBBF24), Color(0xFFF59E0B))),
-                    back = Color(0xFFD97706),
-                    outlineColor = goldOutline,
-                    corner = 16.dp
-                ) {
-                    IconLabelRow(
-                        isPersian = isPersian,
-                        icon = { CoinIcon(size = 30.dp) },
-                        label = {
-                            PopupButtonLabel(
-                                text = if (isPersian)
-                                    "${LocaleHelper.formatNumber(cost, true)} سکه (+${LocaleHelper.formatNumber(extraMoves, true)} حرکت)"
-                                else "$cost Altın (+$extraMoves Hamle)",
-                                outline = goldOutline,
-                                fontSize = 18.sp
-                            )
-                        }
-                    )
-                }
-
+                    icon = {MenuIcon(R.drawable.coin,"coin")}
+                )
                 Spacer(modifier = Modifier.height(10.dp))
-
-                CandyButton(
+                MenuWideButton(
+                    text = if (isPersian)
+                        "ویدیو"
+                    else "Video İzle",
+                    isPersian = isPersian,
                     onClick = onWatchAdForMoves,
-                    modifier = Modifier,
-                    face = Brush.verticalGradient(listOf(Color(0xFF38BDF8), Color(0xFF0284C7))),
-                    back = Color(0xFF0369A1),
-                    outlineColor = blueOutline,
-                    corner = 16.dp
-                ) {
-                    IconLabelRow(
-                        isPersian = isPersian,
-                        icon = { TvIcon(size = 26.dp) },
-                        label = {
-                            PopupButtonLabel(
-                                text = if (isPersian)
-                                    "ویدیو (+${LocaleHelper.formatNumber(GameViewModel.EXTRA_MOVES_FOR_AD, true)} حرکت)"
-                                else "Video İzle (+${GameViewModel.EXTRA_MOVES_FOR_AD} Hamle)",
-                                outline = blueOutline,
-                                fontSize = 17.sp
-                            )
-                        }
-                    )
-                }
-
+                    icon = {MenuIcon(R.drawable.tv,"tv")}
+                )
                 Spacer(modifier = Modifier.height(10.dp))
-
-                CandyButton(
+                MenuWideButton(
+                    text = LocaleHelper.giveUp(isPersian),
+                    isPersian = isPersian,
                     onClick = onAcceptDefeat,
-                    modifier = Modifier,
-                    face = Brush.verticalGradient(listOf(Color(0xFFF87171), Color(0xFFDC2626))),
-                    back = Color(0xFFB91C1C),
-                    outlineColor = MenuRedOutline,
-                    corner = 16.dp
-                ) {
-                    PopupButtonLabel(LocaleHelper.giveUp(isPersian), MenuRedOutline, 18.sp)
-                }
+                    back = MenuRedBack,
+                    face = MenuRedBrush,
+                    outline = MenuRedBack,
+                    icon = { MenuIcon(R.drawable.exit, "Main Menu") }
+                )
             }
         }
 
@@ -1504,7 +1470,7 @@ fun GameScreen(
                     },
                     face = MenuRedBrush,
                     back = MenuRedBack,
-                    outline = MenuRedOutline,
+                    outline = MenuRedBack,
                     icon = { MenuIcon(R.drawable.exit, "Exit to Menu") }
                 )
             }

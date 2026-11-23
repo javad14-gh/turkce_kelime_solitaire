@@ -66,6 +66,8 @@ import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkMain
 import com.turkce.kelimesolitaire.presentation.util.GameSettingsManager
 import com.turkce.kelimesolitaire.presentation.ui.components.CoinCounter
+import com.turkce.kelimesolitaire.presentation.ui.components.MenuRedBack
+import com.turkce.kelimesolitaire.presentation.ui.components.MenuRedBrush
 import com.turkce.kelimesolitaire.presentation.ui.components.SettingsDialog
 import com.turkce.kelimesolitaire.presentation.ui.components.TopBarIconButton
 
@@ -241,7 +243,7 @@ fun MainMenuScreen(
                     val buttonShape = RoundedCornerShape(18.dp)
                     val buttonOutline = when (difficulty) {
                         "Zor" -> Color(0xFFBD4900)
-                        "CokZor" -> Color(0xFFC50000)
+                        "CokZor" -> MenuRedBack
                         else -> Color(0xFF518F00)
                     }
 
@@ -262,17 +264,12 @@ fun MainMenuScreen(
                                         )
                                     )
 
-                                    "CokZor" -> Brush.verticalGradient(
-                                        listOf(
-                                            Color(0xFFFF1D1D),
-                                            Color(0xFFF00000)
-                                        )
-                                    )
+                                    "CokZor" -> MenuRedBrush
 
                                     else -> Brush.verticalGradient(
                                         listOf(
                                             Color(0xFF95FF0A),
-                                            Color(0xFF74CC00)
+                                            Color(0xFF61AA00)
                                         )
                                     )
                                 }

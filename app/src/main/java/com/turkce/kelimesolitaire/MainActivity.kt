@@ -84,8 +84,7 @@ class MainActivity : ComponentActivity() {
                             is ScreenState.Splash -> Color.Black
                             else -> mainBg
                         }
-                        val darkBackground = state.screenState is ScreenState.Store ||
-                                state.screenState is ScreenState.Splash
+                        val darkBackground = state.screenState is ScreenState.Splash
 
                         SideEffect {
                             window.statusBarColor = barColor.toArgb()

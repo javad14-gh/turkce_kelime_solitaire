@@ -7,9 +7,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -52,7 +54,13 @@ fun RestartLevelDialog(
     val isPersian = remember(context) { LocaleHelper.isPersian(context) }
     val appFont = rememberAppFont()
     val canAfford = coins >= cost
-    var remainingMs by remember { mutableStateOf(GameSettingsManager.getFreeRestartRemainingMs(context)) }
+    var remainingMs by remember {
+        mutableStateOf(
+            GameSettingsManager.getFreeRestartRemainingMs(
+                context
+            )
+        )
+    }
     LaunchedEffect(Unit) {
         while (remainingMs > 0) {
             delay(1000)
@@ -61,34 +69,22 @@ fun RestartLevelDialog(
     }
     val isFree = isFirstFree || remainingMs <= 0
 
-
-
-    val greenFace = Brush.verticalGradient(listOf(Color(0xFFA3E635), Color(0xFF65A30D)))
-    val greenback = Color(0xFF4D7C0F)
-    val greenOutline = Color(0x802D5A0E)
-    val blueFace = Brush.verticalGradient(listOf(Color(0xFF38BDF8), Color(0xFF0284C7)))
-    val blueBack = Color(0xFF0284C7).darker(0.5f)
-    val blueOutline = Color(0xFF0284C7).darker(0.35f)
-    val greyFace = Brush.verticalGradient(listOf(Color(0xFF94A3B8), Color(0xFF64748B)))
-    val greyBack = Color(0xFF475569)
-    val greyOutline = Color(0xFF475569).darker(0.35f)
-
     PopupFrame(
         title = LocaleHelper.restartDialogTitle(isPersian),
         onDismiss = onDismiss,
         titleSize = if (isPersian) 26.sp else 21.sp
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.restart),
-            contentDescription = "Restart Level",
-            modifier = Modifier.size(52.dp)
-        )
-
-        Spacer(modifier = Modifier.height(10.dp))
-
+        if(!isFree){
+            Text(
+                text = LocaleHelper.restartNextFreeIn(formatMmSs(remainingMs), isPersian),
+                color = MenuRedBack,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = appFont
+            )
+        }
+        Spacer(modifier = Modifier.height(18.dp))
         Text(
-            //text = if (isFree) LocaleHelper.restartFreePrompt(isPersian)
-            //else LocaleHelper.restartDialogPrompt(isPersian),
             text = when {
                 isFirstFree -> LocaleHelper.restartFreePrompt(isPersian)
                 isFree -> LocaleHelper.restartHourlyPrompt(isPersian)
@@ -105,119 +101,54 @@ fun RestartLevelDialog(
         Spacer(modifier = Modifier.height(18.dp))
 
         if (isFree) {
-            CandyButton(
+            MenuWideButton(
+                text = LocaleHelper.restartFreeBtn(isPersian),
+                isPersian = isPersian,
                 onClick = {
                     GameSettingsManager.playButtonClickSound(context)
                     onFreeRestart()
                 },
-                modifier = Modifier,
-                face = greenFace,
-                back = greenback,
-                outlineColor = greenOutline
-            ) {
-                IconLabelRow(
-                    isPersian = isPersian,
-                    icon = {
-                        Image(
-                            painter = painterResource(id = R.drawable.restart),
-                            contentDescription = null,
-                            modifier = Modifier.size(28.dp)
-                        )
-                    },
-                    label = { PopupButtonLabel(LocaleHelper.restartFreeBtn(isPersian), greenOutline) }
-                )
-            }
-
+                icon = { MenuIcon(R.drawable.restart, "restart") }
+            )
             Spacer(modifier = Modifier.height(12.dp))
-
-            CandyButton(
+            MenuWideButton(
+                text = LocaleHelper.continueBtn(isPersian),
+                isPersian = isPersian,
                 onClick = {
                     GameSettingsManager.playButtonClickSound(context)
                     onDismiss()
                 },
-                modifier = Modifier,
-                face = blueFace,
-                back = blueBack,
-                outlineColor = blueOutline
-            ) {
-                PopupButtonLabel(LocaleHelper.continueBtn(isPersian), blueOutline)
-            }
-        } else {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(PopupButtonBg)
-                    .padding(horizontal = 14.dp, vertical = 6.dp)
-            ) {
-                CoinIcon(size = 20.dp)
-                Spacer(modifier = Modifier.width(6.dp))
-                Text(
-                    text = "${LocaleHelper.formatNumber(coins, isPersian)} " +
-                            if (isPersian) "سکه موجود" else "Mevcut Altın",
-                    color = PopupTextPrimary,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = appFont
-                )
-            }
+                icon = { MenuIcon(R.drawable.undo, "return") }
+            )
 
-            Spacer(modifier = Modifier.height(14.dp))
+        } else {
 
             val coinLabel = if (isPersian) "پرداخت ${LocaleHelper.formatNumber(cost, true)} سکه"
             else "$cost Altın Öde"
-            Text(
-                text = LocaleHelper.restartNextFreeIn(formatMmSs(remainingMs), isPersian),
-                color = PopupTextSecondary,
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Bold,
-                fontFamily = appFont
-            )
             Spacer(modifier = Modifier.height(10.dp))
-            CandyButton(
+            MenuWideButton(
+                text = coinLabel,
+                isPersian = isPersian,
                 onClick = {
                     GameSettingsManager.playButtonClickSound(context)
                     onRestartWithCoins()   // اگر سکه کم باشد ViewModel خودش پیام می‌دهد
                 },
-                modifier = Modifier,
-                face = if (canAfford) greenFace else greyFace,
-                back = if (canAfford) greenback else greyBack,
-                outlineColor = if (canAfford) greenOutline else greyOutline
-            ) {
-                IconLabelRow(
-                    isPersian = isPersian,
-                    icon = { CoinIcon(size = 26.dp) },
-                    label = { PopupButtonLabel(coinLabel, if (canAfford) greenOutline else greyOutline) }
-                )
-            }
-
+                icon = {MenuIcon(R.drawable.coin,"coin")}
+            )
             Spacer(modifier = Modifier.height(12.dp))
-
-            CandyButton(
+            MenuWideButton(
+                text = if (isPersian) "تماشای ویدیو" else "Video İzle",
+                isPersian = isPersian,
                 onClick = {
                     GameSettingsManager.playButtonClickSound(context)
                     onRestartWithAd()
                 },
-                modifier = Modifier,
-                face = blueFace,
-                back = blueBack,
-                outlineColor = blueOutline
-            ) {
-                IconLabelRow(
-                    isPersian = isPersian,
-                    icon = { TvIcon(size = 26.dp) },
-                    label = {
-                        PopupButtonLabel(
-                            if (isPersian) "تماشای ویدیو (رایگان)" else "Video İzle (Ücretsiz)",
-                            blueOutline
-                        )
-                    }
-                )
-            }
+                icon = {MenuIcon(R.drawable.tv,"tv")}
+            )
         }
     }
 }
+
 private fun formatMmSs(ms: Long): String {
     val total = ((ms + 999) / 1000).toInt()
     return String.format(java.util.Locale.US, "%02d:%02d", total / 60, total % 60)

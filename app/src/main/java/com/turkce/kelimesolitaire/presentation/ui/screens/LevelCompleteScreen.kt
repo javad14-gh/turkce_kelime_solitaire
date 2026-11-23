@@ -65,6 +65,8 @@ import com.turkce.kelimesolitaire.R
 import com.turkce.kelimesolitaire.presentation.ui.components.AdBannerPlaceholder
 import com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon
 import com.turkce.kelimesolitaire.presentation.ui.components.ConfettiPartyPopper
+import com.turkce.kelimesolitaire.presentation.ui.components.MenuIcon
+import com.turkce.kelimesolitaire.presentation.ui.components.MenuWideButton
 import com.turkce.kelimesolitaire.presentation.ui.components.OutlinedText
 import com.turkce.kelimesolitaire.presentation.ui.components.candyGloss
 import com.turkce.kelimesolitaire.presentation.ui.components.specularGlint
@@ -562,71 +564,83 @@ fun LevelCompleteScreen(
                     // 3D Candy Gloss Golden Amber Button
                     val doubleShape = RoundedCornerShape(18.dp)
                     val doubleOutline = Color(0xFF78350F)
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .shadow(10.dp, doubleShape)
-                            .clip(doubleShape)
-                            .background(
-                                Brush.verticalGradient(
-                                    listOf(
-                                        Color(0xFFFDE047),
-                                        Color(0xFFF59E0B),
-                                        Color(0xFFD97706)
-                                    )
-                                )
-                            )
-                            .candyGloss(corner = 18.dp, inset = 2.dp)
-                            .specularGlint(offsetX = 14.dp, offsetY = 6.dp, scale = 1.3f)
-                            .border(1.dp, doubleOutline, doubleShape)
-                            .clickable(
-                                enabled = !isActionTriggered,
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = null
-                            ) {
-                                if (!isActionTriggered) {
-                                    isActionTriggered = true
-                                    GameSettingsManager.playButtonClickSound(context)
-                                    onDoubleRewardClicked()
-                                }
+                    MenuWideButton(
+                        text = LocaleHelper.formatNumber(effectiveDoubleBonus, isPersian),
+                        isPersian = isPersian,
+                        onClick = {
+                            if (!isActionTriggered) {
+                                isActionTriggered = true
+                                GameSettingsManager.playButtonClickSound(context)
+                                onDoubleRewardClicked()
                             }
-                            .padding(vertical = 12.dp, horizontal = 14.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            val text = LocaleHelper.formatNumber(effectiveDoubleBonus, isPersian)
-                            if (isPersian) {
-                                OutlinedText(
-                                    text = text,
-                                    textColor = Color.White,
-                                    outlineColor = doubleOutline,
-                                    outlineWidth = 8f,
-                                    fontSize = 28.sp,
-                                    fontWeight = FontWeight.Black,
-                                    shadowColor = doubleOutline.copy(alpha = 0.6f),
-                                    shadowOffsetY = 3f
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                CoinIcon(size = 46.dp)
-                            } else {
-                                CoinIcon(size = 46.dp)
-                                Spacer(modifier = Modifier.width(8.dp))
-                                OutlinedText(
-                                    text = text,
-                                    textColor = Color.White,
-                                    outlineColor = doubleOutline,
-                                    outlineWidth = 8f,
-                                    fontSize = 28.sp,
-                                    fontWeight = FontWeight.Black,
-                                    shadowColor = doubleOutline.copy(alpha = 0.6f),
-                                    shadowOffsetY = 3f
-                                )
-                            }
-                        }
-                    }
+                        },
+                        icon = { MenuIcon(R.drawable.coin, "coin") }
+                    )
+//                    Box(
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .shadow(10.dp, doubleShape)
+//                            .clip(doubleShape)
+//                            .background(
+//                                Brush.verticalGradient(
+//                                    listOf(
+//                                        Color(0xFFFDE047),
+//                                        Color(0xFFF59E0B),
+//                                        Color(0xFFD97706)
+//                                    )
+//                                )
+//                            )
+//                            .candyGloss(corner = 18.dp, inset = 2.dp)
+//                            .specularGlint(offsetX = 14.dp, offsetY = 6.dp, scale = 1.3f)
+//                            .border(1.dp, doubleOutline, doubleShape)
+//                            .clickable(
+//                                enabled = !isActionTriggered,
+//                                interactionSource = remember { MutableInteractionSource() },
+//                                indication = null
+//                            ) {
+//                                if (!isActionTriggered) {
+//                                    isActionTriggered = true
+//                                    GameSettingsManager.playButtonClickSound(context)
+//                                    onDoubleRewardClicked()
+//                                }
+//                            }
+//                            .padding(vertical = 12.dp, horizontal = 14.dp),
+//                        contentAlignment = Alignment.Center
+//                    ) {
+//                        Row(
+//                            verticalAlignment = Alignment.CenterVertically,
+//                            horizontalArrangement = Arrangement.Center
+//                        ) {
+//                            val text = LocaleHelper.formatNumber(effectiveDoubleBonus, isPersian)
+//                            if (isPersian) {
+//                                OutlinedText(
+//                                    text = text,
+//                                    textColor = Color.White,
+//                                    outlineColor = doubleOutline,
+//                                    outlineWidth = 8f,
+//                                    fontSize = 28.sp,
+//                                    fontWeight = FontWeight.Black,
+//                                    shadowColor = doubleOutline.copy(alpha = 0.6f),
+//                                    shadowOffsetY = 3f
+//                                )
+//                                Spacer(modifier = Modifier.width(8.dp))
+//                                CoinIcon(size = 46.dp)
+//                            } else {
+//                                CoinIcon(size = 46.dp)
+//                                Spacer(modifier = Modifier.width(8.dp))
+//                                OutlinedText(
+//                                    text = text,
+//                                    textColor = Color.White,
+//                                    outlineColor = doubleOutline,
+//                                    outlineWidth = 8f,
+//                                    fontSize = 28.sp,
+//                                    fontWeight = FontWeight.Black,
+//                                    shadowColor = doubleOutline.copy(alpha = 0.6f),
+//                                    shadowOffsetY = 3f
+//                                )
+//                            }
+//                        }
+//                    }
 
                     // Video Ad Icon Badge overlapping on the edge (Enlarged)
                     Box(
@@ -662,6 +676,7 @@ fun LevelCompleteScreen(
                 Spacer(modifier = Modifier.height(18.dp))
 
                 // 2. Normal Reward Button (1X) - Candy style
+
                 val normalShape = RoundedCornerShape(18.dp)
                 val normalOutline = Color(0xFF334155)
                 Box(
