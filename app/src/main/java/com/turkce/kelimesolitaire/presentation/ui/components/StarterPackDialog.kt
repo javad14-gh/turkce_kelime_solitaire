@@ -16,12 +16,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -32,19 +34,24 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.turkce.kelimesolitaire.R
 import com.turkce.kelimesolitaire.data.billing.MyketBillingConfig
+import com.turkce.kelimesolitaire.presentation.ui.theme.DarkMain
 import com.turkce.kelimesolitaire.presentation.ui.theme.MenuBtnMid
 import com.turkce.kelimesolitaire.presentation.ui.theme.MenuBtnOutline
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupButtonBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupTextPrimary
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupTextSecondary
+import com.turkce.kelimesolitaire.presentation.ui.theme.lighten
 import com.turkce.kelimesolitaire.presentation.util.GameSettingsManager
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 import java.util.Locale
@@ -68,113 +75,149 @@ fun StarterPackDialog(
         MyketBillingConfig.ALL_PRODUCTS
             .first { it.sku == MyketBillingConfig.SKU_STARTER_PACK }.priceTomans
     }
-    fun toman(v: Int) = LocaleHelper.formatNumber(String.format(Locale.US, "%,d", v), true) + " تومان"
+
+    fun toman(v: Int) =
+        LocaleHelper.formatNumber(String.format(Locale.US, "%,d", v), true) + " تومان"
+
     val priceText = if (isPersian) toman(priceTomans) else STARTER_TRY_PRICE
-    val oldPriceText = if (isPersian) toman(STARTER_FAKE_OLD_PRICE_TOMANS) else STARTER_TRY_OLD_PRICE
+    val oldPriceText =
+        if (isPersian) toman(STARTER_FAKE_OLD_PRICE_TOMANS) else STARTER_TRY_OLD_PRICE
 
     val pulse = rememberInfiniteTransition(label = "starterPulse")
     val buttonScale by pulse.animateFloat(
         initialValue = 1f,
         targetValue = 1.035f,
-        animationSpec = infiniteRepeatable(tween(850, easing = FastOutSlowInEasing), RepeatMode.Reverse),
+        animationSpec = infiniteRepeatable(
+            tween(850, easing = FastOutSlowInEasing),
+            RepeatMode.Reverse
+        ),
         label = "starterPulseScale"
     )
 
-    PopupFrame(
-        title = if (isPersian) "بسته شروع" else "BAŞLANGIÇ PAKETİ",
-        onDismiss = onDismiss,
-        titleSize = if (isPersian) 28.sp else 22.sp
-    ) {
-        // Discount ribbon
-        Box(
-            modifier = Modifier
-                .shadow(6.dp, RoundedCornerShape(12.dp))
-                .clip(RoundedCornerShape(12.dp))
-                .background(Color(0xFFDC2626))
-                .border(1.5.dp, Color.White, RoundedCornerShape(12.dp))
-                .padding(horizontal = 16.dp, vertical = 5.dp)
+
+        PopupFrame(
+            title = if (isPersian) "بسته شروع" else "BAŞLANGIÇ PAKETİ",
+            onDismiss = onDismiss,
+            titleSize = if (isPersian) 28.sp else 22.sp
         ) {
+            // Discount ribbon
+            CompositionLocalProvider(
+                LocalLayoutDirection provides if (isPersian)
+                    LayoutDirection.Rtl
+                else
+                    LayoutDirection.Ltr
+            ) {
+            Box(
+                modifier = Modifier
+                    .shadow(6.dp, RoundedCornerShape(12.dp))
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color(0xFFDC2626))
+                    .border(1.5.dp, Color.White, RoundedCornerShape(12.dp))
+                    .padding(horizontal = 16.dp, vertical = 5.dp)
+            ) {
+                Text(
+                    text = if (isPersian)
+                        "٪${
+                            LocaleHelper.formatNumber(
+                                STARTER_DISCOUNT_PERCENT,
+                                true
+                            )
+                        } تخفیف ویژه (فقط یک‌بار)"
+                    else "%$STARTER_DISCOUNT_PERCENT ÖZEL İNDİRİM (TEK SEFERLİK)",
+                    color = Color.White,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Black,
+                    fontFamily = font
+                )
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
             Text(
-                text = if (isPersian)
-                    "٪${LocaleHelper.formatNumber(STARTER_DISCOUNT_PERCENT, true)} تخفیف ویژه (فقط یک‌بار)"
-                else "%$STARTER_DISCOUNT_PERCENT ÖZEL İNDİRİM (TEK SEFERLİK)",
-                color = Color.White,
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Black,
+                text = if (isPersian) "با این بسته مراحل را راحت‌تر پشت سر بگذار!"
+                else "Bu paketle seviyeleri çok daha kolay tamamlayın!",
+                color = PopupTextSecondary,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = font,
+                textAlign = TextAlign.Center,
+                lineHeight = 18.sp
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                StarterItemRow(R.drawable.coins, if (isPersian) "۲۰۰۰ سکه" else "2000 Altın", null)
+                StarterItemRow(
+                    R.drawable.no_ads,
+                    if (isPersian) "حذف دائمی تبلیغات" else "Tüm Reklamları Kaldır",
+                    if (isPersian) "دائمی" else "Kalıcı",
+                    highlight = true
+                )
+                StarterItemRow(
+                    R.drawable.hint,
+                    if (isPersian) "کارت راهنما" else "İpucu Kartı",
+                    LocaleHelper.formatNumber("3×", isPersian)
+                )
+                StarterItemRow(
+                    R.drawable.undo,
+                    if (isPersian) "بازگشت حرکت" else "Geri Alma Kartı",
+                    LocaleHelper.formatNumber("3×", isPersian)
+                )
+                StarterItemRow(
+                    R.drawable.joker,
+                    if (isPersian) "کارت جوکر" else "Joker Kartı",
+                    LocaleHelper.formatNumber("3×", isPersian)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            Text(
+                text = (if (isPersian) "ارزش واقعی: " else "Değeri: ") + oldPriceText,
+                color = PopupTextSecondary.copy(alpha = 0.7f),
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold,
+                textDecoration = TextDecoration.LineThrough,
                 fontFamily = font
             )
-        }
 
-        Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-        Text(
-            text = if (isPersian) "با این بسته مراحل را راحت‌تر پشت سر بگذار!"
-            else "Bu paketle seviyeleri çok daha kolay tamamlayın!",
-            color = PopupTextSecondary,
-            fontSize = 13.sp,
-            fontWeight = FontWeight.Bold,
-            fontFamily = font,
-            textAlign = TextAlign.Center,
-            lineHeight = 18.sp
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            StarterItemRow(R.drawable.coins, if (isPersian) "۲۰۰۰ سکه" else "2000 Altın", null)
-            StarterItemRow(
-                R.drawable.no_ads,
-                if (isPersian) "حذف دائمی تبلیغات" else "Tüm Reklamları Kaldır",
-                if (isPersian) "دائمی" else "Kalıcı",
-                highlight = true
-            )
-            StarterItemRow(R.drawable.hint, if (isPersian) "کارت راهنما" else "İpucu Kartı", LocaleHelper.formatNumber("3×", isPersian))
-            StarterItemRow(R.drawable.undo, if (isPersian) "بازگشت حرکت" else "Geri Alma Kartı", LocaleHelper.formatNumber("3×", isPersian))
-            StarterItemRow(R.drawable.joker, if (isPersian) "کارت جوکر" else "Joker Kartı", LocaleHelper.formatNumber("3×", isPersian))
-        }
-
-        Spacer(modifier = Modifier.height(14.dp))
-
-        Text(
-            text = (if (isPersian) "ارزش واقعی: " else "Değeri: ") + oldPriceText,
-            color = PopupTextSecondary.copy(alpha = 0.7f),
-            fontSize = 13.sp,
-            fontWeight = FontWeight.Bold,
-            textDecoration = TextDecoration.LineThrough,
-            fontFamily = font
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        CandyButton(
-            onClick = {
-                GameSettingsManager.playButtonClickSound(context)
-                onBuy()
-            },
-            modifier = Modifier
-                .scale(buttonScale)
-                .fillMaxWidth(0.92f),
-            corner = 18.dp,
-            elevation = 10.dp
-        ) {
-            val outline = Color(0x802D5A0E)
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
-                Image(
-                    painter = painterResource(id = R.drawable.gift),
-                    contentDescription = null,
-                    modifier = Modifier.size(26.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                OutlinedText(
-                    text = priceText,
-                    textColor = Color.White,
-                    outlineColor = outline,
-                    outlineWidth = 6f,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Black,
-                    shadowColor = outline.copy(alpha = 0.6f),
-                    shadowOffsetY = 3f
-                )
+            CandyButton(
+                onClick = {
+                    GameSettingsManager.playButtonClickSound(context)
+                    onBuy()
+                },
+                modifier = Modifier
+                    .scale(buttonScale)
+                    .fillMaxWidth(0.6f)
+                    .heightIn(min = 60.dp),
+                corner = 18.dp,
+                elevation = 10.dp
+            ) {
+                val outline = Color(0x802D5A0E)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.gift),
+                        contentDescription = null,
+                        modifier = Modifier.size(26.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    OutlinedText(
+                        text = priceText,
+                        textColor = Color.White,
+                        outlineColor = DarkMain,
+                        outlineWidth = 6f,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Black,
+                        shadowColor = DarkMain.copy(alpha = 0.6f),
+                        shadowOffsetY = 3f
+                    )
+                }
             }
         }
     }
@@ -193,16 +236,24 @@ private fun StarterItemRow(
         modifier = Modifier
             .fillMaxWidth()
             .clip(shape)
-            .background(if (highlight) Color(0xFFD1FAE5) else PopupButtonBg)
-            .border(1.dp, if (highlight) Color(0xFF34D399) else MenuBtnOutline.copy(alpha = 0.25f), shape)
+            .background(if (highlight) Color(0xFFb67de8).lighten(0.5f) else PopupButtonBg)
+            .border(
+                1.dp,
+                if (highlight) Color(0xFF9440DD) else MenuBtnOutline.copy(alpha = 0.25f),
+                shape
+            )
             .padding(horizontal = 10.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Image(painter = painterResource(id = iconRes), contentDescription = null, modifier = Modifier.size(30.dp))
+        Image(
+            painter = painterResource(id = iconRes),
+            contentDescription = null,
+            modifier = Modifier.size(30.dp)
+        )
         Spacer(modifier = Modifier.width(10.dp))
         Text(
             text = title,
-            color = PopupTextPrimary,
+            color = DarkMain,
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,
             fontFamily = font,
@@ -212,11 +263,32 @@ private fun StarterItemRow(
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(8.dp))
-                    .background(if (highlight) Color(0xFF059669) else MenuBtnMid)
+                    .background(if (highlight) Color(0xFFb67de8) else MenuBtnMid)
                     .padding(horizontal = 8.dp, vertical = 3.dp)
             ) {
-                Text(badge, color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.Black, fontFamily = font)
+                Text(
+                    badge,
+                    color = Color.White,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Black,
+                    fontFamily = font
+                )
             }
         }
     }
+
+}
+
+@Preview(
+    showBackground = true,
+    backgroundColor = 0xFF303030,
+    widthDp = 400,
+    heightDp = 800
+)
+@Composable
+private fun StarterPackDialogPreview() {
+    StarterPackDialog(
+        onDismiss = {},
+        onBuy = {}
+    )
 }

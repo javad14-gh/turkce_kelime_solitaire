@@ -36,19 +36,14 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import com.turkce.kelimesolitaire.presentation.ui.theme.BoosterButtonShadow
-import com.turkce.kelimesolitaire.presentation.ui.theme.BoosterRimBorder
 import com.turkce.kelimesolitaire.presentation.ui.theme.BoosterRimGradientTop
 import com.turkce.kelimesolitaire.presentation.ui.theme.BoosterRimGradientMid
-import com.turkce.kelimesolitaire.presentation.ui.theme.BoosterRimGradientBottom
-import com.turkce.kelimesolitaire.presentation.ui.theme.BoosterFaceTop
-import com.turkce.kelimesolitaire.presentation.ui.theme.BoosterFaceMid
-import com.turkce.kelimesolitaire.presentation.ui.theme.BoosterFaceBottom
-import com.turkce.kelimesolitaire.presentation.ui.theme.BoosterFaceBorder
 import com.turkce.kelimesolitaire.presentation.ui.theme.BoosterBadgeGreenTop
 import com.turkce.kelimesolitaire.presentation.ui.theme.BoosterBadgeGreenBottom
 import com.turkce.kelimesolitaire.presentation.ui.theme.BoosterPrimaryColor
-import com.turkce.kelimesolitaire.presentation.ui.theme.GameTableBg
+import com.turkce.kelimesolitaire.presentation.ui.theme.CategorySlotBg
+import com.turkce.kelimesolitaire.presentation.ui.theme.CategorySlotContent
+import com.turkce.kelimesolitaire.presentation.ui.theme.CategorySlotInnerShadow
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 
 enum class BoosterType {
@@ -96,11 +91,11 @@ fun Booster3DButton(
     )
 
     // رنگ‌ها: حالت عادی مثل SquareMenuButton، حالت قفل خاکستری
-    val frameColor = if (isUnlocked) BoosterPrimaryColor else Color(0xFF64748B)
+    val frameColor = if (isUnlocked) BoosterPrimaryColor else CategorySlotInnerShadow
     val faceBrush = if (isUnlocked) {
         Brush.verticalGradient(listOf(BoosterRimGradientTop,BoosterRimGradientMid))
     } else {
-        Brush.verticalGradient(listOf(Color(0xFFCBD5E1), Color(0xFF94A3B8)))
+        Brush.verticalGradient(listOf(CategorySlotBg, CategorySlotContent))
     }
 
     val shape = RoundedCornerShape(24.dp)
@@ -155,7 +150,7 @@ fun Booster3DButton(
                     .background(
                         when {
                             !isUnlocked -> Brush.horizontalGradient(
-                                listOf(Color(0xFF64748B), Color(0xFF475569))
+                                listOf(CategorySlotBg, CategorySlotContent)
                             )
                             else -> Brush.verticalGradient(
                                 listOf(BoosterBadgeGreenTop, BoosterBadgeGreenBottom)

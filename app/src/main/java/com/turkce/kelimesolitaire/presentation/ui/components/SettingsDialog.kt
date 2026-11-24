@@ -45,7 +45,7 @@ fun SettingsDialog(
         title = LocaleHelper.settingsTitle(isPersian),
         onDismiss = onDismiss,
         titleSize = 32.sp,
-        trayMaxHeight = 490.dp
+        trayMaxHeight = 500.dp
     ) {
         Row(
             modifier = Modifier

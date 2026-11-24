@@ -31,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.text.buildSpannedString
 import com.turkce.kelimesolitaire.R
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupButtonBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupTextPrimary
@@ -53,7 +54,6 @@ fun RestartLevelDialog(
     val context = LocalContext.current
     val isPersian = remember(context) { LocaleHelper.isPersian(context) }
     val appFont = rememberAppFont()
-    val canAfford = coins >= cost
     var remainingMs by remember {
         mutableStateOf(
             GameSettingsManager.getFreeRestartRemainingMs(
@@ -71,7 +71,7 @@ fun RestartLevelDialog(
 
     PopupFrame(
         title = LocaleHelper.restartDialogTitle(isPersian),
-        onDismiss = onDismiss,
+        //onDismiss = onDismiss,
         titleSize = if (isPersian) 26.sp else 21.sp
     ) {
         if(!isFree){
@@ -144,6 +144,16 @@ fun RestartLevelDialog(
                     onRestartWithAd()
                 },
                 icon = {MenuIcon(R.drawable.tv,"tv")}
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            MenuWideButton(
+                text = LocaleHelper.continueBtn(isPersian),
+                isPersian = isPersian,
+                onClick = {
+                    GameSettingsManager.playButtonClickSound(context)
+                    onDismiss()
+                },
+                icon = { MenuIcon(R.drawable.undo, "return") }
             )
         }
     }

@@ -574,7 +574,7 @@ fun LevelCompleteScreen(
                     contentAlignment = Alignment.TopCenter
                 ) {
                     // 3D Candy Gloss Golden Amber Button
-                    val packColorX2 = Color(0xFF0094E9)
+                    val packColorX2 = Color(0xFF518F00)
                     CandyButton(
                         onClick = {
                             if (!isActionTriggered) {
@@ -587,7 +587,7 @@ fun LevelCompleteScreen(
                             .fillMaxWidth()
                             .heightIn(min = 80.dp),
                         face = Brush.verticalGradient(
-                                    listOf(Color(0xFF99DAFF), Color(0xFF42BAFF))
+                            listOf(Color(0xFF95FF0A), Color(0xFF61AA00))
                         ),
                         back = packColorX2,
                         outlineColor = packColorX2,
@@ -658,7 +658,7 @@ fun LevelCompleteScreen(
                 Spacer(modifier = Modifier.height(18.dp))
 
                 // 2. Normal Reward Button (1X) - Candy style
-                val packColor = Color(0xFF518F00)
+                val packColor = Color(0xFF0094E9)
                 CandyButton(
                     onClick = {
                         if (!isActionTriggered) {
@@ -671,7 +671,7 @@ fun LevelCompleteScreen(
                         .fillMaxWidth(0.5f)
                         .heightIn(min = 80.dp),
                     face = Brush.verticalGradient(
-                        listOf(Color(0xFF95FF0A), Color(0xFF61AA00))
+                        listOf(Color(0xFF99DAFF), Color(0xFF42BAFF))
                     ),
                     back = packColor,
                     outlineColor = packColor,

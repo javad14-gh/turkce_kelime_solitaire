@@ -17,8 +17,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -26,34 +24,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.foundation.layout.heightIn
 import com.turkce.kelimesolitaire.presentation.ui.components.OutlinedText
 import com.turkce.kelimesolitaire.presentation.ui.components.rememberNunitoFont
-import com.turkce.kelimesolitaire.presentation.ui.theme.AccentGold
-import com.turkce.kelimesolitaire.presentation.ui.theme.CardBackGradientBottom
-import com.turkce.kelimesolitaire.presentation.ui.theme.CardBackGradientTop
-import com.turkce.kelimesolitaire.presentation.ui.theme.maincolor4
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.res.painterResource
 import com.turkce.kelimesolitaire.R
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.ui.draw.clip
-import com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.mainBg
 
 
@@ -63,7 +49,6 @@ fun LevelLoadingScreen(
     modifier: Modifier = Modifier,
     isPersian: Boolean = LocaleHelper.isPersian(LocalContext.current)
 ) {
-    val nunitoFont = rememberNunitoFont()
     val infiniteTransition = rememberInfiniteTransition(label = "LoadingAnimation")
 
     // Gentle card breathing & tilt animation

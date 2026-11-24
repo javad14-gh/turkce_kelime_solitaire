@@ -87,7 +87,6 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.LevelTitleText
 import com.turkce.kelimesolitaire.presentation.ui.theme.LevelTitleOutline
 import com.turkce.kelimesolitaire.presentation.ui.theme.MovesCardBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.MovesCardBorder
-import com.turkce.kelimesolitaire.presentation.ui.theme.MovesTitleText
 import com.turkce.kelimesolitaire.presentation.ui.theme.MovesCountText
 import com.turkce.kelimesolitaire.presentation.ui.theme.MenuBtnOutline
 import com.turkce.kelimesolitaire.presentation.viewmodel.GameViewModel
@@ -433,7 +432,6 @@ fun GameScreen(
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            // LEVEL 1 INTERACTIVE TUTORIAL BANNER
 
 
             // 2. HUD & PILES ROW (Moves, Progress Bar, and Stock/Waste piles)
@@ -466,7 +464,7 @@ fun GameScreen(
                     ) {
                         Text(
                             text = LocaleHelper.remainingMovesTitle(isPersian),
-                            color = MovesTitleText,
+                            color = Color.White,
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
                             fontFamily = nunitoFont,
@@ -1414,7 +1412,7 @@ fun GameScreen(
                 MenuWideButton(
                     text = LocaleHelper.giveUp(isPersian),
                     isPersian = isPersian,
-                    onClick = onAcceptDefeat,
+                    onClick = onBackToMenu,
                     back = MenuRedBack,
                     face = MenuRedBrush,
                     outline = MenuRedBack,

@@ -76,7 +76,7 @@ enum class ThemePreset(
         c1 = Color(0xFFFDF4E3), // کرم چوبی دنج
         c2 = Color(0xFF5D2E16), // قهوه‌ای چرم شیک
         c3 = Color(0xFFC05621), // تراکوتا / خرمایی
-        c4 = Color(0xFFFFCB70)  // طلایی کهربایی گرم
+        c4 = Color(0xFFFFCB70), // طلایی کهربایی گرم
     )
 }
 
@@ -84,7 +84,7 @@ enum class ThemePreset(
  * مدیر وضعیت تم بازی - تغییر آنی بدون نیاز به ری‌استارت
  */
 object GameThemeManager {
-    var currentTheme by mutableStateOf(ThemePreset.CLASSIC)
+    var currentTheme by mutableStateOf(ThemePreset.WARM_AMBER)
         private set
 
     fun setTheme(theme: ThemePreset, context: Context? = null) {
@@ -113,15 +113,13 @@ val mainBg = Color(0xFFFFF6E6)
 val DarkMain = Color(0xFF734A2A)
 val DarkBg = Color(0xFF5271ff)            // پس‌زمینه اصلی بازی (هماهنگ با هدر پاپ‌آپ‌ها)
 val GameTableBg: Color get() = maincolor1       // رنگ پس‌زمینه میز بازی (کاملاً یکدست و ساده)
-val GameTableBgTop: Color get() = GameTableBg          // جهت سازگاری
-val GameTableBgBottom: Color get() = GameTableBg       // جهت سازگاری
+
 
 // --- پاپ‌آپ‌ها و دیالوگ‌ها ---
 
 // سینی داخلی (روشن)
 val PopupBg = mainBg                                   // 0xFFFFF6E6 پس‌زمینه‌ی سینی
 val PopupTrayDepth = Color(0xFFD9BE9A)                 // لبه‌ی سه‌بعدی پایین سینی (کرم تیره)
-val PopupTrayBorder = Color(0xFFE8D3B4)                // کادر داخلی سینی
 
 // قاب بیرونی (تیره)
 val PopupFrameBase = Color(0xFF3F2410)                 // لبه‌ی تیره‌ی پایین قاب (عمق)
@@ -131,8 +129,6 @@ val PopupFrameGradient = listOf(                       // گرادیانت قا�
     Color(0xFF5E3A20),                                 // میانه‌ی تیره‌تر
     Color(0xFF4A2C16)                                  // پایین
 )
-val PopupBorder: Color get() = DarkMain                // کادر دور پاپ‌آپ
-val PopupHeaderBg: Color get() = DarkMain              // هدر
 val PopupTitleOutline = Color(0xFF3F2410)              // خط دور عنوان روی قاب
 
 // دکمه‌های منو (عریض) و مربعی (صدا/ویبره): یک پالت مشترک
@@ -147,8 +143,6 @@ val PopupTextSecondary = Color(0xFF6B4A33)             // متن ثانویه
 
 // برای سازگاری با کد قبلی (کپسول «سکه موجود» و ...)
 val PopupButtonBg = Color(0xFFF0DDBF)                  // کپسول روشن روی سینی
-val PopupButtonShadow = MenuBtnOutline
-val SoundVibrationBoxBg: Color get() = PopupButtonBg
 // --- هدر بالای صفحه بازی (سکه و عنوان مرحله) ---
 val LevelTitleText = Color(0xFFFFFFFF)            // رنگ نوشته مرحله (مثلاً مرحله ۱)
 val LevelTitleOutline: Color get() = maincolor2         // رنگ خط دور نوشته مرحله (قابل تنظیم به هر رنگ دلخواه)
@@ -157,39 +151,30 @@ val CoinBoxBorder: Color get() = maincolor4             // رنگ خط دور ب
 // --- باکس تعداد حرکات باقی‌مانده (Moves Left Card) ---
 val MovesCardBg: Color get() = maincolor2          // رنگ زمینه باکس حرکات (کاملاً مستقل از بقیه بخش‌های بازی)
 val MovesCardBorder: Color get() = maincolor2      // رنگ کادر دور باکس حرکات
-val MovesTitleText = Color(0xFFD1D5DB)       // رنگ عنوان «حرکات باقی‌مانده»
 val MovesCountText = Color(0xFFFFFFFF)       // رنگ عدد تعداد حرکات
 
 // --- ۲. محل قرارگیری دسته‌بندی‌ها (باکس‌های بالای ستون‌ها - Category Slots) ---
 // 🌟 تمام رنگ‌های زیر به صورت خودکار از روی رنگ میز (GameTableBg) محاسبه می‌شوند:
 val CategorySlotBg: Color get() = GameTableBg.darken(0.07f)          // رنگ زمینه باکس خالی دسته‌بندی (کمی گودتر از میز)
-val CategorySlotBgTop: Color get() = CategorySlotBg                  // جهت سازگاری
-val CategorySlotBgBottom: Color get() = CategorySlotBg               // جهت سازگاری
 val CategorySlotBorder: Color get() = GameTableBg.darken(0.14f)      // کادر دور باکس خالی دسته‌بندی (مرز تراشیده شده)
 val CategorySlotContent: Color get() = GameTableBg.darken(0.35f)     // رنگ نوشته «کارت دسته» و آیکون تاج داخل باکس
 val CategorySlotInnerShadow: Color get() = GameTableBg.darken(0.40f) // رنگ سایه داخلی باکس خالی دسته‌بندی (حس عمق و سوراخ)
 val CategoryActiveBannerBg: Color get() = maincolor4          // نوار بالای کارت فعال دسته‌بندی (طلایی)
-val CategorySlotActiveBg = Color(0xFFFFFFFF)            // رنگ بدنه کارت فعال در جایگاه بالا (محل نشستن کلمات مچ‌شده)
+val CategorySlotActiveBg = Color.White            // رنگ بدنه کارت فعال در جایگاه بالا (محل نشستن کلمات مچ‌شده)
 val CategorySlotMatchedBorder: Color get() = CategoryActiveBannerBg  // رنگ کادر جایگاه بالا وقتی کارت‌ها در آن قرار می‌گیرند (هماهنگ با نوار بالا)
 
 // --- ۳. پشت کارت‌ها (Card Back) ---
 val CardBackBg: Color get() = maincolor3            // رنگ ساده و یکدست پشت کارت‌ها (متصل به maincolor3)
-val CardBackGradientTop: Color get() = CardBackBg          // جهت سازگاری
-val CardBackGradientBottom: Color get() = CardBackBg       // جهت سازگاری
-val CardBackPattern: Color get() = CardBackBg              // جهت سازگاری
-
 // --- ۴. روی کارت‌ها (Card Front) ---
-val CardFaceBg = Color(0xFFFFFFFF)            // رنگ زمینه کارت‌های کلمه و کارت‌های دسته‌بندی
+val CardFaceBg = Color.White            // رنگ زمینه کارت‌های کلمه و کارت‌های دسته‌بندی
 val CardFaceText: Color get() = maincolor2          // رنگ متن کلمات روی کارت
 val CardFaceBorder: Color get() = maincolor1.darken(0.12f)  // رنگ کادر بیرونی بسیار نازک روی کارت‌های معمولی (هماهنگ خودکار با میز)
 val CardFaceInnerBorder: Color get() = CardBackBg   // رنگ کادر داخلی روی کارت‌های معمولی
 val CardCategoryBorder: Color get() = maincolor4    // رنگ کادر ضخیم دور کارت دسته‌بندی (شروع از لبه، بولد و مشخص)
 val CardCategoryCrown: Color get() = maincolor4     // رنگ تاج کارت دسته‌بندی
 val CardCategoryText: Color get() = CardFaceText           // رنگ نوشته کارت دسته‌بندی (مثلاً پوشاک)
-val CardCategoryBg: Color get() = CardFaceBg               // جهت سازگاری (زمینه مانند سایر کارت‌ها)
 val CardDraggingBorder: Color get() = maincolor4.copy(alpha = 0.6f)    // رنگ کادر دور کارت در حال جابجایی (Drag) با شفافیت ملایم
 val CardSelectedBorder: Color get() = maincolor4.copy(alpha = 0.7f)    // رنگ کادر دور کارت در حالت انتخاب با شفافیت ملایم
-val CardJokerBgTop = Color(0xFFFEF08A)        // رنگ زمینه کارت جوکر
 
 // --- ۵. مخزن کارت‌ها در حالت بر زدن (Stock Recycle State) ---
 val StockRecycleBg: Color get() = CategorySlotBg       // رنگ پس‌زمینه مخزن خالی جهت بر زدن
@@ -200,85 +185,24 @@ val StockRecycleText: Color get() = CategorySlotContent     // رنگ متن و 
 // 🌟 کافیست فقط همین یک رنگ را تغییر دهید؛ تمام طیف‌های سه‌بعدی به صورت خودکار ساخته می‌شوند:
 val BoosterPrimaryColor: Color get() = maincolor2      // 🟢 رنگ اصلی دکمه‌های راهنما (کافیست فقط این رنگ را تغییر دهید)
 
-// لایه‌های سه‌بعدی خودکار (Auto-Generated):
-val BoosterFaceTop: Color get() = BoosterPrimaryColor.lighten(0.35f)           // رنگ روشن براق بالای پد دکمه
-val BoosterFaceMid: Color get() = BoosterPrimaryColor                          // رنگ اصلی میانی پد دکمه
-val BoosterFaceBottom: Color get() = BoosterPrimaryColor.darken(0.25f)        // شیب تاریک‌تر پایین پد دکمه
-val BoosterFaceBorder: Color get() = BoosterPrimaryColor.lighten(0.50f)        // خط دور هایلایت روی پد دکمه
-val BoosterButtonShadow: Color get() = BoosterPrimaryColor.darken(0.65f)      // حجم و سایه سه‌بعدی زیر دکمه
 
 val BoosterRimGradientTop: Color get() = BoosterPrimaryColor.lighten(0.85f)    // هایلایت روشن بالای لبه بیرونی
 val BoosterRimGradientMid: Color get() = BoosterPrimaryColor.lighten(0.40f)    // رنگ میانی لبه بیرونی
-val BoosterRimGradientBottom: Color get() = BoosterPrimaryColor.darken(0.15f) // رنگ پایینی لبه بیرونی
-val BoosterRimBorder: Color get() = BoosterPrimaryColor.lighten(0.45f)         // خط دور لبه بیرونی
 
-// متغیرهای سازگاری
-val BoosterRimBase: Color get() = BoosterRimGradientMid
-val BoosterButtonHighlight: Color get() = BoosterFaceTop
-val BoosterButtonBg: Color get() = BoosterFaceMid
-val BoosterButtonDark: Color get() = BoosterFaceBottom
-val BoosterBadgeGreenTop = Color(0xFF4ADE80)
-val BoosterBadgeGreenBottom = Color(0xFF16A34A)
 
-// --- دکمه بزرگ شروع بازی در منوی اصلی (Main Play Button) ---
-// 🌟 این دکمه نیز فقط با تغییر همین یک رنگ اصلی کنترل می‌شود:
-val PlayButtonColor = Color(0xFF65A30D)          // 🟢 رنگ اصلی دکمه شروع مرحله در منو
-val PlayButtonFaceTop = PlayButtonColor.lighten(0.35f)
-val PlayButtonFaceMid = PlayButtonColor
-val PlayButtonFaceBottom = PlayButtonColor.darken(0.25f)
-val PlayButtonFaceBorder = PlayButtonColor.lighten(0.50f)
-val PlayButtonShadow = PlayButtonColor.darken(0.65f)
+val BoosterBadgeGreenTop = Color(0xFF95FF0A)
+val BoosterBadgeGreenBottom = Color(0xFF74CC00)
 
 
 // --- ۷. رنگ‌های تاکیدی و درخشان (Accents) ---
 val AccentGold = Color(0xFFFBBF24)       // رنگ طلایی سکه‌ها و جوایز
 val PrimaryNeon = Color(0xFF8B5CF6)      // بنفش نئونی
 val SecondaryNeon = Color(0xFF06B6D4)    // فیروزه‌ای نئونی
-val SuccessGreen = Color(0xFF10B981)     // سبز موفقیت و تایید
 val ErrorRed = Color(0xFFEF4444)         // قرمز خطا و باخت
 
 // --- ۷. المان‌های عمومی و کارت‌های منو ---
 val DarkCard: Color get() = maincolor2
 val TextPrimary = Color(0xFFF9FAFB)
-val TextSecondary = Color(0xFFD1D5DB)
-val BorderGlass = Color(0xFF3B2E6E)
-val CardHighlight = Color(0xFF4C3E8A)
 
-/**
- * رنگ‌بندی سه‌بعدی لبه دکمه بازی بر اساس درجه سختی مرحله
- */
-data class DifficultyRimColors(
-    val gradient: List<Color>,
-    val border: Color,
-    val baseShadow: Color
-)
 
-fun getDifficultyRimColors(difficulty: String): DifficultyRimColors {
-    return when (difficulty) {
-        "Kolay" -> DifficultyRimColors(
-            gradient = listOf(Color(0xFFE8FDF0), Color(0xFF4ADE80), Color(0xFF16A34A)),
-            border = Color(0xFF86EFAC),
-            baseShadow = Color(0xFF14532D)
-        )
-        "Orta" -> DifficultyRimColors(
-            gradient = listOf(Color(0xFFE0F2FE), Color(0xFF38BDF8), Color(0xFF0284C7)),
-            border = Color(0xFF7DD3FC),
-            baseShadow = Color(0xFF075985)
-        )
-        "Zor" -> DifficultyRimColors(
-            gradient = listOf(Color(0xFFFFEDD5), Color(0xFFFB923C), Color(0xFFEA580C)),
-            border = Color(0xFFFDBA74),
-            baseShadow = Color(0xFF9A3412)
-        )
-        "CokZor" -> DifficultyRimColors(
-            gradient = listOf(Color(0xFFFEE2E2), Color(0xFFF43F5E), Color(0xFFDC2626)),
-            border = Color(0xFFFDA4AF),
-            baseShadow = Color(0xFF881337)
-        )
-        else -> DifficultyRimColors(
-            gradient = listOf(Color(0xFFE0F2FE), Color(0xFF38BDF8), Color(0xFF0284C7)),
-            border = Color(0xFF7DD3FC),
-            baseShadow = Color(0xFF075985)
-        )
-    }
-}
+
