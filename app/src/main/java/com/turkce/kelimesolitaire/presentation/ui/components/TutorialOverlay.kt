@@ -34,7 +34,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.turkce.kelimesolitaire.presentation.ui.theme.AccentGold
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupButtonBg
-import com.turkce.kelimesolitaire.presentation.ui.theme.PopupTextPrimary
 import com.turkce.kelimesolitaire.presentation.util.GameSettingsManager
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 import androidx.compose.ui.platform.LocalContext

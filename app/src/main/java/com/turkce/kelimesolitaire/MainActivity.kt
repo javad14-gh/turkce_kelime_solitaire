@@ -14,7 +14,6 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import com.turkce.kelimesolitaire.presentation.ui.screens.GameOverScreen
 import com.turkce.kelimesolitaire.presentation.ui.screens.GameScreen
 import com.turkce.kelimesolitaire.presentation.ui.screens.LevelCompleteScreen
 import com.turkce.kelimesolitaire.presentation.ui.screens.LevelLoadingScreen
@@ -270,9 +269,6 @@ class MainActivity : ComponentActivity() {
                                                 onBuyExtraMoves = {
                                                     viewModel.purchaseExtraMoves(this@MainActivity)
                                                 },
-                                                onAcceptDefeat = {
-                                                    viewModel.acceptDefeat(this@MainActivity)
-                                                },
                                                 onClaimThemeReward = { amount ->
                                                     viewModel.claimThemeReward(
                                                         this@MainActivity,
@@ -307,14 +303,7 @@ class MainActivity : ComponentActivity() {
                                     }
 
                                     is ScreenState.GameOver -> {
-                                        GameOverScreen(
-                                            levelNumber = state.levelNumber,
-                                            coins = state.coins,
-                                            onContinueForCoins = { viewModel.purchaseExtraMoves(this@MainActivity) },
-                                            onContinueForAd = { viewModel.watchAdForExtraMoves(this@MainActivity) },
-                                            onRestartClicked = { viewModel.restartLevel(this@MainActivity) },
-                                            onMainMenuClicked = { viewModel.returnToMainMenu(this@MainActivity) }
-                                        )
+
                                     }
 
                                     is ScreenState.Store -> {

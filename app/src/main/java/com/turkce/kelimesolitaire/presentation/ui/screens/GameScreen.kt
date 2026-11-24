@@ -112,7 +112,6 @@ import com.turkce.kelimesolitaire.presentation.ui.components.MenuRedBrush
 import com.turkce.kelimesolitaire.presentation.ui.components.SettingsDialog
 import com.turkce.kelimesolitaire.presentation.ui.components.ThemeDialog
 import com.turkce.kelimesolitaire.presentation.ui.components.MenuRedBack
-import com.turkce.kelimesolitaire.presentation.ui.components.SquareMenuButton
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupTextSecondary
 
 
@@ -196,7 +195,6 @@ fun GameScreen(
     onUndoLastMove: () -> Unit,
     onUseJoker: () -> Unit,
     onBuyExtraMoves: () -> Unit,
-    onAcceptDefeat: () -> Unit,
     onWatchAdForCoins: () -> Unit = {},
     onShowMessage: (String, MessageType) -> Unit = { _, _ -> },
     isUndoUnlocked: Boolean = false,
@@ -1126,12 +1124,12 @@ fun GameScreen(
                                                     if (success) {
                                                         draggedCards = emptyList()
                                                         if (isHapticEnabled) {
-                                                            com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.vibrateCardSnap(
+                                                           GameSettingsManager.vibrateCardSnap(
                                                                 context
                                                             )
                                                         }
                                                         if (isSoundEnabled) {
-                                                            com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playCardSnapSound(
+                                                            GameSettingsManager.playCardSnapSound(
                                                                 context
                                                             )
                                                         }
@@ -1164,12 +1162,12 @@ fun GameScreen(
                                                         if (success) {
                                                             draggedCards = emptyList()
                                                             if (isHapticEnabled) {
-                                                                com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.vibrateCardSnap(
+                                                                GameSettingsManager.vibrateCardSnap(
                                                                     context
                                                                 )
                                                             }
                                                             if (isSoundEnabled) {
-                                                                com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playCardSnapSound(
+                                                                GameSettingsManager.playCardSnapSound(
                                                                     context
                                                                 )
                                                             }
