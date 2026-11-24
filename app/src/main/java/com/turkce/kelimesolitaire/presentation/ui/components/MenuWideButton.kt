@@ -39,7 +39,6 @@ val MenuRedBrush: Brush = Brush.verticalGradient(
     )
 )
 val MenuRedBack: Color = Color(0xFFC50000)
-val MenuRedOutline = Color(0xFF7F1D1D)
 
 /** Icon + label; order flipped for Persian. */
 @Composable

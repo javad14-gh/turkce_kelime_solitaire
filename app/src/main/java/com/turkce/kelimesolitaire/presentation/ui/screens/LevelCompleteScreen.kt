@@ -664,7 +664,7 @@ fun LevelCompleteScreen(
                         if (!isActionTriggered) {
                             isActionTriggered = true
                             GameSettingsManager.playButtonClickSound(context)
-                            val action = onNormalRewardClicked()
+                            onNormalRewardClicked()
                         }
                     },
                     modifier = Modifier

@@ -209,7 +209,7 @@ val BoosterButtonShadow: Color get() = BoosterPrimaryColor.darken(0.65f)      //
 
 val BoosterRimGradientTop: Color get() = BoosterPrimaryColor.lighten(0.85f)    // هایلایت روشن بالای لبه بیرونی
 val BoosterRimGradientMid: Color get() = BoosterPrimaryColor.lighten(0.40f)    // رنگ میانی لبه بیرونی
-val BoosterRimGradientBottom: Color get() = BoosterPrimaryColor.darken(0.10f) // رنگ پایینی لبه بیرونی
+val BoosterRimGradientBottom: Color get() = BoosterPrimaryColor.darken(0.15f) // رنگ پایینی لبه بیرونی
 val BoosterRimBorder: Color get() = BoosterPrimaryColor.lighten(0.45f)         // خط دور لبه بیرونی
 
 // متغیرهای سازگاری

@@ -107,19 +107,13 @@ import com.turkce.kelimesolitaire.presentation.ui.components.CoinCounter
 import com.turkce.kelimesolitaire.presentation.ui.components.TopBarIconButton
 import com.turkce.kelimesolitaire.presentation.ui.components.computeLevel2Hint
 import com.turkce.kelimesolitaire.presentation.ui.components.PopupFrame
-import com.turkce.kelimesolitaire.presentation.ui.components.CandyButton
 import com.turkce.kelimesolitaire.presentation.ui.components.MenuWideButton
 import com.turkce.kelimesolitaire.presentation.ui.components.MenuIcon
-import com.turkce.kelimesolitaire.presentation.ui.components.IconLabelRow
-import com.turkce.kelimesolitaire.presentation.ui.components.PopupButtonLabel
 import com.turkce.kelimesolitaire.presentation.ui.components.MenuRedBrush
-import com.turkce.kelimesolitaire.presentation.ui.components.MenuRedOutline
 import com.turkce.kelimesolitaire.presentation.ui.components.SettingsDialog
 import com.turkce.kelimesolitaire.presentation.ui.components.ThemeDialog
-import com.turkce.kelimesolitaire.presentation.ui.components.CoinIcon
 import com.turkce.kelimesolitaire.presentation.ui.components.MenuRedBack
-import com.turkce.kelimesolitaire.presentation.ui.components.TvIcon
-import com.turkce.kelimesolitaire.presentation.ui.theme.DarkMain
+import com.turkce.kelimesolitaire.presentation.ui.components.SquareMenuButton
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupTextSecondary
 
 
@@ -215,7 +209,7 @@ fun GameScreen(
     freeUndoCount: Int = if (hasFreeUndo) 1 else 0,
     freeHintCount: Int = if (hasFreeHint) 1 else 0,
     freeJokerCount: Int = if (hasFreeJoker) 1 else 0,
-    activeTutorial: com.turkce.kelimesolitaire.presentation.viewmodel.TutorialType? = null,
+    activeTutorial: TutorialType? = null,
     onDismissTutorial: () -> Unit = {},
     onDismissCategoryCelebration: () -> Unit = {},
     shouldAnimateDeal: Boolean = true,
@@ -266,14 +260,14 @@ fun GameScreen(
     var showThemeDialog by remember { mutableStateOf(false) }
     var isSoundEnabled by rememberSaveable {
         mutableStateOf(
-            com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.isSoundEnabled(
+            GameSettingsManager.isSoundEnabled(
                 context
             )
         )
     }
     var isHapticEnabled by rememberSaveable {
         mutableStateOf(
-            com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.isHapticEnabled(
+            GameSettingsManager.isHapticEnabled(
                 context
             )
         )
@@ -337,7 +331,7 @@ fun GameScreen(
             val soundCount = minOf(totalCards, 10)
             for (i in 0 until soundCount) {
                 delay(95L)
-                com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playCardSnapSound(
+                GameSettingsManager.playCardSnapSound(
                     context
                 )
             }
@@ -429,7 +423,7 @@ fun GameScreen(
                         contentDescription = "Settings",
                         onClick = {
                             showHamburgerMenu = true
-                            com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playButtonClickSound(
+                            GameSettingsManager.playButtonClickSound(
                                 context
                             )
                         }
@@ -547,12 +541,12 @@ fun GameScreen(
                                             if (success) {
                                                 draggedCards = emptyList()
                                                 if (isHapticEnabled) {
-                                                    com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.vibrateCardSnap(
+                                                   GameSettingsManager.vibrateCardSnap(
                                                         context
                                                     )
                                                 }
                                                 if (isSoundEnabled) {
-                                                    com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playCardSnapSound(
+                                                    GameSettingsManager.playCardSnapSound(
                                                         context
                                                     )
                                                 }
@@ -583,12 +577,12 @@ fun GameScreen(
                                                 if (success) {
                                                     draggedCards = emptyList()
                                                     if (isHapticEnabled) {
-                                                        com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.vibrateCardSnap(
+                                                        GameSettingsManager.vibrateCardSnap(
                                                             context
                                                         )
                                                     }
                                                     if (isSoundEnabled) {
-                                                        com.turkce.kelimesolitaire.presentation.util.GameSettingsManager.playCardSnapSound(
+                                                        GameSettingsManager.playCardSnapSound(
                                                             context
                                                         )
                                                     }
@@ -973,7 +967,10 @@ fun GameScreen(
 
                                                 val targetCard = cardFromTableau
                                                 if (cardFromWaste != null) {
-                                                    guardedCardStacked(listOf(cardFromWaste), colIdx)
+                                                    guardedCardStacked(
+                                                        listOf(cardFromWaste),
+                                                        colIdx
+                                                    )
                                                 } else if (targetCard != null && sourceColIdx != -1) {
                                                     val sourceList = tableauPiles[sourceColIdx]
                                                     val targetCatId = targetCard.categoryId
@@ -1296,6 +1293,7 @@ fun GameScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     // 1. HINT BUTTON (Electric Cyan)
+
                     Booster3DButton(
                         type = BoosterType.HINT,
                         isUnlocked = isHintUnlocked,

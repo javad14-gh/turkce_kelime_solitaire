@@ -47,6 +47,8 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.BoosterFaceBottom
 import com.turkce.kelimesolitaire.presentation.ui.theme.BoosterFaceBorder
 import com.turkce.kelimesolitaire.presentation.ui.theme.BoosterBadgeGreenTop
 import com.turkce.kelimesolitaire.presentation.ui.theme.BoosterBadgeGreenBottom
+import com.turkce.kelimesolitaire.presentation.ui.theme.BoosterPrimaryColor
+import com.turkce.kelimesolitaire.presentation.ui.theme.GameTableBg
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 
 enum class BoosterType {
@@ -81,74 +83,52 @@ fun Booster3DButton(
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
 
-    // Tactile press animation states
+    // انیمیشن فشردن دکمه
     val pressOffsetY by animateDpAsState(
-        targetValue = if (isPressed && enabled) 3.5.dp else 0.dp,
+        targetValue = if (isPressed && enabled) 3.dp else 0.dp,
         animationSpec = tween(durationMillis = 60, easing = FastOutSlowInEasing),
         label = "pressOffsetY"
     )
-    val bevelPadding by animateDpAsState(
-        targetValue = if (isPressed && enabled) 1.5.dp else 4.5.dp,
-        animationSpec = tween(durationMillis = 60, easing = FastOutSlowInEasing),
-        label = "bevelPadding"
-    )
     val shadowElevation by animateDpAsState(
-        targetValue = if (isPressed && enabled) 3.dp else 8.dp,
+        targetValue = if (isPressed && enabled) 3.dp else 10.dp,
         animationSpec = tween(durationMillis = 60, easing = FastOutSlowInEasing),
         label = "shadowElevation"
     )
 
-    // Palette: Unified with the Level Start Button logic
-    val (rimBrush, rimBorderColor, baseExtrusionColor, faceBrush, faceHighlightBorder) = when {
-        !isUnlocked -> Quintuple(
-            Brush.verticalGradient(listOf(Color(0xFF64748B), Color(0xFF475569))),
-            Color(0xFF94A3B8).copy(alpha = 0.4f),
-            Color(0xFF0F172A),
-            Brush.verticalGradient(listOf(Color(0xFF1E293B), Color(0xFF0F172A))),
-            Color(0xFF475569).copy(alpha = 0.3f)
-        )
-        else -> Quintuple(
-            // Outer 3-tone Rim Gradient
-            Brush.verticalGradient(listOf(BoosterRimGradientTop, BoosterRimGradientMid, BoosterRimGradientBottom)),
-            BoosterRimBorder,
-            BoosterButtonShadow, // Dark 3D bottom base shadow
-            // Inner 3-tone Face Gradient
-            Brush.verticalGradient(listOf(BoosterFaceTop, BoosterFaceMid, BoosterFaceBottom)),
-            BoosterFaceBorder.copy(alpha = 0.65f)
-        )
+    // رنگ‌ها: حالت عادی مثل SquareMenuButton، حالت قفل خاکستری
+    val frameColor = if (isUnlocked) BoosterPrimaryColor else Color(0xFF64748B)
+    val faceBrush = if (isUnlocked) {
+        Brush.verticalGradient(listOf(BoosterRimGradientTop,BoosterRimGradientMid))
+    } else {
+        Brush.verticalGradient(listOf(Color(0xFFCBD5E1), Color(0xFF94A3B8)))
     }
 
-    // Always use LTR for the button container so the badge is reliably at physical Bottom-Right
+    val shape = RoundedCornerShape(24.dp)
+    val innerShape = RoundedCornerShape(19.dp)
+
+    // همیشه LTR تا بج دقیقاً پایین-راست بیفته
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
         Box(contentAlignment = Alignment.BottomEnd) {
-            // 3D Juicy Button Shell (matching Level Start Button design)
+
+            // خود دکمه (همان ساختار SquareMenuButton)
             Box(
                 modifier = Modifier
                     .offset(y = pressOffsetY)
-                    .shadow(shadowElevation, RoundedCornerShape(20.dp))
-                    .clip(RoundedCornerShape(20.dp))
-                    // Layer 1: Outer 3D Rim Shell
-                    .background(rimBrush)
-                    .border(1.5.dp, rimBorderColor, RoundedCornerShape(20.dp))
-                    .padding(3.5.dp)
-                    .clip(RoundedCornerShape(17.dp))
-                    // Layer 2: Dark 3D bottom base shadow (creates thick 3D bottom bevel)
-                    .background(baseExtrusionColor)
-                    .padding(bottom = bevelPadding)
-                    .clip(RoundedCornerShape(13.5.dp))
-                    // Layer 3: Main Vibrant Face Pad (matching Level Start button glossy 3-color gradient)
+                    .size(80.dp)
+                    .shadow(shadowElevation, shape)
+                    .clip(shape)
+                    .background(frameColor)
+                    .candyGloss(corner = 24.dp, inset = 5.dp)
+                    .padding(8.dp)
+                    .clip(innerShape)
                     .background(faceBrush)
-                    .border(1.2.dp, faceHighlightBorder, RoundedCornerShape(13.5.dp))
-                    .size(68.dp)
                     .clickable(
                         interactionSource = interactionSource,
                         indication = null
-                    ) {
-                        onClick()
-                    },
+                    ) { onClick() }
+                    .padding(2.dp),
                 contentAlignment = Alignment.Center
             ) {
-                // Centered Icon
                 Box(
                     modifier = if (!isUnlocked) Modifier.alpha(0.35f) else Modifier,
                     contentAlignment = Alignment.Center
@@ -156,7 +136,6 @@ fun Booster3DButton(
                     icon()
                 }
 
-                // If locked: 3D golden padlock overlay centered on button
                 if (!isUnlocked) {
                     Text(
                         text = "🔒",
@@ -166,7 +145,7 @@ fun Booster3DButton(
                 }
             }
 
-            // Layer 4: Overlapping 3D Badge on Bottom-Right
+            // بج گوشه پایین-راست (بدون تغییر)
             Box(
                 modifier = Modifier
                     .offset(x = 6.dp, y = 6.dp + pressOffsetY)
@@ -207,8 +186,7 @@ fun Booster3DButton(
                     }
                     hasFree && freeCount > 0 -> {
                         Box(
-                            modifier = Modifier
-                                .size(24.dp),
+                            modifier = Modifier.size(24.dp),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
@@ -221,7 +199,6 @@ fun Booster3DButton(
                         }
                     }
                     else -> {
-                        // 3D Badge with mini Coin + Cost (e.g. 🪙 50)
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.padding(start = 5.dp, end = 7.dp, top = 2.dp, bottom = 2.dp)
@@ -242,11 +219,3 @@ fun Booster3DButton(
         }
     }
 }
-
-private data class Quintuple<A, B, C, D, E>(
-    val first: A,
-    val second: B,
-    val third: C,
-    val fourth: D,
-    val fifth: E
-)
