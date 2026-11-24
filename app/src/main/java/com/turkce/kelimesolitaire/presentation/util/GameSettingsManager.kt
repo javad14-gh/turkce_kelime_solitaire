@@ -331,7 +331,7 @@ object GameSettingsManager {
     private const val KEY_SELECTED_THEME = "key_selected_theme"
 
     fun getSelectedTheme(context: Context): String {
-        return getPrefs(context).getString(KEY_SELECTED_THEME, "classic") ?: "classic"
+        return getPrefs(context).getString(KEY_SELECTED_THEME, "WARM_AMBER") ?: "WARM_AMBER"
     }
 
     fun setSelectedTheme(context: Context, themeId: String) {

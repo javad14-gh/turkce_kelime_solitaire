@@ -96,7 +96,7 @@ object GameThemeManager {
 
     fun init(context: Context) {
         val savedThemeId = GameSettingsManager.getSelectedTheme(context)
-        val theme = ThemePreset.values().find { it.id == savedThemeId } ?: ThemePreset.CLASSIC
+        val theme = ThemePreset.values().find { it.id == savedThemeId } ?: ThemePreset.WARM_AMBER
         currentTheme = theme
     }
 }
