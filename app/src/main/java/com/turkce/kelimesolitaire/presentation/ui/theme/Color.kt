@@ -45,8 +45,8 @@ enum class ThemePreset(
     val c4: Color  // ۴. رنگ تاکیدی و طلایی‌ها (تاج، نوار بالا، کادر انتخابی)
 ) {
     CLASSIC(
-        id = "classic",
-        titlePersian = "کلاسیک",
+        id = "ociean_blue",
+        titlePersian = "آبی اقیانوس",
         titleTurkish = "Klasik",
         c1 = Color(0xFFEBEEFF), // یاسی بسیار ملایم
         c2 = Color(0xFF5271ff), // سرمه‌ای سلطنتی
@@ -72,8 +72,8 @@ enum class ThemePreset(
     c4 = Color(0xFFFFCB70)  // نارنجی-طلایی (تاکیدی)
     ),
     WARM_AMBER(
-        id = "warm_amber",
-        titlePersian = "چوبی گرم",
+        id = "classic",
+        titlePersian = "کلاسیک",
         titleTurkish = "Sıcak Ahşap",
         c1 = Color(0xFFFDF4E3), // کرم چوبی دنج
         c2 = Color(0xFF5D2E16), // قهوه‌ای چرم شیک

@@ -112,7 +112,9 @@ import com.turkce.kelimesolitaire.presentation.ui.components.MenuRedBrush
 import com.turkce.kelimesolitaire.presentation.ui.components.SettingsDialog
 import com.turkce.kelimesolitaire.presentation.ui.components.ThemeDialog
 import com.turkce.kelimesolitaire.presentation.ui.components.MenuRedBack
+import com.turkce.kelimesolitaire.presentation.ui.theme.DarkMain
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupTextSecondary
+import com.turkce.kelimesolitaire.presentation.ui.theme.badgeColor
 
 
 private fun findBestFoundationSlot(
@@ -191,6 +193,7 @@ fun GameScreen(
     onDrawFromStock: () -> Unit,
     onRestartLevel: () -> Unit,
     onBackToMenu: () -> Unit,
+    onAcceptDefeat: () -> Unit,
     onShowHint: () -> Unit,
     onUndoLastMove: () -> Unit,
     onUseJoker: () -> Unit,
@@ -238,7 +241,7 @@ fun GameScreen(
     )
 
     val movesColor by animateColorAsState(
-        targetValue = if (triggerFlash) Color(0xFFE74C3C) else MovesCountText,
+        targetValue = if (triggerFlash) badgeColor else MovesCountText,
         animationSpec = tween(durationMillis = 200)
     )
     var showExitConfirmDialog by remember { mutableStateOf(false) }
@@ -1380,8 +1383,8 @@ fun GameScreen(
             ) {
                 Text(
                     text = LocaleHelper.outOfMovesPrompt(isPersian),
-                    color = PopupTextSecondary,
-                    fontSize = 17.sp,
+                    color = DarkMain,
+                    fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
                     fontFamily = nunitoFont,
                     textAlign = TextAlign.Center,
@@ -1410,7 +1413,7 @@ fun GameScreen(
                 MenuWideButton(
                     text = LocaleHelper.giveUp(isPersian),
                     isPersian = isPersian,
-                    onClick = onBackToMenu,
+                    onClick = onAcceptDefeat,
                     back = MenuRedBack,
                     face = MenuRedBrush,
                     outline = MenuRedBack,
@@ -1428,8 +1431,8 @@ fun GameScreen(
             ) {
                 Text(
                     text = LocaleHelper.exitDialogPrompt(isPersian),
-                    color = PopupTextPrimary,
-                    fontSize = 17.sp,
+                    color = DarkMain,
+                    fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
                     fontFamily = nunitoFont,
                     textAlign = TextAlign.Center
@@ -1437,8 +1440,8 @@ fun GameScreen(
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
                     text = LocaleHelper.exitDialogDesc(isPersian),
-                    color = PopupTextPrimary.copy(alpha = 0.75f),
-                    fontSize = 13.5.sp,
+                    color = DarkMain,
+                    fontSize = 12.5.sp,
                     fontWeight = FontWeight.Medium,
                     fontFamily = nunitoFont,
                     textAlign = TextAlign.Center

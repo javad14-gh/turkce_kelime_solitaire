@@ -1753,17 +1753,10 @@ class GameViewModel : ViewModel() {
         return null
     }
 
-    fun acceptDefeat(context: Context? = null) {
+    fun acceptDefeat(context: Context) {
         logLevelEnd("fail")
         Analytics.log("out_of_moves_choice", mapOf("choice" to "giveup", "level" to _uiState.value.levelNumber))
-        if (context != null) {
-            clearActiveSessionFromPrefs(context, _uiState.value.levelNumber)
-        }
-        _uiState.update {
-            it.copy(
-                showOutofMovesDialog = false,
-                screenState = ScreenState.GameOver
-            )
-        }
+        clearActiveSessionFromPrefs(context, _uiState.value.levelNumber)
+        _uiState.update { it.copy(showOutofMovesDialog = false, screenState = ScreenState.MainMenu) }
     }
 }

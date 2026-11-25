@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -32,13 +33,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg
+import com.turkce.kelimesolitaire.presentation.ui.theme.DarkMain
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupTextSecondary
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupTitleOutline
@@ -81,8 +85,8 @@ fun ThemeIntroSheet(
             .fillMaxWidth()
             .shadow(20.dp, sheetShape)
             .clip(sheetShape)
-            .background(PopupBg)
-            .border(2.5.dp, DarkBg, sheetShape)
+            .background(Brush.verticalGradient(listOf(Color(0xFFFFF6E6), Color(0xFFEADFC8))))
+            .border(2.5.dp, DarkMain, sheetShape)
             // swallow touches so they don't reach the board behind the sheet
             .clickable(
                 indication = null,
@@ -94,14 +98,14 @@ fun ThemeIntroSheet(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(DarkBg)
+                .background(DarkMain)
                 .padding(vertical = 10.dp),
             contentAlignment = Alignment.Center
         ) {
             OutlinedText(
-                text = if (isPersian) "رنگ بازی رو انتخاب کن! 🎨" else "Oyun Rengini Seç! 🎨",
+                text = if (isPersian) "رنگ بازی رو انتخاب کن!" else "Oyun Rengini Seç!",
                 textColor = Color.White,
-                outlineColor = PopupTitleOutline,
+                outlineColor = DarkMain,
                 outlineWidth = 10f,
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Black,
@@ -120,8 +124,8 @@ fun ThemeIntroSheet(
                     "یکی از رنگ‌ها رو بزن و تغییرش رو روی میز و کارت‌ها ببین!"
                 else
                     "Bir renge dokun ve masadaki, kartlardaki değişimi hemen gör!",
-                color = PopupTextSecondary,
-                fontSize = 14.sp,
+                color = DarkMain,
+                fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
                 fontFamily = font,
                 textAlign = TextAlign.Center,
@@ -145,10 +149,12 @@ fun ThemeIntroSheet(
                         onConfirm()
                     },
                     modifier = Modifier
-                        .scale(btnScale),
+                        .scale(btnScale)
+                        .heightIn(min = 60.dp)
+                        .fillMaxWidth(0.50f),
                     corner = 16.dp
                 ) {
-                    val outline = Color(0x802D5A0E)
+                    val outline = DarkMain
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
@@ -183,7 +189,7 @@ fun ThemeIntroSheet(
                         } else {
                             if (isPersian) "👆 یکی رو انتخاب کن" else "👆 Birini seç"
                         },
-                        color = DarkBg,
+                        color = DarkMain,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Black,
                         fontFamily = font
@@ -194,7 +200,7 @@ fun ThemeIntroSheet(
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
                             text = if (isPersian) "هدیه بگیر" else "Hediye Kazan",
-                            color = DarkBg,
+                            color = DarkMain,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Black,
                             fontFamily = font
@@ -207,7 +213,7 @@ fun ThemeIntroSheet(
 
             Text(
                 text = if (isPersian) "بعداً" else "Sonra",
-                color = PopupTextSecondary.copy(alpha = 0.85f),
+                color = DarkMain,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold,
                 fontFamily = font,
@@ -217,5 +223,28 @@ fun ThemeIntroSheet(
                     .padding(horizontal = 16.dp, vertical = 6.dp)
             )
         }
+    }
+}
+
+
+@Preview(
+    name = "Theme Intro Sheet",
+    showBackground = true,
+    backgroundColor = 0xFF111827,
+    widthDp = 400,
+    heightDp = 650
+)
+@Composable
+fun ThemeIntroSheetPreview() {
+    Box(
+        modifier = Modifier
+            .background(Color(0xFF111827)),
+        contentAlignment = Alignment.BottomCenter
+    ) {
+        ThemeIntroSheet(
+            rewardCoins = 100,
+            onDismiss = {},
+            onConfirm = {}
+        )
     }
 }

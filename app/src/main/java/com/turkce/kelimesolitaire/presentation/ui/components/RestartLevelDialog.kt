@@ -33,9 +33,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.text.buildSpannedString
 import com.turkce.kelimesolitaire.R
+import com.turkce.kelimesolitaire.presentation.ui.theme.DarkMain
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupButtonBg
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupTextPrimary
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupTextSecondary
+import com.turkce.kelimesolitaire.presentation.ui.theme.badgeColor
 import com.turkce.kelimesolitaire.presentation.util.GameSettingsManager
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 import com.turkce.kelimesolitaire.presentation.util.rememberAppFont
@@ -71,13 +73,12 @@ fun RestartLevelDialog(
 
     PopupFrame(
         title = LocaleHelper.restartDialogTitle(isPersian),
-        //onDismiss = onDismiss,
         titleSize = if (isPersian) 26.sp else 21.sp
     ) {
         if(!isFree){
             Text(
                 text = LocaleHelper.restartNextFreeIn(formatMmSs(remainingMs), isPersian),
-                color = MenuRedBack,
+                color = badgeColor,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold,
                 fontFamily = appFont
@@ -90,8 +91,8 @@ fun RestartLevelDialog(
                 isFree -> LocaleHelper.restartHourlyPrompt(isPersian)
                 else -> LocaleHelper.restartDialogPrompt(isPersian)
             },
-            color = PopupTextSecondary,
-            fontSize = 14.sp,
+            color = DarkMain,
+            fontSize = 15.sp,
             fontWeight = FontWeight.Bold,
             fontFamily = appFont,
             textAlign = TextAlign.Center,

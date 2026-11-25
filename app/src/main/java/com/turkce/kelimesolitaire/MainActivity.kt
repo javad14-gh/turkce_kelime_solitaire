@@ -45,6 +45,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkMain
+import io.appmetrica.analytics.impl.th
 
 class MainActivity : ComponentActivity() {
 
@@ -236,6 +237,7 @@ class MainActivity : ComponentActivity() {
                                                     )
                                                 },
                                                 onBackToMenu = { viewModel.returnToMainMenu(this@MainActivity) },
+                                                onAcceptDefeat = {viewModel.acceptDefeat(this@MainActivity)},
                                                 onShowMessage = { msg, type ->
                                                     viewModel.showUserMessage(
                                                         msg,

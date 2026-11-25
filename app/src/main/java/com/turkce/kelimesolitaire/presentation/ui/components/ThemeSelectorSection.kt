@@ -142,7 +142,7 @@ fun ThemeSelectorSection(
                         // Theme Name
                         Text(
                             text = if (isPersian) preset.titlePersian else preset.titleTurkish,
-                            color = if (isSelected) com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg else com.turkce.kelimesolitaire.presentation.ui.theme.DarkBg.copy(alpha = 0.7f),
+                            color = if (isSelected) com.turkce.kelimesolitaire.presentation.ui.theme.DarkMain else com.turkce.kelimesolitaire.presentation.ui.theme.DarkMain.copy(alpha = 0.7f),
                             fontSize = 13.sp,
                             fontWeight = if (isSelected) FontWeight.Black else FontWeight.Bold,
                             fontFamily = fontFamily,

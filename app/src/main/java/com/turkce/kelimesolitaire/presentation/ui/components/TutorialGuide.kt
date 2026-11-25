@@ -59,6 +59,7 @@ import androidx.compose.ui.unit.sp
 import com.turkce.kelimesolitaire.R
 import com.turkce.kelimesolitaire.data.model.FoundationSlot
 import com.turkce.kelimesolitaire.data.model.SolitaireCard
+import com.turkce.kelimesolitaire.presentation.ui.theme.lighten
 import kotlin.math.roundToInt
 
 // ---------------------------------------------------------------------
@@ -231,28 +232,28 @@ fun TutorialBubble(
 ) {
     val text = when (message) {
         TutorialMessage.DRAG_CATEGORY ->
-            if (isPersian) "👑 کارت دسته را بکش و روی جایگاه خالی بالا بگذار"
-            else "👑 Kategori kartını yukarıdaki boş yuvaya sürükle"
+            if (isPersian) "👑  کارت دسته را بکش و روی جایگاه خالی بالا بگذار"
+            else "👑  Kategori kartını yukarıdaki boş yuvaya sürükle"
         TutorialMessage.DRAG_WORD ->
-            if (isPersian) "✨ حالا کلمه‌ای از همین دسته را روی آن بگذار"
-            else "✨ Şimdi bu kategoriye ait bir kelimeyi üstüne bırak"
+            if (isPersian) "✨  حالا کلمه‌ای از همین دسته را روی آن بگذار"
+            else "✨  Şimdi bu kategoriye ait bir kelimeyi üstüne bırak"
         TutorialMessage.TAP_STOCK ->
-            if (isPersian) "🃏 حرکتی نداری؟ روی دسته کارت بزن. حرکت‌ها محدودند، با دقت بچین!"
-            else "🃏 Hamle yok mu? Desteye dokun. Hamleler sınırlı, dikkatli oyna!"
+            if (isPersian) "🃏  حرکتی نداری؟ روی دسته کارت بزن. حرکت‌ها محدودند، با دقت بچین!"
+            else "🃏  Hamle yok mu? Desteye dokun. Hamleler sınırlı, dikkatli oyna!"
         TutorialMessage.STACK_ON_SAME ->
-            if (isPersian) "🔄 کارت را روی کارت هم‌دسته در ستون دیگر بگذار تا کارت برگشته‌ی زیرش باز شود"
-            else "🔄 Kartı başka sütundaki aynı kategorili kartın üstüne koy, altındaki kapalı kart açılsın"
+            if (isPersian) "🔄  کارت را روی کارت هم‌دسته در ستون دیگر بگذار تا کارت برگشته‌ی زیرش باز شود"
+            else "🔄  Kartı başka sütundaki aynı kategorili kartın üstüne koy, altındaki kapalı kart açılsın"
         TutorialMessage.USE_EMPTY_COLUMN ->
-            if (isPersian) "📥 ستون خالی داری! کارت را روی آن بگذار تا کارت زیرش باز شود"
-            else "📥 Boş sütun var! Kartı oraya koy, altındaki kart açılsın"
+            if (isPersian) "📥  ستون خالی داری! کارت را روی آن بگذار تا کارت زیرش باز شود"
+            else "📥  Boş sütun var! Kartı oraya koy, altındaki kart açılsın"
         TutorialMessage.STOCK_TO_COLUMN ->
-            if (isPersian) "🃏 کارتی که از دسته کشیدی را هم می‌شود روی ستون هم‌دسته‌اش گذاشت"
-            else "🃏 Desteden çektiğin kartı da aynı kategorili sütuna koyabilirsin"
+            if (isPersian) "🃏  کارتی که از دسته کشیدی را هم می‌شود روی ستون هم‌دسته‌اش گذاشت"
+            else "🃏  Desteden çektiğin kartı da aynı kategorili sütuna koyabilirsin"
         TutorialMessage.CATEGORY_ON_COLUMN ->
-            if (isPersian) "👑 کارت دسته را هم می‌شود روی ستون گذاشت، ولی دیگر هیچ کارتی روی آن نمی‌نشیند"
-            else "👑 Kategori kartı da sütuna konabilir, ama üstüne artık kart konamaz"
+            if (isPersian) "👑  کارت دسته را هم می‌شود روی ستون گذاشت، ولی دیگر هیچ کارتی روی آن نمی‌نشیند"
+            else "👑  Kategori kartı da sütuna konabilir, ama üstüne artık kart konamaz"
         null ->
-            if (isPersian) "👏 آفرین!" else "👏 Aferin!"
+            if (isPersian) "👏  آفرین!" else "👏  Aferin!"
     }
     val skipText = if (isPersian) "رد کردن" else "Atla"
 
@@ -261,16 +262,16 @@ fun TutorialBubble(
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 4.dp)
             .heightIn(min = 64.dp)
-            .shadow(12.dp, RoundedCornerShape(18.dp))
+            //.shadow(12.dp, RoundedCornerShape(18.dp))
             .clip(RoundedCornerShape(18.dp))
             .background(
                 Brush.verticalGradient(
-                    listOf(Color(0xFF0F172A).copy(alpha = 0.95f), Color(0xFF1E293B).copy(alpha = 0.95f))
+                    listOf(Color(0xFF000000).lighten(0.2f), Color(0xFF000000).lighten(0.2f))
                 )
             )
             .border(
                 1.5.dp,
-                Brush.horizontalGradient(listOf(Color(0xFFFFD700), Color(0xFF38BDF8), Color(0xFFFFD700))),
+                Color(0xFF518F00),
                 RoundedCornerShape(18.dp)
             )
             .padding(horizontal = 14.dp, vertical = 10.dp),
@@ -279,28 +280,28 @@ fun TutorialBubble(
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.Center
         ) {
             Text(
                 text = text,
-                fontSize = 14.sp,
+                fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFFF8FAFC),
+                color = Color.White,
                 fontFamily = fontFamily,
                 lineHeight = 20.sp,
                 modifier = Modifier.weight(1f)
             )
             Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = skipText,
-                fontSize = 12.sp,
-                color = Color(0xFF94A3B8),
-                fontFamily = fontFamily,
-                modifier = Modifier
-                    .clip(RoundedCornerShape(8.dp))
-                    .clickable { onSkip() }
-                    .padding(horizontal = 6.dp, vertical = 4.dp)
-            )
+//            Text(
+//                text = skipText,
+//                fontSize = 12.sp,
+//                color = Color.White,
+//                fontFamily = fontFamily,
+//                modifier = Modifier
+//                    .clip(RoundedCornerShape(8.dp))
+//                    .clickable { onSkip() }
+//                    .padding(horizontal = 6.dp, vertical = 4.dp)
+//            )
         }
     }
 }

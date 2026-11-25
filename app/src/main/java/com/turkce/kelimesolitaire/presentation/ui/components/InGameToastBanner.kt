@@ -14,6 +14,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -40,10 +41,12 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import com.turkce.kelimesolitaire.presentation.ui.theme.MenuBtnOutline
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
 import com.turkce.kelimesolitaire.presentation.util.rememberAppFont
 
@@ -99,30 +102,37 @@ fun InGameToastBanner(
             ) + fadeOut(animationSpec = tween(180))
         ) {
             if (message != null) {
-                val (borderStrokeColor, bgColors, iconEmoji, badgeColor) = when (message.type) {
+                val (borderStrokeColor, bgColors, iconEmoji) = when (message.type) {
                     MessageType.ERROR -> Quadruple(
-                        Color(0xFFF87171),
-                        listOf(Color(0xFF3B0713), Color(0xFF1F040A)),
-                        "⚠️",
-                        Color(0xFFDC2626)
+                        MenuRedBack,
+                        listOf(
+                            Color(0xFFFF4D4D),
+                            Color(0xFFF30000)
+                        ),
+                        "⚠️"
                     )
                     MessageType.WARNING -> Quadruple(
-                        Color(0xFFFBBF24),
-                        listOf(Color(0xFF381D03), Color(0xFF1F1001)),
-                        "⚠️",
-                        Color(0xFFD97706)
+                        Color(0xFFBD4900),
+                        listOf(
+                            Color(0xFFFF914D),
+                            Color(0xFFFF6505)
+                        ),
+                        "⚠️"
                     )
                     MessageType.SUCCESS -> Quadruple(
-                        Color(0xFF34D399),
-                        listOf(Color(0xFF042F1C), Color(0xFF02170D)),
-                        "✨",
-                        Color(0xFF059669)
+                        Color(0xFF518F00),
+                        listOf(
+                            Color(0xFF95FF0A),
+                            Color(0xFF61AA00)
+                        ),
+                        "✨"
                     )
                     MessageType.INFO -> Quadruple(
-                        Color(0xFF818CF8),
-                        listOf(Color(0xFF1E1B4B), Color(0xFF0F0E2A)),
-                        "💡",
-                        Color(0xFF4F46E5)
+                        Color(0xFF9440DD),
+                        listOf(
+                            Color(0xFFb67de8), Color(0xFF8C33DB)
+                        ),
+                        "💡"
                     )
                 }
 
@@ -139,7 +149,7 @@ fun InGameToastBanner(
                                 spotColor = Color.Black
                             )
                             .clip(RoundedCornerShape(20.dp))
-                            .background(Brush.horizontalGradient(bgColors))
+                            .background(Brush.verticalGradient(bgColors))
                             .border(1.5.dp, borderStrokeColor, RoundedCornerShape(20.dp))
                             .clickable(
                                 interactionSource = remember { MutableInteractionSource() },
@@ -160,18 +170,17 @@ fun InGameToastBanner(
                                 Box(
                                     modifier = Modifier
                                         .size(38.dp)
-                                        .clip(CircleShape)
-                                        .background(badgeColor.copy(alpha = 0.25f))
-                                        .border(1.dp, borderStrokeColor.copy(alpha = 0.6f), CircleShape),
+                                        .clip(CircleShape),
+                                        //.background(badgeColor.copy(alpha = 0.25f))
+                                        //.border(1.dp, borderStrokeColor.copy(alpha = 0.6f), CircleShape),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
                                         text = iconEmoji,
-                                        fontSize = 18.sp
+                                        fontSize = 25.sp
                                     )
                                 }
 
-                                Spacer(modifier = Modifier.width(12.dp))
 
                                 // Main Message text
                                 Text(
@@ -188,22 +197,6 @@ fun InGameToastBanner(
 
                             Spacer(modifier = Modifier.width(10.dp))
 
-                            // Close tap target
-                            Box(
-                                modifier = Modifier
-                                    .size(26.dp)
-                                    .clip(CircleShape)
-                                    .background(Color.White.copy(alpha = 0.08f))
-                                    .clickable { onDismiss() },
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = "✕",
-                                    color = Color.White.copy(alpha = 0.7f),
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Black
-                                )
-                            }
                         }
                     }
                 }
@@ -212,9 +205,55 @@ fun InGameToastBanner(
     }
 }
 
-private data class Quadruple<A, B, C, D>(
+private data class Quadruple<A, B, C>(
     val first: A,
     val second: B,
-    val third: C,
-    val fourth: D
+    val third: C
 )
+
+@Preview(
+    name = "Toast Banner - All Types",
+    showBackground = true,
+    backgroundColor = 0xFF111827,
+    widthDp = 400,
+    heightDp = 360
+)
+@Composable
+fun InGameToastBannerPreview() {
+    val messages = listOf(
+        InGameMessage(
+            id = 1,
+            message = "این یک پیام خطا است",
+            type = MessageType.ERROR
+        ),
+        InGameMessage(
+            id = 2,
+            message = "این یک پیام هشدار است",
+            type = MessageType.WARNING
+        ),
+        InGameMessage(
+            id = 3,
+            message = "عملیات با موفقیت انجام شد",
+            type = MessageType.SUCCESS
+        ),
+        InGameMessage(
+            id = 4,
+            message = "برای ادامه راهنمایی را دنبال کنید",
+            type = MessageType.INFO
+        )
+    )
+
+    Column(
+        modifier = Modifier
+            .background(Color(0xFF111827))
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        messages.forEach { msg ->
+            InGameToastBanner(
+                message = msg,
+                onDismiss = {}
+            )
+        }
+    }
+}
