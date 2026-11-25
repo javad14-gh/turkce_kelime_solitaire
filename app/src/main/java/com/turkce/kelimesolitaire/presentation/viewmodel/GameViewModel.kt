@@ -42,7 +42,6 @@ sealed interface ScreenState {
     object Loading : ScreenState
     object Gameplay : ScreenState
     object LevelComplete : ScreenState
-    object GameOver : ScreenState // Defeat screen
     object Store : ScreenState // Full-screen store
 }
 

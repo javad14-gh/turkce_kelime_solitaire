@@ -304,10 +304,6 @@ class MainActivity : ComponentActivity() {
                                         )
                                     }
 
-                                    is ScreenState.GameOver -> {
-
-                                    }
-
                                     is ScreenState.Store -> {
                                         StoreScreen(
                                             coins = state.coins,
