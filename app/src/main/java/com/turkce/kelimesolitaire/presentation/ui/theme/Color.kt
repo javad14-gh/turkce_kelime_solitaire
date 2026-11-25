@@ -23,6 +23,8 @@ fun Color.lighten(factor: Float): Color = Color(
     alpha = alpha
 )
 
+val badgeColor = Color(0xFFC80000)
+
 fun Color.darken(factor: Float): Color = Color(
     red = (red * (1f - factor)).coerceIn(0f, 1f),
     green = (green * (1f - factor)).coerceIn(0f, 1f),

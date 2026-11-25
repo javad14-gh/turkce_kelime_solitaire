@@ -56,6 +56,7 @@ import com.turkce.kelimesolitaire.presentation.ui.theme.mainBg
 import com.turkce.kelimesolitaire.presentation.ui.components.TopBarIconButton
 import com.turkce.kelimesolitaire.presentation.ui.components.CandyButton
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkMain
+import com.turkce.kelimesolitaire.presentation.ui.theme.badgeColor
 
 val inner = RoundedCornerShape(19.dp)
 val outer = RoundedCornerShape(24.dp)
@@ -510,7 +511,7 @@ private fun BundleItemChip(iconRes: Int, text: String, textColor: Color, outColo
 private fun ComboPackCard(
     title: String,
     badge: String? = null,
-    badgeColor: Color = Color(0xFFC80000),
+    badgeColor: Color = com.turkce.kelimesolitaire.presentation.ui.theme.badgeColor,
     price: String,
     packColor: Color,
     lightColor: Color,

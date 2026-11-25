@@ -473,6 +473,7 @@ private fun DailyReward7DayProgressBar(
     // Outer Center Container
     Box(
         modifier = modifier
+            .scale(if(hasUnclaimedReward) pulseScale else 1f )
             .fillMaxWidth()
             .padding(horizontal = 20.dp)
             .widthIn(max = 330.dp),
@@ -545,7 +546,6 @@ private fun DailyReward7DayProgressBar(
                             Box(
                                 modifier = Modifier
                                     .size(20.dp)
-                                    .then(if (isReady) Modifier.scale(pulseScale) else Modifier)
                                     .clip(CircleShape)
                                     .background(
                                         if (isReady)

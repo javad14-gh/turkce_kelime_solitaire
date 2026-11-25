@@ -110,20 +110,16 @@ class InAppBillingManager private constructor() {
 
         val flavor = try { BuildConfig.FLAVOR } catch (e: Throwable) { "" }
 
-        when {
-            flavor.contains("bazaar", ignoreCase = true) || (!isMyketInstalled && isBazaarInstalled) -> {
-                activeMarketPackage = "com.farsitel.bazaar"
-                activeBindAction = "ir.cafebazaar.pardakht.InAppBillingService.BIND"
-                activePublicKey = BazaarBillingConfig.BAZAAR_RSA_PUBLIC_KEY
-                activeDescriptor = "com.android.vending.billing.IInAppBillingService"
-            }
-            else -> {
-                activeMarketPackage = MyketBillingConfig.MYKET_BILLING_PACKAGE
-                activeBindAction = MyketBillingConfig.MYKET_BIND_ACTION
-                activePublicKey = MyketBillingConfig.MYKET_RSA_PUBLIC_KEY
-                activeDescriptor = "com.android.vending.billing.IInAppBillingService"
-            }
+        if (flavor.equals("bazaar", ignoreCase = true)) {
+            activeMarketPackage = "com.farsitel.bazaar"
+            activeBindAction = "ir.cafebazaar.pardakht.InAppBillingService.BIND"
+            activePublicKey = BazaarBillingConfig.BAZAAR_RSA_PUBLIC_KEY
+        } else {
+            activeMarketPackage = MyketBillingConfig.MYKET_BILLING_PACKAGE
+            activeBindAction = MyketBillingConfig.MYKET_BIND_ACTION
+            activePublicKey = MyketBillingConfig.MYKET_RSA_PUBLIC_KEY
         }
+        activeDescriptor = "com.android.vending.billing.IInAppBillingService"
     }
 
     fun isMarketInstalled(context: Context): Boolean {

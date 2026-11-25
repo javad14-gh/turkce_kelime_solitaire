@@ -31,7 +31,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -39,18 +38,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.turkce.kelimesolitaire.R
 import com.turkce.kelimesolitaire.data.billing.MyketBillingConfig
 import com.turkce.kelimesolitaire.presentation.ui.theme.DarkMain
-import com.turkce.kelimesolitaire.presentation.ui.theme.MenuBtnMid
-import com.turkce.kelimesolitaire.presentation.ui.theme.MenuBtnOutline
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupButtonBg
-import com.turkce.kelimesolitaire.presentation.ui.theme.PopupTextPrimary
 import com.turkce.kelimesolitaire.presentation.ui.theme.PopupTextSecondary
+import com.turkce.kelimesolitaire.presentation.ui.theme.badgeColor
 import com.turkce.kelimesolitaire.presentation.ui.theme.lighten
 import com.turkce.kelimesolitaire.presentation.util.GameSettingsManager
 import com.turkce.kelimesolitaire.presentation.util.LocaleHelper
@@ -109,10 +105,10 @@ fun StarterPackDialog(
             ) {
             Box(
                 modifier = Modifier
-                    .shadow(6.dp, RoundedCornerShape(12.dp))
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(Color(0xFFDC2626))
-                    .border(1.5.dp, Color.White, RoundedCornerShape(12.dp))
+                    .shadow(6.dp, RoundedCornerShape(10.dp))
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(badgeColor)
+                    .border(1.5.dp, Color.White, RoundedCornerShape(10.dp))
                     .padding(horizontal = 16.dp, vertical = 5.dp)
             ) {
                 Text(
@@ -125,7 +121,7 @@ fun StarterPackDialog(
                         } تخفیف ویژه (فقط یک‌بار)"
                     else "%$STARTER_DISCOUNT_PERCENT ÖZEL İNDİRİM (TEK SEFERLİK)",
                     color = Color.White,
-                    fontSize = 12.sp,
+                    fontSize = 13.sp,
                     fontWeight = FontWeight.Black,
                     fontFamily = font
                 )
@@ -136,8 +132,8 @@ fun StarterPackDialog(
             Text(
                 text = if (isPersian) "با این بسته مراحل را راحت‌تر پشت سر بگذار!"
                 else "Bu paketle seviyeleri çok daha kolay tamamlayın!",
-                color = PopupTextSecondary,
-                fontSize = 13.sp,
+                color = DarkMain,
+                fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
                 fontFamily = font,
                 textAlign = TextAlign.Center,
@@ -191,12 +187,11 @@ fun StarterPackDialog(
                 },
                 modifier = Modifier
                     .scale(buttonScale)
-                    .fillMaxWidth(0.6f)
+                    .fillMaxWidth(0.62f)
                     .heightIn(min = 60.dp),
                 corner = 18.dp,
                 elevation = 10.dp
             ) {
-                val outline = Color(0x802D5A0E)
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
@@ -239,7 +234,7 @@ private fun StarterItemRow(
             .background(if (highlight) Color(0xFFb67de8).lighten(0.5f) else PopupButtonBg)
             .border(
                 1.dp,
-                if (highlight) Color(0xFF9440DD) else MenuBtnOutline.copy(alpha = 0.25f),
+                if (highlight) Color(0xFF9440DD) else DarkMain,
                 shape
             )
             .padding(horizontal = 10.dp, vertical = 6.dp),
@@ -263,7 +258,8 @@ private fun StarterItemRow(
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(8.dp))
-                    .background(if (highlight) Color(0xFFb67de8) else MenuBtnMid)
+                    .background(if (highlight) Color(0xFF9440DD) else DarkMain)
+                    .candyGloss(8.dp, inset = 0.dp)
                     .padding(horizontal = 8.dp, vertical = 3.dp)
             ) {
                 Text(
@@ -277,18 +273,4 @@ private fun StarterItemRow(
         }
     }
 
-}
-
-@Preview(
-    showBackground = true,
-    backgroundColor = 0xFF303030,
-    widthDp = 400,
-    heightDp = 800
-)
-@Composable
-private fun StarterPackDialogPreview() {
-    StarterPackDialog(
-        onDismiss = {},
-        onBuy = {}
-    )
 }
