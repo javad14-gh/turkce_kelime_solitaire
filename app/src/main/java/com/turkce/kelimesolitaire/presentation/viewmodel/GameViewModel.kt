@@ -827,6 +827,7 @@ class GameViewModel : ViewModel() {
 
     fun restartLevel(activity: Activity) {
         val db = wordDatabase ?: return
+        logLevelEnd("restart")
         _uiState.update { it.copy(screenState = ScreenState.Loading) }
         viewModelScope.launch {
             loadLevelData(_uiState.value.levelNumber, db, activity, minDisplayTimeMs = 600L)

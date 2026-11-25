@@ -190,7 +190,6 @@ class LevelGenerator {
                     targetWords = targetWords,
                     initialTableau = tableaus,
                     initialStock = stock,
-                    isFallback = true
                 )
             }
 
@@ -237,7 +236,8 @@ class LevelGenerator {
             targetCategories = defaultCategories,
             targetWords = defaultWords,
             initialTableau = fallbackTableaus,
-            initialStock = fallbackStock
+            initialStock = fallbackStock,
+            isFallback = true
         )
     }
 

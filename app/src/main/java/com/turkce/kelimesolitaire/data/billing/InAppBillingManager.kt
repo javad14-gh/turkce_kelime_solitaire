@@ -105,8 +105,6 @@ class InAppBillingManager private constructor() {
     }
 
     private fun setupTargetMarket(context: Context) {
-        val isMyketInstalled = isPackageInstalled(context, MyketBillingConfig.MYKET_BILLING_PACKAGE)
-        val isBazaarInstalled = isPackageInstalled(context, "com.farsitel.bazaar")
 
         val flavor = try { BuildConfig.FLAVOR } catch (e: Throwable) { "" }
 
